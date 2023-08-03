@@ -1,0 +1,25 @@
+Lib.Require("comfort/GetPosition");
+Lib.Register("comfort/GetGeometricFocus");
+
+--- Returns the average position of all passed positions combined.
+--- @param ... any List of positions
+--- @return table Center Center position
+function GetGeometricFocus(...)
+    local PositionData = {X= 0, Y= 0, Z= 0};
+    local ValidEntryCount = 0;
+    for i= 1, #arg do
+        local Position = GetPosition(arg[i]);
+        if Position then
+            PositionData.X = PositionData.X + Position.X;
+            PositionData.Y = PositionData.Y + Position.Y;
+            PositionData.Z = PositionData.Z + (Position.Z or 0);
+            ValidEntryCount = ValidEntryCount +1;
+        end
+    end
+    return {
+        X= PositionData.X * (1/ValidEntryCount);
+        Y= PositionData.Y * (1/ValidEntryCount);
+        Z= PositionData.Z * (1/ValidEntryCount);
+    }
+end
+

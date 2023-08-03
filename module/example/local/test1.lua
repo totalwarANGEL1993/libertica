@@ -1,0 +1,1 @@
+Lib.Register("module/example/local/Test1");
