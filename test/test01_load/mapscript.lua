@@ -1,0 +1,36 @@
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
+-- ||||                          GLOBALES SKRIPT                         |||| --
+-- ||||                    --------------------------                    |||| --
+-- ||||                            Testmap 01                            |||| --
+-- ||||                           totalwarANGEL                          |||| --
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
+
+-- ========================================================================== --
+
+Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
+
+Lib.Require("core/libertycore");
+Lib.Require("module/questsystem/questsystem");
+
+function Mission_FirstMapAction()
+    Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/questsystembehavior.lua");
+
+    -- Mapeditor-Einstellungen werden geladen
+    if Framework.IsNetworkGame() ~= true then
+        Startup_Player();
+        Startup_StartGoods();
+        Startup_Diplomacy();
+    end
+    Liberate();
+end
+
+function Mission_InitPlayers()
+end
+
+function Mission_SetStartingMonth()
+    Logic.SetMonthOffset(3);
+end
+
+function Mission_InitMerchants()
+end
+
