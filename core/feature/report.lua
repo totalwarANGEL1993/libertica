@@ -10,12 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("comfort/IsLocalScript");
-Lib.Require("comfort/IsMultiplayer");
-Lib.Require("comfort/IsHistoryEdition");
-Lib.Require("core/feature/LuaExtension");
-Lib.Register("core/feature/Report");
-
 LibertyCore.Report = {
     ScriptEventRegister = {},
     ScriptEventListener = {},
@@ -23,6 +17,15 @@ LibertyCore.Report = {
     ScriptCommandRegister = {},
     ScriptCommandSequence = 0,
 };
+
+Lib.Require("comfort/IsLocalScript");
+Lib.Require("comfort/IsMultiplayer");
+Lib.Require("comfort/IsHistoryEdition");
+Lib.Require("core/feature/LuaExtension");
+Lib.Register("core/feature/Report");
+
+Report = {};
+Command = {};
 
 -- -------------------------------------------------------------------------- --
 
@@ -72,7 +75,7 @@ function LibertyCore.Report:CreateScriptCommand(_Name, _Function)
     self.ScriptCommandRegister[ID] = {Name, _Function};
     ExecuteLocal([[
         local ID, Name = %d, "%s"
-        LibertyCore.ScriptCommandRegister[ID] = Name
+        LibertyCore.Report.ScriptCommandRegister[ID] = Name
         Command[Name] = ID
     ]], ID, Name);
 end

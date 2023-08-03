@@ -25,6 +25,7 @@ Lib = {
 ---
 --- @param _Path string Relative path
 function Lib.Require(_Path)
+    _Path = _Path:lower();
     local Key = _Path:gsub("/", "_");
 
     -- Do not load globals in local
@@ -49,14 +50,14 @@ end
 --- Adds a custom path at the top of the search order.
 --- @param _Path string Relative path
 function Lib.PushPath(_Path)
-    table.insert(Lib.Paths, 1, _Path);
+    table.insert(Lib.Paths, 1, _Path:lower());
 end
 
 --- DO NOT USE THIS MANUALLY!
 --- Registers a component as found.
 --- @param _Path string Relative path
 function Lib.Register(_Path)
-    local Key = _Path:gsub("/", "_");
+    local Key = _Path:gsub("/", "_"):lower();
     Lib.Loaded[Key] = Lib.Sources[Key] .. Lib.Root .. "/";
 end
 
@@ -65,7 +66,7 @@ end
 --- @param _Source string Path where the component is loaded from
 --- @param _Path string   Relative path of component
 function Lib.Load(_Source, _Path)
-    local Path = _Source .. Lib.Root .. "/" .._Path;
+    local Path = _Source .. Lib.Root .. "/" .._Path:lower();
     Script.Load(Path.. ".lua");
 end
 

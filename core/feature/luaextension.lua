@@ -10,12 +10,12 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
+LibertyCore.LuaExtension = {};
+
 --- @diagnostic disable: param-type-mismatch
 Lib.Require("comfort/CopyTable");
 Lib.Require("comfort/SerializeTable");
 Lib.Register("core/feature/LuaExtension");
-
-LibertyCore.LuaExtension = {};
 
 function LibertyCore.LuaExtension:Initialize()
     self:OverrideTable();

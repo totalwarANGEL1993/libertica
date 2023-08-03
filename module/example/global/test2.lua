@@ -1,1 +1,0 @@
-Lib.Register("module/example/global/Test2");

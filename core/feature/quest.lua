@@ -10,14 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("comfort/IsLocalScript");
-Lib.Require("comfort/ToBoolean");
-Lib.Require("comfort/GetHealth");
-Lib.Require("comfort/CopyTable");
-Lib.Require("comfort/global/SendCart");
-Lib.Require("core/feature/Report");
-Lib.Register("core/feature/Quest");
-
 LibertyCore.Quest = {
     QuestCounter = 0,
     Text = {
@@ -69,8 +61,16 @@ LibertyCore.Quest = {
     }
 }
 
+Lib.Require("comfort/IsLocalScript");
+Lib.Require("comfort/ToBoolean");
+Lib.Require("comfort/GetHealth");
+Lib.Require("comfort/CopyTable");
+Lib.Require("comfort/global/SendCart");
+Lib.Require("core/feature/Report");
+Lib.Register("core/feature/Quest");
+
 QSB.EffectNameToID = {};
-QSB.InitalizedObjekts = {};
+QSB.InitializedObjekts = {};
 
 -- -------------------------------------------------------------------------- --
 
@@ -88,7 +88,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Quest:Initalize()
+function LibertyCore.Quest:Initialize()
     Report.CustomValueChanged = CreateReport("Event_CustomValueChanged");
 
     if not IsLocalScript() then

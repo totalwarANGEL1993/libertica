@@ -10,8 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Register("core/feature/Job");
-
 LibertyCore.Job = {
     EventJobMappingID = 0;
     EventJobMapping = {},
@@ -21,9 +19,11 @@ LibertyCore.Job = {
     LastTimeStamp = 0;
 }
 
+Lib.Register("core/feature/Job");
+
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Job:Initalize()
+function LibertyCore.Job:Initialize()
     self:StartJobs();
 end
 

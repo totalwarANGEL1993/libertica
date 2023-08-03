@@ -3158,7 +3158,7 @@ function B_Reprisal_InteractiveObjectDeactivate:Debug(_Quest)
         self.WarningPrinted = true;
     end
     local eID = GetID(self.ScriptName);
-    if QSB.InitalizedObjekts[eID] and QSB.InitalizedObjekts[eID] == _Quest.Identifier then
+    if QSB.InitializedObjekts[eID] and QSB.InitializedObjekts[eID] == _Quest.Identifier then
         error(_Quest.Identifier.. ": " ..self.Name..": you can not deactivate in the same quest the object is initalized!");
         return true;
     end
@@ -3233,7 +3233,7 @@ function B_Reprisal_InteractiveObjectActivate:Debug(_Quest)
         self.WarningPrinted = true;
     end
     local eID = GetID(self.ScriptName);
-    if QSB.InitalizedObjekts[eID] and QSB.InitalizedObjekts[eID] == _Quest.Identifier then
+    if QSB.InitializedObjekts[eID] and QSB.InitializedObjekts[eID] == _Quest.Identifier then
         error(_Quest.Identifier.. ": " ..self.Name..": you can not activate in the same quest the object is initalized!");
         return true;
     end
@@ -4324,7 +4324,7 @@ function B_Reward_ObjectInit:CustomFunction(_Quest)
     if eID == 0 then
         return;
     end
-    QSB.InitalizedObjekts[eID] = _Quest.Identifier;
+    QSB.InitializedObjekts[eID] = _Quest.Identifier;
 
     Logic.InteractiveObjectClearCosts(eID);
     Logic.InteractiveObjectClearRewards(eID);

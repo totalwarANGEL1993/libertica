@@ -15,12 +15,14 @@ function LibWriter:Run(...)
         self.ComponentList = {unpack(arg)};
     end
 
+    os.execute('cp "loader.lua" "var/liberty/liberator.lua');
+
     -- copy modules
     local imports = self:ReadFilesLoop();
     for i= #imports, 1, -1 do
         local index = string.find(imports[i], "/[^/]*$");
         local Path = 'var/liberty/'..imports[i]:sub(1, index-1);
-        local File = imports[i]:sub(index+1) ..".lua";
+        local File = imports[i]:sub(index+1):lower() ..".lua";
         if not self:IsDir(Path) then
             os.execute('mkdir "'..Path..'"');
         end

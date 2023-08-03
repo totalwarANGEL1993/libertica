@@ -10,6 +10,11 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
+LibertyCore.Logging = {
+    FileLogLevel = CONST_LOG_LEVEL_INFO,
+    LogLevel = CONST_LOG_LEVEL_ERROR,
+}
+
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("core/feature/Logging");
 
@@ -19,14 +24,9 @@ CONST_LOG_LEVEL_WARNING = 2;
 CONST_LOG_LEVEL_ERROR   = 1;
 CONST_LOG_LEVEL_OFF     = 0;
 
-LibertyCore.Logging = {
-    FileLogLevel = CONST_LOG_LEVEL_INFO,
-    LogLevel = CONST_LOG_LEVEL_ERROR,
-}
-
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Logging:Initalize()
+function LibertyCore.Logging:Initialize()
 end
 
 function LibertyCore.Logging:OnSaveGameLoaded()

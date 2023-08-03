@@ -10,17 +10,17 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("comfort/IsLocalScript");
-Lib.Require("core/feature/Report");
-Lib.Register("core/feature/Chat");
-
 LibertyCore.Chat = {
     DebugInput = {};
 };
 
+Lib.Require("comfort/IsLocalScript");
+Lib.Require("core/feature/Report");
+Lib.Register("core/feature/Chat");
+
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Chat:Initalize()
+function LibertyCore.Chat:Initialize()
     Report.ChatOpened = CreateReport("Event_ChatOpened");
     Report.ChatClosed = CreateReport("Event_ChatClosed");
     for i= 1, 8 do

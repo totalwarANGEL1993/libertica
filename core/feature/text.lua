@@ -10,11 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("core/feature/Report");
-Lib.Register("core/feature/Text");
-
-CONST_LANGUAGE = "de";
-
 LibertyCore.Text = {
     Languages = {
         {"de", "Deutsch", "en"},
@@ -50,9 +45,14 @@ LibertyCore.Text = {
     },
 }
 
+Lib.Require("core/feature/Report");
+Lib.Register("core/feature/Text");
+
+CONST_LANGUAGE = "de";
+
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Text:Initalize()
+function LibertyCore.Text:Initialize()
     Report.LanguageChanged = CreateReport("Event_LanguageChanged");
     self:DetectLanguage();
 end

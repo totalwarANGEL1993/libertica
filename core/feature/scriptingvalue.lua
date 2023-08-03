@@ -10,11 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("comfort/IsHistoryEdition");
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/LuaExtension");
-Lib.Register("core/feature/ScriptingValue");
-
 LibertyCore.ScriptingValue = {
     SV = {
         Game = "Vanilla",
@@ -37,11 +32,16 @@ LibertyCore.ScriptingValue = {
     }
 }
 
+Lib.Require("comfort/IsHistoryEdition");
+Lib.Require("core/feature/Report");
+Lib.Require("core/feature/LuaExtension");
+Lib.Register("core/feature/ScriptingValue");
+
 CONST_SCRIPTING_VALUES = LibertyCore.ScriptingValue.SV.Vanilla;
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.ScriptingValue:Initalize()
+function LibertyCore.ScriptingValue:Initialize()
     if IsHistoryEdition() then
         self.SV.Game = "HistoryEdition";
     end

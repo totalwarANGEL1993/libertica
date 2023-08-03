@@ -10,15 +10,15 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/Job");
-Lib.Register("core/feature/Save");
-
 LibertyCore.Save = {
     HistoryEditionQuickSave = false,
     SavingDisabled = false,
     LoadingDisabled = false,
 };
+
+Lib.Require("core/feature/Report");
+Lib.Require("core/feature/Job");
+Lib.Register("core/feature/Save");
 
 -- -------------------------------------------------------------------------- --
 
@@ -45,7 +45,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Save:Initalize()
+function LibertyCore.Save:Initialize()
     Report.SaveGameLoaded = CreateReport("Event_SaveGameLoaded");
 
     self:SetupQuicksaveKeyCallback();

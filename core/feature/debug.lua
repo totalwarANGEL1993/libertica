@@ -10,11 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("comfort/IsLocalScript");
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/Chat");
-Lib.Register("core/feature/Debug");
-
 LibertyCore.Debug = {
     CheckAtRun       = false;
     TraceQuests      = false;
@@ -22,12 +17,17 @@ LibertyCore.Debug = {
     DevelopingShell  = false;
 }
 
-function LibertyCore.Debug:Initalize()
+Lib.Require("comfort/IsLocalScript");
+Lib.Require("core/feature/Report");
+Lib.Require("core/feature/Chat");
+Lib.Register("core/feature/Debug");
+
+function LibertyCore.Debug:Initialize()
     Report.DebugChatConfirmed = CreateReport("Event_DebugChatConfirmed");
     Report.DebugConfigChanged = CreateReport("Event_DebugConfigChanged");
 
     if IsLocalScript() then
-        self:InitalizeQsbDebugHotkeys();
+        self:InitializeQsbDebugHotkeys();
 
         CreateReportReceiver(
             Report.ChatClosed,
@@ -40,8 +40,8 @@ end
 
 function LibertyCore.Debug:OnSaveGameLoaded()
     if IsLocalScript() then
-        self:InitalizeDebugWidgets();
-        self:InitalizeQsbDebugHotkeys();
+        self:InitializeDebugWidgets();
+        self:InitializeQsbDebugHotkeys();
     end
 end
 
@@ -77,7 +77,7 @@ function LibertyCore.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _Develop
                 Swift.Debug.DevelopingCheats,
                 Swift.Debug.DevelopingShell
             );
-            Swift.Debug:InitalizeDebugWidgets();
+            Swift.Debug:InitializeDebugWidgets();
         ]],
         tostring(self.CheckAtRun),
         tostring(self.TraceQuests),
@@ -86,7 +86,7 @@ function LibertyCore.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _Develop
     );
 end
 
-function LibertyCore.Debug:InitalizeDebugWidgets()
+function LibertyCore.Debug:InitializeDebugWidgets()
     if Network.IsNATReady ~= nil and Framework.IsNetworkGame() then
         return;
     end
@@ -103,7 +103,7 @@ function LibertyCore.Debug:InitalizeDebugWidgets()
     end
 end
 
-function LibertyCore.Debug:InitalizeQsbDebugHotkeys()
+function LibertyCore.Debug:InitializeQsbDebugHotkeys()
     if Framework.IsNetworkGame() then
         return;
     end

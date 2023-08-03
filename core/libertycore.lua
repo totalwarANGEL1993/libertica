@@ -10,20 +10,17 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore = {
+QSB = {};
+
+LibertyCore = LibertyCore or {
+    ModuleList = {},
     Global = {
-        ScriptCommandRegister = {},
-        ScriptCommandSequence = 0,
-        IsInstalled = false;
+        IsInstalled = false,
     },
     Local = {
         IsInstalled = false;
-    },
+    }
 }
-
-Report = {};
-Command = {};
-QSB = {};
 
 Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
@@ -33,6 +30,7 @@ Lib.Require("core/feature/Logging");
 Lib.Require("core/feature/Debug");
 Lib.Require("core/feature/LuaExtension");
 Lib.Require("core/feature/Report");
+Lib.Require("core/feature/ScriptingValue");
 Lib.Require("core/feature/Text");
 Lib.Require("core/feature/Job");
 Lib.Require("core/feature/Save");
@@ -59,6 +57,15 @@ function LibertyCore.Global:Initialize()
         LibertyCore.Quest:Initialize();
         LibertyCore.Chat:Initialize();
         LibertyCore.Debug:Initialize();
+
+        -- Initialize modules
+        for i= 1, #LibertyCore.ModuleList do
+            local Module = _G[LibertyCore.ModuleList[i]];
+            if Module.Global and Module.Global.Initialize then
+                Module.Global:Initialize();
+            end
+        end
+
         -- Cleanup (garbage collection)
         LibertyCore.Local = nil;
     end
@@ -76,6 +83,14 @@ function LibertyCore.Global:OnSaveGameLoaded()
     LibertyCore.Quest:OnSaveGameLoaded();
     LibertyCore.Chat:OnSaveGameLoaded();
     LibertyCore.Debug:OnSaveGameLoaded();
+
+    -- Restore modules
+    for i= 1, #LibertyCore.ModuleList do
+        local Module = _G[LibertyCore.ModuleList[i]];
+        if Module.Global and Module.Global.OnSaveGameLoaded then
+            Module.Global:OnSaveGameLoaded();
+        end
+    end
 end
 
 function LibertyCore.Global:OverrideOnSaveGameLoaded()
@@ -91,7 +106,7 @@ function LibertyCore.Global:ExecuteLocal(_Command, ...)
     if #arg > 0 then
         Command = Command:format(unpack(arg));
     end
-    Logic.ExecuteInLuaLocalState(_Command);
+    Logic.ExecuteInLuaLocalState(Command);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -109,6 +124,15 @@ function LibertyCore.Local:Initialize()
         LibertyCore.Quest:Initialize();
         LibertyCore.Chat:Initialize();
         LibertyCore.Debug:Initialize();
+
+        -- Initialize modules
+        for i= 1, #LibertyCore.ModuleList do
+            local Module = _G[LibertyCore.ModuleList[i]];
+            if Module.Local and Module.Local.Initialize then
+                Module.Local:Initialize();
+            end
+        end
+
         -- Cleanup (garbage collection)
         LibertyCore.Global = nil;
     end
@@ -127,6 +151,14 @@ function LibertyCore.Local:OnSaveGameLoaded()
     LibertyCore.Chat:OnSaveGameLoaded();
     LibertyCore.Debug:OnSaveGameLoaded();
 
+    -- Restore modules
+    for i= 1, #LibertyCore.ModuleList do
+        local Module = _G[LibertyCore.ModuleList[i]];
+        if Module.Local and Module.Local.OnSaveGameLoaded then
+            Module.Local:OnSaveGameLoaded();
+        end
+    end
+
     SendReport(Report.SaveGameLoaded);
 end
 
@@ -143,6 +175,20 @@ function LibertyCore.Local:ExecuteGlobal(_Command, ...)
 end
 
 -- -------------------------------------------------------------------------- --
+
+--- Initializes the whole library.
+function Liberate()
+    assert(not IsLocalScript(), "Must be called from global script!");
+    LibertyCore.Global:Initialize();
+    ExecuteLocal("LibertyCore.Local:Initialize()");
+end
+
+--- Register a module in the module list.
+--- @param _Name string Name of module
+function RegisterModule(_Name)
+    assert(_G[_Name], "Module '" .._Name.. "' does not exist!");
+    table.insert(LibertyCore.ModuleList, _Name);
+end
 
 --- Executes dynamic lua in the local script.
 --- @param _Command string Lua string
