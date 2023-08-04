@@ -10,20 +10,20 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.LuaExtension = {};
+Lib.Core.LuaExtension = {};
 
 --- @diagnostic disable: param-type-mismatch
 Lib.Require("comfort/CopyTable");
 Lib.Require("comfort/SerializeTable");
 Lib.Register("core/feature/LuaExtension");
 
-function LibertyCore.LuaExtension:Initialize()
+function Lib.Core.LuaExtension:Initialize()
     self:OverrideTable();
     self:OverrideString();
     self:OverrideMath();
 end
 
-function LibertyCore.LuaExtension:OnSaveGameLoaded()
+function Lib.Core.LuaExtension:OnSaveGameLoaded()
     self:OverrideTable();
     self:OverrideString();
     self:OverrideMath();
@@ -31,7 +31,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.LuaExtension:OverrideTable()
+function Lib.Core.LuaExtension:OverrideTable()
     --- Compares two tables with a comperator function.
     --- @param t1 table First table
     --- @param t2 table Second table
@@ -150,7 +150,7 @@ function LibertyCore.LuaExtension:OverrideTable()
     end
 end
 
-function LibertyCore.LuaExtension:OverrideString()
+function Lib.Core.LuaExtension:OverrideString()
     --- Returns true if the partial string is found.
     --- @param self stringlib String to search
     --- @param s string       Partial string
@@ -221,7 +221,7 @@ function LibertyCore.LuaExtension:OverrideString()
     end
 end
 
-function LibertyCore.LuaExtension:OverrideMath()
+function Lib.Core.LuaExtension:OverrideMath()
     math.lerp = function(s, c, e)
         local f = (c - s) / e;
         return (f > 1 and 1) or f;

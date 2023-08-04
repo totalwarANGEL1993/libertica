@@ -8,7 +8,7 @@ always needed for a running map.
 
 - Include questsystembehavior.lua as usual in global script
   (Mission_FirstMapAction)
-- Use Lib.Require to load components AFTER that in global script
+- Use Require to load components AFTER that in global script
 - In local script questsystembehavior.lua is not needed.
-- Use Lib.Require to load components in local script
+- Use Require to load components in local script
   (Mission_LocalOnMapStart)
