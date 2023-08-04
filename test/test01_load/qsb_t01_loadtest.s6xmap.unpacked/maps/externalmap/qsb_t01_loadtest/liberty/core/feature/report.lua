@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Report = {
+Lib.Core.Report = {
     ScriptEventRegister = {},
     ScriptEventListener = {},
 
@@ -29,32 +29,32 @@ Command = {};
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Report:Initialize()
+function Lib.Core.Report:Initialize()
     if not IsLocalScript() then
         self:OverrideSoldierPayment();
 
-        LibertyCore.Report:CreateScriptCommand("Cmd_SendReportToGlobal", function(_ID, ...)
+        Lib.Core.Report:CreateScriptCommand("Cmd_SendReportToGlobal", function(_ID, ...)
             SendReport(_ID, unpack(arg));
         end);
     end
 end
 
-function LibertyCore.Report:OnSaveGameLoaded()
+function Lib.Core.Report:OnSaveGameLoaded()
 end
 
-function LibertyCore.Report:OverrideSoldierPayment()
+function Lib.Core.Report:OverrideSoldierPayment()
     GameCallback_SetSoldierPaymentLevel_Orig_Liberty = GameCallback_SetSoldierPaymentLevel;
     GameCallback_SetSoldierPaymentLevel = function(_PlayerID, _Level)
         if _Level <= 2 then
             return GameCallback_SetSoldierPaymentLevel_Orig_Liberty(_PlayerID, _Level);
         end
-        LibertyCore.Event:ProcessScriptCommand(_PlayerID, _Level);
+        Lib.Core.Event:ProcessScriptCommand(_PlayerID, _Level);
     end
 end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Report:ProcessScriptCommand(_PlayerID, _ID)
+function Lib.Core.Report:ProcessScriptCommand(_PlayerID, _ID)
     assert(_ID and self.ScriptCommandRegister[_ID], "Commands is invalid.");
     local PlayerName = Logic.GetPlayerName(_PlayerID +4);
     local Parameters = self:DecodeScriptCommandParameters(PlayerName);
@@ -64,7 +64,7 @@ function LibertyCore.Report:ProcessScriptCommand(_PlayerID, _ID)
     end
 end
 
-function LibertyCore.Report:CreateScriptCommand(_Name, _Function)
+function Lib.Core.Report:CreateScriptCommand(_Name, _Function)
     assert(not IsLocalScript(), "Commands must be created in global script.");
     self.ScriptCommandSequence = self.ScriptCommandSequence +1;
     local ID = self.ScriptCommandSequence;
@@ -75,12 +75,12 @@ function LibertyCore.Report:CreateScriptCommand(_Name, _Function)
     self.ScriptCommandRegister[ID] = {Name, _Function};
     ExecuteLocal([[
         local ID, Name = %d, "%s"
-        LibertyCore.Report.ScriptCommandRegister[ID] = Name
+        Lib.Core.Report.ScriptCommandRegister[ID] = Name
         Command[Name] = ID
     ]], ID, Name);
 end
 
-function LibertyCore.Report:DecodeScriptCommandParameters(_Query)
+function Lib.Core.Report:DecodeScriptCommandParameters(_Query)
     local Parameters = {};
     for k, v in pairs(string.slice(_Query, "#")) do
         local Value = v;
@@ -106,7 +106,7 @@ function LibertyCore.Report:DecodeScriptCommandParameters(_Query)
     return Parameters;
 end
 
-function LibertyCore.Report:SendScriptCommand(_ID, ...)
+function Lib.Core.Report:SendScriptCommand(_ID, ...)
     assert(IsLocalScript(), "Commands must be send in local script.");
     assert(_ID and self.ScriptCommandRegister[_ID], "Command is invalid.");
     local PlayerID = GUI.GetPlayerID();
@@ -123,7 +123,7 @@ function LibertyCore.Report:SendScriptCommand(_ID, ...)
     GUI.SetSoldierPaymentLevel(PlayerSoldierPaymentLevel[PlayerID]);
 end
 
-function LibertyCore.Report:EncodeScriptCommandParameters(...)
+function Lib.Core.Report:EncodeScriptCommandParameters(...)
     local Query = "";
     for i= 1, #arg do
         local Parameter = arg[i];
@@ -146,7 +146,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Report:CreateReport(_Name)
+function Lib.Core.Report:CreateReport(_Name)
     assert(type(_Name) == "string", "Report name must be a string.");
     for i= 1, #self.ScriptEventRegister, 1 do
         if self.ScriptEventRegister[i] == _Name then
@@ -160,7 +160,7 @@ function LibertyCore.Report:CreateReport(_Name)
     return ID;
 end
 
-function LibertyCore.Report:SendReport(_ID, ...)
+function Lib.Core.Report:SendReport(_ID, ...)
     assert(self.ScriptEventRegister[_ID] ~= nil, "Report type does not exist.");
     ---@diagnostic disable-next-line: undefined-global
     if GameCallback_Lib_OnEventReceived then
@@ -175,7 +175,7 @@ function LibertyCore.Report:SendReport(_ID, ...)
     end
 end
 
-function LibertyCore.Report:CreateReportReceiver(_EventID, _Function)
+function Lib.Core.Report:CreateReportReceiver(_EventID, _Function)
     assert(type(_Function) == "function", "Listener must be a function.");
     assert(self.ScriptEventRegister[_EventID] ~= nil, "Event does not exist.");
     local Data = self.ScriptEventListener[_EventID];
@@ -184,7 +184,7 @@ function LibertyCore.Report:CreateReportReceiver(_EventID, _Function)
     return Data.IDSequence;
 end
 
-function LibertyCore.Report:RemoveReportReceiver(_EventID, _ID)
+function Lib.Core.Report:RemoveReportReceiver(_EventID, _ID)
     assert(self.ScriptEventRegister[_EventID] ~= nil, "Event does not exist.");
     self.ScriptEventListener[_EventID][_ID] = nil;
 end
@@ -195,7 +195,7 @@ end
 --- @param _Name string Name of report
 --- @return integer
 function CreateReport(_Name)
-    return LibertyCore.Report:CreateReport(_Name);
+    return Lib.Core.Report:CreateReport(_Name);
 end
 
 --- Sends a report with optional parameter.
@@ -209,12 +209,12 @@ function SendReport(_ID, ...)
             "Can only use string, number, boolean or nil as parameter."
         );
     end
-    LibertyCore.Report:SendReport(_ID, unpack(arg));
+    Lib.Core.Report:SendReport(_ID, unpack(arg));
 end
 
 function SendReportToGlobal(_ID, ...)
     assert(IsLocalScript(), "Can not be used in global script.");
-    LibertyCore.Report:SendScriptCommand(_ID, ...);
+    Lib.Core.Report:SendScriptCommand(_ID, ...);
 end
 
 --- Sends a report with optional parameter to the local script.
@@ -245,13 +245,13 @@ end
 --- @param _Function function Listener function
 --- @return unknown
 function CreateReportReceiver(_EventID, _Function)
-    return LibertyCore.Report:CreateReportReceiver(_EventID, _Function);
+    return Lib.Core.Report:CreateReportReceiver(_EventID, _Function);
 end
 
 --- Deletes a report listener for the report type.
 --- @param _EventID integer ID of report
 --- @param _ID integer ID of listener
 function RemoveReportReceiver(_EventID, _ID)
-    LibertyCore.Report:RemoveReportReceiver(_EventID, _ID);
+    Lib.Core.Report:RemoveReportReceiver(_EventID, _ID);
 end
 

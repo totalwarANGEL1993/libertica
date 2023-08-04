@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Quest = {
+Lib.Core.Quest = {
     QuestCounter = 0,
     Text = {
         ActivateBuff = {
@@ -75,7 +75,7 @@ QSB.InitializedObjekts = {};
 -- -------------------------------------------------------------------------- --
 
 function SaveCustomVariable(_Name, _Value)
-    LibertyCore.Quest:SetCustomVariable(_Name, _Value);
+    Lib.Core.Quest:SetCustomVariable(_Name, _Value);
 end
 
 function ObtainCustomVariable(_Name, _Default)
@@ -88,7 +88,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Quest:Initialize()
+function Lib.Core.Quest:Initialize()
     Report.CustomValueChanged = CreateReport("Event_CustomValueChanged");
 
     if not IsLocalScript() then
@@ -100,12 +100,12 @@ function LibertyCore.Quest:Initialize()
     end
 end
 
-function LibertyCore.Quest:OnSaveGameLoaded()
+function Lib.Core.Quest:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Quest:OverrideQuestMarkers()
+function Lib.Core.Quest:OverrideQuestMarkers()
     QuestTemplate.RemoveQuestMarkers = function(self)
         for i=1, self.Objectives[0] do
             if self.Objectives[i].Type == Objective.Distance then
@@ -144,7 +144,7 @@ function LibertyCore.Quest:OverrideQuestMarkers()
     end
 end
 
-function LibertyCore.Quest:OverrideDisplayQuestObjective()
+function Lib.Core.Quest:OverrideDisplayQuestObjective()
     GUI_Interaction.DisplayQuestObjective_Orig_QSB_Kernel = GUI_Interaction.DisplayQuestObjective
     GUI_Interaction.DisplayQuestObjective = function(_QuestIndex, _MessageKey)
         local Quest, QuestType = GUI_Interaction.GetPotentialSubQuestAndType(_QuestIndex);
@@ -157,7 +157,7 @@ function LibertyCore.Quest:OverrideDisplayQuestObjective()
     end
 end
 
-function LibertyCore.Quest:IsQuestPositionReached(_Quest, _Objective)
+function Lib.Core.Quest:IsQuestPositionReached(_Quest, _Objective)
     local IDdata2 = GetID(_Objective.Data[1]);
     if IDdata2 == -65566 then
         _Objective.Data[1] = Logic.GetKnightID(_Quest.ReceivingPlayer);
@@ -178,7 +178,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Quest:ChangeCustomQuestCaptionText(_Text, _Quest)
+function Lib.Core.Quest:ChangeCustomQuestCaptionText(_Text, _Quest)
     if _Quest and _Quest.Visible then
         _Quest.QuestDescription = _Text;
         ExecuteLocal([[
@@ -197,7 +197,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Quest:OverwriteGeologistRefill()
+function Lib.Core.Quest:OverwriteGeologistRefill()
     if Framework.GetGameExtraNo() >= 1 then
         GameCallback_OnGeologistRefill_Orig_QSB_Kernel = GameCallback_OnGeologistRefill;
         GameCallback_OnGeologistRefill = function(_PlayerID, _TargetID, _GeologistID)
@@ -218,7 +218,7 @@ function LibertyCore.Quest:OverwriteGeologistRefill()
     end
 end
 
-function LibertyCore.Quest:TriggerEntityKilledCallbacks(_Entity, _Attacker)
+function Lib.Core.Quest:TriggerEntityKilledCallbacks(_Entity, _Attacker)
     local DefenderID = GetID(_Entity);
     local AttackerID = GetID(_Attacker or 0);
     if AttackerID == 0 or DefenderID == 0 or Logic.GetEntityHealth(DefenderID) > 0 then
@@ -237,22 +237,22 @@ function LibertyCore.Quest:TriggerEntityKilledCallbacks(_Entity, _Attacker)
     ));
 end
 
-function LibertyCore.Quest:GetCustomVariable(_Name)
+function Lib.Core.Quest:GetCustomVariable(_Name)
     return QSB.CustomVariable[_Name];
 end
 
-function LibertyCore.Quest:SetCustomVariable(_Name, _Value)
+function Lib.Core.Quest:SetCustomVariable(_Name, _Value)
     self:UpdateCustomVariable(_Name, _Value);
     local Value = tostring(_Value);
     if type(_Value) ~= "number" then
         Value = [["]] ..Value.. [["]];
     end
     if not GUI then
-        ExecuteLocal([[LibertyCore.Quest:UpdateCustomVariable("%s", %s)]], _Name, Value);
+        ExecuteLocal([[Lib.Core.Quest:UpdateCustomVariable("%s", %s)]], _Name, Value);
     end
 end
 
-function LibertyCore.Quest:UpdateCustomVariable(_Name, _Value)
+function Lib.Core.Quest:UpdateCustomVariable(_Name, _Value)
     if QSB.CustomVariable[_Name] then
         local Old = QSB.CustomVariable[_Name];
         QSB.CustomVariable[_Name] = _Value;

@@ -9,8 +9,8 @@
 
 Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
 
-Lib.Require("core/libertycore");
-Lib.Require("module/questsystem/questsystem");
+Lib.Require("core/core");
+Lib.Require("module/quest/questmodule");
 
 function Mission_FirstMapAction()
     Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/questsystembehavior.lua");
@@ -32,5 +32,10 @@ function Mission_SetStartingMonth()
 end
 
 function Mission_InitMerchants()
+end
+
+-- ========================================================================== --
+
+function GameCallback_Lib_LoadingFinished()
 end
 

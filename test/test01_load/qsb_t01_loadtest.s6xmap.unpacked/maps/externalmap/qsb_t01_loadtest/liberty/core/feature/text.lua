@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Text = {
+Lib.Core.Text = {
     Languages = {
         {"de", "Deutsch", "en"},
         {"en", "English", "en"},
@@ -52,17 +52,17 @@ CONST_LANGUAGE = "de";
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Text:Initialize()
+function Lib.Core.Text:Initialize()
     Report.LanguageChanged = CreateReport("Event_LanguageChanged");
     self:DetectLanguage();
 end
 
-function LibertyCore.Text:OnSaveGameLoaded()
+function Lib.Core.Text:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Text:DetectLanguage()
+function Lib.Core.Text:DetectLanguage()
     local DefaultLanguage = Network.GetDesiredLanguage();
     if DefaultLanguage ~= "de" and DefaultLanguage ~= "fr" then
         DefaultLanguage = "en";
@@ -70,11 +70,11 @@ function LibertyCore.Text:DetectLanguage()
     CONST_LANGUAGE = DefaultLanguage;
 end
 
-function LibertyCore.Text:OnLanguageChanged(_PlayerID, _GUI_PlayerID, _Language)
+function Lib.Core.Text:OnLanguageChanged(_PlayerID, _GUI_PlayerID, _Language)
     self:ChangeSystemLanguage(_PlayerID, _Language, _GUI_PlayerID);
 end
 
-function LibertyCore.Text:ChangeSystemLanguage(_PlayerID, _Language, _GUI_PlayerID)
+function Lib.Core.Text:ChangeSystemLanguage(_PlayerID, _Language, _GUI_PlayerID)
     local OldLanguage = CONST_LANGUAGE;
     local NewLanguage = _Language;
     if _GUI_PlayerID == nil or _GUI_PlayerID == _PlayerID then
@@ -89,7 +89,7 @@ function LibertyCore.Text:ChangeSystemLanguage(_PlayerID, _Language, _GUI_Player
     ]],_PlayerID, OldLanguage, NewLanguage);
 end
 
-function LibertyCore.Text:Localize(_Text)
+function Lib.Core.Text:Localize(_Text)
     local LocalizedText = "ERROR_NO_TEXT";
     if type(_Text) == "table" then
         if _Text[CONST_LANGUAGE] then
@@ -108,7 +108,7 @@ function LibertyCore.Text:Localize(_Text)
     return LocalizedText;
 end
 
-function LibertyCore.Text:ConvertPlaceholders(_Text)
+function Lib.Core.Text:ConvertPlaceholders(_Text)
     local s1, e1, s2, e2;
     assert(type(_Text) == "table", "Can only format strings.");
     while true do
@@ -134,7 +134,7 @@ function LibertyCore.Text:ConvertPlaceholders(_Text)
     return _Text;
 end
 
-function LibertyCore.Text:SplicePlaceholderText(_Text, _Start)
+function Lib.Core.Text:SplicePlaceholderText(_Text, _Start)
     local s1, e1      = _Text:find(_Start);
     local s2, e2      = _Text:find("}", e1);
     local Before      = _Text:sub(1, s1-1);
@@ -143,14 +143,14 @@ function LibertyCore.Text:SplicePlaceholderText(_Text, _Start)
     return Before, Placeholder, After, s1, e1, s2, e2;
 end
 
-function LibertyCore.Text:ReplaceColorPlaceholders(_Text)
+function Lib.Core.Text:ReplaceColorPlaceholders(_Text)
     for k, v in pairs(self.Colors) do
         _Text = _Text:gsub("{" ..k.. "}", v);
     end
     return _Text;
 end
 
-function LibertyCore.Text:ReplaceValuePlaceholder(_Text)
+function Lib.Core.Text:ReplaceValuePlaceholder(_Text)
     local Ref = _G;
     local Slice = string.slice(_Text, "%.");
     for i= 1, #Slice do
@@ -173,7 +173,7 @@ end
 --- @param _Text any Text to localize
 --- @return string Localized Localized text
 function Localize(_Text)
-    return LibertyCore.Text:Localize(_Text);
+    return Lib.Core.Text:Localize(_Text);
 end
 
 --- Replaces all placeholders inside the string with their respective values.
@@ -190,7 +190,7 @@ end
 --- @param _Text string Text to format
 --- @return string Formatted Formatted text
 function ConvertPlaceholders(_Text)
-    return LibertyCore.Text:ConvertPlaceholders(_Text);
+    return Lib.Core.Text:ConvertPlaceholders(_Text);
 end
 
 --- Prints a message into the debug text window.

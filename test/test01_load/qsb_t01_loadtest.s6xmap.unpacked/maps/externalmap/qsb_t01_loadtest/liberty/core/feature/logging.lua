@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Logging = {
+Lib.Core.Logging = {
     FileLogLevel = CONST_LOG_LEVEL_INFO,
     LogLevel = CONST_LOG_LEVEL_ERROR,
 }
@@ -26,15 +26,15 @@ CONST_LOG_LEVEL_OFF     = 0;
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Logging:Initialize()
+function Lib.Core.Logging:Initialize()
 end
 
-function LibertyCore.Logging:OnSaveGameLoaded()
+function Lib.Core.Logging:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Logging:Log(_Text, _Level, _Verbose)
+function Lib.Core.Logging:Log(_Text, _Level, _Verbose)
     if self.FileLogLevel >= _Level then
         local Level = _Text:sub(1, _Text:find(":"));
         local Text = _Text:sub(_Text:find(":")+1);
@@ -63,15 +63,15 @@ function LibertyCore.Logging:Log(_Text, _Level, _Verbose)
 end
 
 function debug(_Text, _Silent)
-    LibertyCore.Logging:Log("DEBUG: " .._Text, CONST_LOG_LEVEL_ALL, not _Silent);
+    Lib.Core.Logging:Log("DEBUG: " .._Text, CONST_LOG_LEVEL_ALL, not _Silent);
 end
 function info(_Text, _Silent)
-    LibertyCore.Logging:Log("INFO: " .._Text, CONST_LOG_LEVEL_INFO, not _Silent);
+    Lib.Core.Logging:Log("INFO: " .._Text, CONST_LOG_LEVEL_INFO, not _Silent);
 end
 function warn(_Text, _Silent)
-    LibertyCore.Logging:Log("WARNING: " .._Text, CONST_LOG_LEVEL_WARNING, not _Silent);
+    Lib.Core.Logging:Log("WARNING: " .._Text, CONST_LOG_LEVEL_WARNING, not _Silent);
 end
 function error(_Text, _Silent)
-    LibertyCore.Logging:Log("ERROR: " .._Text, CONST_LOG_LEVEL_ERROR, not _Silent);
+    Lib.Core.Logging:Log("ERROR: " .._Text, CONST_LOG_LEVEL_ERROR, not _Silent);
 end
 

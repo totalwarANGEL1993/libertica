@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Debug = {
+Lib.Core.Debug = {
     CheckAtRun       = false;
     TraceQuests      = false;
     DevelopingCheats = false;
@@ -22,7 +22,7 @@ Lib.Require("core/feature/Report");
 Lib.Require("core/feature/Chat");
 Lib.Register("core/feature/Debug");
 
-function LibertyCore.Debug:Initialize()
+function Lib.Core.Debug:Initialize()
     Report.DebugChatConfirmed = CreateReport("Event_DebugChatConfirmed");
     Report.DebugConfigChanged = CreateReport("Event_DebugConfigChanged");
 
@@ -32,20 +32,20 @@ function LibertyCore.Debug:Initialize()
         CreateReportReceiver(
             Report.ChatClosed,
             function(...)
-                LibertyCore.Debug:ProcessDebugInput(unpack(arg));
+                Lib.Core.Debug:ProcessDebugInput(unpack(arg));
             end
         );
     end
 end
 
-function LibertyCore.Debug:OnSaveGameLoaded()
+function Lib.Core.Debug:OnSaveGameLoaded()
     if IsLocalScript() then
         self:InitializeDebugWidgets();
         self:InitializeQsbDebugHotkeys();
     end
 end
 
-function LibertyCore.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
+function Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
     if IsLocalScript() then
         return;
     end
@@ -86,7 +86,7 @@ function LibertyCore.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _Develop
     );
 end
 
-function LibertyCore.Debug:InitializeDebugWidgets()
+function Lib.Core.Debug:InitializeDebugWidgets()
     if Network.IsNATReady ~= nil and Framework.IsNetworkGame() then
         return;
     end
@@ -103,27 +103,27 @@ function LibertyCore.Debug:InitializeDebugWidgets()
     end
 end
 
-function LibertyCore.Debug:InitializeQsbDebugHotkeys()
+function Lib.Core.Debug:InitializeQsbDebugHotkeys()
     if Framework.IsNetworkGame() then
         return;
     end
     -- Restart map
     Input.KeyBindDown(
         Keys.ModifierControl + Keys.ModifierShift + Keys.ModifierAlt + Keys.R,
-        "LibertyCore.Debug:ProcessDebugShortcut('RestartMap')",
+        "Lib.Core.Debug:ProcessDebugShortcut('RestartMap')",
         30,
         false
     );
     -- Open chat
     Input.KeyBindDown(
         Keys.ModifierShift + Keys.OemPipe,
-        "LibertyCore.Debug:ProcessDebugShortcut('Terminal')",
+        "Lib.Core.Debug:ProcessDebugShortcut('Terminal')",
         30,
         false
     );
 end
 
-function LibertyCore.Debug:ProcessDebugShortcut(_Type, _Params)
+function Lib.Core.Debug:ProcessDebugShortcut(_Type, _Params)
     if self.DevelopingCheats then
         if _Type == "RestartMap" then
             Framework.RestartMap();
@@ -133,7 +133,7 @@ function LibertyCore.Debug:ProcessDebugShortcut(_Type, _Params)
     end
 end
 
-function LibertyCore.Debug:ProcessDebugInput(_Input, _PlayerID, _DebugAllowed)
+function Lib.Core.Debug:ProcessDebugInput(_Input, _PlayerID, _DebugAllowed)
     if _DebugAllowed then
         if _Input:lower():find("^restartmap") then
             self:ProcessDebugShortcut("RestartMap");
@@ -167,6 +167,6 @@ end
 --- @param _DevelopingCheats boolean Cheats on/off
 --- @param _DevelopingShell boolean  Input commands on/off
 function ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
-    LibertyCore.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell);
+    Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell);
 end
 

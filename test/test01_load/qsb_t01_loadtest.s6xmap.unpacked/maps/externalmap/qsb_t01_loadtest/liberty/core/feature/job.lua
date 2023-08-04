@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Job = {
+Lib.Core.Job = {
     EventJobMappingID = 0;
     EventJobMapping = {},
     EventJobs = {},
@@ -23,26 +23,26 @@ Lib.Register("core/feature/Job");
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Job:Initialize()
+function Lib.Core.Job:Initialize()
     self:StartJobs();
 end
 
-function LibertyCore.Job:OnSaveGameLoaded()
+function Lib.Core.Job:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Job:StartJobs()
+function Lib.Core.Job:StartJobs()
     -- Update Real time variable
     self:CreateEventJob(
         Events.LOGIC_EVENT_EVERY_TURN,
         function()
-            LibertyCore.Job:RealtimeController();
+            Lib.Core.Job:RealtimeController();
         end
     )
 end
 
-function LibertyCore.Job:CreateEventJob(_Type, _Function, ...)
+function Lib.Core.Job:CreateEventJob(_Type, _Function, ...)
     self.EventJobMappingID = self.EventJobMappingID +1;
     local ID = Trigger.RequestTrigger(
         _Type,
@@ -57,7 +57,7 @@ function LibertyCore.Job:CreateEventJob(_Type, _Function, ...)
     return ID;
 end
 
-function LibertyCore.Job:EventJobExecutor(_MappingID)
+function Lib.Core.Job:EventJobExecutor(_MappingID)
     local ID = self.EventJobMapping[_MappingID];
     if ID and self.EventJobs[ID] and self.EventJobs[ID][2] then
         local Parameter = self.EventJobs[ID][4];
@@ -67,7 +67,7 @@ function LibertyCore.Job:EventJobExecutor(_MappingID)
     end
 end
 
-function LibertyCore.Job:RealtimeController()
+function Lib.Core.Job:RealtimeController()
     if not self.LastTimeStamp then
         self.LastTimeStamp = math.floor(Framework.TimeGetTime());
     end
@@ -82,7 +82,7 @@ end
 -- -------------------------------------------------------------------------- --
 
 function LibertyCore_Job_EventJobExecutor(_MappingID)
-    LibertyCore.Job:EventJobExecutor(_MappingID);
+    Lib.Core.Job:EventJobExecutor(_MappingID);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -95,7 +95,7 @@ end
 function RequestJobByEventType(_EventType, _Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
-    return LibertyCore.Job:CreateEventJob(_EventType, _Function, unpack(arg));
+    return Lib.Core.Job:CreateEventJob(_EventType, _Function, unpack(arg));
 end
 
 --- Requests a job that triggers each second.
@@ -176,12 +176,12 @@ function RequestRealTimeDelay(_Waittime, _Function, ...)
     assert(type(Function) == "function", "Function does not exist!");
     return RequestHiResJob(
         function(_StartTime, _Delay, _Callback, _Arguments)
-            if (LibertyCore.Job.SecondsSinceGameStart >= _StartTime + _Delay) then
+            if (Lib.Core.Job.SecondsSinceGameStart >= _StartTime + _Delay) then
                 _Callback(unpack(_Arguments or {}));
                 return true;
             end
         end,
-        LibertyCore.Job.SecondsSinceGameStart,
+        Lib.Core.Job.SecondsSinceGameStart,
         _Waittime,
         _Function,
         {...}
@@ -191,9 +191,9 @@ end
 --- Ends a job. The job can not be reactivated.
 --- @param _JobID integer ID of job
 function StopJob(_JobID)
-    if LibertyCore.Job.EventJobs[_JobID] then
-        Trigger.UnrequestTrigger(LibertyCore.Job.EventJobs[_JobID][1]);
-        LibertyCore.Job.EventJobs[_JobID] = nil;
+    if Lib.Core.Job.EventJobs[_JobID] then
+        Trigger.UnrequestTrigger(Lib.Core.Job.EventJobs[_JobID][1]);
+        Lib.Core.Job.EventJobs[_JobID] = nil;
         return;
     end
     EndJob(_JobID);
@@ -203,8 +203,8 @@ end
 --- @param _JobID integer ID of job
 --- @return boolean Running Job is runnung
 function IsJobRunning(_JobID)
-    if LibertyCore.Job.EventJobs[_JobID] then
-        return LibertyCore.Job.EventJobs[_JobID][2] == true;
+    if Lib.Core.Job.EventJobs[_JobID] then
+        return Lib.Core.Job.EventJobs[_JobID][2] == true;
     end
     return JobIsRunning(_JobID);
 end
@@ -212,9 +212,9 @@ end
 --- Resumes a paused job.
 --- @param _JobID integer ID of job
 function ResumeJob(_JobID)
-    if LibertyCore.Job.EventJobs[_JobID] then
-        if LibertyCore.Job.EventJobs[_JobID][2] ~= true then
-            LibertyCore.Job.EventJobs[_JobID][2] = true;
+    if Lib.Core.Job.EventJobs[_JobID] then
+        if Lib.Core.Job.EventJobs[_JobID][2] ~= true then
+            Lib.Core.Job.EventJobs[_JobID][2] = true;
         end
         return;
     end
@@ -224,9 +224,9 @@ end
 --- Pauses a runnung job.
 --- @param _JobID integer ID of job
 function YieldJob(_JobID)
-    if LibertyCore.Job.EventJobs[_JobID] then
-        if LibertyCore.Job.EventJobs[_JobID][2] == true then
-            LibertyCore.Job.EventJobs[_JobID][2] = false;
+    if Lib.Core.Job.EventJobs[_JobID] then
+        if Lib.Core.Job.EventJobs[_JobID][2] == true then
+            Lib.Core.Job.EventJobs[_JobID][2] = false;
         end
         return;
     end
@@ -236,6 +236,6 @@ end
 --- Returns the real time seconds passed since game start.
 --- @return integer Seconds Amount of seconds
 function GetSecondsRealTime()
-    return LibertyCore.Job.SecondsSinceGameStart;
+    return Lib.Core.Job.SecondsSinceGameStart;
 end
 

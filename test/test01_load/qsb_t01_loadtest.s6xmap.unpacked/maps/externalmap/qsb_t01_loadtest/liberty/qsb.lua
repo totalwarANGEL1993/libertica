@@ -332,7 +332,7 @@ function B_Goal_Diplomacy:ChangeCaption(_Quest)
         Localize(self.DiploNameMap[self.DiplState]),
         PlayerName
     );
-    LibertyCore.Quest:ChangeCustomQuestCaptionText(Text, _Quest);
+    Lib.Core.Quest:ChangeCustomQuestCaptionText(Text, _Quest);
 end
 
 function B_Goal_Diplomacy:CustomFunction(_Quest)
@@ -1146,13 +1146,13 @@ end
 
 function B_Goal_ActivateBuff:CustomFunction(_Quest)
    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
-        local tMapping = CopyTable(LibertyCore.Quest.Text.ActivateBuff.BuffsVanilla);
+        local tMapping = CopyTable(Lib.Core.Quest.Text.ActivateBuff.BuffsVanilla);
         if g_GameExtraNo >= 1 then
-            tMapping = CopyTable(LibertyCore.Quest.Text.ActivateBuff.BuffsEx1, tMapping);
+            tMapping = CopyTable(Lib.Core.Quest.Text.ActivateBuff.BuffsEx1, tMapping);
         end
-        LibertyCore.Quest:ChangeCustomQuestCaptionText(
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
             string.format(
-                Localize(LibertyCore.Quest.Text.ActivateBuff.Pattern),
+                Localize(Lib.Core.Quest.Text.ActivateBuff.Pattern),
                 Localize(tMapping[self.BuffName])
             ),
             _Quest
@@ -1867,11 +1867,11 @@ function B_Goal_SoldierCount:CustomFunction(_Quest)
     if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
         local Relation = tostring(self.bRelSmallerThan);
         local PlayerName = GetPlayerName(self.PlayerID) or "";
-        LibertyCore.Quest:ChangeCustomQuestCaptionText(
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
             string.format(
-                Localize(LibertyCore.Quest.Text.SoldierCount.Pattern),
+                Localize(Lib.Core.Quest.Text.SoldierCount.Pattern),
                 PlayerName,
-                Localize(LibertyCore.Quest.Text.SoldierCount.Relation[Relation]),
+                Localize(Lib.Core.Quest.Text.SoldierCount.Relation[Relation]),
                 self.NumberOfUnits
             ),
             _Quest
@@ -2052,9 +2052,9 @@ end
 function B_Goal_Festivals:CustomFunction(_Quest)
     if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
         local PlayerName = GetPlayerName(self.PlayerID) or "";
-        LibertyCore.Quest:ChangeCustomQuestCaptionText(
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
             string.format(
-                Localize(LibertyCore.Quest.Text.Festivals.Pattern),
+                Localize(Lib.Core.Quest.Text.Festivals.Pattern),
                 PlayerName, self.NeededFestivals
             ), 
             _Quest
@@ -2804,10 +2804,10 @@ function B_Goal_TributeDiplomacy:GetTributeQuest(_Quest)
             FailureMsg = FailureMsg[Language];
         end
 
-        LibertyCore.Quest.QuestCounter = LibertyCore.Quest.QuestCounter+1;
+        Lib.Core.Quest.QuestCounter = Lib.Core.Quest.QuestCounter+1;
 
         local QuestID, Quest = QuestTemplate:New (
-            _Quest.Identifier.."_TributeDiplomacyQuest_" ..LibertyCore.Quest.QuestCounter,
+            _Quest.Identifier.."_TributeDiplomacyQuest_" ..Lib.Core.Quest.QuestCounter,
             _Quest.SendingPlayer,
             _Quest.ReceivingPlayer,
             {{ Objective.Deliver, {Goods.G_Gold, self.Amount}}},
@@ -3034,13 +3034,13 @@ function B_Goal_TributeClaim:CreateTributeQuest(_Quest)
             FailureMsg = FailureMsg[Language];
         end
 
-        LibertyCore.Quest.QuestCounter = LibertyCore.Quest.QuestCounter+1;
+        Lib.Core.Quest.QuestCounter = Lib.Core.Quest.QuestCounter+1;
 
         local OnFinished = function()
             self.Time = Logic.GetTime();
         end
         local QuestID, Quest = QuestTemplate:New(
-            _Quest.Identifier.."_TributeClaimQuest" ..LibertyCore.Quest.QuestCounter,
+            _Quest.Identifier.."_TributeClaimQuest" ..Lib.Core.Quest.QuestCounter,
             self.PlayerID,
             _Quest.ReceivingPlayer,
             {{ Objective.Deliver, {Goods.G_Gold, self.Amount}}},

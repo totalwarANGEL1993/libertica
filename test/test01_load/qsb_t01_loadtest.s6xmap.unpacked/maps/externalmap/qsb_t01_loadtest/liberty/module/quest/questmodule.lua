@@ -10,11 +10,12 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("core/LibertyCore");
-Lib.Register("module/questsystem/questsystem");
+Lib.Require("comfort/global/GetQuestID");
+Lib.Require("comfort/global/IsValidQuest");
+Lib.Register("module/quest/QuestModule");
 
-QuestModule = {
-    Name = "QuestModule",
+Lib.Quest = {
+    Name = "Quest",
 
     Global = {
         IsInstalled = false;
@@ -28,7 +29,7 @@ QuestModule = {
 -- Global
 
 -- Global initalizer method
-function QuestModule.Global:Initialize()
+function Lib.Quest.Global:Initialize()
     if not self.IsInstalled then
 
     end
@@ -36,14 +37,14 @@ function QuestModule.Global:Initialize()
 end
 
 -- Global load game
-function QuestModule.Global:OnSaveGameLoaded()
+function Lib.Quest.Global:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
-function QuestModule.Local:Initialize()
+function Lib.Quest.Local:Initialize()
     if not self.IsInstalled then
 
     end
@@ -51,10 +52,10 @@ function QuestModule.Local:Initialize()
 end
 
 -- Local load game
-function QuestModule.Local:OnSaveGameLoaded()
+function Lib.Quest.Local:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 
-RegisterModule(QuestModule.Name);
+RegisterModule(Lib.Quest.Name);
 

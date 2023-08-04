@@ -10,7 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.ScriptingValue = {
+Lib.Core.ScriptingValue = {
     SV = {
         Game = "Vanilla",
         Vanilla = {
@@ -37,18 +37,18 @@ Lib.Require("core/feature/Report");
 Lib.Require("core/feature/LuaExtension");
 Lib.Register("core/feature/ScriptingValue");
 
-CONST_SCRIPTING_VALUES = LibertyCore.ScriptingValue.SV.Vanilla;
+CONST_SCRIPTING_VALUES = Lib.Core.ScriptingValue.SV.Vanilla;
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.ScriptingValue:Initialize()
+function Lib.Core.ScriptingValue:Initialize()
     if IsHistoryEdition() then
         self.SV.Game = "HistoryEdition";
     end
     CONST_SCRIPTING_VALUES = self.SV[self.SV.Game];
 end
 
-function LibertyCore.ScriptingValue:OnSaveGameLoaded()
+function Lib.Core.ScriptingValue:OnSaveGameLoaded()
     if IsHistoryEdition() then
         self.SV.Game = "HistoryEdition";
     end
@@ -57,7 +57,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.ScriptingValue:BitsInteger(num)
+function Lib.Core.ScriptingValue:BitsInteger(num)
     local t = {};
     while num > 0 do
         local rest = math.qmod(num, 2);
@@ -68,7 +68,7 @@ function LibertyCore.ScriptingValue:BitsInteger(num)
     return t;
 end
 
-function LibertyCore.ScriptingValue:BitsFraction(num, t)
+function Lib.Core.ScriptingValue:BitsFraction(num, t)
     for i = 1, 48 do
         num = num * 2;
         if(num >= 1) then
@@ -84,7 +84,7 @@ function LibertyCore.ScriptingValue:BitsFraction(num, t)
     return t;
 end
 
-function LibertyCore.ScriptingValue:IntegerToFloat(num)
+function Lib.Core.ScriptingValue:IntegerToFloat(num)
     if(num == 0) then
         return 0;
     end
@@ -111,7 +111,7 @@ function LibertyCore.ScriptingValue:IntegerToFloat(num)
     return fraction * math.pow(2, exp) * sign;
 end
 
-function LibertyCore.ScriptingValue:FloatToInteger(fval)
+function Lib.Core.ScriptingValue:FloatToInteger(fval)
     if(fval == 0) then
         return 0;
     end
@@ -205,13 +205,13 @@ end
 --- @param _Value number Integer value
 --- @return number Value Double value
 function ConvertIntegerToFloat(_Value)
-    return LibertyCore.ScriptingValue:IntegerToFloat(_Value);
+    return Lib.Core.ScriptingValue:IntegerToFloat(_Value);
 end
 
 --- Converts the integer value into double representation.
 --- @param _Value number Double value
 --- @return integer Value Integer value
 function ConvertFloatToInteger(_Value)
-    return LibertyCore.ScriptingValue:FloatToInteger(_Value);
+    return Lib.Core.ScriptingValue:FloatToInteger(_Value);
 end
 

@@ -10,17 +10,18 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-LibertyCore.Chat = {
+Lib.Core.Chat = {
     DebugInput = {};
 };
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("core/feature/Report");
+Lib.Require("core/feature/Job");
 Lib.Register("core/feature/Chat");
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Chat:Initialize()
+function Lib.Core.Chat:Initialize()
     Report.ChatOpened = CreateReport("Event_ChatOpened");
     Report.ChatClosed = CreateReport("Event_ChatClosed");
     for i= 1, 8 do
@@ -28,12 +29,12 @@ function LibertyCore.Chat:Initialize()
     end
 end
 
-function LibertyCore.Chat:OnSaveGameLoaded()
+function Lib.Core.Chat:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
 
-function LibertyCore.Chat:ShowTextInput(_PlayerID, _AllowDebug)
+function Lib.Core.Chat:ShowTextInput(_PlayerID, _AllowDebug)
     if Lib.IsHistoryEdition and Framework.IsNetworkGame() then
         return;
     end
@@ -46,7 +47,7 @@ function LibertyCore.Chat:ShowTextInput(_PlayerID, _AllowDebug)
     self:ShowInputBox(_PlayerID, _AllowDebug == true);
 end
 
-function LibertyCore.Chat:ShowInputBox(_PlayerID, _Debug)
+function Lib.Core.Chat:ShowInputBox(_PlayerID, _Debug)
     if GUI.GetPlayerID() ~= _PlayerID then
         return;
     end
@@ -75,7 +76,7 @@ function LibertyCore.Chat:ShowInputBox(_PlayerID, _Debug)
     )
 end
 
-function LibertyCore.Chat:PrepareInputVariable(_PlayerID)
+function Lib.Core.Chat:PrepareInputVariable(_PlayerID)
     if not IsLocalScript() then
         return;
     end
@@ -86,9 +87,9 @@ function LibertyCore.Chat:PrepareInputVariable(_PlayerID)
     GUI_Chat.Confirm = function()
         XGUIEng.ShowWidget("/InGame/Root/Normal/ChatInput", 0);
         local ChatMessage = XGUIEng.GetText("/InGame/Root/Normal/ChatInput/ChatInput");
-        local IsDebug = LibertyCore.Chat.DebugInput[_PlayerID];
-        LibertyCore.Chat.ChatBoxInput = ChatMessage;
-        LibertyCore.Chat:SendInputAsEvent(ChatMessage, IsDebug);
+        local IsDebug = Lib.Core.Chat.DebugInput[_PlayerID];
+        Lib.Core.Chat.ChatBoxInput = ChatMessage;
+        Lib.Core.Chat:SendInputAsEvent(ChatMessage, IsDebug);
         g_Chat.JustClosed = 1;
         if not Framework.IsNetworkGame() then
             Game.GameTimeSetFactor(_PlayerID, 1);
@@ -112,7 +113,7 @@ function LibertyCore.Chat:PrepareInputVariable(_PlayerID)
     end
 end
 
-function LibertyCore.Chat:SendInputAsEvent(_Text, _Debug)
+function Lib.Core.Chat:SendInputAsEvent(_Text, _Debug)
     _Text = (_Text == nil and "") or _Text;
     local PlayerID = GUI.GetPlayerID();
     -- Send chat input to global script
@@ -139,6 +140,6 @@ end
 --- @param _PlayerID number    ID of player
 --- @param _AllowDebug boolean Debug codes allowed
 function ShowTextInput(_PlayerID, _AllowDebug)
-    LibertyCore.Chat:ShowTextInput(_PlayerID, _AllowDebug);
+    Lib.Core.Chat:ShowTextInput(_PlayerID, _AllowDebug);
 end
 
