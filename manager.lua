@@ -69,7 +69,7 @@ end
 --- Concatinates all behavior.lua files in all active modules,
 --- creates the QSB and writes it to output folder.
 function LibWriter:ConcatBehaviors()
-    local fhq = assert(io.open("qsb/template.lua", "rb"));
+    local fhq = assert(io.open("core/qsb.lua", "rb"));
     local template = fhq:read("*all");
     fhq:close();
     local behaviors = template;
@@ -90,14 +90,20 @@ end
 --- Reads all dependencies from all active modules and saves them
 --- into the component
 function LibWriter:ReadFilesLoop()
-    local Paths = {};
-    for i= 1, #self.ComponentList do
-        self:ReadFileAndDependencies(self.ComponentList[i], Paths);
-        if not self:InTable(self.ComponentList[i], Paths) then
-            table.insert(Paths, self.ComponentList[i]);
+    local Paths = {Result = {}};
+    for i= #self.ComponentList, 1, -1 do
+        Paths[i] = {};
+        self:ReadFileAndDependencies(self.ComponentList[i], Paths[i]);
+        table.insert(Paths[i], self.ComponentList[i]:lower());
+    end
+    for i= 1, #Paths do
+        for j= 1, #Paths[i] do
+            if not self:InTable(Paths[i][j], Paths.Result) then
+                table.insert(Paths.Result, Paths[i][j]);
+            end
         end
     end
-    return Paths;
+    return Paths.Result;
 end
 
 --- Recursivly searches for the dependencies of the passed file and
@@ -113,14 +119,12 @@ function LibWriter:ReadFileAndDependencies(_Path, _Paths)
         end
         local s,e = line:find("Lib%.Require%(\".*\"");
         if s and s > 0 then
-            table.insert(Paths, line:sub(s+13, e-1));
+            table.insert(Paths, 1, line:sub(s+13, e-1):lower());
         end
     end
     for i= 1, #Paths do
         self:ReadFileAndDependencies(Paths[i], _Paths);
-        if not self:InTable(Paths[i], _Paths) then
-            table.insert(_Paths, Paths[i]);
-        end
+        table.insert(_Paths, Paths[i]);
     end
 end
 

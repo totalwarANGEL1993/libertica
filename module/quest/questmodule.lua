@@ -12,6 +12,7 @@
 
 Lib.Require("comfort/global/GetQuestID");
 Lib.Require("comfort/global/IsValidQuest");
+Lib.Require("core/core");
 Lib.Register("module/quest/QuestModule");
 
 Lib.Quest = {
@@ -25,13 +26,19 @@ Lib.Quest = {
     },
 }
 
+SegmentResult = {
+    Success = 1,
+    Failure = 2,
+    Ignore  = 3,
+}
+
 -- -------------------------------------------------------------------------- --
 -- Global
 
 -- Global initalizer method
 function Lib.Quest.Global:Initialize()
     if not self.IsInstalled then
-
+        --Quest_Loop = self.QuestLoop;
     end
     self.IsInstalled = true;
 end

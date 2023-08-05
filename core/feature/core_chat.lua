@@ -15,9 +15,9 @@ Lib.Core.Chat = {
 };
 
 Lib.Require("comfort/IsLocalScript");
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/Job");
-Lib.Register("core/feature/Chat");
+Lib.Require("core/feature/Core_Report");
+Lib.Require("core/feature/Core_Job");
+Lib.Register("core/feature/Core_Chat");
 
 -- -------------------------------------------------------------------------- --
 

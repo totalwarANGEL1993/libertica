@@ -16,7 +16,7 @@ Lib.Core.Logging = {
 }
 
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("core/feature/Logging");
+Lib.Register("core/feature/Core_Logging");
 
 CONST_LOG_LEVEL_ALL     = 4;
 CONST_LOG_LEVEL_INFO    = 3;

@@ -19,7 +19,7 @@ Lib.Core.Job = {
     LastTimeStamp = 0;
 }
 
-Lib.Register("core/feature/Job");
+Lib.Register("core/feature/Core_Job");
 
 -- -------------------------------------------------------------------------- --
 

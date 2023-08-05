@@ -15,7 +15,7 @@ Lib.Core.LuaExtension = {};
 --- @diagnostic disable: param-type-mismatch
 Lib.Require("comfort/CopyTable");
 Lib.Require("comfort/SerializeTable");
-Lib.Register("core/feature/LuaExtension");
+Lib.Register("core/feature/Core_LuaExtension");
 
 function Lib.Core.LuaExtension:Initialize()
     self:OverrideTable();

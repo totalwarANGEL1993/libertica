@@ -33,9 +33,9 @@ Lib.Core.ScriptingValue = {
 }
 
 Lib.Require("comfort/IsHistoryEdition");
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/LuaExtension");
-Lib.Register("core/feature/ScriptingValue");
+Lib.Require("core/feature/Core_Report");
+Lib.Require("core/feature/Core_LuaExtension");
+Lib.Register("core/feature/Core_ScriptingValue");
 
 CONST_SCRIPTING_VALUES = Lib.Core.ScriptingValue.SV.Vanilla;
 

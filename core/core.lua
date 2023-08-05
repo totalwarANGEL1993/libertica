@@ -10,8 +10,6 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-QSB = {};
-
 Lib.Core = Lib.Core or {
     ModuleList = {},
     Global = {
@@ -26,17 +24,17 @@ Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/IsLocalScript");
 
-Lib.Require("core/feature/Logging");
-Lib.Require("core/feature/Debug");
-Lib.Require("core/feature/LuaExtension");
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/ScriptingValue");
-Lib.Require("core/feature/Text");
-Lib.Require("core/feature/Job");
-Lib.Require("core/feature/Save");
-Lib.Require("core/feature/Quest");
-Lib.Require("core/feature/Chat");
-Lib.Require("core/feature/Debug");
+Lib.Require("core/feature/Core_Logging");
+Lib.Require("core/feature/Core_Debug");
+Lib.Require("core/feature/Core_LuaExtension");
+Lib.Require("core/feature/Core_Report");
+Lib.Require("core/feature/Core_ScriptingValue");
+Lib.Require("core/feature/Core_Text");
+Lib.Require("core/feature/Core_Job");
+Lib.Require("core/feature/Core_Save");
+Lib.Require("core/feature/Core_Quest");
+Lib.Require("core/feature/Core_Chat");
+Lib.Require("core/feature/Core_Debug");
 
 Lib.Register("core/Core");
 

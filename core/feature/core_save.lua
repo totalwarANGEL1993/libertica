@@ -16,9 +16,9 @@ Lib.Core.Save = {
     LoadingDisabled = false,
 };
 
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/Job");
-Lib.Register("core/feature/Save");
+Lib.Require("core/feature/Core_Report");
+Lib.Require("core/feature/Core_Job");
+Lib.Register("core/feature/Core_Save");
 
 -- -------------------------------------------------------------------------- --
 
