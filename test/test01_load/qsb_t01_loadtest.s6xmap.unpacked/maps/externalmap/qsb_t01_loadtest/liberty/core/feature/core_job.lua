@@ -30,6 +30,9 @@ end
 function Lib.Core.Job:OnSaveGameLoaded()
 end
 
+function Lib.Core.Job:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.Job:StartJobs()

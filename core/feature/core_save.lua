@@ -60,6 +60,9 @@ function Lib.Core.Save:OnSaveGameLoaded()
     SendReport(Report.SaveGameLoaded);
 end
 
+function Lib.Core.Save:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.Save:SetupQuicksaveKeyTrigger()

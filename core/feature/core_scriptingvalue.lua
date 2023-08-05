@@ -55,6 +55,9 @@ function Lib.Core.ScriptingValue:OnSaveGameLoaded()
     CONST_SCRIPTING_VALUES = self.SV[self.SV.Game];
 end
 
+function Lib.Core.ScriptingValue:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.ScriptingValue:BitsInteger(num)

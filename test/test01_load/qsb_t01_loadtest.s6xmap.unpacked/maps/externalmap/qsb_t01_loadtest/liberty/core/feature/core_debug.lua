@@ -45,6 +45,9 @@ function Lib.Core.Debug:OnSaveGameLoaded()
     end
 end
 
+function Lib.Core.Debug:OnReportReceived(_ID, ...)
+end
+
 function Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
     if IsLocalScript() then
         return;

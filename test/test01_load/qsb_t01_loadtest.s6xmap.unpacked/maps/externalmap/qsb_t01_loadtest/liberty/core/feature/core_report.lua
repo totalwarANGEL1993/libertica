@@ -42,6 +42,9 @@ end
 function Lib.Core.Report:OnSaveGameLoaded()
 end
 
+function Lib.Core.Report:OnReportReceived(_ID, ...)
+end
+
 function Lib.Core.Report:OverrideSoldierPayment()
     GameCallback_SetSoldierPaymentLevel_Orig_Liberty = GameCallback_SetSoldierPaymentLevel;
     GameCallback_SetSoldierPaymentLevel = function(_PlayerID, _Level)
@@ -58,10 +61,7 @@ function Lib.Core.Report:ProcessScriptCommand(_PlayerID, _ID)
     assert(_ID and self.ScriptCommandRegister[_ID], "Commands is invalid.");
     local PlayerName = Logic.GetPlayerName(_PlayerID +4);
     local Parameters = self:DecodeScriptCommandParameters(PlayerName);
-    local PlayerID = table.remove(Parameters, 1);
-    if PlayerID == 0 or PlayerID == _PlayerID then
-        self.ScriptCommandRegister[_ID][2](unpack(Parameters));
-    end
+    self.ScriptCommandRegister[_ID][2](unpack(Parameters));
 end
 
 function Lib.Core.Report:CreateScriptCommand(_Name, _Function)
@@ -117,7 +117,7 @@ function Lib.Core.Report:SendScriptCommand(_ID, ...)
     if IsHistoryEdition() and IsMultiplayer() then
         GUI.SetSoldierPaymentLevel(_ID);
     else
-        self:ExecuteGlobal([[LibertyCore:ProcessScriptCommand(%d, %d)]], arg[1], _ID);
+        ExecuteGlobal([[Lib.Core.Report:ProcessScriptCommand(%d, %d)]], PlayerID, _ID);
     end
     GUI.SetPlayerName(NamePlayerID, PlayerName);
     GUI.SetSoldierPaymentLevel(PlayerSoldierPaymentLevel[PlayerID]);
@@ -164,12 +164,12 @@ function Lib.Core.Report:SendReport(_ID, ...)
     assert(self.ScriptEventRegister[_ID] ~= nil, "Report type does not exist.");
     ---@diagnostic disable-next-line: undefined-global
     if GameCallback_Lib_OnEventReceived then
-        GameCallback_Lib_OnEventReceived(_ID, unpack(arg));
+        GameCallback_Lib_OnEventReceived(_ID, ...);
     end
     if self.ScriptEventListener[_ID] then
         for k, v in pairs(self.ScriptEventListener[_ID]) do
             if tonumber(k) then
-                v(unpack(arg));
+                v(...);
             end
         end
     end
@@ -214,7 +214,7 @@ end
 
 function SendReportToGlobal(_ID, ...)
     assert(IsLocalScript(), "Can not be used in global script.");
-    Lib.Core.Report:SendScriptCommand(_ID, ...);
+    Lib.Core.Report:SendScriptCommand(Command.SendReportToGlobal, _ID, ...);
 end
 
 --- Sends a report with optional parameter to the local script.
@@ -236,7 +236,7 @@ function SendReportToLocal(_ID, ...)
         end
         ExecuteLocal([[SendReport(%d, %s)]], _ID, Parameter);
     else
-        ExecuteLocal([[SendReport(%d]], _ID);
+        ExecuteLocal([[SendReport(%d)]], _ID);
     end
 end
 

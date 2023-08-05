@@ -60,6 +60,9 @@ end
 function Lib.Core.Text:OnSaveGameLoaded()
 end
 
+function Lib.Core.Text:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.Text:DetectLanguage()

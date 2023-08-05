@@ -32,6 +32,9 @@ end
 function Lib.Core.Chat:OnSaveGameLoaded()
 end
 
+function Lib.Core.Chat:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.Chat:ShowTextInput(_PlayerID, _AllowDebug)

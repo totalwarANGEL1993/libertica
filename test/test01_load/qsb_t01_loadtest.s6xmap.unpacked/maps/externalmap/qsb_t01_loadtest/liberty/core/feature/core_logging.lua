@@ -32,6 +32,9 @@ end
 function Lib.Core.Logging:OnSaveGameLoaded()
 end
 
+function Lib.Core.Logging:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.Logging:Log(_Text, _Level, _Verbose)

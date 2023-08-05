@@ -29,6 +29,9 @@ function Lib.Core.LuaExtension:OnSaveGameLoaded()
     self:OverrideMath();
 end
 
+function Lib.Core.LuaExtension:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.LuaExtension:OverrideTable()

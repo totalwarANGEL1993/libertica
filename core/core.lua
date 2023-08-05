@@ -39,11 +39,10 @@ Lib.Require("core/feature/Core_Debug");
 Lib.Register("core/Core");
 
 -- -------------------------------------------------------------------------- --
+-- Global
 
 function Lib.Core.Global:Initialize()
     if not self.IsInstalled then
-        self:OverrideOnSaveGameLoaded();
-
         -- Init base features
         Lib.Core.Logging:Initialize();
         Lib.Core.LuaExtension:Initialize();
@@ -71,6 +70,11 @@ function Lib.Core.Global:Initialize()
                 Module.Global:Initialize();
             end
         end
+
+        self:OverrideOnSaveGameLoaded();
+        self:InitReportListener();
+        self:InitEscapeHandler();
+        self:InitLoadscreenHandler();
 
         -- Loading finished callback
         if GameCallback_Lib_LoadingFinished then
@@ -112,6 +116,37 @@ function Lib.Core.Global:OverrideOnSaveGameLoaded()
     end
 end
 
+function Lib.Core.Global:InitReportListener()
+    GameCallback_Lib_OnEventReceived = function(_ID, ...)
+        Lib.Core.Logging:OnReportReceived(_ID, ...);
+        Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
+        Lib.Core.Report:OnReportReceived(_ID, ...);
+        Lib.Core.Text:OnReportReceived(_ID, ...);
+        Lib.Core.Job:OnReportReceived(_ID, ...);
+        Lib.Core.ScriptingValue:OnReportReceived(_ID, ...);
+        Lib.Core.Save:OnReportReceived(_ID, ...);
+        Lib.Core.Quest:OnReportReceived(_ID, ...);
+        Lib.Core.Chat:OnReportReceived(_ID, ...);
+        Lib.Core.Debug:OnReportReceived(_ID, ...);
+
+        -- Loadscreen
+        if _ID == Report.LoadingFinished then
+            SendReportToLocal(Report.LoadingFinished, ...);
+        end
+        -- Escape
+        if _ID == Report.EscapePressed then
+            SendReportToLocal(Report.EscapePressed, ...);
+        end
+
+        for i= 1, #Lib.Core.ModuleList do
+            local Module = Lib[Lib.Core.ModuleList[i]];
+            if Module.Global and Module.Global.OnReportReceived then
+                Module.Global:OnReportReceived(_ID, ...);
+            end
+        end
+    end
+end
+
 function Lib.Core.Global:ExecuteLocal(_Command, ...)
     local Command = _Command;
     if #arg > 0 then
@@ -121,6 +156,19 @@ function Lib.Core.Global:ExecuteLocal(_Command, ...)
 end
 
 -- -------------------------------------------------------------------------- --
+
+function Lib.Core.Global:InitEscapeHandler()
+    Report.EscapePressed = CreateReport("Event_EscapePressed");
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.Core.Global:InitLoadscreenHandler()
+    Report.LoadingFinished = CreateReport("Event_LoadingFinished");
+end
+
+-- -------------------------------------------------------------------------- --
+-- Local
 
 function Lib.Core.Local:Initialize()
     if not self.IsInstalled then
@@ -151,6 +199,10 @@ function Lib.Core.Local:Initialize()
                 Module.Local:Initialize();
             end
         end
+
+        self:InitReportListener();
+        self:InitEscapeHandler();
+        self:InitLoadscreenHandler();
 
         -- Loading finished callback
         if GameCallback_Lib_LoadingFinished then
@@ -183,7 +235,36 @@ function Lib.Core.Local:OnSaveGameLoaded()
         end
     end
 
+    self:SetEscapeKeyTrigger();
+
     SendReport(Report.SaveGameLoaded);
+end
+
+function Lib.Core.Local:InitReportListener()
+    GameCallback_Lib_OnEventReceived = function(_ID, ...)
+        Lib.Core.Logging:OnReportReceived(_ID, ...);
+        Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
+        Lib.Core.Report:OnReportReceived(_ID, ...);
+        Lib.Core.Text:OnReportReceived(_ID, ...);
+        Lib.Core.Job:OnReportReceived(_ID, ...);
+        Lib.Core.ScriptingValue:OnReportReceived(_ID, ...);
+        Lib.Core.Save:OnReportReceived(_ID, ...);
+        Lib.Core.Quest:OnReportReceived(_ID, ...);
+        Lib.Core.Chat:OnReportReceived(_ID, ...);
+        Lib.Core.Debug:OnReportReceived(_ID, ...);
+
+        -- Loadscreen
+        if _ID == Report.LoadingFinished then
+            XGUIEng.PopPage();
+        end
+
+        for i= 1, #Lib.Core.ModuleList do
+            local Module = Lib[Lib.Core.ModuleList[i]];
+            if Module.Local and Module.Local.OnReportReceived then
+                Module.Local:OnReportReceived(_ID, ...);
+            end
+        end
+    end
 end
 
 function Lib.Core.Local:ExecuteGlobal(_Command, ...)
@@ -196,6 +277,44 @@ function Lib.Core.Local:ExecuteGlobal(_Command, ...)
         Command = Command:format(unpack(arg));
     end
     GUI.SendScriptCommand(Command);
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.Core.Local:InitEscapeHandler()
+    Report.EscapePressed = CreateReport("Event_EscapePressed");
+    self:SetEscapeKeyTrigger();
+end
+
+function Lib.Core.Local:SetEscapeKeyTrigger()
+    Input.KeyBindDown(
+        Keys.Escape,
+        "SendReportToGlobal(Report.EscapePressed, GUI.GetPlayerID())",
+        30,
+        false
+    );
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.Core.Local:InitLoadscreenHandler()
+    Report.LoadingFinished = CreateReport("Event_LoadingFinished");
+
+    self.LoadscreenWatchJobID = RequestHiResJob(function()
+        if XGUIEng.IsWidgetShownEx("/LoadScreen/LoadScreen") == 0 then
+            SendReportToGlobal(Report.LoadingFinished, GUI.GetPlayerID());
+            return true;
+        end
+    end);
+
+    HideLoadScreen_Orig_Core = HideLoadScreen;
+    HideLoadScreen = function()
+        HideLoadScreen_Orig_Core();
+        XGUIEng.PushPage("/LoadScreen/LoadScreen", true);
+        XGUIEng.ShowWidget("/LoadScreen/LoadScreen/ButtonStart", 0);
+        EndJob(Lib.Core.Local.LoadscreenWatchJobID);
+        SendReportToGlobal(Report.LoadingFinished, GUI.GetPlayerID());
+    end
 end
 
 -- -------------------------------------------------------------------------- --

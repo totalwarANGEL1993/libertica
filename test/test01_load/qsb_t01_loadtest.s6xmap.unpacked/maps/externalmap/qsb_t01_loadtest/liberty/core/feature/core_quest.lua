@@ -112,6 +112,9 @@ end
 function Lib.Core.Quest:OnSaveGameLoaded()
 end
 
+function Lib.Core.Quest:OnReportReceived(_ID, ...)
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.Core.Quest:OverrideQuestMarkers()
