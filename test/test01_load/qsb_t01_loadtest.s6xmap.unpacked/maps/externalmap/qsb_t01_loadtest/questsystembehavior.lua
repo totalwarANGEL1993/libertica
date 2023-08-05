@@ -1,1 +1,1 @@
-Script.Load("E:/Repositories/liberty/var/qsb.lua");
+Script.Load("E:/Repositories/liberty/var/liberty/qsb.lua");

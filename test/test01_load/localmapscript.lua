@@ -21,9 +21,9 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    Logic.DEBUG_AddNote("Local: Listener initialized");
-    CreateReportReceiver(Report.EscapePressed, function(...)
-        GUI.AddNote("Local: It just works!");
-    end);
+    -- Logic.DEBUG_AddNote("Local: Listener initialized");
+    -- CreateReportReceiver(Report.EscapePressed, function(...)
+    --     GUI.AddNote("Local: It just works!");
+    -- end);
 end
 

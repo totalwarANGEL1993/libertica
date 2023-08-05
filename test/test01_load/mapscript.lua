@@ -37,9 +37,18 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    Logic.DEBUG_AddNote("Global: Listener initialized");
-    CreateReportReceiver(Report.EscapePressed, function(...)
-        Logic.DEBUG_AddNote("Global: It just works!");
-    end);
+    -- Logic.DEBUG_AddNote("Global: Listener initialized");
+    -- CreateReportReceiver(Report.EscapePressed, function(...)
+    --     Logic.DEBUG_AddNote("Global: It just works!");
+    -- end);
+
+    LuaDebugger.Break()
+    SetupQuest {
+        Name        = "HelloWorld",
+        Success     = "It just work's!",
+
+        Goal_InstantSuccess(),
+        Trigger_Time(10),
+    }
 end
 
