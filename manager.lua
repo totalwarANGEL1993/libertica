@@ -58,11 +58,17 @@ function LibWriter:CopyModules()
     for i= #imports, 1, -1 do
         local index = string.find(imports[i], "/[^/]*$");
         local Path = 'var/liberty/'..imports[i]:sub(1, index-1);
-        local File = imports[i]:sub(index+1):lower() ..".lua";
+        local File = imports[i]:sub(index+1):lower();
         if not self:IsDir(Path) then
             os.execute('mkdir "'..Path..'"');
         end
-        os.execute('cp "'..imports[i]..'.lua" "'..Path..'/'..File..'');
+
+        -- open source
+        os.execute('cp "'..imports[i]..'.lua" "'..Path..'/'..File..'.lua');
+
+        -- closed source
+        -- os.execute('luac "'..imports[i]..'.lua"');
+        -- os.execute('mv "luac.out" "'..Path..'/'..File..'.lua"');
     end
 end
 
