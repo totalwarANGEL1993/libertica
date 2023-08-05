@@ -18,14 +18,14 @@ Lib.Core.Report = {
     ScriptCommandSequence = 0,
 };
 
+Report = {};
+Command = {};
+
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("core/feature/Core_LuaExtension");
 Lib.Register("core/feature/Core_Report");
-
-Report = {};
-Command = {};
 
 -- -------------------------------------------------------------------------- --
 

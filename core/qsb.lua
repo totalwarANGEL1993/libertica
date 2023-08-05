@@ -4,9 +4,6 @@
 -- ||||                                                                  |||| --
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 
-QSB = QSB or {};
-QSB.Version = "4.0.0";
-
 ParameterType = ParameterType or {};
 g_QuestBehaviorVersion = 1;
 g_QuestBehaviorTypes = {};
@@ -24,18 +21,18 @@ function LoadBehaviors()
 
         if not _G["B_" .. Behavior.Name].new then
             _G["B_" .. Behavior.Name].new = function(self, ...)
-                local arg = {...};
+                local parameter = {...};
                 local behavior = table.copy(self);
                 -- Raw parameters
                 behavior.i47ya_6aghw_frxil = {};
                 -- Overhead parameters
                 behavior.v12ya_gg56h_al125 = {};
-                for j= 1, #arg, 1 do
-                    table.insert(behavior.v12ya_gg56h_al125, arg[j]);
-                    if self.Parameter and self.Parameter[i] ~= nil then
-                        behavior:AddParameter(i-1, arg[j]);
+                for j= 1, #parameter, 1 do
+                    table.insert(behavior.v12ya_gg56h_al125, parameter[j]);
+                    if self.Parameter and self.Parameter[j] ~= nil then
+                        behavior:AddParameter(j-1, parameter[j]);
                     else
-                        table.insert(behavior.i47ya_6aghw_frxil, arg[j]);
+                        table.insert(behavior.i47ya_6aghw_frxil, parameter[j]);
                     end
                 end
                 return behavior;

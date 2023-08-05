@@ -75,6 +75,7 @@ function Lib.Core.Global:Initialize()
         self:InitReportListener();
         self:InitEscapeHandler();
         self:InitLoadscreenHandler();
+        LoadBehaviors();
 
         -- Loading finished callback
         if GameCallback_Lib_LoadingFinished then

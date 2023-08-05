@@ -10,6 +10,12 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
+CONST_LOG_LEVEL_ALL     = 4;
+CONST_LOG_LEVEL_INFO    = 3;
+CONST_LOG_LEVEL_WARNING = 2;
+CONST_LOG_LEVEL_ERROR   = 1;
+CONST_LOG_LEVEL_OFF     = 0;
+
 Lib.Core.Logging = {
     FileLogLevel = CONST_LOG_LEVEL_INFO,
     LogLevel = CONST_LOG_LEVEL_ERROR,
@@ -17,12 +23,6 @@ Lib.Core.Logging = {
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("core/feature/Core_Logging");
-
-CONST_LOG_LEVEL_ALL     = 4;
-CONST_LOG_LEVEL_INFO    = 3;
-CONST_LOG_LEVEL_WARNING = 2;
-CONST_LOG_LEVEL_ERROR   = 1;
-CONST_LOG_LEVEL_OFF     = 0;
 
 -- -------------------------------------------------------------------------- --
 

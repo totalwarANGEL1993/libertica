@@ -61,6 +61,9 @@ Lib.Core.Quest = {
     }
 }
 
+CONST_EFFECT_NAME_TO_ID = {};
+CONST_INITIALIZED_OBJECTS = {};
+
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/ToBoolean");
 Lib.Require("comfort/GetHealth");
@@ -70,9 +73,6 @@ Lib.Require("comfort/global/IsValidQuest");
 Lib.Require("comfort/global/SendCart");
 Lib.Require("core/feature/Core_Report");
 Lib.Register("core/feature/Core_Quest");
-
-Lib.EffectNameToID = {};
-Lib.InitializedObjekts = {};
 
 -- -------------------------------------------------------------------------- --
 

@@ -45,10 +45,10 @@ Lib.Core.Text = {
     },
 }
 
+CONST_LANGUAGE = "de";
+
 Lib.Require("core/feature/Core_Report");
 Lib.Register("core/feature/Core_Text");
-
-CONST_LANGUAGE = "de";
 
 -- -------------------------------------------------------------------------- --
 
@@ -112,28 +112,28 @@ function Lib.Core.Text:Localize(_Text)
 end
 
 function Lib.Core.Text:ConvertPlaceholders(_Text)
-    local s1, e1, s2, e2;
-    assert(type(_Text) == "table", "Can only format strings.");
-    while true do
-        local Before, Placeholder, After, Replacement, s1, e1, s2, e2;
-        if _Text:find("{n:") then
-            Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{n:");
-            Replacement = self.Placeholders.Names[Placeholder];
-            _Text = Before .. self:Localize(Replacement or ("n:" ..tostring(Placeholder).. ": not found")) .. After;
-        elseif _Text:find("{t:") then
-            Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{t:");
-            Replacement = self.Placeholders.EntityTypes[Placeholder];
-            _Text = Before .. self:Localize(Replacement or ("n:" ..tostring(Placeholder).. ": not found")) .. After;
-        elseif _Text:find("{v:") then
-            Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{v:");
-            Replacement = self:ReplaceValuePlaceholder(Placeholder);
-            _Text = Before .. self:Localize(Replacement or ("v:" ..tostring(Placeholder).. ": not found")) .. After;
+    if type(_Text) == "table" then
+        while true do
+            local Before, Placeholder, After, Replacement, s1, e1, s2, e2;
+            if _Text:find("{n:") then
+                Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{n:");
+                Replacement = self.Placeholders.Names[Placeholder];
+                _Text = Before .. self:Localize(Replacement or ("n:" ..tostring(Placeholder).. ": not found")) .. After;
+            elseif _Text:find("{t:") then
+                Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{t:");
+                Replacement = self.Placeholders.EntityTypes[Placeholder];
+                _Text = Before .. self:Localize(Replacement or ("n:" ..tostring(Placeholder).. ": not found")) .. After;
+            elseif _Text:find("{v:") then
+                Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{v:");
+                Replacement = self:ReplaceValuePlaceholder(Placeholder);
+                _Text = Before .. self:Localize(Replacement or ("v:" ..tostring(Placeholder).. ": not found")) .. After;
+            end
+            if s1 == nil or e1 == nil or s2 == nil or e2 == nil then
+                break;
+            end
         end
-        if s1 == nil or e1 == nil or s2 == nil or e2 == nil then
-            break;
-        end
+        _Text = self:ReplaceColorPlaceholders(_Text);
     end
-    _Text = self:ReplaceColorPlaceholders(_Text);
     return _Text;
 end
 
