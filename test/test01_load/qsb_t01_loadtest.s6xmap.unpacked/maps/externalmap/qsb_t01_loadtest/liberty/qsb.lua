@@ -2790,7 +2790,7 @@ end
 
 function B_Goal_TributeDiplomacy:GetTributeQuest(_Quest)
     if not self.InternTributeQuest then
-        local Language = QSB.Language;
+        local Language = Lib.Language;
         local StartMsg = self.StartMsg;
         if type(StartMsg) == "table" then
             StartMsg = StartMsg[Language];
@@ -3020,7 +3020,7 @@ end
 
 function B_Goal_TributeClaim:CreateTributeQuest(_Quest)
     if not self.InternTributeQuest then
-        local Language = QSB.Language;
+        local Language = Lib.Language;
         local StartMsg = self.StartMsg;
         if type(StartMsg) == "table" then
             StartMsg = StartMsg[Language];
@@ -3234,7 +3234,7 @@ function B_Reprisal_InteractiveObjectDeactivate:Debug(_Quest)
         self.WarningPrinted = true;
     end
     local eID = GetID(self.ScriptName);
-    if QSB.InitializedObjekts[eID] and QSB.InitializedObjekts[eID] == _Quest.Identifier then
+    if Lib.InitializedObjekts[eID] and Lib.InitializedObjekts[eID] == _Quest.Identifier then
         error(_Quest.Identifier.. ": " ..self.Name..": you can not deactivate in the same quest the object is initalized!");
         return true;
     end
@@ -3309,7 +3309,7 @@ function B_Reprisal_InteractiveObjectActivate:Debug(_Quest)
         self.WarningPrinted = true;
     end
     local eID = GetID(self.ScriptName);
-    if QSB.InitializedObjekts[eID] and QSB.InitializedObjekts[eID] == _Quest.Identifier then
+    if Lib.InitializedObjekts[eID] and Lib.InitializedObjekts[eID] == _Quest.Identifier then
         error(_Quest.Identifier.. ": " ..self.Name..": you can not activate in the same quest the object is initalized!");
         return true;
     end
@@ -3511,14 +3511,14 @@ function B_Reprisal_DestroyEffect:GetReprisalTable()
 end
 
 function B_Reprisal_DestroyEffect:CustomFunction(_Quest)
-    if not QSB.EffectNameToID[self.EffectName] or not Logic.IsEffectRegistered(QSB.EffectNameToID[self.EffectName]) then
+    if not Lib.EffectNameToID[self.EffectName] or not Logic.IsEffectRegistered(Lib.EffectNameToID[self.EffectName]) then
         return;
     end
-    Logic.DestroyEffect(QSB.EffectNameToID[self.EffectName]);
+    Logic.DestroyEffect(Lib.EffectNameToID[self.EffectName]);
 end
 
 function B_Reprisal_DestroyEffect:Debug(_Quest)
-    if not QSB.EffectNameToID[self.EffectName] then
+    if not Lib.EffectNameToID[self.EffectName] then
         error(_Quest.Identifier.. ": " ..self.Name .. ": Effect " .. self.EffectName .. " never created")
     end
     return false;
@@ -3712,7 +3712,7 @@ function B_Reprisal_QuestRestart:AddParameter(_Index, _Parameter)
 end
 
 function B_Reprisal_QuestRestart:CustomFunction(_Quest)
-    -- API.RestartQuest(self.QuestName, true);
+    RestartQuest(self.QuestName, true);
 end
 
 function B_Reprisal_QuestRestart:Debug(_Quest)
@@ -3761,7 +3761,7 @@ function B_Reprisal_QuestFailure:AddParameter(_Index, _Parameter)
 end
 
 function B_Reprisal_QuestFailure:CustomFunction(_Quest)
-    -- API.FailQuest(self.QuestName, true);
+    FailQuest(self.QuestName, true);
 end
 
 function B_Reprisal_QuestFailure:Debug(_Quest)
@@ -3810,7 +3810,7 @@ function B_Reprisal_QuestSuccess:AddParameter(_Index, _Parameter)
 end
 
 function B_Reprisal_QuestSuccess:CustomFunction(_Quest)
-    -- API.WinQuest(self.QuestName, true);
+    WinQuest(self.QuestName, true);
 end
 
 function B_Reprisal_QuestSuccess:Debug(_Quest)
@@ -3861,7 +3861,7 @@ function B_Reprisal_QuestActivate:AddParameter(_Index, _Parameter)
 end
 
 function B_Reprisal_QuestActivate:CustomFunction(_Quest)
-    -- API.StartQuest(self.QuestName, true);
+    StartQuest(self.QuestName, true);
 end
 
 function B_Reprisal_QuestActivate:Debug(_Quest)
@@ -3915,7 +3915,7 @@ function B_Reprisal_QuestInterrupt:CustomFunction(_Quest)
         local QuestID = GetQuestID(self.QuestName)
         local Quest = Quests[QuestID]
         if Quest.State == QuestState.Active then
-            -- API.StopQuest(self.QuestName, true);
+            StopQuest(self.QuestName, true);
         end
     end
 end
@@ -4400,7 +4400,7 @@ function B_Reward_ObjectInit:CustomFunction(_Quest)
     if eID == 0 then
         return;
     end
-    QSB.InitializedObjekts[eID] = _Quest.Identifier;
+    Lib.InitializedObjekts[eID] = _Quest.Identifier;
 
     Logic.InteractiveObjectClearCosts(eID);
     Logic.InteractiveObjectClearRewards(eID);
@@ -5118,7 +5118,7 @@ function B_Reward_CreateEffect:CustomFunction(_Quest)
         return;
     end
     local entity = assert(GetID(self.Location), _Quest.Identifier .. "Error in " .. self.Name .. ": CustomFunction: Entity is invalid");
-    if QSB.EffectNameToID[self.EffectName] and Logic.IsEffectRegistered(QSB.EffectNameToID[self.EffectName]) then
+    if Lib.EffectNameToID[self.EffectName] and Logic.IsEffectRegistered(Lib.EffectNameToID[self.EffectName]) then
         return;
     end
 
@@ -5126,12 +5126,12 @@ function B_Reward_CreateEffect:CustomFunction(_Quest)
     local orientation = tonumber(self.Orientation);
     local effect = Logic.CreateEffectWithOrientation(self.Type, posX, posY, orientation, self.PlayerID);
     if self.EffectName ~= "" then
-        QSB.EffectNameToID[self.EffectName] = effect;
+        Lib.EffectNameToID[self.EffectName] = effect;
     end
 end
 
 function B_Reward_CreateEffect:Debug(_Quest)
-    if QSB.EffectNameToID[self.EffectName] and Logic.IsEffectRegistered(QSB.EffectNameToID[self.EffectName]) then
+    if Lib.EffectNameToID[self.EffectName] and Logic.IsEffectRegistered(Lib.EffectNameToID[self.EffectName]) then
         error(_Quest.Identifier.. ": " ..self.Name..": effect already exists!");
         return true;
     elseif not IsExisting(self.Location) then
@@ -8673,11 +8673,11 @@ function B_Trigger_OnEffectDestroyed:AddParameter(_Index, _Parameter)
 end
 
 function B_Trigger_OnEffectDestroyed:CustomFunction()
-	return not QSB.EffectNameToID[self.EffectName] or not Logic.IsEffectRegistered(QSB.EffectNameToID[self.EffectName]);
+	return not Lib.EffectNameToID[self.EffectName] or not Logic.IsEffectRegistered(Lib.EffectNameToID[self.EffectName]);
 end
 
 function B_Trigger_OnEffectDestroyed:Debug(_Quest)
-	if not QSB.EffectNameToID[self.EffectName] then
+	if not Lib.EffectNameToID[self.EffectName] then
 		error(_Quest.Identifier.. ": " ..self.Name .. ": Effect has never existed")
 		return true
 	end

@@ -71,7 +71,6 @@ Lib.Register = Lib.Loader.Register;
 --- @param _Path string   Relative path of component
 function Lib.Loader.LoadSourceFile(_Source, _Path)
     local Path = _Source .. Lib.Loader.Root .. "/" .._Path:lower();
-    LuaDebugger.Break();
     Script.Load(Path.. ".lua");
 end
 

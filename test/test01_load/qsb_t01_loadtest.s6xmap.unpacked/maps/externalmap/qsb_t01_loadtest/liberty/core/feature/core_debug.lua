@@ -18,9 +18,9 @@ Lib.Core.Debug = {
 }
 
 Lib.Require("comfort/IsLocalScript");
-Lib.Require("core/feature/Report");
-Lib.Require("core/feature/Chat");
-Lib.Register("core/feature/Debug");
+Lib.Require("core/feature/Core_Report");
+Lib.Require("core/feature/Core_Chat");
+Lib.Register("core/feature/Core_Debug");
 
 function Lib.Core.Debug:Initialize()
     Report.DebugChatConfirmed = CreateReport("Event_DebugChatConfirmed");
@@ -71,7 +71,7 @@ function Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _Developing
             Swift.Debug.DevelopingShell  = %s;
 
             Swift.Event:DispatchScriptEvent(
-                QSB.ScriptEvents.DebugConfigChanged,
+                Report.DebugConfigChanged,
                 Swift.Debug.CheckAtRun,
                 Swift.Debug.TraceQuests,
                 Swift.Debug.DevelopingCheats,

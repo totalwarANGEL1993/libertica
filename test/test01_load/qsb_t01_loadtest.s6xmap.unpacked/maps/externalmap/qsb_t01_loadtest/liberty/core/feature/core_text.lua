@@ -45,8 +45,8 @@ Lib.Core.Text = {
     },
 }
 
-Lib.Require("core/feature/Report");
-Lib.Register("core/feature/Text");
+Lib.Require("core/feature/Core_Report");
+Lib.Register("core/feature/Core_Text");
 
 CONST_LANGUAGE = "de";
 
