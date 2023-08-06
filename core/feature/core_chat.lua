@@ -42,7 +42,7 @@ function Lib.Core.Chat:ShowTextInput(_PlayerID, _AllowDebug)
         return;
     end
     if not GUI then
-        ExecuteLocal([[Swift.Chat:ShowTextInput(%d, %s)]], _PlayerID,tostring(_AllowDebug == true));
+        ExecuteLocal([[Lib.Core.Chat:ShowTextInput(%d, %s)]], _PlayerID,tostring(_AllowDebug == true));
         return;
     end
     _PlayerID = _PlayerID or GUI.GetPlayerID();
@@ -84,8 +84,8 @@ function Lib.Core.Chat:PrepareInputVariable(_PlayerID)
         return;
     end
 
-    GUI_Chat.Abort_Orig_Swift = GUI_Chat.Abort_Orig_Swift or GUI_Chat.Abort;
-    GUI_Chat.Confirm_Orig_Swift = GUI_Chat.Confirm_Orig_Swift or GUI_Chat.Confirm;
+    GUI_Chat.Abort_Orig_Core = GUI_Chat.Abort_Orig_Core or GUI_Chat.Abort;
+    GUI_Chat.Confirm_Orig_Core = GUI_Chat.Confirm_Orig_Core or GUI_Chat.Confirm;
 
     GUI_Chat.Confirm = function()
         XGUIEng.ShowWidget("/InGame/Root/Normal/ChatInput", 0);
