@@ -83,7 +83,7 @@ end
 
 function Lib.Core.Save:SetupQuicksaveKeyCallback()
     if IsLocalScript() then
-        KeyBindings_SaveGame_Orig_Swift = KeyBindings_SaveGame;
+        KeyBindings_SaveGame_Orig_Core = KeyBindings_SaveGame;
         KeyBindings_SaveGame = function(...)
             -- No quicksave if saving disabled
             if Lib.Core.Save.SavingDisabled then
@@ -94,7 +94,7 @@ function Lib.Core.Save:SetupQuicksaveKeyCallback()
                 return;
             end
             -- Do quicksave
-            KeyBindings_SaveGame_Orig_Swift();
+            KeyBindings_SaveGame_Orig_Core();
         end
     end
 end

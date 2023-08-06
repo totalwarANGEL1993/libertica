@@ -9,8 +9,9 @@
 
 Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
 
-Lib.Require("core/core");
-Lib.Require("module/quest/questmodule");
+Lib.Require("core/Core");
+Lib.Require("module/quest/Quest");
+Lib.Require("module/uitools/UITools");
 
 function Mission_LocalOnMapStart()
 end

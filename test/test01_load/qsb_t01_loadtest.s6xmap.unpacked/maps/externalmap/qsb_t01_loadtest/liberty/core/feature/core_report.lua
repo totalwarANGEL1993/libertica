@@ -128,8 +128,8 @@ function Lib.Core.Report:EncodeScriptCommandParameters(...)
     for i= 1, #arg do
         local Parameter = arg[i];
         if type(Parameter) == "string" then
-            Value = Value:replaceAll('#', "<<<HT>>>");
-            Value = Value:replaceAll('"', "<<<QT>>>");
+            Parameter = Parameter:gsub('#', "<<<HT>>>");
+            Parameter = Parameter:gsub('"', "<<<QT>>>");
             if Parameter:len() == 0 then
                 Parameter = "<<<ES>>>";
             end

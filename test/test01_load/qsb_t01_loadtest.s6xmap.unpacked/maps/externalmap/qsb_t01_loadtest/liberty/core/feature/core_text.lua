@@ -39,6 +39,8 @@ Lib.Core.Text = {
         none    = "{@color:none}"
     },
 
+    StringTables = {},
+
     Placeholders = {
         Names = {},
         EntityTypes = {},
@@ -47,6 +49,7 @@ Lib.Core.Text = {
 
 CONST_LANGUAGE = "de";
 
+Lib.Require("comfort/IsLocalScript");
 Lib.Require("core/feature/Core_Report");
 Lib.Register("core/feature/Core_Text");
 
@@ -55,12 +58,54 @@ Lib.Register("core/feature/Core_Text");
 function Lib.Core.Text:Initialize()
     Report.LanguageChanged = CreateReport("Event_LanguageChanged");
     self:DetectLanguage();
+    if IsLocalScript() then
+        self:OverwriteGetStringTableText();
+    end
 end
 
 function Lib.Core.Text:OnSaveGameLoaded()
+    if IsLocalScript() then
+        self:OverwriteGetStringTableText();
+    end
 end
 
 function Lib.Core.Text:OnReportReceived(_ID, ...)
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.Core.Text:OverwriteGetStringTableText()
+    XGUIEng.GetStringTableText_Orig_Core = XGUIEng.GetStringTableText;
+    XGUIEng.GetStringTableText = function(_key)
+        return Lib.Core.Text:GetStringTableOverwrite(_key)
+    end
+end
+
+function Lib.Core.Text:AddStringTableOverwrite(_Key, _Text)
+    local i = string.find(_Key, "/[^/]*$");
+    local File = _Key:sub(1, i-1):lower();
+    local Key = _Key:sub(i+1):lower();
+    self.StringTables[File] = self.StringTables[File] or {};
+    self.StringTables[File][Key] = _Text;
+end
+
+function Lib.Core.Text:DeleteStringTableOverwrite(_Key)
+    local i = string.find(_Key, "/[^/]*$");
+    local File = _Key:sub(1, i-1):lower();
+    local Key = _Key:sub(i+1):lower();
+    self.StringTables[File] = self.StringTables[File] or {};
+    self.StringTables[File][Key] = nil;
+end
+
+function Lib.Core.Text:GetStringTableOverwrite(_Key)
+    local i = string.find(_Key, "/[^/]*$");
+    local File = _Key:sub(1, i-1):lower();
+    local Key = _Key:sub(i+1):lower();
+    self.StringTables[File] = self.StringTables[File] or {};
+    if self.StringTables[File][Key] then
+        return ConvertPlaceholders(Localize(self.StringTables[File][Key]));
+    end
+    return XGUIEng.GetStringTableText_Orig_Core(_Key);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -200,7 +245,7 @@ end
 --- @param _Text any Text as string or table
 function AddNote(_Text)
     _Text = ConvertPlaceholders(Localize(_Text));
-    if not GUI then
+    if not IsLocalScript() then
         Logic.DEBUG_AddNote(_Text);
         return;
     end
@@ -212,7 +257,7 @@ end
 --- @param _Text any Text as string or table
 function AddStaticNote(_Text)
     _Text = ConvertPlaceholders(Localize(_Text));
-    if not GUI then
+    if not IsLocalScript() then
         ExecuteLocal([[GUI.AddStaticNote("%s")]], _Text);
         return;
     end
@@ -224,7 +269,7 @@ end
 --- @param _Sound? string Sound to play
 function AddMessage(_Text, _Sound)
     _Text = ConvertPlaceholders(Localize(_Text));
-    if not GUI then
+    if not IsLocalScript() then
         ExecuteLocal([[AddMessage("%s", %s)]], _Text, _Sound);
         return;
     end
@@ -234,10 +279,33 @@ end
 
 ---Removes all text from the debug text window.
 function ClearNotes()
-    if not GUI then
-        ExecuteLocal([[API.ClearNotes()]]);
+    if not IsLocalScript() then
+        ExecuteLocal([[ClearNotes()]]);
         return;
     end
     GUI.ClearNotes();
+end
+
+--- Saves a string text overwrite at the key.
+--- @param _Key string Key of entry
+--- @param _Text any Text or localized Table
+function AddStringText(_Key, _Text)
+    assert(IsLocalScript(), "Text can only be set in local script!");
+    Lib.Core.Text:AddStringTableOverwrite(_Key, _Text)
+end
+
+--- Deletes the string text overwrite at the key.
+--- @param _Key string Key of entry
+function DeleteStringText(_Key)
+    assert(IsLocalScript(), "Text can only be removed in local script!");
+    Lib.Core.Text:DeleteStringTableOverwrite(_Key);
+end
+
+--- Returns the String text at the key.
+--- @param _Key string Key of entry
+--- @return string Text String text
+function GetStringText(_Key)
+    assert(IsLocalScript(), "Text can only be retrieved in local script!");
+    return Lib.Core.Text:GetStringTableOverwrite(_Key)
 end
 

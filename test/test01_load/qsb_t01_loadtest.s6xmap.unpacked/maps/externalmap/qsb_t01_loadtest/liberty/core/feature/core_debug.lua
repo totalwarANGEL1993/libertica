@@ -68,19 +68,19 @@ function Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _Developing
 
     ExecuteLocal(
         [[
-            Swift.Debug.CheckAtRun       = %s;
-            Swift.Debug.TraceQuests      = %s;
-            Swift.Debug.DevelopingCheats = %s;
-            Swift.Debug.DevelopingShell  = %s;
+            Lib.Core.Debug.CheckAtRun       = %s;
+            Lib.Core.Debug.TraceQuests      = %s;
+            Lib.Core.Debug.DevelopingCheats = %s;
+            Lib.Core.Debug.DevelopingShell  = %s;
 
-            Swift.Event:DispatchScriptEvent(
+            Lib.Core.Event:DispatchScriptEvent(
                 Report.DebugConfigChanged,
-                Swift.Debug.CheckAtRun,
-                Swift.Debug.TraceQuests,
-                Swift.Debug.DevelopingCheats,
-                Swift.Debug.DevelopingShell
+                Lib.Core.Debug.CheckAtRun,
+                Lib.Core.Debug.TraceQuests,
+                Lib.Core.Debug.DevelopingCheats,
+                Lib.Core.Debug.DevelopingShell
             );
-            Swift.Debug:InitializeDebugWidgets();
+            Lib.Core.Debug:InitializeDebugWidgets();
         ]],
         tostring(self.CheckAtRun),
         tostring(self.TraceQuests),

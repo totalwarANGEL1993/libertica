@@ -13,6 +13,7 @@
 Lib.Core.LuaExtension = {};
 
 --- @diagnostic disable: param-type-mismatch
+--- @diagnostic disable: return-type-mismatch
 Lib.Require("comfort/CopyTable");
 Lib.Require("comfort/SerializeTable");
 Lib.Register("core/feature/Core_LuaExtension");

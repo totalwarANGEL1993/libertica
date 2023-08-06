@@ -25,16 +25,16 @@ Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/IsLocalScript");
 
 Lib.Require("core/feature/Core_Logging");
+Lib.Require("core/feature/Core_Chat");
 Lib.Require("core/feature/Core_Debug");
 Lib.Require("core/feature/Core_LuaExtension");
+Lib.Require("core/feature/Core_Bugfix");
 Lib.Require("core/feature/Core_Report");
 Lib.Require("core/feature/Core_ScriptingValue");
 Lib.Require("core/feature/Core_Text");
 Lib.Require("core/feature/Core_Job");
 Lib.Require("core/feature/Core_Save");
 Lib.Require("core/feature/Core_Quest");
-Lib.Require("core/feature/Core_Chat");
-Lib.Require("core/feature/Core_Debug");
 
 Lib.Register("core/Core");
 
@@ -54,6 +54,7 @@ function Lib.Core.Global:Initialize()
         Lib.Core.Quest:Initialize();
         Lib.Core.Chat:Initialize();
         Lib.Core.Debug:Initialize();
+        Lib.Core.Bugfix:Initialize();
 
         -- Load user files
         if GameCallback_Lib_GetExternFilesToLoad then
@@ -99,6 +100,7 @@ function Lib.Core.Global:OnSaveGameLoaded()
     Lib.Core.Quest:OnSaveGameLoaded();
     Lib.Core.Chat:OnSaveGameLoaded();
     Lib.Core.Debug:OnSaveGameLoaded();
+    Lib.Core.Bugfix:OnSaveGameLoaded();
 
     -- Restore modules
     for i= 1, #Lib.Core.ModuleList do
@@ -129,6 +131,7 @@ function Lib.Core.Global:InitReportListener()
         Lib.Core.Quest:OnReportReceived(_ID, ...);
         Lib.Core.Chat:OnReportReceived(_ID, ...);
         Lib.Core.Debug:OnReportReceived(_ID, ...);
+        Lib.Core.Bugfix:OnReportReceived(_ID, ...);
 
         -- Loadscreen
         if _ID == Report.LoadingFinished then
@@ -184,6 +187,7 @@ function Lib.Core.Local:Initialize()
         Lib.Core.Quest:Initialize();
         Lib.Core.Chat:Initialize();
         Lib.Core.Debug:Initialize();
+        Lib.Core.Bugfix:Initialize();
 
         -- Load user files
         if GameCallback_Lib_GetExternFilesToLoad then
@@ -227,6 +231,7 @@ function Lib.Core.Local:OnSaveGameLoaded()
     Lib.Core.Quest:OnSaveGameLoaded();
     Lib.Core.Chat:OnSaveGameLoaded();
     Lib.Core.Debug:OnSaveGameLoaded();
+    Lib.Core.Bugfix:OnSaveGameLoaded();
 
     -- Restore modules
     for i= 1, #Lib.Core.ModuleList do
@@ -253,6 +258,7 @@ function Lib.Core.Local:InitReportListener()
         Lib.Core.Quest:OnReportReceived(_ID, ...);
         Lib.Core.Chat:OnReportReceived(_ID, ...);
         Lib.Core.Debug:OnReportReceived(_ID, ...);
+        Lib.Core.Bugfix:OnReportReceived(_ID, ...);
 
         -- Loadscreen
         if _ID == Report.LoadingFinished then

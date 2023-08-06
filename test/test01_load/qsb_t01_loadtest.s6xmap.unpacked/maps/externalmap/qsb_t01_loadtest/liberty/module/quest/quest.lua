@@ -10,12 +10,7 @@
 -- ..............\..............\
 -- Steal my IP and I'll sue you!
 
-Lib.Require("comfort/global/GetQuestID");
-Lib.Require("comfort/global/IsValidQuest");
-Lib.Require("comfort/global/IsValidQuestName");
-Lib.Require("core/core");
-Lib.Require("module/quest/QuestModule_API");
-Lib.Register("module/quest/QuestModule");
+---@diagnostic disable: missing-return-value
 
 Lib.Quest = {
     Name = "Quest",
@@ -35,6 +30,13 @@ SegmentResult = {
     Ignore  = 3,
 }
 
+Lib.Require("comfort/global/GetQuestID");
+Lib.Require("comfort/global/IsValidQuest");
+Lib.Require("comfort/global/IsValidQuestName");
+Lib.Require("core/core");
+Lib.Require("module/quest/Quest_API");
+Lib.Register("module/quest/Quest");
+
 -- -------------------------------------------------------------------------- --
 -- Global
 
@@ -43,6 +45,9 @@ function Lib.Quest.Global:Initialize()
     if not self.IsInstalled then
         Quest_Loop = self.QuestLoop;
         self:OverrideKernelQuestApi();
+
+        -- Garbage collection
+        Lib.Quest.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -535,7 +540,8 @@ end
 -- Local initalizer method
 function Lib.Quest.Local:Initialize()
     if not self.IsInstalled then
-
+        -- Garbage collection
+        Lib.Quest.Global = nil;
     end
     self.IsInstalled = true;
 end
