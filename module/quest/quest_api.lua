@@ -1,4 +1,4 @@
-Lib.Register("module/quest/QuestModule_API");
+Lib.Register("module/quest/Quest_API");
 ---@diagnostic disable: missing-return-value
 ---@diagnostic disable: return-type-mismatch
 
