@@ -29,7 +29,7 @@ Lib.Register("module/uitools/UITools_API");
 --- @param _Coordinates table Table with coordinates
 --- @param _Size? number Optional icon size
 --- @param _Name? string Optional icon file
-function SetIcon(_WidgetID, _Coordinates, _Size, _Name)
+function ChangeIcon(_WidgetID, _Coordinates, _Size, _Name)
     assert(IsLocalScript(), "Can only be done in local script!");
     _Coordinates = _Coordinates or {10, 14};
     Lib.UITools.Widget:SetIcon(_WidgetID, _Coordinates, _Size, _Name);

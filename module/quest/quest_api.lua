@@ -1,6 +1,19 @@
-Lib.Register("module/quest/Quest_API");
+-- ...................../´¯¯/)
+-- ...................,/¯.../
+-- .................../..../
+-- .............../´¯/'..'/´¯¯`·¸
+-- .........../'/.../..../....../¨¯\
+-- ..........('(....´...´... ¯~/'..')
+-- ...........\..............'...../
+-- ............\....\.........._.·´
+-- .............\..............(
+-- ..............\..............\
+-- Steal my IP and I'll sue you!
+
 ---@diagnostic disable: missing-return-value
 ---@diagnostic disable: return-type-mismatch
+
+Lib.Register("module/quest/Quest_API");
 
 --- Creates a normal quest.
 ---

@@ -32,7 +32,7 @@ function Lib.Core.Debug:Initialize()
         CreateReportReceiver(
             Report.ChatClosed,
             function(...)
-                Lib.Core.Debug:ProcessDebugInput(unpack(arg));
+                Lib.Core.Debug:ProcessDebugInput(...);
             end
         );
     end

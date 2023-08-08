@@ -5,6 +5,7 @@ Lib.Register("comfort/GetGeometricFocus");
 --- @param ... any List of positions
 --- @return table Center Center position
 function GetGeometricFocus(...)
+    local arg = {...}
     local PositionData = {X= 0, Y= 0, Z= 0};
     local ValidEntryCount = 0;
     for i= 1, #arg do
