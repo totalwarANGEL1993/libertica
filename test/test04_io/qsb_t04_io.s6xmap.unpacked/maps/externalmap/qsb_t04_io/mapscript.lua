@@ -1,0 +1,1 @@
+Script.Load("E:/Repositories/liberty/test/test04_io/mapscript.lua");
