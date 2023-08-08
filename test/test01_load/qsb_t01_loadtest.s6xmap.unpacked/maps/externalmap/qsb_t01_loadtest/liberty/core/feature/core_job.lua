@@ -98,7 +98,7 @@ end
 function RequestJobByEventType(_EventType, _Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
-    return Lib.Core.Job:CreateEventJob(_EventType, _Function, unpack(arg));
+    return Lib.Core.Job:CreateEventJob(_EventType, _Function, ...);
 end
 
 --- Requests a job that triggers each second.
@@ -108,7 +108,7 @@ end
 function RequestJob(_Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
-    return RequestJobByEventType(Events.LOGIC_EVENT_EVERY_SECOND, Function, unpack(arg));
+    return RequestJobByEventType(Events.LOGIC_EVENT_EVERY_SECOND, Function, ...);
 end
 StartSimpleJob = RequestJob;
 StartSimpleJobEx = RequestJob;
@@ -120,7 +120,7 @@ StartSimpleJobEx = RequestJob;
 function RequestHiResJob(_Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
-    return RequestJobByEventType(Events.LOGIC_EVENT_EVERY_TURN, Function, unpack(arg));
+    return RequestJobByEventType(Events.LOGIC_EVENT_EVERY_TURN, Function, ...);
 end
 StartSimpleHiResJob = RequestHiResJob;
 StartSimpleHiResJobEx = RequestHiResJob;

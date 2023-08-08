@@ -152,9 +152,10 @@ function Lib.Core.Global:InitReportListener()
 end
 
 function Lib.Core.Global:ExecuteLocal(_Command, ...)
+    local arg = {...};
     local Command = _Command;
     if #arg > 0 then
-        Command = Command:format(unpack(arg));
+        Command = Command:format(...);
     end
     Logic.ExecuteInLuaLocalState(Command);
 end
@@ -275,6 +276,7 @@ function Lib.Core.Local:InitReportListener()
 end
 
 function Lib.Core.Local:ExecuteGlobal(_Command, ...)
+    local arg = {...};
     local Command = _Command;
     assert(
         not (IsHistoryEdition() and IsMultiplayer()),
@@ -344,7 +346,8 @@ end
 --- @param _Command string Lua string
 --- @param ... unknown Replacement values
 function ExecuteLocal(_Command, ...)
-    Lib.Core.Global:ExecuteLocal(_Command, unpack(arg));
+    assert(not IsLocalScript(), "Can not be used in local script.");
+    Lib.Core.Global:ExecuteLocal(_Command, ...);
 end
 
 --- Executes dynamic lua in the global script.
@@ -352,6 +355,6 @@ end
 --- @param ... unknown Replacement values
 function ExecuteGlobal(_Command, ...)
     assert(IsLocalScript(), "Can not be used in global script.");
-    Lib.Core.Local:ExecuteGlobal(_Command, unpack(arg));
+    Lib.Core.Local:ExecuteGlobal(_Command, ...);
 end
 

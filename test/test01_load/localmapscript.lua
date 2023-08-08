@@ -12,6 +12,7 @@ Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/libe
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/uitools/UITools");
+Lib.Require("module/promotion/Promotion");
 
 function Mission_LocalOnMapStart()
 end

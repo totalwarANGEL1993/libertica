@@ -52,7 +52,7 @@ end
 
 -- Global report listener
 function Lib.UITools.Global:OnReportReceived(_ID, ...)
-    if _ID == Report.LoadscreenClosed then
+    if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.UpdateTexturePosition then
         g_TexturePositions = g_TexturePositions or {};
@@ -90,7 +90,7 @@ end
 
 -- Global report listener
 function Lib.UITools.Local:OnReportReceived(_ID, ...)
-    if _ID == Report.LoadscreenClosed then
+    if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     end
 end
@@ -101,7 +101,7 @@ function Lib.UITools.Local:OverrideAfterBuildingPlacement()
         GameCallback_GUI_AfterBuildingPlacement_Orig_UITools();
 
         local x,y = GUI.Debug_GetMapPositionUnderMouse();
-        RequestHiResJob(0, function()
+        RequestHiResJob(function()
             local Results = {Logic.GetPlayerEntitiesInArea(GUI.GetPlayerID(), 0, x, y, 50, 16)};
             for i= 2, Results[1] +1 do
                 if  Results[i]

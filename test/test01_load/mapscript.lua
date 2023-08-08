@@ -12,6 +12,7 @@ Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/libe
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/uitools/UITools");
+Lib.Require("module/promotion/Promotion");
 
 function Mission_FirstMapAction()
     Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/questsystembehavior.lua");
@@ -43,7 +44,6 @@ function GameCallback_Lib_LoadingFinished()
     --     Logic.DEBUG_AddNote("Global: It just works!");
     -- end);
 
-    LuaDebugger.Break()
     SetupQuest {
         Name        = "HelloWorld",
         Success     = "It just work's!",

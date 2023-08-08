@@ -193,7 +193,7 @@ function Lib.Core.LuaExtension:OverrideString()
     ---@return string String Resulting string
     string.join = function(self, ...)
         local s = "";
-        local parts = {self, unpack(arg)};
+        local parts = {self, ...};
         for i= 1, #parts do
             if type(parts[i]) == "table" then
                 s = s .. string.join(unpack(parts[i]));

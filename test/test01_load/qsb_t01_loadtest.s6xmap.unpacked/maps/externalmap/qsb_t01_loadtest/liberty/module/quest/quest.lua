@@ -58,7 +58,7 @@ end
 
 -- Global report listener
 function Lib.Quest.Global:OnReportReceived(_ID, ...)
-    if _ID == Report.LoadscreenClosed then
+    if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     end
 end
@@ -287,8 +287,6 @@ function Lib.Quest.Global:GetFreeSpaceInlineTrigger()
 end
 
 -- -------------------------------------------------------------------------- --
-
-
 
 function Lib.Quest.Global:OverrideKernelQuestApi()
     FailQuest_Orig_ModuleQuest = FailQuest;
@@ -552,7 +550,7 @@ end
 
 -- Global report listener
 function Lib.Quest.Local:OnReportReceived(_ID, ...)
-    if _ID == Report.LoadscreenClosed then
+    if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     end
 end

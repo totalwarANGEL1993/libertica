@@ -34,7 +34,7 @@ function Lib.Core.Report:Initialize()
         self:OverrideSoldierPayment();
 
         Lib.Core.Report:CreateScriptCommand("Cmd_SendReportToGlobal", function(_ID, ...)
-            SendReport(_ID, unpack(arg));
+            SendReport(_ID, ...);
         end);
     end
 end
@@ -112,7 +112,7 @@ function Lib.Core.Report:SendScriptCommand(_ID, ...)
     local PlayerID = GUI.GetPlayerID();
     local NamePlayerID = PlayerID +4;
     local PlayerName = Logic.GetPlayerName(NamePlayerID);
-    local Parameters = self:EncodeScriptCommandParameters(unpack(arg));
+    local Parameters = self:EncodeScriptCommandParameters(...);
     GUI.SetPlayerName(NamePlayerID, Parameters);
     if IsHistoryEdition() and IsMultiplayer() then
         GUI.SetSoldierPaymentLevel(_ID);
@@ -202,6 +202,7 @@ end
 --- @param _ID integer Report ID
 --- @param ... unknown Parameters
 function SendReport(_ID, ...)
+    local arg = {...};
     for i= 1, #arg do
         assert(
             type(arg[i]) == "string" or type(arg[i]) == "number" or
@@ -213,8 +214,9 @@ function SendReport(_ID, ...)
 end
 
 function SendReportToGlobal(_ID, ...)
-    assert(IsLocalScript(), "Can not be used in global script.");
-    Lib.Core.Report:SendScriptCommand(Command.SendReportToGlobal, _ID, ...);
+    assert(IsLocalScript(), "Was called from global script.");
+    local arg = {...};
+    Lib.Core.Report:SendScriptCommand(Command.SendReportToGlobal, _ID, unpack(arg));
 end
 
 --- Sends a report with optional parameter to the local script.
@@ -222,16 +224,17 @@ end
 --- @param ... unknown Parameters
 function SendReportToLocal(_ID, ...)
     assert(not IsLocalScript(), "Was called from local script.");
+    local arg = {...};
     if #arg > 0 then
-        local Parameter;
+        local Parameter = "";
         for i= 1, #arg do
             if i > 1 then
                 Parameter = Parameter.. ",";
             end
             if type(arg[i]) == "string" then
-                Parameter = "\"" ..arg[i].. "\"";
+                Parameter = Parameter.. "\"" ..arg[i].. "\"";
             else
-                Parameter = tostring(arg[i]);
+                Parameter = Parameter.. tostring(arg[i]);
             end
         end
         ExecuteLocal([[SendReport(%d, %s)]], _ID, Parameter);
