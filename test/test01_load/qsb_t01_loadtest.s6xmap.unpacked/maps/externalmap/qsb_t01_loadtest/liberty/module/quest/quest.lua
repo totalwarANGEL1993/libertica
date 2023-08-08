@@ -8,7 +8,6 @@
 -- ............\....\.........._.·´
 -- .............\..............(
 -- ..............\..............\
--- Steal my IP and I'll sue you!
 
 ---@diagnostic disable: missing-return-value
 

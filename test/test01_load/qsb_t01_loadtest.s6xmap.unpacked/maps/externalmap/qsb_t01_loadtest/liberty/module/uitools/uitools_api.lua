@@ -8,7 +8,6 @@
 -- ............\....\.........._.·´
 -- .............\..............(
 -- ..............\..............\
--- Steal my IP and I'll sue you!
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/uitools/UITools_API");
@@ -294,13 +293,6 @@ end
 --- Changes the portrait of a player.
 --- @param _PlayerID number  ID of player
 --- @param _Portrait? string Name of model
---- @usage
---- -- Choose by primary knight
---- SetPlayerPortrait(2);
---- -- Choose by named entity
---- SetPlayerPortrait(2, "amma");
---- -- Set model
---- SetPlayerPortrait(2, "H_NPC_Monk_AS");
 function SetPlayerPortrait(_PlayerID, _Portrait)
     assert(_PlayerID < 1 or _PlayerID > 8, "Invalid player ID!");
     if not IsLocalScript then

@@ -1,16 +1,11 @@
+--- Aktiviert den Debug.
 ---
--- Aktiviert den Debug.
---
--- @param[type=boolean] _CheckAtRun Prüfe Quests zur Laufzeit
--- @param[type=boolean] _TraceQuests Aktiviert Questverfolgung
--- @param[type=boolean] _DevelopingCheats Aktiviert Cheats
--- @param[type=boolean] _DevelopingShell Aktiviert Eingabe
---
--- @within Reward
--- @see ActivateDebugMode
---
-function Reward_DEBUG(...)
-    return B_Reward_DEBUG:new(...);
+--- @param _CheckAtRun boolean Prüfe Quests zur Laufzeit
+--- @param _TraceQuests boolean Aktiviert Questverfolgung
+--- @param _DevelopingCheats boolean Aktiviert Cheats
+--- @param _DevelopingShell boolean Aktiviert Eingabe
+function Reward_DEBUG(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
+    return B_Reward_DEBUG:new(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell);
 end
 
 B_Reward_DEBUG = {

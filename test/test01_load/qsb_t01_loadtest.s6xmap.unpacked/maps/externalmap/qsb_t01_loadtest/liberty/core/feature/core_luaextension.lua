@@ -8,12 +8,12 @@
 -- ............\....\.........._.·´
 -- .............\..............(
 -- ..............\..............\
--- Steal my IP and I'll sue you!
-
-Lib.Core.LuaExtension = {};
 
 --- @diagnostic disable: param-type-mismatch
 --- @diagnostic disable: return-type-mismatch
+
+Lib.Core.LuaExtension = {};
+
 Lib.Require("comfort/CopyTable");
 Lib.Require("comfort/SerializeTable");
 Lib.Register("core/feature/Core_LuaExtension");

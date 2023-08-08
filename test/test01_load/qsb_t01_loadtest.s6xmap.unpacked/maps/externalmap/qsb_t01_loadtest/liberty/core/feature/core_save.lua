@@ -8,7 +8,6 @@
 -- ............\....\.........._.·´
 -- .............\..............(
 -- ..............\..............\
--- Steal my IP and I'll sue you!
 
 Lib.Core.Save = {
     HistoryEditionQuickSave = false,

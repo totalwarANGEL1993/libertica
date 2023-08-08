@@ -8,7 +8,6 @@
 -- ............\....\.........._.·´
 -- .............\..............(
 -- ..............\..............\
--- Steal my IP and I'll sue you!
 
 ---@diagnostic disable: missing-return-value
 ---@diagnostic disable: return-type-mismatch
@@ -63,46 +62,6 @@ end
 ---
 --- @param _Data table Quest data
 --- @return string Name Name of quest
---- @usage SetupNestedQuest {
----     Name        = "MainQuest",
----     Segments    = {
----         {
----             Suggestion  = "Wir benötigen einen höheren Titel!",
----
----             Goal_KnightTitle("Mayor"),
----         },
----         {
----             -- Mit dem Typ Ignore wird ein Fehlschlag ignoriert.
----             Result      = QSB.SegmentResult.Ignore,
----
----             Suggestion  = "Wir benötigen außerdem mehr Asche! Und das sofort...",
----             Success     = "Geschafft!",
----             Failure     = "Versagt!",
----             Time        = 3 * 60,
----
----             Goal_Produce("G_Gold", 5000),
----
----             Trigger_OnQuestSuccess("MainQuest@Segment1", 1),
----             -- Segmented Quest wird gewonnen.
----             Reward_QuestSuccess("MainQuest"),
----         },
----         {
----             Suggestion  = "Dann versuchen wir es mit Eisen...",
----             Success     = "Geschafft!",
----             Failure     = "Versagt!",
----             Time        = 3 * 60,
----
----             Trigger_OnQuestFailure("MainQuest@Segment2"),
----             Goal_Produce("G_Iron", 50),
----         }
----     },
----
----     -- Wenn ein Quest nicht das erwartete Ergebnis hat, Fehlschlag.
----     Reprisal_Defeat(),
----     -- Wenn alles erfüllt wird, ist das Spiel gewonnen.
----     Reward_VictoryWithParty(),
---- };
----
 function SetupNestedQuest(_Data)
     if GUI or type(_Data) ~= "table" then
         return;

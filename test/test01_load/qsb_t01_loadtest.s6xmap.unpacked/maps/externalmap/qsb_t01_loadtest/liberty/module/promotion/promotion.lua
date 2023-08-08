@@ -8,9 +8,9 @@
 -- ............\....\.........._.·´
 -- .............\..............(
 -- ..............\..............\
--- Steal my IP and I'll sue you!
 
----@diagnostic disable: missing-return-value
+--- @diagnostic disable: cast-local-type
+--- @diagnostic disable: missing-return-value
 
 Lib.Promotion = {
     Name = "Promotion",

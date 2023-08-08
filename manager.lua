@@ -3,7 +3,8 @@ LibWriter = {
         "core/Core",
         "module/quest/Quest",
         "module/uitools/UiTools",
-        "module/promotion/Promotion"
+        "module/promotion/Promotion",
+        "module/npc/NPC",
     },
     Behaviors = "",
 }
