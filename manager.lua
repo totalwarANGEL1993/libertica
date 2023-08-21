@@ -7,6 +7,7 @@ LibWriter = {
         "module/npc/NPC",
     },
     Behaviors = "",
+    Compile = false,
 }
 
 --- Runs the build process.
@@ -14,6 +15,10 @@ LibWriter = {
 function LibWriter:Run(...)
     local Action = self:ProcessArguments();
     if Action == 0 then
+        print("Usage:");
+        print("-b [-c] [Files]  - build library (-c compiles to bytecode)");
+        print("-l [Files]       - list loaded dependencies");
+        print("-h               - show this help");
         return;
     end
 
@@ -40,6 +45,11 @@ function LibWriter:ProcessArguments()
         local Command = table.remove(arg, 1);
         local Parameter = arg;
         if Command == "-b" or Command == "build" then
+            Command = arg[1];
+            if Command and Command == "-c" then
+                self.Compile = true;
+                table.remove(arg, 1);
+            end
             if #Parameter > 0 then
                 self.ComponentList = Parameter;
             end
@@ -57,6 +67,8 @@ end
 --- Copies the module files with dependencies to the output folder.
 function LibWriter:CopyModules()
     os.execute('cp "loader.lua" "var/liberty/liberator.lua');
+    self:CompileFile('var/liberty/liberator.lua', 'var/liberty/liberator.lua');
+
     local imports = self:ReadFilesLoop();
     for i= #imports, 1, -1 do
         local index = string.find(imports[i], "/[^/]*$");
@@ -65,13 +77,8 @@ function LibWriter:CopyModules()
         if not self:IsDir(Path) then
             os.execute('mkdir "'..Path..'"');
         end
-
-        -- open source
         os.execute('cp "'..imports[i]..'.lua" "'..Path..'/'..File..'.lua');
-
-        -- closed source
-        -- os.execute('luac "'..imports[i]..'.lua"');
-        -- os.execute('mv "luac.out" "'..Path..'/'..File..'.lua"');
+        self:CompileFile(imports[i].. ".lua", Path.. '/' ..File.. '.lua');
     end
 end
 
@@ -94,6 +101,7 @@ function LibWriter:ConcatBehaviors()
     local dsf = assert(io.open("var/liberty/qsb.lua", "wb"));
     dsf:write(behaviors);
     dsf:close();
+    self:CompileFile('var/liberty/qsb.lua', 'var/liberty/qsb.lua');
 end
 
 --- Reads all dependencies from all active modules and saves them
@@ -165,6 +173,16 @@ function LibWriter:FileExists(_File)
         end
     end
     return ok, err;
+end
+
+--- Compiles the source file and moves it to the destination.
+--- @param _Source string Source file location
+--- @param _Dest string   Destination location
+function LibWriter:CompileFile(_Source, _Dest)
+    if self.Compile then
+        os.execute('luac "'.._Source..'"');
+        os.execute('mv "luac.out" "'.._Dest..'"');
+    end
 end
 
 -- -------------------------------------------------------------------------- --

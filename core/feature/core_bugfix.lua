@@ -9,6 +9,8 @@
 -- .............\..............(
 -- ..............\..............\
 
+---@diagnostic disable: duplicate-set-field
+
 Lib.Core.Bugfix = {};
 
 Lib.Require("comfort/IsLocalScript");

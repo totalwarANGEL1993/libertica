@@ -6,12 +6,12 @@ Lib = {
             -- Search in script directory
             "script/",
         },
-    
+
         Version = "1.0.0",
         Root = "liberty",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = Network.IsNATReady ~= nil,
-    
+
         Sources = {},
         Loaded = {},
     },
