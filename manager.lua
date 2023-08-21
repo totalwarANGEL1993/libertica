@@ -8,6 +8,7 @@ LibWriter = {
     },
     Behaviors = "",
     Compile = false,
+    SingleFile = false,
 }
 
 --- Runs the build process.
@@ -16,9 +17,11 @@ function LibWriter:Run(...)
     local Action = self:ProcessArguments();
     if Action == 0 then
         print("Usage:");
-        print("-b [-c] [Files]  - build library (-c compiles to bytecode)");
-        print("-l [Files]       - list loaded dependencies");
-        print("-h               - show this help");
+        print("-b [-c] [-s] [Files] - build library in var/liberty");
+        print("                       * -c compiles files to bytecode");
+        print("                       * -s (TODO) creates a single file version");
+        print("-l [Files]           - list loaded dependencies");
+        print("-h                   - show this help");
         return;
     end
 
@@ -45,11 +48,19 @@ function LibWriter:ProcessArguments()
         local Command = table.remove(arg, 1);
         local Parameter = arg;
         if Command == "-b" or Command == "build" then
+            -- Compile?
             Command = arg[1];
             if Command and Command == "-c" then
                 self.Compile = true;
                 table.remove(arg, 1);
             end
+            -- Single file?
+            Command = arg[1];
+            if Command and Command == "-s" then
+                self.SingleFile = true;
+                table.remove(arg, 1);
+            end
+
             if #Parameter > 0 then
                 self.ComponentList = Parameter;
             end
