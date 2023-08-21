@@ -20,7 +20,7 @@ function LibWriter:Run(...)
         print("-b [-c] [-s] [Files] - build library in var/liberty");
         print("                       * -c compiles files to bytecode");
         print("                       * -s (TODO) creates a single file version");
-        print("-l [Files]           - list loaded dependencies");
+        print("-l [Files]           - alphabetical list of loaded dependencies");
         print("-h                   - show this help");
         return;
     end
@@ -33,6 +33,7 @@ function LibWriter:Run(...)
     elseif Action == 2 then
         print("Files loaded:");
         local Files = self:ReadFilesLoop();
+        table.sort(Files);
         for i= 1, #Files do
             print("> " ..Files[i]:lower());
         end
