@@ -4,6 +4,9 @@ Lib.Register("comfort/GetPosition");
 --- @param _Entity any ID or scriptname
 --- @return table Position Table of coordinates
 function GetPosition(_Entity)
+    if not _Entity then
+        return {X= 0, Y= 0, Z= 0};
+    end
     if type(_Entity) == "table" and _Entity.X and _Entity.Y then
         _Entity.Z = _Entity.Z or 0;
         return _Entity;

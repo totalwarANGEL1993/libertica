@@ -19,7 +19,7 @@ function LibWriter:Run(...)
         print("Usage:");
         print("-b [-c] [-s] [Files] - build library in var/liberty");
         print("                       * -c compiles files to bytecode");
-        print("                       * -s (TODO) creates a single file version");
+        print("                       * -s creates a single file version");
         print("-l [Files]           - alphabetical list of loaded dependencies");
         print("-h                   - show this help");
         return;
@@ -27,9 +27,14 @@ function LibWriter:Run(...)
 
     if Action == 1 then
         os.execute('rm -rf var');
-        os.execute('mkdir "var/liberty"');
-        self:CopyModules();
-        self:ConcatBehaviors();
+        if self.SingleFile then
+            os.execute('mkdir "var"');
+            self:CreateSingleFile();
+        else
+            os.execute('mkdir "var/liberty"');
+            self:CopyModules();
+            self:CreateQsb();
+        end
     elseif Action == 2 then
         print("Files loaded:");
         local Files = self:ReadFilesLoop();
@@ -76,6 +81,46 @@ function LibWriter:ProcessArguments()
     return 0;
 end
 
+--- Creates a single file version of the library.
+function LibWriter:CreateSingleFile()
+    local code = "";
+    local fh, behaviors, content;
+
+    -- Read loader mock
+    fh = assert(io.open("loadersf.lua", "rb"));
+    content = fh:read("*all");
+    code = code .. content;
+    fh:close();
+
+    -- Read components
+    local imports = self:ReadFilesLoop();
+    table.sort(imports, function(a,b)
+        if string.find(a, "_") and not string.find(b, "_") then
+            return false;
+        end
+        if string.find(b, "_") and not string.find(a, "_") then
+            return true;
+        end
+        return a < b;
+    end);
+    for i= 1, #imports do
+        fh = assert(io.open(imports[i].. ".lua", "rb"));
+        content = fh:read("*all");
+        code = code .. content;
+        fh:close();
+    end
+
+    -- Read behaviors
+    behaviors = self:ConcatBehaviors();
+    code = code .. behaviors;
+
+    -- Create file
+    fh = assert(io.open("var/qsb.lua", "wb"));
+    fh:write(code);
+    fh:close();
+    self:CompileFile('var/qsb.lua', 'var/qsb.lua');
+end
+
 --- Copies the module files with dependencies to the output folder.
 function LibWriter:CopyModules()
     os.execute('cp "loader.lua" "var/liberty/liberator.lua');
@@ -96,24 +141,29 @@ end
 
 --- Concatinates all behavior.lua files in all active modules,
 --- creates the QSB and writes it to output folder.
-function LibWriter:ConcatBehaviors()
-    local fhq = assert(io.open("core/qsb.lua", "rb"));
-    local template = fhq:read("*all");
-    fhq:close();
-    local behaviors = template;
-    for i= 1, #self.ComponentList do
-        local index = string.find(self.ComponentList[i], "/[^/]*$");
-        local f = io.open(self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb");
-        if f then
-            local content = f:read("*all");
-            f:close();
-            behaviors = behaviors .. content;
-        end
-    end
-    local dsf = assert(io.open("var/liberty/qsb.lua", "wb"));
-    dsf:write(behaviors);
-    dsf:close();
+function LibWriter:CreateQsb()
+    local behaviors = self:ConcatBehaviors();
+    local fh = assert(io.open("var/liberty/qsb.lua", "wb"));
+    fh:write(behaviors);
+    fh:close();
     self:CompileFile('var/liberty/qsb.lua', 'var/liberty/qsb.lua');
+end
+
+--- Reads all behavior files from the components and returns them as lua string.
+function LibWriter:ConcatBehaviors()
+    local fh, index, content, template, behaviors;
+    fh = assert(io.open("core/qsb.lua", "rb"));
+    template = fh:read("*all");
+    fh:close();
+    behaviors = template;
+    for i= 1, #self.ComponentList do
+        index = string.find(self.ComponentList[i], "/[^/]*$");
+        fh = assert(io.open(self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb"));
+        content = fh:read("*all");
+        fh:close();
+        behaviors = behaviors .. content;
+    end
+    return behaviors;
 end
 
 --- Reads all dependencies from all active modules and saves them
