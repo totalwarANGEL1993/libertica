@@ -6,12 +6,8 @@ always needed for a running map.
 
 ## Requirements
 
-To run the build script you need an Linux enviorment. Since Windows 10 a Linux
-sub system can be installed. If you do not want that, install Git for Windows.
-It comes with a git bash you can use.
-
-The script will run Lua code. You will also need to install Lua on your PC. In
-the `bin` directory is a full version of Lua 5.1 for you to install. Follow the
+The script will run Lua code. You will need to install Lua on your PC. In the 
+`bin` directory is a full version of Lua 5.1 for you to install. Follow the
 instructions in the readme file. 
 (You can also use any other Lua distribution but keep in mind that the game
 uses Lua 5.1!)
@@ -20,7 +16,7 @@ uses Lua 5.1!)
 
 #### Default
 
-- Build library by the command `exe/build -b`
+- Build library by the command `exe/build -b` or `"exe/build.bat" -b`
   (plus -c if you want bytecode)
 - Import generated `liberty` folder in map archive
 - import `qsb.lua` as `questsystembehavior.lua`
@@ -32,7 +28,7 @@ uses Lua 5.1!)
 
 #### Single File
 
-- Build library by the command `exe/build -b -s`
+- Build library by the command `exe/build -b -s` or `"exe/build.bat" -b -s`
   (plus -c if you want bytecode)
 - import `qsb.lua` as `questsystembehavior.lua`
 - Include `questsystembehavior.lua` as usual in Mission_FirstMapAction
