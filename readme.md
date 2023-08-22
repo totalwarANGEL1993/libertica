@@ -24,12 +24,11 @@ uses Lua 5.1!)
   (plus -c if you want bytecode)
 - Import generated `liberty` folder in map archive
 - import `qsb.lua` as `questsystembehavior.lua`
-- Load liberator.lua at the start of your scripts
+- Load `liberator.lua` at the start of your scripts
   (both global and local)
 - Use Require to load components AFTER that
 - Include `questsystembehavior.lua` as usual in Mission_FirstMapAction
 - call `Liberate()` in Mission_FirstMapAction
-- call `Liberate()` Mission_LocalOnMapStart (local script)
 
 #### Single File
 
@@ -37,6 +36,5 @@ uses Lua 5.1!)
   (plus -c if you want bytecode)
 - import `qsb.lua` as `questsystembehavior.lua`
 - Include `questsystembehavior.lua` as usual in Mission_FirstMapAction
-- call `Liberate()`
 - Include also in Mission_LocalOnMapStart (local script)
-- call `Liberate()`
+- call `Liberate()` in Mission_FirstMapAction
