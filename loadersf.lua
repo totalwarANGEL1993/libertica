@@ -1,7 +1,3 @@
---- @diagnostic disable: cast-local-type
---- @diagnostic disable: duplicate-set-field
---- @diagnostic disable: missing-return-value
-
 Lib = {
     Loader = {
         Paths = {
@@ -20,6 +16,10 @@ Lib = {
         Loaded = {},
     },
 };
+
+--- @diagnostic disable: cast-local-type
+--- @diagnostic disable: duplicate-set-field
+--- @diagnostic disable: missing-return-value
 
 function Lib.Loader.PushPath(_Path)
 end

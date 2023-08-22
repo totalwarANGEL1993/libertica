@@ -4,6 +4,10 @@
 -- ||||                                                                  |||| --
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 
+--- @diagnostic disable: cast-local-type
+--- @diagnostic disable: duplicate-set-field
+--- @diagnostic disable: missing-return-value
+
 ParameterType = ParameterType or {};
 g_QuestBehaviorVersion = 1;
 g_QuestBehaviorTypes = {};
@@ -63,6 +67,10 @@ function RegisterBehavior(_Behavior)
         end
     end
     table.insert(g_QuestBehaviorTypes, _Behavior);
+end
+
+if GUI then
+    return;
 end
 
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
