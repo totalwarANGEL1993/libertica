@@ -9,9 +9,12 @@
 
 Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
 
+Lib.Loader.PushPath("E:/Repositories/liberty/var/");
+
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/uitools/UITools");
+Lib.Require("module/uieffects/UIEffects");
 Lib.Require("module/promotion/Promotion");
 
 function Mission_FirstMapAction()
@@ -44,6 +47,31 @@ function GameCallback_Lib_LoadingFinished()
     --     Logic.DEBUG_AddNote("Global: It just works!");
     -- end);
 
+    CreateReportReceiver(Report.CinematicConcluded, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.CinematicActivated, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.ImageScreenShown, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.ImageScreenHidden, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.GameInterfaceShown, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.GameInterfaceHidden, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.BorderScrollLocked, function(...)
+        LuaDebugger.Break();
+    end);
+    CreateReportReceiver(Report.BorderScrollReset, function(...)
+        LuaDebugger.Break();
+    end);
+
     SetupQuest {
         Name        = "HelloWorld",
         Success     = "It just work's!",
@@ -51,5 +79,24 @@ function GameCallback_Lib_LoadingFinished()
         Goal_InstantSuccess(),
         Trigger_Time(10),
     }
+end
+
+function TestTypeWriter()
+    local EventName = StartTypewriter {
+        PlayerID = 1,
+        Text     = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "..
+                   "sed diam nonumy eirmod tempor invidunt ut labore et dolore"..
+                   "magna aliquyam erat, sed diam voluptua. At vero eos et"..
+                   " accusam et justo duo dolores et ea rebum. Stet clita kasd"..
+                   " gubergren, no sea takimata sanctus est Lorem ipsum dolor"..
+                   " sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing"..
+                   " elitr, sed diam nonumy eirmod tempor invidunt ut labore et"..
+                   " dolore magna aliquyam erat, sed diam voluptua. At vero eos"..
+                   " et accusam et justo duo dolores et ea rebum. Stet clita"..
+                   " kasd gubergren, no sea takimata sanctus est Lorem ipsum"..
+                   " dolor sit amet.",
+        Callback = function(_Data)
+        end
+    };
 end
 

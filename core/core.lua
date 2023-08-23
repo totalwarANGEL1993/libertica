@@ -42,6 +42,8 @@ Lib.Register("core/Core");
 
 function Lib.Core.Global:Initialize()
     if not self.IsInstalled then
+        g_GameExtraNo = Framework.GetGameExtraNo();
+
         -- Init base features
         Lib.Core.Logging:Initialize();
         Lib.Core.LuaExtension:Initialize();
@@ -176,6 +178,8 @@ end
 
 function Lib.Core.Local:Initialize()
     if not self.IsInstalled then
+        g_GameExtraNo = Framework.GetGameExtraNo();
+
         -- Init base features
         Lib.Core.Logging:Initialize();
         Lib.Core.LuaExtension:Initialize();

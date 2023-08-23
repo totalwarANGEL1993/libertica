@@ -2,7 +2,8 @@ LibWriter = {
     ComponentList = {
         "core/Core",
         "module/quest/Quest",
-        "module/uitools/UiTools",
+        "module/uitools/UITools",
+        "module/uieffects/UIEffects",
         "module/promotion/Promotion",
         "module/npc/NPC",
     },

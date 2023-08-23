@@ -7,7 +7,7 @@ Lib = {
             "script/",
         },
 
-        Version = "1.0.0",
+        Version = "LIB 1.0.0",
         Root = "liberty",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = Network.IsNATReady ~= nil,

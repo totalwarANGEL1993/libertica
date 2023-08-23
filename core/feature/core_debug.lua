@@ -72,7 +72,7 @@ function Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _Developing
             Lib.Core.Debug.DevelopingCheats = %s;
             Lib.Core.Debug.DevelopingShell  = %s;
 
-            Lib.Core.Event:DispatchScriptEvent(
+            SendReport(
                 Report.DebugConfigChanged,
                 Lib.Core.Debug.CheckAtRun,
                 Lib.Core.Debug.TraceQuests,
@@ -142,7 +142,7 @@ function Lib.Core.Debug:ProcessDebugInput(_Input, _PlayerID, _DebugAllowed)
         elseif _Input:lower():find("^clear") then
             GUI.ClearNotes();
         elseif _Input:lower():find("^version") then
-            -- FIXME
+            GUI.AddStaticNote("Version: " ..Lib.Loader.Version);
         elseif _Input:find("^> ") then
             GUI.SendScriptCommand(_Input:sub(3), true);
         elseif _Input:find("^>> ") then
