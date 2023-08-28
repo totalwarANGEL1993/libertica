@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/uieffects/UIEffects_API");
 
@@ -207,7 +196,7 @@ end
 --- an atomic token and are displayed immedaitly. More than 1 space in a row
 --- is atomaticaly trunk to 1 space (by the game engine).
 ---
---- Possible fields:
+--- #### Fields of table
 --- * Text         - Text to display
 --- * Name         - (Optional) Name for event
 --- * PlayerID     - (Optional) Player text is shown
@@ -218,6 +207,19 @@ end
 --- * Opacity      - (Optional) Opacity of background (default: 1.0)
 --- * Color        - (Optional) Background color (default: {R= 0, G= 0, B= 0})
 --- * Image        - (Optional) Background image (needs to be 16:9 ratio)
+---
+--- #### Examples
+--- ```lua
+--- local EventName = StartTypewriter {
+---     PlayerID = 1,
+---     Text     = "Lorem ipsum dolor sit amet, consetetur "..
+---                "sadipscing elitr, sed diam nonumy eirmod "..
+---                "tempor invidunt ut labore et dolore magna "..
+---                "aliquyam erat, sed diam voluptua.",
+---     Callback = function(_Data)
+---     end
+--- };
+--- ```
 ---
 --- @param _Data table Data table
 --- @return string? EventName Name of event

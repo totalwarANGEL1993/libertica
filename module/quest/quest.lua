@@ -1,16 +1,16 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 ---@diagnostic disable: missing-return-value
 
+--- Offers a more comfortable way to create quests.
+---
+--- Quests can be created as single quests or as nested quests. A nested quest
+--- is a simplified notation for quests that are dependend on oneanother.
+---
+--- #### Debug commands
+--- * `stop <QuestName>`      - Interrupts a quest
+--- * `start <QuestName>`     - Triggers a quest
+--- * `win <QuestName>`       - Ends a quest successfuly
+--- * `fail <QuestName>`      - Ends a quest in failure
+--- * `restart <QuestName>`   - Resets and triggers a quest
 Lib.Quest = {
     Name = "Quest",
 
@@ -59,6 +59,7 @@ end
 function Lib.Quest.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    elseif _ID == Report.ChatClosed then
     end
 end
 
@@ -532,6 +533,56 @@ function Lib.Quest.Global:SerializeBehavior(_Data, _CustomType, _Typ)
 end
 
 -- -------------------------------------------------------------------------- --
+-- Chat Commands
+
+function Lib.Quest.Global:FindQuestNames(_Pattern, _ExactName)
+    local FoundQuests = FindQuestsByName(_Pattern, _ExactName);
+    if #FoundQuests == 0 then
+        return {};
+    end
+    local NamesOfFoundQuests = {};
+    for i= 1, #FoundQuests, 1 do
+        table.insert(NamesOfFoundQuests, FoundQuests[i].Identifier);
+    end
+    return NamesOfFoundQuests;
+end
+
+function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
+    if _IsDebug then
+        local Commands = Swift.Text:CommandTokenizer(_Text);
+        for i= 1, #Commands, 1 do
+            if Commands[1] == "fail"
+            or Commands[1] == "start"
+            or Commands[1] == "restart"
+            or Commands[1] == "stop"
+            or Commands[1] == "win" then
+                local FoundQuests = self:FindQuestNames(Commands[2], true);
+                if #FoundQuests ~= 1 then
+                    error("Unable to find quest containing '" ..Commands[2].. "'");
+                    return;
+                end
+                if Commands[1] == "fail" then
+                    FailQuest(FoundQuests[1]);
+                    info("fail quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "restart" then
+                    RestartQuest(FoundQuests[1]);
+                    info("restart quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "start" then
+                    StartQuest(FoundQuests[1]);
+                    info("trigger quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "stop" then
+                    StopQuest(FoundQuests[1]);
+                    info("interrupt quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "win" then
+                    WinQuest(FoundQuests[1]);
+                    info("win quest '" ..FoundQuests[1].. "'");
+                end
+            end
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
@@ -551,7 +602,19 @@ end
 function Lib.Quest.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    elseif _ID == Report.ChatClosed then
+        self:ProcessChatInput(arg[1], arg[2], arg[3]);
     end
+end
+
+function Lib.Quest.Local:ProcessChatInput(_Text, _PlayerID, _IsDebug)
+    if not _IsDebug or GUI.GetPlayerID() ~= _PlayerID then
+        return;
+    end
+    ExecuteGlobal(
+        [[Lib.Quest.Global:ProcessChatInput("%s", %d, %s)]],
+        _Text, _PlayerID, tostring(_IsDebug == true)
+    );
 end
 
 -- -------------------------------------------------------------------------- --

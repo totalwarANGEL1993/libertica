@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/uitools/UITools_API");
 
@@ -23,6 +12,20 @@ Lib.Register("module/uitools/UITools_API");
 --- * 44:  [filename].png
 --- * 64:  [filename]big.png
 --- * 128: [filename]verybig.png
+---
+--- #### Examples
+--- ```lua
+--- -- Example #1: Use a ingame graphic
+--- ChangeIcon(AnyWidgetID, {1, 1, 1});
+---
+--- -- Example #2: use a user defined graphic
+--- -- (meinetolleniconsbig.png is searched)
+--- ChangeIcon(AnyWidgetID, {8, 5}, nil, "meinetollenicons");
+---
+--- -- Example #3: use large user defined graphic
+--- -- (meinetolleniconsverybig.png is searched)
+--- ChangeIcon(AnyWidgetID, {8, 5}, 128, "meinetollenicons");
+--- ```
 ---
 --- @param _WidgetID any Path or ID of widget
 --- @param _Coordinates table Table with coordinates
@@ -291,6 +294,16 @@ function SetPlayerColor(_PlayerID, _Color, _Logo, _Pattern)
 end
 
 --- Changes the portrait of a player.
+---
+--- #### Examples
+--- ```lua
+--- -- Example #1: Set model by player hero
+--- SetPlayerPortrait(2);
+--- -- Example #2: Set model by type of entity
+--- SetPlayerPortrait(2, "amma");
+--- -- Example #3: Set model name directly
+--- SetPlayerPortrait(2, "H_NPC_Monk_AS");
+--- ```
 --- @param _PlayerID number  ID of player
 --- @param _Portrait? string Name of model
 function SetPlayerPortrait(_PlayerID, _Portrait)

@@ -1,20 +1,9 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/npc/NPC_API");
 
 --- Adds an NPC to an entity.
 ---
---- An NPC might have the following fields:
+--- #### Fields of table
 --- * Name              Script name of entity (mandatory)
 --- * Callback          Function called at activation
 --- * Condition         Condition checked before activation
@@ -24,6 +13,49 @@ Lib.Register("module/npc/NPC_API");
 --- * Hero              Name of specific hero
 --- * WrongHeroAction   Message for wrong heroes
 --- * Active            NPC is active
+---
+--- #### Examples
+--- ```lua
+--- -- Example #1: Creates a simple NPC
+--- MyNpc = NpcCompose {
+---     Name     = "HansWurst",
+---     Callback = function(_Data)
+---         local HeroID = CONST_LAST_HERO_INTERACTED;
+---         local NpcID = GetID(_Data.Name);
+---     end
+--- }
+--- ```
+---
+--- ```lua
+--- -- Example #2: Creates a NPC with conditions
+--- MyNpc = NpcCompose {
+---     Name      = "HansWurst",
+---     Condition = function(_Data)
+---         local NpcID = GetID(_Data.Name);
+---         -- prüfe irgend was
+---         return MyConditon == true;
+---     end
+---     Callback  = function(_Data)
+---         local HeroID = CONST_LAST_HERO_INTERACTED;
+---         local NpcID = GetID(_Data.Name);
+---     end
+--- }
+---```
+---
+--- ```lua
+--- -- Example #3: Limit players for activation
+--- MyNpc = NpcCompose {
+---     Name              = "HansWurst",
+---     Player            = {1, 2},
+---     WrongPlayerAction = function(_Data)
+---         AddNote("I will not talk to you!");
+---     end,
+---     Callback          = function(_Data)
+---         local HeroID = CONST_LAST_HERO_INTERACTED;
+---         local NpcID = GetID(_Data.Name);
+---     end
+--- }
+---```
 ---
 --- @param _Data table NPC data
 --- @return table NPC NPC data
@@ -50,7 +82,7 @@ end
 
 --- Updates the NPC with the data table.
 ---
---- An NPC might have the following fields:
+--- #### Fields of table
 --- * Name              Script name of entity (mandatory)
 --- * Callback          Function called at activation
 --- * Condition         Condition checked before activation
@@ -60,6 +92,17 @@ end
 --- * Hero              Name of specific hero
 --- * WrongHeroAction   Message for wrong heroes
 --- * Active            NPC is active
+---
+--- #### Examples
+--- ```lua
+--- -- Example #1: Reset NPC and change action
+--- MyNpc.Active = true;
+--- MyNpc.TalkedTo = 0;
+--- MyNpc.Callback = function(_Data)
+---     -- mach was hier
+--- end;
+--- NpcUpdate(MyNpc);
+--- ```
 ---
 --- @param _Data table NPC data
 function NpcUpdate(_Data)

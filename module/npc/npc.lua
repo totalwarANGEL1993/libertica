@@ -1,16 +1,10 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 --- @diagnostic disable: duplicate-set-field
 
+--- Allows to use settlers somewhat like interactive objects.
+---
+--- NPCs are characters who are activated by the player with a hero hence
+--- talk to them. Much like interactive objects an action can be called
+--- and some other adjustments can be made.
 Lib.NPC = {
     Name = "NPC",
 
@@ -46,6 +40,11 @@ Lib.Register("module/npc/NPC");
 -- Global initalizer method
 function Lib.NPC.Global:Initialize()
     if not self.IsInstalled then
+        --- Someone talks to an NPC
+        ---
+        --- #### Parameters
+        --- * `NpcEntityID`  - ID of npc
+        --- * `HeroEntityID` - ID of hero
         Report.NpcInteraction = CreateReport("Event_NpcInteraction");
 
         self:OverrideQuestFunctions();

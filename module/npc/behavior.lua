@@ -2,8 +2,6 @@
 ---
 --- @param _NpcName   string Script name of npc
 --- @param _HeroName? string Script name of hero
---- @within Goal
----
 function Goal_NPC(_NpcName, _HeroName)
     return B_Goal_NPC:new(_NpcName, _HeroName);
 end

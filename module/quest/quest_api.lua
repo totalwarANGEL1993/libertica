@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 ---@diagnostic disable: missing-return-value
 ---@diagnostic disable: return-type-mismatch
 
@@ -16,7 +5,7 @@ Lib.Register("module/quest/Quest_API");
 
 --- Creates a normal quest.
 ---
---- A quest can have several fields:
+--- #### Fields of table
 --- * Name:        A unique name for the quest
 --- * Sender:      Quest giver player ID
 --- * Receiver:    Quest receiver player ID
@@ -28,6 +17,19 @@ Lib.Register("module/quest/Quest_API");
 --- * Loop:        Loop function
 --- * Callback:    Callback function
 --- 
+--- #### Examples
+--- ```lua
+--- -- Create a simple quest
+--- SetupQuest {
+---     Name        = "SomeQuestName",
+---     Suggestion  = "We need to find the cloister.",
+---     Success     = "They are the famous healer monks.",
+---
+---     Goal_DiscoverPlayer(4),
+---     Reward_Diplomacy(1, 4, "EstablishedContact"),
+---     Trigger_Time(0),
+--- }
+--- ```
 --- @param _Data table Quest data
 --- @return string Name Name of quest
 --- @return number Amount Quest amount
@@ -44,6 +46,7 @@ end
 
 --- Creates a nested quest.
 ---
+--- #### What are nested quests?
 --- Nested quest simplifying the notation of quests connected to each other. The
 --- "main quest" is always invisible and contains segments as "sub quests". Each
 --- segment of the quest is itself a quest that can contain more segments.
@@ -59,6 +62,50 @@ end
 ---
 --- Segments do not need a trigger because they are all automatically started.
 --- Additional triggers can be added (e.g. triggering on other segment).
+---
+--- #### Examples
+--- ```lua
+--- -- Create a nested quest
+--- SetupNestedQuest {
+---     Name        = "MainQuest",
+---     Segments    = {
+---         {
+---             Suggestion  = "We need a higher title!",
+---
+---             Goal_KnightTitle("Mayor"),
+---         },
+---         {
+---             -- This ignores a failure
+---             Result      = QSB.SegmentResult.Ignore,
+---
+---             Suggestion  = "We need mor bucks. And fast!",
+---             Success     = "We done it!",
+---             Failure     = "We have failed!",
+---             Time        = 3 * 60,
+---
+---             Goal_Produce("G_Gold", 5000),
+---
+---             Trigger_OnQuestSuccess("MainQuest@Segment1", 1),
+---             -- Segmented Quest wird gewonnen.
+---             Reward_QuestSuccess("MainQuest"),
+---         },
+---         {
+---             Suggestion  = "Okay, we can try iron instead...",
+---             Success     = "We done it!",
+---             Failure     = "We have failed!",
+---             Time        = 3 * 60,
+---
+---             Trigger_OnQuestFailure("MainQuest@Segment2"),
+---             Goal_Produce("G_Iron", 50),
+---         }
+---     },
+---
+---     -- Loose if one quest does not end properly
+---     Reprisal_Defeat(),
+---     -- Win the game when everything is done.
+---     Reward_VictoryWithParty(),
+--- };
+--- ```
 ---
 --- @param _Data table Quest data
 --- @return string Name Name of quest
