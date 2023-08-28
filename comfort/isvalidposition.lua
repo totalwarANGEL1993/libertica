@@ -16,4 +16,5 @@ function IsValidPosition(_Pos)
     end
     return false;
 end
+API.IsValidPosition = IsValidPosition;
 

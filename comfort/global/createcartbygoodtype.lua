@@ -36,4 +36,5 @@ function CreateCartByGoodType(_PlayerID, _Position, _GoodType, _Orientation, _Ca
     end
     return ID;
 end
+API.CreateCartByGoodType = CreateCartByGoodType;
 

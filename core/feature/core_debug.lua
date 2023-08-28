@@ -160,4 +160,5 @@ end
 function ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
     Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell);
 end
+API.ActivateDebugMode = ActivateDebugMode;
 

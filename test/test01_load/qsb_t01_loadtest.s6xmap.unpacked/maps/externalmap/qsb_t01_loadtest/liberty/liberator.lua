@@ -17,6 +17,9 @@ Lib = {
     },
 };
 
+API = {};
+QSB = {};
+
 --- Loads a component at the given relative path.
 ---
 --- Must be called before questsystembehavior.lua is loaded (if loaded).

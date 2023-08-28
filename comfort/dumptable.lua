@@ -22,4 +22,5 @@ function DumpTable(_Table, _Name)
     end
     Framework.WriteToLog("}");
 end
+API.DumpTable = DumpTable;
 

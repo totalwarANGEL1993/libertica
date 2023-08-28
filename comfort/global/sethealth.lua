@@ -21,4 +21,5 @@ function SetHealth(_Entity, _Health)
         Logic.HurtEntity(EntityID, OldHealth - NewHealth);
     end
 end
+API.SetHealth = SetHealth
 

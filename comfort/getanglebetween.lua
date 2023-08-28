@@ -36,4 +36,5 @@ function GetAngleBetween(_Pos1, _Pos2)
 	end
 	return alpha;
 end
+API.GetAngleBetween = GetAngleBetween;
 

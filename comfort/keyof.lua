@@ -1,6 +1,6 @@
 Lib.Register("comfort/KeyOf");
 
---- Returns the kay of the value in the table.
+--- Returns the key of the value in the table.
 --- @param _wert  any   Value to search
 --- @param _table table Table to check
 --- @return any Key Key of value
@@ -15,4 +15,5 @@ function KeyOf(_wert, _table)
         end
     end
 end
+API.KeyOf = KeyOf;
 

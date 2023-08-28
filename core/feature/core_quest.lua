@@ -255,6 +255,7 @@ function InteractiveObjectActivate(_ScriptName, _State)
         Logic.InteractiveObjectSetPlayerState(GetID(_ScriptName), i, _State);
     end
 end
+API.InteractiveObjectActivate = InteractiveObjectActivate;
 
 function InteractiveObjectDeactivate(_ScriptName)
     if GUI or not IsExisting(_ScriptName) then
@@ -264,6 +265,7 @@ function InteractiveObjectDeactivate(_ScriptName)
         Logic.InteractiveObjectSetPlayerState(GetID(_ScriptName), i, 2);
     end
 end
+API.InteractiveObjectDeactivate = InteractiveObjectDeactivate;
 
 -- -------------------------------------------------------------------------- --
 
@@ -347,6 +349,7 @@ function SetCustomBehaviorText(_QuestName, _Text)
     assert(Quest ~= nil, "Quest '" .._QuestName.. "' not found!");
     Lib.Core.Quest:ChangeCustomQuestCaptionText(_Text, Quest);
 end
+API.SetCustomBehaviorText = SetCustomBehaviorText;
 
 --- Restarts a quest.
 ---
@@ -441,6 +444,7 @@ function RestartQuest(_QuestName, _NoMessage)
     end
     return QuestID, Quest;
 end
+API.RestartQuest = RestartQuest;
 
 --- Fails a quest.
 --- @param _QuestName string Name of quest
@@ -456,6 +460,7 @@ function FailQuest(_QuestName, _NoMessage)
         Quest:Fail();
     end
 end
+API.FailQuest = FailQuest;
 
 --- Triggers a quest.
 --- @param _QuestName string Name of quest
@@ -472,6 +477,7 @@ function StartQuest(_QuestName, _NoMessage)
         Quest:Trigger();
     end
 end
+API.StartQuest = StartQuest;
 
 --- Interrupts a quest.
 --- @param _QuestName string Name of quest
@@ -487,6 +493,7 @@ function StopQuest(_QuestName, _NoMessage)
         Quest:Interrupt(-1);
     end
 end
+API.StopQuest = StopQuest;
 
 --- Wins a quest.
 --- @param _QuestName string Name of quest
@@ -502,4 +509,5 @@ function WinQuest(_QuestName, _NoMessage)
         Quest:Success();
     end
 end
+API.WinQuest = WinQuest;
 

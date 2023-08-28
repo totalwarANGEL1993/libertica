@@ -19,4 +19,5 @@ function SetPosition(_Entity, _Target)
     end
     Logic.DEBUG_SetSettlerPosition(ID, Target.X, Target.Y);
 end
+API.SetPosition = SetPosition;
 

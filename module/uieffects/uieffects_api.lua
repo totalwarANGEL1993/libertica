@@ -3,15 +3,17 @@ Lib.Register("module/uieffects/UIEffects_API");
 
 --- Shows a black background behind the interface and over the game world.
 --- @param _PlayerID integer ID of player
-function ActivateBlackScreen(_PlayerID)
-    ActivateImageScreen(_PlayerID, "", 0, 0, 0, 255);
+function ActivateColoredScreen(_PlayerID, _Red, _Green, _Blue, _Alpha)
+    ActivateImageScreen(_PlayerID, "", _Red or 0, _Green or 0, _Blue or 0, _Alpha or 255);
 end
+API.ActivateColoredScreen = ActivateColoredScreen;
 
 --- Hides the black screen.
 --- @param _PlayerID integer ID of player
-function DeactivateBlackScreen(_PlayerID)
+function DeactivateColoredScreen(_PlayerID)
     DeactivateImageScreen(_PlayerID);
 end
+API.DeactivateColoredScreen = DeactivateColoredScreen;
 
 --- Shows a full screen graphic over the game world and below the interface.
 ---
@@ -40,6 +42,7 @@ function ActivateImageScreen(_PlayerID, _Image, _Red, _Green, _Blue, _Alpha)
     end
     Lib.UIEffects.Local:InterfaceActivateImageBackground(_PlayerID, _Image, _Red, _Green, _Blue, _Alpha);
 end
+API.ActivateImageScreen = ActivateImageScreen;
 
 --- Hides the full screen picture.
 --- @param _PlayerID integer ID of player
@@ -54,6 +57,7 @@ function DeactivateImageScreen(_PlayerID)
     end
     Lib.UIEffects.Local:InterfaceDeactivateImageBackground(_PlayerID);
 end
+API.DeactivateImageScreen = DeactivateImageScreen;
 
 --- Shows the normal game interface.
 --- @param _PlayerID integer ID of player
@@ -68,6 +72,7 @@ function ActivateNormalInterface(_PlayerID)
     end
     Lib.UIEffects.Local:InterfaceActivateNormalInterface(_PlayerID);
 end
+API.ActivateNormalInterface = ActivateNormalInterface;
 
 --- Hides the normal game interface.
 --- @param _PlayerID integer ID of player
@@ -82,6 +87,7 @@ function DeactivateNormalInterface(_PlayerID)
     end
     Lib.UIEffects.Local:InterfaceDeactivateNormalInterface(_PlayerID);
 end
+API.DeactivateNormalInterface = DeactivateNormalInterface;
 
 --- Activates border scroll and loosens camera fixation.
 --- @param _PlayerID integer ID of player
@@ -96,6 +102,7 @@ function ActivateBorderScroll(_PlayerID)
     end
     Lib.UIEffects.Local:InterfaceActivateBorderScroll(_PlayerID);
 end
+API.ActivateBorderScroll = ActivateBorderScroll;
 
 --- Deactivates border scroll and fixes camera.
 --- @param _PlayerID integer ID of player
@@ -116,6 +123,7 @@ function DeactivateBorderScroll(_PlayerID, _Position)
     end
     Lib.UIEffects.Local:InterfaceDeactivateBorderScroll(_PlayerID, PositionID);
 end
+API.DeactivateBorderScroll = DeactivateBorderScroll;
 
 --- Propagates the start of a cinema event.
 --- @param _Name     string  Bezeichner
@@ -127,6 +135,7 @@ function StartCinematicEvent(_Name, _PlayerID)
     local ID = Lib.UIEffects.Global:ActivateCinematicEvent(_PlayerID);
     Lib.UIEffects.CinematicEvents[_PlayerID][_Name] = ID;
 end
+API.StartCinematicEvent = StartCinematicEvent;
 
 --- Propagates the end of a cinema event.
 --- @param _Name     string  Bezeichner
@@ -142,6 +151,7 @@ function FinishCinematicEvent(_Name, _PlayerID)
         );
     end
 end
+API.FinishCinematicEvent = FinishCinematicEvent;
 
 ---
 -- Gibt den Zustand des Kinoevent zurück.
@@ -168,6 +178,7 @@ function GetCinematicEvent(_Identifier, _PlayerID)
     end
     return CinematicEventState.NotTriggered;
 end
+API.GetCinematicEvent = GetCinematicEvent;
 
 ---
 -- Prüft ob gerade ein Kinoevent für den Spieler aktiv ist.
@@ -186,6 +197,7 @@ function IsCinematicEventActive(_PlayerID)
     end
     return false;
 end
+API.IsCinematicEventActive = IsCinematicEventActive;
 
 --- Displays a text byte by byte.
 ---
@@ -249,4 +261,5 @@ function StartTypewriter(_Data)
     _Data.Index = 0;
     return Lib.UIEffects.Global:StartTypewriter(_Data);
 end
+API.StartTypewriter = StartTypewriter;
 

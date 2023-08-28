@@ -133,4 +133,5 @@ end
 function ShowTextInput(_PlayerID, _AllowDebug)
     Lib.Core.Chat:ShowTextInput(_PlayerID, _AllowDebug);
 end
+API.ShowTextInput = ShowTextInput;
 

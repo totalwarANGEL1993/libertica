@@ -23,4 +23,5 @@ function ReplaceEntity(_Entity, _Type, _NewOwner)
     end
     return ID2;
 end
+API.ReplaceEntity = ReplaceEntity;
 

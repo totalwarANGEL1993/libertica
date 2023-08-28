@@ -29,4 +29,5 @@ function SendCart(_Position, _PlayerID, _GoodType, _Amount, _CartOverlay, _Ignor
     end
     return ID;
 end
+API.SendCart = SendCart;
 

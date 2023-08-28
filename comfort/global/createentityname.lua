@@ -20,4 +20,5 @@ function CreateEntityName(_EntityID)
         return name;
     end
 end
+API.CreateEntityName = CreateEntityName;
 

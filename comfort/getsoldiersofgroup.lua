@@ -15,4 +15,5 @@ function GetSoldiersOfGroup(_Leader)
     end
     return SoldierList;
 end
+API.GetSoldiersOfGroup = GetSoldiersOfGroup;
 

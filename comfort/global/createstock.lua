@@ -16,4 +16,5 @@ function CreateStock(_PlayerID, _GoodType)
         end
     end
 end
+API.CreateStock = CreateStock;
 

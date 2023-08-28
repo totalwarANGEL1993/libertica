@@ -12,4 +12,5 @@ function GetHealth(_Entity)
     end
     return 0;
 end
+API.GetHealth = GetHealth;
 

@@ -211,6 +211,7 @@ end
 function Localize(_Text)
     return Lib.Core.Text:Localize(_Text);
 end
+API.Localize = Localize;
 
 --- Replaces all placeholders inside the string with their respective values.
 ---
@@ -228,6 +229,7 @@ end
 function ConvertPlaceholders(_Text)
     return Lib.Core.Text:ConvertPlaceholders(_Text);
 end
+API.ConvertPlaceholders = ConvertPlaceholders;
 
 --- Prints a message into the debug text window.
 --- @param _Text any Text as string or table
@@ -239,6 +241,7 @@ function AddNote(_Text)
     end
     GUI.AddNote(_Text);
 end
+API.Note = AddNote;
 
 --- Prints a message into the debug text window. The messages stays until it
 --- is actively removed.
@@ -251,6 +254,7 @@ function AddStaticNote(_Text)
     end
     GUI.AddStaticNote(_Text);
 end
+API.StaticNote = AddStaticNote;
 
 --- Prints a message into the message window.
 --- @param _Text any Text as string or table
@@ -273,6 +277,7 @@ function ClearNotes()
     end
     GUI.ClearNotes();
 end
+API.ClearNotes = ClearNotes;
 
 --- Saves a string text overwrite at the key.
 --- @param _Key string Key of entry
@@ -281,6 +286,7 @@ function AddStringText(_Key, _Text)
     assert(IsLocalScript(), "Text can only be set in local script!");
     Lib.Core.Text:AddStringTableOverwrite(_Key, _Text)
 end
+API.AddStringText = AddStringText;
 
 --- Deletes the string text overwrite at the key.
 --- @param _Key string Key of entry
@@ -288,6 +294,7 @@ function DeleteStringText(_Key)
     assert(IsLocalScript(), "Text can only be removed in local script!");
     Lib.Core.Text:DeleteStringTableOverwrite(_Key);
 end
+API.DeleteStringText = DeleteStringText;
 
 --- Returns the String text at the key.
 --- @param _Key string Key of entry
@@ -296,4 +303,5 @@ function GetStringText(_Key)
     assert(IsLocalScript(), "Text can only be retrieved in local script!");
     return Lib.Core.Text:GetStringTableOverwrite(_Key)
 end
+API.GetStringText = GetStringText;
 

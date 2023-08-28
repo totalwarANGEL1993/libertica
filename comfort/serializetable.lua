@@ -27,4 +27,5 @@ function SerializeTable(_Table)
     String = String .. "}";
     return String;
 end
+API.SerializeTable = SerializeTable;
 

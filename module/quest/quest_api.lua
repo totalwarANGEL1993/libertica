@@ -43,6 +43,7 @@ function SetupQuest(_Data)
     end
     return Lib.Quest.Global:CreateSimpleQuest(_Data);
 end
+API.CreateQuest = SetupQuest;
 
 --- Creates a nested quest.
 ---
@@ -119,6 +120,7 @@ function SetupNestedQuest(_Data)
     end
     return Lib.Quest.Global:CreateNestedQuest(_Data);
 end
+API.CreateNestedQuest = SetupNestedQuest;
 
 --- Adds a function to control if trigger are evaluated.
 --- @param _Function function Condition
@@ -128,6 +130,7 @@ function AddDisableTriggerCondition(_Function)
     end
     table.insert(Lib.Quest.Global.ExternalTriggerConditions, _Function);
 end
+API.AddDisableTriggerCondition = AddDisableTriggerCondition;
 
 --- Adds a function to control if timer are evaluated.
 --- @param _Function function Condition
@@ -137,6 +140,7 @@ function AddDisableTimerCondition(_Function)
     end
     table.insert(Lib.Quest.Global.ExternalTimerConditions, _Function);
 end
+API.AddDisableTimerCondition = AddDisableTimerCondition;
 
 --- Adds a function to control if objectives are evaluated.
 --- @param _Function function Condition
@@ -146,4 +150,5 @@ function AddDisableDecisionCondition(_Function)
     end
     table.insert(Lib.Quest.Global.ExternalDecisionConditions, _Function);
 end
+API.AddDisableDecisionCondition = AddDisableDecisionCondition;
 

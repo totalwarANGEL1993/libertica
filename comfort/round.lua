@@ -11,4 +11,5 @@ function Round(_Value, _Decimals)
     end
     return tonumber(string.format("%." .._Decimals.. "f", _Value));
 end
+API.Round = Round;
 

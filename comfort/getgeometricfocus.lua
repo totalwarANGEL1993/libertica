@@ -23,4 +23,5 @@ function GetGeometricFocus(...)
         Z= PositionData.Z * (1/ValidEntryCount);
     }
 end
+API.GetGeometricFocus = GetGeometricFocus;
 

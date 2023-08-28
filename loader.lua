@@ -17,6 +17,9 @@ Lib = {
     },
 };
 
+API = {};
+QSB = {};
+
 --- @diagnostic disable: duplicate-set-field
 
 --- Loads a component at the given relative path.

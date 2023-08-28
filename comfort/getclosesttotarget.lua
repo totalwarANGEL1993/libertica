@@ -18,4 +18,5 @@ function GetClosestToTarget(_Target, _List)
     end
     return ClosestToTarget;
 end
+API.GetClosestToTarget = GetClosestToTarget;
 

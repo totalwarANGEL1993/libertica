@@ -15,4 +15,5 @@ function GetPosition(_Entity)
     local x, y, z = Logic.EntityGetPos(GetID(_Entity));
     return {X= x, Y= y, Z= z};
 end
+API.GetPosition = GetPosition;
 

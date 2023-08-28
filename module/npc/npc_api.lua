@@ -70,6 +70,7 @@ function NpcCompose(_Data)
     assert(not _Data.Type or (_Data.Type >= 1 or _Data.Type <= 4), "NPC type is invalid.");
     return Lib.NPC.Global:CreateNpc(_Data);
 end
+API.NpcCompose = NpcCompose;
 
 --- Removes the NPC but does not delete the entity.
 --- @param _Data table NPC data
@@ -79,6 +80,7 @@ function NpcDispose(_Data)
     assert(Lib.NPC.Global:GetNpc(_Data.Name) == nil, "NPC must first be composed.");
     Lib.NPC.Global:DestroyNpc(_Data);
 end
+API.NpcDispose = NpcDispose;
 
 --- Updates the NPC with the data table.
 ---
@@ -111,6 +113,7 @@ function NpcUpdate(_Data)
     assert(Lib.NPC.Global:GetNpc(_Data.Name) ~= nil, "NPC must first be composed.");
     Lib.NPC.Global:UpdateNpc(_Data);
 end
+API.NpcUpdate = NpcUpdate;
 
 --- Checks if the NPC is active.
 --- @param _Data table NPC data
@@ -125,6 +128,7 @@ function NpcIsActive(_Data)
     end
     return false;
 end
+API.NpcIsActive = NpcIsActive;
 
 --- Returns if an NPC has talked.
 --- @param _Data table NPC data
@@ -146,4 +150,5 @@ function NpcTalkedTo(_Data, _Hero, _PlayerID)
     end
     return TalkedTo;
 end
+API.NpcTalkedTo = NpcTalkedTo;
 

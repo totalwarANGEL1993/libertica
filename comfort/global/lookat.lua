@@ -33,4 +33,5 @@ function LookAt(_Entity, _Target)
     end
     Logic.SetOrientation(ID1, Angle);
 end
+API.LookAt = LookAt;
 

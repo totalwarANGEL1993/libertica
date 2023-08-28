@@ -38,4 +38,5 @@ function Move(_Entity, _Target, _IgnoreBlocking)
         end
     end, ID, Target);
 end
+API.Move = Move;
 
