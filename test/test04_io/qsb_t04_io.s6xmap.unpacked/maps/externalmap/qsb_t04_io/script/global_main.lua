@@ -16,10 +16,14 @@ Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/npc/NPC");
 Lib.Require("module/io/IO");
+Lib.Require("module/iochest/IOChest");
 
 -- ========================================================================== --
 
 function TestSetupChests()
+    CreateRandomGoldChest("chest1");
+    CreateRandomResourceChest("chest2");
+    CreateRandomLuxuryChest("chest3");
 end
 
 function TestSetupTradeposts()
