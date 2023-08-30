@@ -169,6 +169,28 @@
     </P>
     <O>0.000000e+000</O>
    </E>
+   <E>
+    <T>R_IronMine</T>
+    <H>100</H>
+    <S>1.</S>
+    <N>iron</N>
+    <P>
+     <X>2800.</X>
+     <Y>5700.</Y>
+    </P>
+    <O>0.000000e+000</O>
+   </E>
+   <E>
+    <T>R_StoneMine</T>
+    <H>100</H>
+    <S>1.</S>
+    <N>stone</N>
+    <P>
+     <X>3940.</X>
+     <Y>5859.6572265625</Y>
+    </P>
+    <O>0.000000e+000</O>
+   </E>
   </EntityCollection>
  </Entities>
  <Roads>
