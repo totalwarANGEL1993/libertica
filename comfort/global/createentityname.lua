@@ -6,7 +6,7 @@ CreateEntityName_Sequence_ID = 0;
 --- @param _EntityID any ID of entity or scriptname
 --- @return string Scriptname Generated scriptname
 function CreateEntityName(_EntityID)
-    assert(Lib.IsLocalEnv == false, "Can only be used in global script.");
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     if type(_EntityID) == "string" then
         return _EntityID;
     else

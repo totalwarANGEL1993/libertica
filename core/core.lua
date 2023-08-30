@@ -80,9 +80,11 @@ function Lib.Core.Global:Initialize()
         LoadBehaviors();
 
         -- Loading finished callback
-        if GameCallback_Lib_LoadingFinished then
-            GameCallback_Lib_LoadingFinished();
-        end
+        RequestHiResDelay(1, function()
+            if GameCallback_Lib_LoadingFinished then
+                GameCallback_Lib_LoadingFinished();
+            end
+        end);
 
         -- Cleanup (garbage collection)
         Lib.Core.Local = nil;
@@ -214,9 +216,11 @@ function Lib.Core.Local:Initialize()
         self:InitLoadscreenHandler();
 
         -- Loading finished callback
-        if GameCallback_Lib_LoadingFinished then
-            GameCallback_Lib_LoadingFinished();
-        end
+        RequestHiResDelay(1, function()
+            if GameCallback_Lib_LoadingFinished then
+                GameCallback_Lib_LoadingFinished();
+            end
+        end);
 
         -- Cleanup (garbage collection)
         Lib.Core.Global = nil;

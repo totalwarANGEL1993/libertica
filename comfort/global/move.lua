@@ -6,6 +6,7 @@ Lib.Register("comfort/global/Move");
 --- @param _IgnoreBlocking boolean Ignore blocking
 function Move(_Entity, _Target, _IgnoreBlocking)
     local ID = GetID(_Entity);
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     assert(ID ~= 0, "Moving entity does not exist!");
 
     local Target;

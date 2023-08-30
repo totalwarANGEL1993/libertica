@@ -549,7 +549,7 @@ end
 
 function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
     if _IsDebug then
-        local Commands = Swift.Text:CommandTokenizer(_Text);
+        local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
         for i= 1, #Commands, 1 do
             if Commands[1] == "fail"
             or Commands[1] == "start"

@@ -150,6 +150,72 @@ function Lib.Core.Debug:ProcessDebugInput(_Input, _PlayerID, _DebugAllowed)
     end
 end
 
+function Lib.Core.Debug:CommandTokenizer(_Input)
+    local Commands = {};
+    if _Input == nil then
+        return Commands;
+    end
+    local DAmberCommands = {_Input};
+    local AmberCommands = {};
+
+    -- parse & delimiter
+    local s, e = string.find(_Input, "%s+&&%s+");
+    if s then
+        DAmberCommands = {};
+        while (s) do
+            local tmp = string.sub(_Input, 1, s-1);
+            table.insert(DAmberCommands, tmp);
+            _Input = string.sub(_Input, e+1);
+            s, e = string.find(_Input, "%s+&&%s+");
+        end
+        if string.len(_Input) > 0 then 
+            table.insert(DAmberCommands, _Input);
+        end
+    end
+
+    -- parse & delimiter
+    for i= 1, #DAmberCommands, 1 do
+        s, e = string.find(DAmberCommands[i], "%s+&%s+");
+        if s then
+            local LastCommand = "";
+            while (s) do
+                local tmp = string.sub(DAmberCommands[i], 1, s-1);
+                table.insert(AmberCommands, LastCommand .. tmp);
+                if string.find(tmp, " ") then
+                    LastCommand = string.sub(tmp, 1, string.find(tmp, " ")-1) .. " ";
+                end
+                DAmberCommands[i] = string.sub(DAmberCommands[i], e+1);
+                s, e = string.find(DAmberCommands[i], "%s+&%s+");
+            end
+            if string.len(DAmberCommands[i]) > 0 then 
+                table.insert(AmberCommands, LastCommand .. DAmberCommands[i]);
+            end
+        else
+            table.insert(AmberCommands, DAmberCommands[i]);
+        end
+    end
+
+    -- parse spaces
+    for i= 1, #AmberCommands, 1 do
+        local CommandLine = {};
+        s, e = string.find(AmberCommands[i], "%s+");
+        if s then
+            while (s) do
+                local tmp = string.sub(AmberCommands[i], 1, s-1);
+                table.insert(CommandLine, tmp);
+                AmberCommands[i] = string.sub(AmberCommands[i], e+1);
+                s, e = string.find(AmberCommands[i], "%s+");
+            end
+            table.insert(CommandLine, AmberCommands[i]);
+        else
+            table.insert(CommandLine, AmberCommands[i]);
+        end
+        table.insert(Commands, CommandLine);
+    end
+
+    return Commands;
+end
+
 -- -------------------------------------------------------------------------- --
 
 --- Activates the debug mode of the game.

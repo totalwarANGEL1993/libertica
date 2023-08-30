@@ -7,7 +7,7 @@ Lib.Register("comfort/global/SetPosition");
 --- @param _Entity integer Entity to place
 --- @param _Target any Target position or entity
 function SetPosition(_Entity, _Target)
-    assert(Lib.IsLocalEnv == false, "Can only be used in global script.");
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     local ID = GetID(_Entity);
     if not ID then
         return;

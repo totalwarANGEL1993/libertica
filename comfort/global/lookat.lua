@@ -6,6 +6,7 @@ Lib.Register("comfort/global/LookAt");
 --- @param _Target any Position to move to
 function LookAt(_Entity, _Target)
     local ID1 = GetID(_Entity);
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     assert(ID1 ~= 0, "Looking entity does not exist!");
     local x1,y1,z1 = Logic.EntityGetPos(ID1);
     local ID2;

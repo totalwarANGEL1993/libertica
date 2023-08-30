@@ -6,6 +6,7 @@ LibWriter = {
         "module/uieffects/UIEffects",
         "module/promotion/Promotion",
         "module/npc/NPC",
+        "module/io/IO",
     },
     Behaviors = "",
     Compile = false,
@@ -173,6 +174,7 @@ function LibWriter:ReadFilesLoop()
     local Paths = {Result = {}};
     for i= #self.ComponentList, 1, -1 do
         Paths[i] = {};
+        ---@diagnostic disable-next-line: param-type-mismatch
         self:ReadFileAndDependencies(self.ComponentList[i], Paths[i]);
         table.insert(Paths[i], self.ComponentList[i]:lower());
     end

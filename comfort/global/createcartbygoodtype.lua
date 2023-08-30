@@ -8,7 +8,7 @@ Lib.Register("comfort/global/CreateCartByGoodType");
 --- @param _CartOverlay? integer Type of cart
 --- @return integer ID ID of cart
 function CreateCartByGoodType(_PlayerID, _Position, _GoodType, _Orientation, _CartOverlay)
-    assert(Lib.IsLocalEnv == false, "Can only be used in global script.");
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     _Orientation = _Orientation or 0;
     local ID = 0;
     local Position = GetID(_Position);

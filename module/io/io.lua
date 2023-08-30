@@ -1,0 +1,700 @@
+--- Improves on interactive objects.
+---
+--- #### Debug commands
+--- * `enableobject <ScriptName>`  - A object is activated
+--- * `disableobject <ScriptName>` - A object is deactivated
+--- * `initobject <ScriptName>`    - The object is rudimentarily activated
+Lib.IO = {
+    Name = "IO",
+
+    Global = {
+        SlaveSequence = 0,
+    };
+    Local  = {};
+};
+
+CONST_IO = {};
+CONST_IO_SLAVE_TO_MASTER = {};
+CONST_IO_SLAVE_STATE = {};
+
+CONST_IO_LAST_OBJECT = 0;
+CONST_IO_LAST_HERO = 0;
+
+Lib.Require("comfort/GetClosestToTarget");
+Lib.Require("comfort/global/ReplaceEntity");
+Lib.Require("core/Core");
+Lib.Require("module/uitools/UITools");
+Lib.Require("module/io/IO_API");
+Lib.Register("module/io/IO");
+
+-- -------------------------------------------------------------------------- --
+-- Global
+
+-- Global initalizer method
+function Lib.IO.Global:Initialize()
+    --- The player clicked the interaction button.
+    --- 
+    --- #### Parameters
+    --- * `ScriptName` - Scriptname of entity
+    --- * `KnightID`   - ID of activating hero
+    --- * `PlayerID`   - ID of activating player
+    Report.ObjectClicked = CreateReport("Event_ObjectClicked");
+
+    --- The interaction of the object was successfull.
+    --- If the object has costs the activation concludes when the costs arrive.
+    --- 
+    --- #### Parameters
+    --- * `ScriptName` - Scriptname of entity
+    --- * `KnightID`   - ID of activating hero
+    --- * `PlayerID`   - ID of activating player
+    Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
+
+    --- The interaction is deleted from the object.
+    ---
+    --- #### Parameters
+    --- * `ScriptName` - Scriptname of entity
+    Report.ObjectReset = CreateReport("Event_ObjectReset");
+
+    --- The state of an object has been reset.
+    ---
+    --- #### Parameters
+    --- * `ScriptName` - Scriptname of entity
+    Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+
+    self:OverrideObjectInteraction();
+    self:StartObjectDestructionController();
+    self:StartObjectConditionController();
+end
+
+-- Global load game
+function Lib.IO.Global:OnSaveGameLoaded()
+end
+
+-- Global report listener
+function Lib.IO.Global:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    elseif _ID == Report.ObjectInteraction then
+        self:OnObjectInteraction(arg[1], arg[2], arg[3]);
+    elseif _ID == Report.ChatClosed then
+        if arg[3] then
+            self:ProcessChatInput(arg[1]);
+        end
+    end
+end
+
+function Lib.IO.Global:OnObjectInteraction(_ScriptName, _KnightID, _PlayerID)
+    CONST_IO_LAST_OBJECT = GetID(_ScriptName);
+    CONST_IO_LAST_HERO = _KnightID;
+
+    if CONST_IO_SLAVE_TO_MASTER[_ScriptName] then
+        _ScriptName = CONST_IO_SLAVE_TO_MASTER[_ScriptName];
+    end
+    if CONST_IO[_ScriptName] then
+        CONST_IO[_ScriptName].IsUsed = true;
+        ExecuteLocal([[
+            local ScriptName = "%s"
+            if CONST_IO[ScriptName] then
+                CONST_IO[ScriptName].IsUsed = true
+            end
+        ]], _ScriptName);
+        if CONST_IO[_ScriptName].Replacement then
+            ReplaceEntity(_ScriptName, CONST_IO[_ScriptName].Replacement);
+        end
+        if CONST_IO[_ScriptName].Action then
+            CONST_IO[_ScriptName]:Action(_PlayerID, _KnightID);
+        end
+    end
+end
+
+function Lib.IO.Global:CreateObject(_Description)
+    local ID = GetID(_Description.Name);
+    if ID == 0 then
+        return;
+    end
+    self:DestroyObject(_Description.Name);
+
+    local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(ID));
+    if TypeName and not TypeName:find("^I_X_") then
+        self:CreateSlaveObject(_Description);
+    end
+
+    _Description.IsActive = true;
+    _Description.IsUsed = false;
+    _Description.Player = _Description.Player or {1, 2, 3, 4, 5, 6, 7, 8};
+    _Description.State = _Description.State or 0;
+    _Description.Waittime = _Description.Waittime or 5;
+    _Description.Distance = _Description.Distance or 1000;
+    CONST_IO[_Description.Name] = _Description;
+    ExecuteLocal(
+        [[CONST_IO["%s"] = %s]],
+        _Description.Name,
+        table.tostring(CONST_IO[_Description.Name])
+    );
+    self:SetupObject(_Description);
+    return _Description;
+end
+
+function Lib.IO.Global:DestroyObject(_ScriptName)
+    if not CONST_IO[_ScriptName] then
+        return;
+    end
+    if CONST_IO[_ScriptName].Slave then
+        CONST_IO_SLAVE_TO_MASTER[CONST_IO[_ScriptName].Slave] = nil;
+        ExecuteLocal(
+            [[CONST_IO_SLAVE_TO_MASTER["%s"] = nil]],
+            CONST_IO[_ScriptName].Slave
+        );
+        CONST_IO_SLAVE_STATE[CONST_IO[_ScriptName].Slave] = nil;
+        DestroyEntity(CONST_IO[_ScriptName].Slave);
+    end
+    self:SetObjectState(_ScriptName, 2);
+    SendReport(Report.ObjectDelete, _ScriptName);
+    SendReportToLocal(Report.ObjectDelete, _ScriptName);
+    ExecuteLocal([[CONST_IO["%s"] = nil]], _ScriptName);
+    CONST_IO[_ScriptName] = nil;
+end
+
+function Lib.IO.Global:CreateSlaveObject(_Object)
+    local Name;
+    for k, v in pairs(CONST_IO_SLAVE_TO_MASTER) do
+        if v == _Object.Name and IsExisting(k) then
+            Name = k;
+        end
+    end
+    if Name == nil then
+        self.SlaveSequence = self.SlaveSequence +1;
+        Name = "LIB_IO_SlaveObject_" ..self.SlaveSequence;
+    end
+
+    local SlaveID = GetID(Name);
+    if not IsExisting(Name) then
+        local x,y,z = Logic.EntityGetPos(GetID(_Object.Name));
+        SlaveID = Logic.CreateEntity(Entities.I_X_DragonBoatWreckage, x, y, 0, 0);
+        Logic.SetModel(SlaveID, Models.Effects_E_Mosquitos);
+        Logic.SetEntityName(SlaveID, Name);
+        CONST_IO_SLAVE_TO_MASTER[Name] = _Object.Name;
+        ExecuteLocal([[CONST_IO_SLAVE_TO_MASTER["%s"] = "%s"]], Name, _Object.Name);
+        _Object.Slave = Name;
+    end
+    CONST_IO_SLAVE_STATE[Name] = 1;
+    return SlaveID;
+end
+
+function Lib.IO.Global:SetupObject(_Object)
+    local ID = GetID((_Object.Slave and _Object.Slave) or _Object.Name);
+    Logic.InteractiveObjectClearCosts(ID);
+    Logic.InteractiveObjectClearRewards(ID);
+    Logic.InteractiveObjectSetInteractionDistance(ID, _Object.Distance);
+    Logic.InteractiveObjectSetTimeToOpen(ID, _Object.Waittime);
+
+    local RewardResourceCart = _Object.RewardResourceCartType or Entities.U_ResourceMerchant;
+    Logic.InteractiveObjectSetRewardResourceCartType(ID, RewardResourceCart);
+    local RewardGoldCart = _Object.RewardGoldCartType or Entities.U_GoldCart;
+    Logic.InteractiveObjectSetRewardGoldCartType(ID, RewardGoldCart);
+    local CostResourceCart = _Object.CostResourceCartType or Entities.U_ResourceMerchant;
+    Logic.InteractiveObjectSetCostResourceCartType(ID, CostResourceCart);
+    local CostGoldCart = _Object.CostGoldCartType or Entities.U_GoldCart;
+    Logic.InteractiveObjectSetCostGoldCartType(ID, CostGoldCart);
+
+    if _Object.Reward then
+        Logic.InteractiveObjectAddRewards(ID, _Object.Reward[1], _Object.Reward[2]);
+    end
+    if _Object.Costs and _Object.Costs[1] then
+        Logic.InteractiveObjectAddCosts(ID, _Object.Costs[1], _Object.Costs[2]);
+    end
+    if _Object.Costs and _Object.Costs[3] then
+        Logic.InteractiveObjectAddCosts(ID, _Object.Costs[3], _Object.Costs[4]);
+    end
+    table.insert(HiddenTreasures, ID);
+    InteractiveObjectActivate(Logic.GetEntityName(ID), _Object.State or 0);
+end
+
+function Lib.IO.Global:ResetObject(_ScriptName)
+    local ID = GetID((CONST_IO[_ScriptName].Slave and CONST_IO[_ScriptName].Slave) or _ScriptName);
+    RemoveInteractiveObjectFromOpenedList(ID);
+    table.insert(HiddenTreasures, ID);
+    Logic.InteractiveObjectSetAvailability(ID, true);
+    self:SetObjectState(ID, CONST_IO[_ScriptName].State or 0);
+    CONST_IO[_ScriptName].IsUsed = false;
+    CONST_IO[_ScriptName].IsActive = true;
+
+    SendReport(Report.ObjectReset, _ScriptName);
+    SendReportToLocal(Report.ObjectReset, _ScriptName);
+end
+
+function Lib.IO.Global:SetObjectState(_ScriptName, _State, ...)
+    arg = ((not arg or #arg == 0) and {1, 2, 3, 4, 5, 6, 7, 8}) or arg;
+    for i= 1, 8 do
+        Logic.InteractiveObjectSetPlayerState(GetID(_ScriptName), i, 2);
+    end
+    for i= 1, #arg, 1 do
+        Logic.InteractiveObjectSetPlayerState(GetID(_ScriptName), arg[i], _State);
+    end
+    Logic.InteractiveObjectSetAvailability(GetID(_ScriptName), _State ~= 2);
+end
+
+function Lib.IO.Global:OverrideObjectInteraction()
+    GameCallback_OnObjectInteraction = function(_EntityID, _PlayerID)
+        OnInteractiveObjectOpened(_EntityID, _PlayerID);
+        OnTreasureFound(_EntityID, _PlayerID);
+
+        local ScriptName = Logic.GetEntityName(_EntityID);
+        if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
+            ScriptName = CONST_IO_SLAVE_TO_MASTER[ScriptName];
+        end
+        local KnightIDs = {};
+        Logic.GetKnights(_PlayerID, KnightIDs);
+        local KnightID = GetClosestToTarget(_EntityID, KnightIDs);
+        SendReport(Report.ObjectInteraction, ScriptName, KnightID, _PlayerID);
+        SendReportToLocal(Report.ObjectInteraction, ScriptName, KnightID, _PlayerID);
+    end
+
+    QuestTemplate.AreObjectsActivated = function(self, _ObjectList)
+        for i=1, _ObjectList[0] do
+            if not _ObjectList[-i] then
+                _ObjectList[-i] = GetID(_ObjectList[i]);
+            end
+            local EntityName = Logic.GetEntityName(_ObjectList[-i]);
+            if CONST_IO_SLAVE_TO_MASTER[EntityName] then
+                EntityName = CONST_IO_SLAVE_TO_MASTER[EntityName];
+            end
+
+            if CONST_IO[EntityName] then
+                if CONST_IO[EntityName].IsUsed ~= true then
+                    return false;
+                end
+            elseif Logic.IsInteractiveObject(_ObjectList[-i]) then
+                if not IsInteractiveObjectOpen(_ObjectList[-i]) then
+                    return false;
+                end
+            end
+        end
+        return true;
+    end
+end
+
+function Lib.IO.Global:ProcessChatInput(_Text)
+    local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
+    for i= 1, #Commands, 1 do
+        if Commands[1] == "enableobject" then
+            local State = (Commands[3] and tonumber(Commands[3])) or nil;
+            local PlayerID = (Commands[4] and tonumber(Commands[4])) or nil;
+            if not IsExisting(Commands[2]) then
+                error("object " ..Commands[2].. " does not exist!");
+                return;
+            end
+            ---@diagnostic disable-next-line: param-type-mismatch
+            InteractiveObjectActivate(Commands[2], State, PlayerID);
+            info("activated object " ..Commands[2].. ".");
+        elseif Commands[1] == "disableobject" then
+            local PlayerID = (Commands[3] and tonumber(Commands[3])) or nil;
+            if not IsExisting(Commands[2]) then
+                error("object " ..Commands[2].. " does not exist!");
+                return;
+            end
+            InteractiveObjectDeactivate(Commands[2], PlayerID);
+            info("deactivated object " ..Commands[2].. ".");
+        elseif Commands[1] == "initobject" then
+            if not IsExisting(Commands[2]) then
+                error("object " ..Commands[2].. " does not exist!");
+                return;
+            end
+            API.SetupObject({
+                Name     = Commands[2],
+                Waittime = 0,
+                State    = 0
+            });
+            info("quick initalization of object " ..Commands[2].. ".");
+        end
+    end
+end
+
+function Lib.IO.Global:StartObjectDestructionController()
+    RequestJobByEventType(Events.LOGIC_EVENT_ENTITY_DESTROYED, function()
+        local DestryoedEntityID = Event.GetEntityID();
+        local SlaveName  = Logic.GetEntityName(DestryoedEntityID);
+        local MasterName = CONST_IO_SLAVE_TO_MASTER[SlaveName];
+        if SlaveName and MasterName then
+            local Object = CONST_IO[MasterName];
+            if not Object then
+                return;
+            end
+            info("slave " ..SlaveName.. " of master " ..MasterName.. " has been deleted!");
+            info("try to create new slave...");
+            CONST_IO_SLAVE_TO_MASTER[SlaveName] = nil;
+            ExecuteLocal([[CONST_IO_SLAVE_TO_MASTER["%s"] = nil]], SlaveName);
+            local SlaveID = Lib.IO.Global:CreateSlaveObject(Object);
+            if not IsExisting(SlaveID) then
+                error("failed to create slave!");
+                return;
+            end
+            Lib.IO.Global:SetupObject(Object);
+            if Object.IsUsed == true or (CONST_IO_SLAVE_STATE[SlaveName] and CONST_IO_SLAVE_STATE[SlaveName] == 0) then
+                InteractiveObjectDeactivate(Object.Slave);
+            end
+            info("new slave created for master " ..MasterName.. ".");
+        end
+    end);
+end
+
+function Lib.IO.Global:StartObjectConditionController()
+    RequestHiResJob(function()
+        for k, v in pairs(CONST_IO) do
+            if v and not v.IsUsed and v.IsActive then
+                CONST_IO[k].IsFullfilled = true;
+                if CONST_IO[k].Condition then
+                    local IsFulfulled = v:Condition();
+                    CONST_IO[k].IsFullfilled = IsFulfulled;
+                end
+                ExecuteLocal([[
+                    local ScriptName = "%s"
+                    if CONST_IO[ScriptName] then
+                        CONST_IO[ScriptName].IsFullfilled = %s
+                    end
+                ]], k, tostring(CONST_IO[k].IsFullfilled));
+            end
+        end
+    end);
+end
+
+-- -------------------------------------------------------------------------- --
+-- Local
+
+-- Local initalizer method
+function Lib.IO.Local:Initialize()
+    Report.ObjectClicked = CreateReport("Event_ObjectClicked");
+    Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
+    Report.ObjectReset = CreateReport("Event_ObjectReset");
+    Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+
+    self:CreateDefaultObjectNames();
+end
+
+-- Local load game
+function Lib.IO.Local:OnSaveGameLoaded()
+end
+
+-- Local report listener
+function Lib.IO.Local:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    elseif _ID == Report.ObjectReset then
+        if CONST_IO[arg[1]] then
+            CONST_IO[arg[1]].IsUsed = false;
+        end
+    elseif _ID == Report.ObjectInteraction then
+        CONST_IO_LAST_OBJECT = GetID(arg[1]);
+        CONST_IO_LAST_HERO = arg[2];
+    end
+end
+
+function Lib.IO.Local:CreateDefaultObjectNames()
+    AddStringText("UI_ObjectNames/D_X_ChestClosed", {
+        de = "Schatztruhe",
+        en = "Treasure Chest",
+        fr = "Coffre au Trésor"
+    });
+    AddStringText("UI_ObjectNames/D_X_ChestOpenEmpty", {
+        de = "Leere Truhe",
+        en = "Empty Chest",
+        fr = "Coffre vide"
+    });
+end
+
+function Lib.IO.Local:OverrideGameFunctions()
+    g_CurrentDisplayedQuestID = 0;
+
+    GUI_Interaction.InteractiveObjectClicked_Orig_Lib_IO = GUI_Interaction.InteractiveObjectClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_Interaction.InteractiveObjectClicked = function()
+        local i = tonumber(XGUIEng.GetWidgetNameByID(XGUIEng.GetCurrentWidgetID()));
+        local EntityID = g_Interaction.ActiveObjectsOnScreen[i];
+        local PlayerID = GUI.GetPlayerID();
+        if not EntityID then
+            return;
+        end
+        local ScriptName = Logic.GetEntityName(EntityID);
+        if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
+            ScriptName = CONST_IO_SLAVE_TO_MASTER[ScriptName];
+        end
+        if CONST_IO[ScriptName] then
+            if not CONST_IO[ScriptName].IsFullfilled then
+                local Text = XGUIEng.GetStringTableText("UI_ButtonDisabled/PromoteKnight");
+                if CONST_IO[ScriptName].ConditionInfo then
+                    Text = ConvertPlaceholders(Localize(CONST_IO[ScriptName].ConditionInfo));
+                end
+                Message(Text);
+                return;
+            end
+            if type(CONST_IO[ScriptName].Costs) == "table" and #CONST_IO[ScriptName].Costs ~= 0 then
+                local StoreHouseID = Logic.GetStoreHouse(PlayerID);
+                local CastleID     = Logic.GetHeadquarters(PlayerID);
+                if StoreHouseID == nil or StoreHouseID == 0 or CastleID == nil or CastleID == 0 then
+                    GUI.AddNote("DEBUG: Player needs special buildings when using activation costs!");
+                    return;
+                end
+            end
+        end
+        GUI_Interaction.InteractiveObjectClicked_Orig_Lib_IO();
+
+        -- Send additional click event
+        -- This is supposed to be used in singleplayer only!
+        if not Framework.IsNetworkGame() then
+            local KnightIDs = {};
+            Logic.GetKnights(PlayerID, KnightIDs);
+            local KnightID = GetClosestToTarget(EntityID, KnightIDs);
+            SendReportToGlobal(Report.ObjectClicked, ScriptName, KnightID, PlayerID);
+            SendReport(Report.ObjectClicked, ScriptName, KnightID, PlayerID);
+        end
+    end
+
+    GUI_Interaction.InteractiveObjectUpdate = function()
+        if g_Interaction.ActiveObjects == nil then
+            return;
+        end
+
+        local PlayerID = GUI.GetPlayerID();
+        for i = 1, #g_Interaction.ActiveObjects do
+            local ObjectID = g_Interaction.ActiveObjects[i];
+            local MasterObjectID = ObjectID;
+            local ScriptName = Logic.GetEntityName(ObjectID);
+            if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
+                MasterObjectID = GetID(CONST_IO_SLAVE_TO_MASTER[ScriptName]);
+            end
+            local X, Y = GUI.GetEntityInfoScreenPosition(MasterObjectID);
+            local ScreenSizeX, ScreenSizeY = GUI.GetScreenSize();
+            if X ~= 0 and Y ~= 0 and X > -50 and Y > -50 and X < (ScreenSizeX + 50) and Y < (ScreenSizeY + 50) then
+                if not table.contains(g_Interaction.ActiveObjectsOnScreen, ObjectID) then
+                    table.insert(g_Interaction.ActiveObjectsOnScreen, ObjectID);
+                end
+            else
+                for i = 1, #g_Interaction.ActiveObjectsOnScreen do
+                    if g_Interaction.ActiveObjectsOnScreen[i] == ObjectID then
+                        table.remove(g_Interaction.ActiveObjectsOnScreen, i);
+                    end
+                end
+            end
+        end
+
+        for i = 1, #g_Interaction.ActiveObjectsOnScreen do
+            local Widget = "/InGame/Root/Normal/InteractiveObjects/" ..i;
+            if XGUIEng.IsWidgetExisting(Widget) == 1 then
+                local ObjectID       = g_Interaction.ActiveObjectsOnScreen[i];
+                local MasterObjectID = ObjectID;
+                local ScriptName     = Logic.GetEntityName(ObjectID);
+                if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
+                    MasterObjectID = GetID(CONST_IO_SLAVE_TO_MASTER[ScriptName]);
+                    ScriptName = Logic.GetEntityName(MasterObjectID);
+                end
+                local EntityType = Logic.GetEntityType(ObjectID);
+                local X, Y = GUI.GetEntityInfoScreenPosition(MasterObjectID);
+                local WidgetSize = {XGUIEng.GetWidgetScreenSize(Widget)};
+                XGUIEng.SetWidgetScreenPosition(Widget, X - (WidgetSize[1]/2), Y - (WidgetSize[2]/2));
+                local BaseCosts = {Logic.InteractiveObjectGetCosts(ObjectID)};
+                local EffectiveCosts = {Logic.InteractiveObjectGetEffectiveCosts(ObjectID, PlayerID)};
+                local IsAvailable = Logic.InteractiveObjectGetAvailability(ObjectID);
+                local HasSpace = Logic.InteractiveObjectHasPlayerEnoughSpaceForRewards(ObjectID, PlayerID);
+                local Disable = false;
+
+                if BaseCosts[1] ~= nil and EffectiveCosts[1] == nil and IsAvailable == true then
+                    Disable = true;
+                end
+                if HasSpace == false then
+                    Disable = true
+                end
+                if Disable == false then
+                    if CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "table" then
+                        Disable = not self:IsAvailableForGuiPlayer(ScriptName);
+                    elseif CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "number" then
+                        Disable = CONST_IO[ScriptName].Player ~= PlayerID;
+                    end
+                end
+
+                if Disable == true then
+                    XGUIEng.DisableButton(Widget, 1);
+                else
+                    XGUIEng.DisableButton(Widget, 0);
+                end
+                if GUI_Interaction.InteractiveObjectUpdateEx1 ~= nil then
+                    GUI_Interaction.InteractiveObjectUpdateEx1(Widget, EntityType);
+                end
+                XGUIEng.ShowWidget(Widget, 1);
+            end
+        end
+
+        for i = #g_Interaction.ActiveObjectsOnScreen + 1, 2 do
+            local Widget = "/InGame/Root/Normal/InteractiveObjects/" .. i;
+            XGUIEng.ShowWidget(Widget, 0);
+        end
+
+        for i = 1, #g_Interaction.ActiveObjectsOnScreen do
+            local Widget     = "/InGame/Root/Normal/InteractiveObjects/" ..i;
+            local ObjectID   = g_Interaction.ActiveObjectsOnScreen[i];
+            local ScriptName = Logic.GetEntityName(ObjectID);
+            if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
+                ScriptName = CONST_IO_SLAVE_TO_MASTER[ScriptName];
+            end
+            if CONST_IO[ScriptName] and CONST_IO[ScriptName].Texture then
+                local FileBaseName;
+                local a = (CONST_IO[ScriptName].Texture[1]) or 14;
+                local b = (CONST_IO[ScriptName].Texture[2]) or 10;
+                local c = (CONST_IO[ScriptName].Texture[3]) or 0;
+                if type(c) == "string" then
+                    FileBaseName = c;
+                    c = 0;
+                end
+                ChangeIcon(Widget, {a, b, c}, nil, FileBaseName);
+            end
+        end
+    end
+
+    GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO = GUI_Interaction.InteractiveObjectMouseOver;
+    GUI_Interaction.InteractiveObjectMouseOver = function()
+        local PlayerID = GUI.GetPlayerID();
+        local ButtonNumber = tonumber(XGUIEng.GetWidgetNameByID(XGUIEng.GetCurrentWidgetID()));
+        local ObjectID = g_Interaction.ActiveObjectsOnScreen[ButtonNumber];
+        local EntityType = Logic.GetEntityType(ObjectID);
+
+        if g_GameExtraNo > 0 then
+            local EntityTypeName = Logic.GetEntityTypeName(EntityType);
+            local List = {
+                "R_StoneMine",
+                "R_IronMine",
+                "B_Cistern",
+                "B_Well",
+                "I_X_TradePostConstructionSite"
+            };
+            if table.contains (List, EntityTypeName) then
+                GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO();
+                return;
+            end
+        end
+        local EntityTypeName = Logic.GetEntityTypeName(EntityType);
+        if string.find(EntityTypeName, "^I_X_") and tonumber(Logic.GetEntityName(ObjectID)) ~= nil then
+            GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO();
+            return;
+        end
+        local Costs = {Logic.InteractiveObjectGetEffectiveCosts(ObjectID, PlayerID)};
+        local ScriptName = Logic.GetEntityName(ObjectID);
+        if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
+            ScriptName = CONST_IO_SLAVE_TO_MASTER[ScriptName];
+        end
+
+        local CheckSettlement;
+        if CONST_IO[ScriptName] and CONST_IO[ScriptName].IsUsed ~= true then
+            local Key = "InteractiveObjectAvailable";
+            if (CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "table" and not self:IsAvailableForGuiPlayer(ScriptName))
+            or (CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "number" and CONST_IO[ScriptName].Player ~= PlayerID)
+            or Logic.InteractiveObjectGetAvailability(ObjectID) == false then
+                Key = "InteractiveObjectNotAvailable";
+            end
+            local DisabledKey;
+            if Logic.InteractiveObjectHasPlayerEnoughSpaceForRewards(ObjectID, PlayerID) == false then
+                DisabledKey = "InteractiveObjectAvailableReward";
+            end
+            local Title = CONST_IO[ScriptName].Title or ("UI_ObjectNames/" ..Key);
+            Title = ConvertPlaceholders(Localize(Title));
+            if Title and Title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                Title = XGUIEng.GetStringTableText(Title);
+            end
+            local Text = CONST_IO[ScriptName].Text or ("UI_ObjectDescription/" ..Key);
+            Text = ConvertPlaceholders(Localize(Text));
+            if Text and Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                Text = XGUIEng.GetStringTableText(Text);
+            end
+            local Disabled = CONST_IO[ScriptName].DisabledText or DisabledKey;
+            if Disabled then
+                Disabled = ConvertPlaceholders(Localize(Disabled));
+                if Disabled and Disabled:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                    Disabled = XGUIEng.GetStringTableText(Disabled);
+                end
+            end
+            Costs = CONST_IO[ScriptName].Costs;
+            if Costs and Costs[1] and Costs[1] ~= Goods.G_Gold and Logic.GetGoodCategoryForGoodType(Costs[1]) ~= GoodCategories.GC_Resource then
+                CheckSettlement = true;
+            end
+            SetTooltipCosts(Title, Text, Disabled, Costs, CheckSettlement);
+            return;
+        end
+        GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO();
+    end
+
+    GUI_Interaction.DisplayQuestObjective_Orig_Lib_IO = GUI_Interaction.DisplayQuestObjective
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_Interaction.DisplayQuestObjective = function(_QuestIndex, _MessageKey)
+        local QuestIndexTemp = tonumber(_QuestIndex);
+        if QuestIndexTemp then
+            _QuestIndex = QuestIndexTemp;
+        end
+
+        local Quest, QuestType = GUI_Interaction.GetPotentialSubQuestAndType(_QuestIndex);
+        local QuestObjectivesPath = "/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives";
+        XGUIEng.ShowAllSubWidgets("/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives", 0);
+        local QuestObjectiveContainer;
+        local QuestTypeCaption;
+
+        g_CurrentDisplayedQuestID = _QuestIndex;
+
+        if QuestType == Objective.Object then
+            QuestObjectiveContainer = QuestObjectivesPath .. "/List";
+            QuestTypeCaption = Wrapped_GetStringTableText(_QuestIndex, "UI_Texts/QuestInteraction");
+            local ObjectList = {};
+
+            for i = 1, Quest.Objectives[1].Data[0] do
+                local ObjectType;
+                if Logic.IsEntityDestroyed(Quest.Objectives[1].Data[i]) then
+                    ObjectType = g_Interaction.SavedQuestEntityTypes[_QuestIndex][i];
+                else
+                    ObjectType = Logic.GetEntityType(GetID(Quest.Objectives[1].Data[i]));
+                end
+                local ObjectEntityName = Logic.GetEntityName(Quest.Objectives[1].Data[i]);
+                local ObjectName = "";
+                if ObjectType ~= nil and ObjectType ~= 0 then
+                    local ObjectTypeName = Logic.GetEntityTypeName(ObjectType)
+                    ObjectName = Wrapped_GetStringTableText(_QuestIndex, "Names/" .. ObjectTypeName)
+                                 or GetStringText("Names/" .. ObjectTypeName);
+                    if ObjectName == "" then
+                        ObjectName = Wrapped_GetStringTableText(_QuestIndex, "UI_ObjectNames/" .. ObjectTypeName)
+                                     or GetStringText("UI_ObjectNames/" .. ObjectTypeName);
+                    end
+                    if ObjectName == nil then
+                        ObjectName = "Debug: ObjectName missing for " .. ObjectTypeName;
+                    end
+                end
+                table.insert(ObjectList, Localize(ConvertPlaceholders(ObjectName)));
+            end
+            for i = 1, 4 do
+                local String = ObjectList[i];
+                if String == nil then
+                    String = "";
+                end
+                XGUIEng.SetText(QuestObjectiveContainer .. "/Entry" .. i, "{center}" .. String);
+            end
+
+            SetIcon(QuestObjectiveContainer .. "/QuestTypeIcon",{14, 10});
+            XGUIEng.SetText(QuestObjectiveContainer.."/Caption","{center}"..QuestTypeCaption);
+            XGUIEng.ShowWidget(QuestObjectiveContainer, 1);
+        else
+            GUI_Interaction.DisplayQuestObjective_Orig_Lib_IO(_QuestIndex, _MessageKey);
+        end
+    end
+end
+
+function Lib.IO.Local:IsAvailableForGuiPlayer(_ScriptName)
+    local PlayerID = GUI.GetPlayerID();
+    if CONST_IO[_ScriptName] and type(CONST_IO[_ScriptName].Player) == "table" then
+        for i= 1, 8 do
+            if CONST_IO[_ScriptName].Player[i] and CONST_IO[_ScriptName].Player[i] == PlayerID then
+                return true;
+            end
+        end
+        return false;
+    end
+    return true;
+end
+
+-- -------------------------------------------------------------------------- --
+
+RegisterModule(Lib.IO.Name);
+

@@ -4,7 +4,7 @@ Lib.Register("comfort/global/SetHealth");
 --- @param _Entity any    ID or script name
 --- @param _Health number Relative health 
 function SetHealth(_Entity, _Health)
-    assert(Lib.IsLocalEnv == false, "Can only be used in global script.");
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     assert(type(_Health) == "number" and _Health >= 0);
 
     local EntityID = GetID(_Entity);

@@ -4,7 +4,7 @@ Lib.Register("comfort/global/CreateStock");
 --- @param _PlayerID integer ID pf player
 --- @param _GoodType integer Type of good
 function CreateStock(_PlayerID, _GoodType)
-    assert(Lib.IsLocalEnv == false, "Can only be used in global script.");
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     local ResourceCategory = Logic.GetGoodCategoryForGoodType(_GoodType);
     if ResourceCategory == GoodCategories.GC_Resource or _GoodType == Goods.G_None then
         local StoreID = Logic.GetStoreHouse(_PlayerID);
