@@ -120,6 +120,61 @@ function InteractiveObjectDeleteCustomName(_Key)
 end
 API.InteractiveObjectUnsetQuestName = InteractiveObjectDeleteCustomName;
 
+--- Allows or forbids to activate all types of objects.
+--- @param _PlayerID integer ID of player
+--- @param _Allowed boolean  Activation is allowed
+function AllowActivateObjects(_PlayerID, _Allowed)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Regular, %s)
+    ]], _PlayerID, tostring(_Allowed == true));
+end
+API.AllowActivateObjects = AllowActivateObjects;
+
+--- Allows or forbids to activate iron mines.
+--- @param _PlayerID integer ID of player
+--- @param _Allowed boolean  Activation is allowed
+function AllowActivateIronMines(_PlayerID, _Allowed)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Mine, %s)
+    ]], _PlayerID, tostring(_Allowed == true));
+end
+API.AllowActivateIronMines = AllowActivateIronMines;
+
+--- Allows or forbids to activate stone mines.
+--- @param _PlayerID integer ID of player
+--- @param _Allowed boolean  Activation is allowed
+function AllowActivateStoneMines(_PlayerID, _Allowed)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Quarry, %s)
+    ]], _PlayerID, tostring(_Allowed == true));
+end
+API.AllowActivateStoneMines = AllowActivateStoneMines;
+
+--- Allows or forbids to activate cisterns.
+--- @param _PlayerID integer ID of player
+--- @param _Allowed boolean  Activation is allowed
+function AllowActivateCisterns(_PlayerID, _Allowed)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Cistern, %s)
+    ]], _PlayerID, tostring(_Allowed == true));
+end
+API.AllowActivateCisterns = AllowActivateCisterns;
+
+--- Allows or forbids to activate tradeposts.
+--- @param _PlayerID integer ID of player
+--- @param _Allowed boolean  Activation is allowed
+function AllowActivateTradepost(_PlayerID, _Allowed)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Tradepost, %s)
+    ]], _PlayerID, tostring(_Allowed == true));
+end
+API.AllowActivateTradepost = AllowActivateTradepost;
+
 --- Activates an interactive object.
 --- @param _ScriptName string Script name of entity
 --- @param _State integer     Interactable state
@@ -170,3 +225,4 @@ InteractiveObjectDeactivate = function(_ScriptName, ...)
     end
 end
 API.InteractiveObjectDeactivate = InteractiveObjectDeactivate;
+

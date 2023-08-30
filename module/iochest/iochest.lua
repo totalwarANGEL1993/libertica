@@ -116,13 +116,8 @@ function Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, _DirectP
         tostring(_NoModelChange == true)
     ))
 
-    -- Texte und Model setzen
-    local Title = Lib.IOChest.Text.Treasure.Title;
-    local Text  = Lib.IOChest.Text.Treasure.Text;
+    -- Model setzen
     if not _NoModelChange then
-        Title = Lib.IOChest.Text.Chest.Title;
-        Text  = Lib.IOChest.Text.Chest.Text;
-
         local eID = ReplaceEntity(_Name, Entities.XD_ScriptEntity, 0);
         Logic.SetModel(eID, Models.Doodads_D_X_ChestClose);
         Logic.SetVisible(eID, true);
@@ -146,8 +141,6 @@ function Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, _DirectP
     SetupObject {
         Name                    = _Name,
         IsInteractiveChest      = true,
-        Title                   = Title,
-        Text                    = Text,
         Reward                  = IOReward,
         DirectReward            = DirectReward,
         Texture                 = {1, 6},

@@ -10,7 +10,9 @@ Lib.IO = {
     Global = {
         SlaveSequence = 0,
     };
-    Local  = {};
+    Local  = {
+        Data = {},
+    };
 };
 
 CONST_IO = {};
@@ -19,6 +21,14 @@ CONST_IO_SLAVE_STATE = {};
 
 CONST_IO_LAST_OBJECT = 0;
 CONST_IO_LAST_HERO = 0;
+
+ObjectType = {
+    Regular = 1,
+    Tradepost = 2,
+    Mine = 3,
+    Quarry = 4,
+    Cistern = 5,
+}
 
 Lib.Require("comfort/GetClosestToTarget");
 Lib.Require("comfort/global/ReplaceEntity");
@@ -367,6 +377,31 @@ function Lib.IO.Local:Initialize()
     Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
     Report.ObjectReset = CreateReport("Event_ObjectReset");
     Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+
+    self:OverrideGameFunctions();
+
+    for i= 1, 8 do
+        self.Data[i] = {
+            [ObjectType.Regular] = true, -- Regular objects
+            [ObjectType.Tradepost] = true, -- Tradepost
+            [ObjectType.Mine] = true, -- Iron mine
+            [ObjectType.Quarry] = true, -- Stone mine
+            [ObjectType.Cistern] = true, -- Well
+        };
+    end
+end
+
+function Lib.IO.Local:AllowObjectActivation(_PlayerID, _Type, _IsAllowed)
+    if self.Data[_PlayerID] then
+        self.Data[_PlayerID][_Type] = _IsAllowed == true;
+    end
+end
+
+function Lib.IO.Local:IsObjectActivationAllowed(_PlayerID, _Type)
+    if self.Data[_PlayerID] then
+        return self.Data[_PlayerID][_Type] ~= false;
+    end
+    return true;
 end
 
 -- Local load game
@@ -473,6 +508,7 @@ function Lib.IO.Local:OverrideGameFunctions()
                     ScriptName = Logic.GetEntityName(MasterObjectID);
                 end
                 local EntityType = Logic.GetEntityType(ObjectID);
+                local EntityTypeName = Logic.GetEntityTypeName(EntityType);
                 local X, Y = GUI.GetEntityInfoScreenPosition(MasterObjectID);
                 local WidgetSize = {XGUIEng.GetWidgetScreenSize(Widget)};
                 XGUIEng.SetWidgetScreenPosition(Widget, X - (WidgetSize[1]/2), Y - (WidgetSize[2]/2));
@@ -488,6 +524,31 @@ function Lib.IO.Local:OverrideGameFunctions()
                 if HasSpace == false then
                     Disable = true
                 end
+
+                if Disable == false and not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Regular) then
+                    Disable = true;
+                end
+                if Disable == false and string.find(EntityTypeName, "R_StoneMine") then
+                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Quarry) then
+                        Disable = true;
+                    end
+                end
+                if Disable == false and string.find(EntityTypeName, "R_IronMine") then
+                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Mine) then
+                        Disable = true;
+                    end
+                end
+                if Disable == false and (string.find(EntityTypeName, "B_Cistern") or string.find(EntityTypeName, "B_Well")) then
+                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Cistern) then
+                        Disable = true;
+                    end
+                end
+                if Disable == false and string.find(EntityTypeName, "I_X_TradePostConstructionSite") then
+                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Tradepost) then
+                        Disable = true;
+                    end
+                end
+
                 if Disable == false then
                     if CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "table" then
                         Disable = not self:IsAvailableForGuiPlayer(ScriptName);
@@ -537,58 +598,80 @@ function Lib.IO.Local:OverrideGameFunctions()
     GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO = GUI_Interaction.InteractiveObjectMouseOver;
     GUI_Interaction.InteractiveObjectMouseOver = function()
         local PlayerID = GUI.GetPlayerID();
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
         local ButtonNumber = tonumber(XGUIEng.GetWidgetNameByID(XGUIEng.GetCurrentWidgetID()));
         local ObjectID = g_Interaction.ActiveObjectsOnScreen[ButtonNumber];
         local EntityType = Logic.GetEntityType(ObjectID);
-
-        if g_GameExtraNo > 0 then
-            local EntityTypeName = Logic.GetEntityTypeName(EntityType);
-            local List = {
-                "R_StoneMine",
-                "R_IronMine",
-                "B_Cistern",
-                "B_Well",
-                "I_X_TradePostConstructionSite"
-            };
-            if table.contains (List, EntityTypeName) then
-                GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO();
-                return;
-            end
-        end
         local EntityTypeName = Logic.GetEntityTypeName(EntityType);
-        if string.find(EntityTypeName, "^I_X_") and tonumber(Logic.GetEntityName(ObjectID)) ~= nil then
+
+        -- Call original for gold ruins
+        if  tonumber(Logic.GetEntityName(ObjectID)) ~= nil
+        and string.find(EntityTypeName, "^I_X_") then
             GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO();
             return;
         end
+
+        -- addon special objects
+        local IsGeologistTarget = false;
+        local IsTradepost = false;
+        if g_GameExtraNo > 0 then
+            IsGeologistTarget = string.find(EntityTypeName, "^R_Stone") ~= nil or
+                                string.find(EntityTypeName, "^R_Iron") ~= nil or
+                                string.find(EntityTypeName, "^B_Cistern") ~= nil or
+                                string.find(EntityTypeName, "^B_Well") ~= nil;
+            IsTradepost = string.find(EntityTypeName, "^I_X_Trade") ~= nil;
+        end
+
+        -- Get default text keys
+        local DisabledKey;
+        local Key = "InteractiveObjectAvailable";
+        if Logic.InteractiveObjectGetAvailability(ObjectID) == false then
+            Key = "InteractiveObjectNotAvailable";
+        elseif Logic.InteractiveObjectHasPlayerEnoughSpaceForRewards(ObjectID, PlayerID) == false then
+            DisabledKey = "InteractiveObjectAvailableReward";
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            DisabledKey = "UpgradeOutpost";
+        end
+        local Title = "UI_ObjectNames/" ..Key;
+        local Text = "UI_ObjectDescription/" ..Key;
+        local Disabled = (DisabledKey ~= nil and "UI_ButtonDisabled/" ..DisabledKey) or nil;
+        if IsGeologistTarget then
+            Title = "UI_ObjectNames/InteractiveObjectGeologist";
+            Text = "";
+        end
+        if IsTradepost then
+            Title = "UI_ObjectNames/InteractiveObjectTradepost";
+            Text = "";
+        end
+
+        -- Get default costs
+        local CheckSettlement = false;
         local Costs = {Logic.InteractiveObjectGetEffectiveCosts(ObjectID, PlayerID)};
+        if Costs and Costs[1] and Costs[1] ~= Goods.G_Gold and Logic.GetGoodCategoryForGoodType(Costs[1]) ~= GoodCategories.GC_Resource then
+            CheckSettlement = true;
+        end
+
+        -- Handle initalized lib objects
         local ScriptName = Logic.GetEntityName(ObjectID);
         if CONST_IO_SLAVE_TO_MASTER[ScriptName] then
             ScriptName = CONST_IO_SLAVE_TO_MASTER[ScriptName];
         end
-
-        local CheckSettlement;
         if CONST_IO[ScriptName] and CONST_IO[ScriptName].IsUsed ~= true then
-            local Key = "InteractiveObjectAvailable";
+            Key = "InteractiveObjectAvailable";
             if (CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "table" and not self:IsAvailableForGuiPlayer(ScriptName))
             or (CONST_IO[ScriptName] and type(CONST_IO[ScriptName].Player) == "number" and CONST_IO[ScriptName].Player ~= PlayerID)
             or Logic.InteractiveObjectGetAvailability(ObjectID) == false then
                 Key = "InteractiveObjectNotAvailable";
             end
-            local DisabledKey;
-            if Logic.InteractiveObjectHasPlayerEnoughSpaceForRewards(ObjectID, PlayerID) == false then
-                DisabledKey = "InteractiveObjectAvailableReward";
-            end
-            local Title = CONST_IO[ScriptName].Title or ("UI_ObjectNames/" ..Key);
-            Title = ConvertPlaceholders(Localize(Title));
+            Title = ConvertPlaceholders(Localize(CONST_IO[ScriptName].Title or Title));
             if Title and Title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
                 Title = XGUIEng.GetStringTableText(Title);
             end
-            local Text = CONST_IO[ScriptName].Text or ("UI_ObjectDescription/" ..Key);
-            Text = ConvertPlaceholders(Localize(Text));
+            Text = ConvertPlaceholders(Localize(CONST_IO[ScriptName].Text or Text));
             if Text and Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
                 Text = XGUIEng.GetStringTableText(Text);
             end
-            local Disabled = CONST_IO[ScriptName].DisabledText or DisabledKey;
+            Disabled = CONST_IO[ScriptName].DisabledText or Disabled;
             if Disabled then
                 Disabled = ConvertPlaceholders(Localize(Disabled));
                 if Disabled and Disabled:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
@@ -599,10 +682,8 @@ function Lib.IO.Local:OverrideGameFunctions()
             if Costs and Costs[1] and Costs[1] ~= Goods.G_Gold and Logic.GetGoodCategoryForGoodType(Costs[1]) ~= GoodCategories.GC_Resource then
                 CheckSettlement = true;
             end
-            SetTooltipCosts(Title, Text, Disabled, Costs, CheckSettlement);
-            return;
         end
-        GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO();
+        SetTooltipCosts(Title, Text, Disabled, Costs, CheckSettlement);
     end
 
     GUI_Interaction.DisplayQuestObjective_Orig_Lib_IO = GUI_Interaction.DisplayQuestObjective
