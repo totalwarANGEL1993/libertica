@@ -367,8 +367,6 @@ function Lib.IO.Local:Initialize()
     Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
     Report.ObjectReset = CreateReport("Event_ObjectReset");
     Report.ObjectDelete = CreateReport("Event_ObjectDelete");
-
-    self:CreateDefaultObjectNames();
 end
 
 -- Local load game
@@ -387,19 +385,6 @@ function Lib.IO.Local:OnReportReceived(_ID, ...)
         CONST_IO_LAST_OBJECT = GetID(arg[1]);
         CONST_IO_LAST_HERO = arg[2];
     end
-end
-
-function Lib.IO.Local:CreateDefaultObjectNames()
-    AddStringText("UI_ObjectNames/D_X_ChestClosed", {
-        de = "Schatztruhe",
-        en = "Treasure Chest",
-        fr = "Coffre au Trésor"
-    });
-    AddStringText("UI_ObjectNames/D_X_ChestOpenEmpty", {
-        de = "Leere Truhe",
-        en = "Empty Chest",
-        fr = "Coffre vide"
-    });
 end
 
 function Lib.IO.Local:OverrideGameFunctions()
