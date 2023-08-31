@@ -18,6 +18,7 @@ Lib.Require("module/npc/NPC");
 Lib.Require("module/io/IO");
 Lib.Require("module/iochest/IOChest");
 Lib.Require("module/iomine/IOMine");
+Lib.Require("module/uibuilding/UIBuilding");
 
 -- ========================================================================== --
 

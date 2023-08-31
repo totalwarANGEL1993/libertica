@@ -18,13 +18,41 @@ Lib.Require("module/npc/NPC");
 Lib.Require("module/io/IO");
 Lib.Require("module/iochest/IOChest");
 Lib.Require("module/iomine/IOMine");
+Lib.Require("module/uibuilding/UIBuilding");
 
 -- ========================================================================== --
 
-
+function TestBuildingButtons()
+    SpecialButtonID = AddBuildingButtonByEntity(
+        "HQ1",
+        -- Aktion
+        function(_WidgetID, _BuildingID)
+            GUI.AddNote("Hier passiert etwas!");
+        end,
+        -- Tooltip
+        function(_WidgetID, _BuildingID)
+            -- Es MUSS ein Kostentooltip verwendet werden.
+            SetTooltipCosts("Beschreibung", "Das ist die Beschreibung!");
+        end,
+        -- Update
+        function(_WidgetID, _BuildingID)
+            -- Ausblenden, wenn noch in Bau
+            if Logic.IsConstructionComplete(_BuildingID) == 0 then
+                XGUIEng.ShowWidget(_WidgetID, 0);
+                return;
+            end
+            -- Deaktivieren, wenn ausgebaut wird.
+            if Logic.IsBuildingBeingUpgraded(_BuildingID) then
+                XGUIEng.DisableButton(_WidgetID, 1);
+            end
+            SetIcon(_WidgetID, {1, 1});
+        end
+    );
+end
 
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
+    TestBuildingButtons();
 end
 
