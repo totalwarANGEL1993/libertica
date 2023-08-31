@@ -13,24 +13,40 @@ Lib.Register("module/uitools/UITools_API");
 --- * 64:  [filename]big.png
 --- * 128: [filename]verybig.png
 ---
+--- #### Examples
+--- ```lua
+--- -- Example #1: Use a ingame graphic
+--- ChangeIcon(AnyWidgetID, {1, 1, 1});
+---
+--- -- Example #2: use a user defined graphic
+--- -- (meinetolleniconsbig.png is searched)
+--- ChangeIcon(AnyWidgetID, {8, 5}, nil, "meinetollenicons");
+---
+--- -- Example #3: use large user defined graphic
+--- -- (meinetolleniconsverybig.png is searched)
+--- ChangeIcon(AnyWidgetID, {8, 5}, 128, "meinetollenicons");
+--- ```
+---
 --- @param _WidgetID any Path or ID of widget
 --- @param _Coordinates table Table with coordinates
 --- @param _Size? number Optional icon size
 --- @param _Name? string Optional icon file
 function ChangeIcon(_WidgetID, _Coordinates, _Size, _Name)
-    assert(IsLocalScript(), "Can only be done in local script!");
+    error(IsLocalScript(), "Can only be done in local script!");
     _Coordinates = _Coordinates or {10, 14};
     Lib.UITools.Widget:SetIcon(_WidgetID, _Coordinates, _Size, _Name);
 end
+API.SetIcon = ChangeIcon;
 
 --- Changes the description of a button or icon.
 --- @param _Title any Title text or localized table
 --- @param _Text any Text or localized table
 --- @param _DisabledText any Text or localized table
 function SetTooltipNormal(_Title, _Text, _DisabledText)
-    assert(IsLocalScript(), "Can only be done in local script!");
+    error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipNormal(_Title, _Text, _DisabledText);
 end
+API.SetTooltipNormal = SetTooltipNormal;
 
 --- Changes the description of a button or icon with additional costs.
 --- @param _Title any Title text or localized table
@@ -39,9 +55,10 @@ end
 --- @param _Costs table Table with costs
 --- @param _InSettlement boolean Check all sources in settlement
 function SetTooltipCosts(_Title, _Text, _DisabledText, _Costs, _InSettlement)
-    assert(IsLocalScript(), "Can only be done in local script!");
+    error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipCosts(_Title,_Text,_DisabledText,_Costs,_InSettlement);
 end
+API.SetTooltipCosts = SetTooltipCosts;
 
 --- Changes the visibility of the minimap.
 --- @param _Flag boolean Widget is hidden
@@ -53,6 +70,7 @@ function HideMinimap(_Flag)
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/Minimap/MinimapOverlay",_Flag);
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/Minimap/MinimapTerrain",_Flag);
 end
+API.HideMinimap = HideMinimap;
 
 --- Changes the visibility of the minimap button.
 --- @param _Flag boolean Widget is hidden
@@ -63,6 +81,7 @@ function HideToggleMinimap(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/MinimapButton",_Flag);
 end
+API.HideToggleMinimap = HideToggleMinimap;
 
 --- Changes the visibility of the diplomacy menu button.
 --- @param _Flag boolean Widget is hidden
@@ -73,6 +92,7 @@ function HideDiplomacyMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/DiplomacyMenuButton",_Flag);
 end
+API.HideDiplomacyMenu = HideDiplomacyMenu;
 
 --- Changes the visibility of the produktion menu button.
 --- @param _Flag boolean Widget is hidden
@@ -83,6 +103,7 @@ function HideProductionMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/ProductionMenuButton",_Flag);
 end
+API.HideProductionMenu = HideProductionMenu;
 
 --- Changes the visibility of the weather menu button.
 --- @param _Flag boolean Widget is hidden
@@ -93,6 +114,7 @@ function HideWeatherMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/WeatherMenuButton",_Flag);
 end
+API.HideWeatherMenu = HideWeatherMenu;
 
 --- Changes the visibility of the territory button.
 --- @param _Flag boolean Widget is hidden
@@ -103,6 +125,7 @@ function HideBuyTerritory(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/ClaimTerritory",_Flag);
 end
+API.HideBuyTerritory = HideBuyTerritory;
 
 --- Changes the visibility of the knight ability button.
 --- @param _Flag boolean Widget is hidden
@@ -114,6 +137,7 @@ function HideKnightAbility(_Flag)
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/StartAbilityProgress",_Flag);
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/StartAbility",_Flag);
 end
+API.HideKnightAbility = HideKnightAbility;
 
 --- Changes the visibility of the knight selection button.
 --- @param _Flag boolean Widget is hidden
@@ -130,6 +154,7 @@ function HideKnightButton(_Flag)
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/KnightButtonProgress",_Flag);
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/KnightButton",_Flag);
 end
+API.HideKnightButton = HideKnightButton;
 
 --- Changes the visibility of the select military button.
 --- @param _Flag boolean Widget is hidden
@@ -142,6 +167,7 @@ function HideSelectionButton(_Flag)
     GUI.ClearSelection();
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/BattalionButton",_Flag);
 end
+API.HideSelectionButton = HideSelectionButton;
 
 --- Changes the visibility of the build menu.
 --- @param _Flag boolean Widget is hidden
@@ -152,6 +178,7 @@ function HideBuildMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/BuildMenu", _Flag);
 end
+API.HideBuildMenu = HideBuildMenu;
 
 --- Adds a new shortcut description.
 --- @param _Key string Key of shortcut
@@ -171,6 +198,7 @@ function AddShortcutDescription(_Key, _Description)
     table.insert(Lib.UITools.Shortcut.HotkeyDescriptions, {ID = ID, _Key, _Description});
     return #Lib.UITools.Shortcut.HotkeyDescriptions;
 end
+API.AddShortcutDescription = AddShortcutDescription;
 
 --- Removes the shortcut description with the ID.
 --- @param _ID number ID of shortcut
@@ -185,6 +213,7 @@ function RemoveShortcutDescription(_ID)
         end
     end
 end
+API.RemoveShortcutDescription = RemoveShortcutDescription;
 
 --- Activates or deactivates the forced speed 1.
 --- @param _Flag boolean Is active
@@ -197,6 +226,7 @@ function SpeedLimitActivate(_Flag)
         tostring(_Flag)
     );
 end
+API.SpeedLimitActivate = SpeedLimitActivate;
 
 --- Returns the name of the territory.
 --- @param _TerritoryID number ID of territory
@@ -217,6 +247,7 @@ function GetTerritoryName(_TerritoryID)
     end
     return TerritoryName;
 end
+API.GetTerritoryName = GetTerritoryName;
 
 --- Returns the name of the player.
 --- @param _PlayerID number ID of player
@@ -243,6 +274,7 @@ function GetPlayerName(_PlayerID)
     end
     return PlayerName;
 end
+API.GetPlayerName = GetPlayerName;
 
 ---Changes the name of a player.
 ---@param _PlayerID number ID of player
@@ -257,6 +289,7 @@ function SetPlayerName(_PlayerID, _Name)
     GUI_MissionStatistic.PlayerNames[_PlayerID] = _Name
     CONST_PLAYER_NAMES[_PlayerID] = _Name;
 end
+API.SetPlayerName = SetPlayerName;
 
 --- Changes the color of a player.
 --- @param _PlayerID number ID of player
@@ -264,7 +297,7 @@ end
 --- @param _Logo? number ID of logo
 --- @param _Pattern? number ID of pattern
 function SetPlayerColor(_PlayerID, _Color, _Logo, _Pattern)
-    assert(not IsLocalScript(), "Player color must be set from logic!");
+    error(not IsLocalScript(), "Player color must be set from logic!");
     g_ColorIndex["ExtraColor1"] = g_ColorIndex["ExtraColor1"] or 16;
     g_ColorIndex["ExtraColor2"] = g_ColorIndex["ExtraColor2"] or 17;
 
@@ -278,12 +311,23 @@ function SetPlayerColor(_PlayerID, _Color, _Logo, _Pattern)
         GUI.RebuildMinimapTerritory()
     ]]);
 end
+API.SetPlayerColor = SetPlayerColor;
 
 --- Changes the portrait of a player.
+---
+--- #### Examples
+--- ```lua
+--- -- Example #1: Set model by player hero
+--- SetPlayerPortrait(2);
+--- -- Example #2: Set model by type of entity
+--- SetPlayerPortrait(2, "amma");
+--- -- Example #3: Set model name directly
+--- SetPlayerPortrait(2, "H_NPC_Monk_AS");
+--- ```
 --- @param _PlayerID number  ID of player
 --- @param _Portrait? string Name of model
 function SetPlayerPortrait(_PlayerID, _Portrait)
-    assert(_PlayerID < 1 or _PlayerID > 8, "Invalid player ID!");
+    error(_PlayerID < 1 or _PlayerID > 8, "Invalid player ID!");
     if not IsLocalScript then
         local Portrait = (_Portrait ~= nil and "'" .._Portrait.. "'") or "nil";
         ExecuteLocal("SetPlayerPortrait(%d, %s)", _PlayerID, Portrait)
@@ -297,4 +341,5 @@ function SetPlayerPortrait(_PlayerID, _Portrait)
         Lib.UITools.Player:SetPlayerPortraitByModelName(_PlayerID, _Portrait);
     end
 end
+API.SetPlayerPortrait = SetPlayerPortrait;
 

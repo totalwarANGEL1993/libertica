@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Core.Job = {
     EventJobMappingID = 0;
     EventJobMapping = {},
@@ -99,6 +88,7 @@ function RequestJobByEventType(_EventType, _Function, ...)
     assert(type(Function) == "function", "Function does not exist!");
     return Lib.Core.Job:CreateEventJob(_EventType, _Function, ...);
 end
+API.StartJobByEventType = RequestJobByEventType;
 
 --- Requests a job that triggers each second.
 --- @param _Function any Function reference or name
@@ -109,6 +99,7 @@ function RequestJob(_Function, ...)
     assert(type(Function) == "function", "Function does not exist!");
     return RequestJobByEventType(Events.LOGIC_EVENT_EVERY_SECOND, Function, ...);
 end
+API.StartJob = RequestJob;
 StartSimpleJob = RequestJob;
 StartSimpleJobEx = RequestJob;
 
@@ -121,6 +112,7 @@ function RequestHiResJob(_Function, ...)
     assert(type(Function) == "function", "Function does not exist!");
     return RequestJobByEventType(Events.LOGIC_EVENT_EVERY_TURN, Function, ...);
 end
+API.StartHiResJob = RequestHiResJob;
 StartSimpleHiResJob = RequestHiResJob;
 StartSimpleHiResJobEx = RequestHiResJob;
 
@@ -145,6 +137,7 @@ function RequestDelay(_Waittime, _Function, ...)
         {...}
     );
 end
+API.StartDelay = RequestDelay;
 
 --- Requests a delayed action delayed by turns
 --- @param _Waittime integer Turns
@@ -167,6 +160,7 @@ function RequestHiResDelay(_Waittime, _Function, ...)
         {...}
     );
 end
+API.StartHiResDelay = RequestHiResDelay;
 
 --- Requests a delayed action delayed by realtime seconds.
 --- @param _Waittime integer Seconds
@@ -189,6 +183,7 @@ function RequestRealTimeDelay(_Waittime, _Function, ...)
         {...}
     );
 end
+API.StartRealTimeDelay = RequestRealTimeDelay;
 
 --- Ends a job. The job can not be reactivated.
 --- @param _JobID integer ID of job
@@ -200,6 +195,7 @@ function StopJob(_JobID)
     end
     EndJob(_JobID);
 end
+API.EndJob = StopJob;
 
 --- Returns if the job is running.
 --- @param _JobID integer ID of job
@@ -210,6 +206,7 @@ function IsJobRunning(_JobID)
     end
     return JobIsRunning(_JobID);
 end
+API.JobIsRunning = IsJobRunning;
 
 --- Resumes a paused job.
 --- @param _JobID integer ID of job
@@ -222,6 +219,7 @@ function ResumeJob(_JobID)
     end
     assert(false, "Failed to resume job.");
 end
+API.ResumeJob = ResumeJob;
 
 --- Pauses a runnung job.
 --- @param _JobID integer ID of job
@@ -234,10 +232,12 @@ function YieldJob(_JobID)
     end
     assert(false, "Failed to yield job.");
 end
+API.YieldJob = YieldJob;
 
 --- Returns the real time seconds passed since game start.
 --- @return integer Seconds Amount of seconds
 function GetSecondsRealTime()
     return Lib.Core.Job.SecondsSinceGameStart;
 end
+API.GetSecondsRealTime = GetSecondsRealTime;
 

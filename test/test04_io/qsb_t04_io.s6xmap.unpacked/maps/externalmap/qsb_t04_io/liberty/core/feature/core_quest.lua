@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Core.Quest = {
     QuestCounter = 0,
     Text = {
@@ -62,6 +51,7 @@ Lib.Core.Quest = {
 
 CONST_EFFECT_NAME_TO_ID = {};
 CONST_INITIALIZED_OBJECTS = {};
+CONST_REFILL_AMOUNT = {};
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/ToBoolean");
@@ -194,8 +184,8 @@ function Lib.Core.Quest:OverwriteGeologistRefill()
         GameCallback_OnGeologistRefill_Orig_Lib_Core = GameCallback_OnGeologistRefill;
         GameCallback_OnGeologistRefill = function(_PlayerID, _TargetID, _GeologistID)
             GameCallback_OnGeologistRefill_Orig_Lib_Core(_PlayerID, _TargetID, _GeologistID);
-            if Lib.RefillAmounts[_TargetID] then
-                local RefillAmount = Lib.RefillAmounts[_TargetID];
+            if CONST_REFILL_AMOUNT[_TargetID] then
+                local RefillAmount = CONST_REFILL_AMOUNT[_TargetID];
                 local RefillRandom = RefillAmount + math.random(1, math.floor((RefillAmount * 0.2) + 0.5));
                 Logic.SetResourceDoodadGoodAmount(_TargetID, RefillRandom);
                 if RefillRandom > 0 then
@@ -266,6 +256,7 @@ function InteractiveObjectActivate(_ScriptName, _State)
         Logic.InteractiveObjectSetPlayerState(GetID(_ScriptName), i, _State);
     end
 end
+API.InteractiveObjectActivate = InteractiveObjectActivate;
 
 function InteractiveObjectDeactivate(_ScriptName)
     if GUI or not IsExisting(_ScriptName) then
@@ -275,6 +266,7 @@ function InteractiveObjectDeactivate(_ScriptName)
         Logic.InteractiveObjectSetPlayerState(GetID(_ScriptName), i, 2);
     end
 end
+API.InteractiveObjectDeactivate = InteractiveObjectDeactivate;
 
 -- -------------------------------------------------------------------------- --
 
@@ -349,6 +341,27 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+--- Sets the amount of resources in a mine and optional refill amount.
+--- @param _Entity string|integer Entity to change
+--- @param _StartAmount integer Initial amount
+--- @param _RefillAmount integer? (optional) Refill amount
+function SetResourceAmount(_Entity, _StartAmount, _RefillAmount)
+    if GUI or not IsExisting(_Entity) then
+        return;
+    end
+    assert(type(_StartAmount) == "number");
+    assert(type(_RefillAmount) == "number");
+
+    local EntityID = GetID(_Entity);
+    if IsExisting(EntityID) and Logic.GetResourceDoodadGoodType(EntityID) ~= 0 then
+        if Logic.GetResourceDoodadGoodAmount(EntityID) == 0 then
+            EntityID = ReplaceEntity(EntityID, Logic.GetEntityType(EntityID));
+        end
+        Logic.SetResourceDoodadGoodAmount(EntityID, _StartAmount);
+        CONST_REFILL_AMOUNT[EntityID] = _RefillAmount;
+    end
+end
+
 --- Changes the displayed description of a custom behavior.
 --- @param _QuestName string Name of quest
 --- @param _Text string Quest text
@@ -358,6 +371,7 @@ function SetCustomBehaviorText(_QuestName, _Text)
     assert(Quest ~= nil, "Quest '" .._QuestName.. "' not found!");
     Lib.Core.Quest:ChangeCustomQuestCaptionText(_Text, Quest);
 end
+API.SetCustomBehaviorText = SetCustomBehaviorText;
 
 --- Restarts a quest.
 ---
@@ -452,6 +466,7 @@ function RestartQuest(_QuestName, _NoMessage)
     end
     return QuestID, Quest;
 end
+API.RestartQuest = RestartQuest;
 
 --- Fails a quest.
 --- @param _QuestName string Name of quest
@@ -467,6 +482,7 @@ function FailQuest(_QuestName, _NoMessage)
         Quest:Fail();
     end
 end
+API.FailQuest = FailQuest;
 
 --- Triggers a quest.
 --- @param _QuestName string Name of quest
@@ -483,6 +499,7 @@ function StartQuest(_QuestName, _NoMessage)
         Quest:Trigger();
     end
 end
+API.StartQuest = StartQuest;
 
 --- Interrupts a quest.
 --- @param _QuestName string Name of quest
@@ -498,6 +515,7 @@ function StopQuest(_QuestName, _NoMessage)
         Quest:Interrupt(-1);
     end
 end
+API.StopQuest = StopQuest;
 
 --- Wins a quest.
 --- @param _QuestName string Name of quest
@@ -513,4 +531,5 @@ function WinQuest(_QuestName, _NoMessage)
         Quest:Success();
     end
 end
+API.WinQuest = WinQuest;
 

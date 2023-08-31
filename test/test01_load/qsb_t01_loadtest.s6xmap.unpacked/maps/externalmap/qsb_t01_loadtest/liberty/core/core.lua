@@ -23,7 +23,6 @@ Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/IsLocalScript");
 
-Lib.Require("core/feature/Core_Logging");
 Lib.Require("core/feature/Core_Chat");
 Lib.Require("core/feature/Core_Debug");
 Lib.Require("core/feature/Core_LuaExtension");
@@ -38,12 +37,58 @@ Lib.Require("core/feature/Core_Quest");
 Lib.Register("core/Core");
 
 -- -------------------------------------------------------------------------- --
+
+--- Writes a message to the log.
+--- @param _Text string Message text
+--- @param ... any Parameter list
+--- @return string Log Logged text
+function log(_Text, ...)
+    local Text = _Text;
+    if #arg > 0 then
+        Text = string.format(Text, unpack(arg));
+    end
+    Framework.WriteToLog(Text);
+    return Text;
+end
+
+--- Prints a warning message to the screen and writes to the log.
+--- @param _Condition any
+--- @param _Text string Message text
+--- @param ... any Parameter list
+--- @return string? Warning Warning text (if any)
+function warn(_Condition, _Text, ...)
+    if not _Condition then
+        local Color = "{@color:255,0,0,255}";
+        local Text = Color .. log(_Text, unpack(arg));
+        if GUI then
+            GUI.AddNote(Text);
+        else
+            Logic.DEBUG_Addnote(Text);
+        end
+        return Text;
+    end
+end
+
+--- Asserts in case of error and writes a message to the log.
+--- @param _Condition any
+--- @param _Text string Message text
+--- @param ... any Parameter list
+--- @return string? Error Error text (if any)
+function error(_Condition, _Text, ...)
+    if not _Condition then
+        local Text = log(_Text, unpack(arg));
+        return assert(_Condition, Text);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
 -- Global
 
 function Lib.Core.Global:Initialize()
     if not self.IsInstalled then
+        g_GameExtraNo = Framework.GetGameExtraNo();
+
         -- Init base features
-        Lib.Core.Logging:Initialize();
         Lib.Core.LuaExtension:Initialize();
         Lib.Core.Report:Initialize();
         Lib.Core.Text:Initialize();
@@ -78,9 +123,11 @@ function Lib.Core.Global:Initialize()
         LoadBehaviors();
 
         -- Loading finished callback
-        if GameCallback_Lib_LoadingFinished then
-            GameCallback_Lib_LoadingFinished();
-        end
+        RequestHiResDelay(1, function()
+            if GameCallback_Lib_LoadingFinished then
+                GameCallback_Lib_LoadingFinished();
+            end
+        end);
 
         -- Cleanup (garbage collection)
         Lib.Core.Local = nil;
@@ -89,7 +136,6 @@ function Lib.Core.Global:Initialize()
 end
 
 function Lib.Core.Global:OnSaveGameLoaded()
-    Lib.Core.Logging:OnSaveGameLoaded();
     Lib.Core.LuaExtension:OnSaveGameLoaded();
     Lib.Core.Report:OnSaveGameLoaded();
     Lib.Core.Text:OnSaveGameLoaded();
@@ -120,7 +166,6 @@ end
 
 function Lib.Core.Global:InitReportListener()
     GameCallback_Lib_OnEventReceived = function(_ID, ...)
-        Lib.Core.Logging:OnReportReceived(_ID, ...);
         Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
         Lib.Core.Report:OnReportReceived(_ID, ...);
         Lib.Core.Text:OnReportReceived(_ID, ...);
@@ -176,8 +221,9 @@ end
 
 function Lib.Core.Local:Initialize()
     if not self.IsInstalled then
+        g_GameExtraNo = Framework.GetGameExtraNo();
+
         -- Init base features
-        Lib.Core.Logging:Initialize();
         Lib.Core.LuaExtension:Initialize();
         Lib.Core.Report:Initialize();
         Lib.Core.Text:Initialize();
@@ -210,9 +256,11 @@ function Lib.Core.Local:Initialize()
         self:InitLoadscreenHandler();
 
         -- Loading finished callback
-        if GameCallback_Lib_LoadingFinished then
-            GameCallback_Lib_LoadingFinished();
-        end
+        RequestHiResDelay(1, function()
+            if GameCallback_Lib_LoadingFinished then
+                GameCallback_Lib_LoadingFinished();
+            end
+        end);
 
         -- Cleanup (garbage collection)
         Lib.Core.Global = nil;
@@ -221,7 +269,6 @@ function Lib.Core.Local:Initialize()
 end
 
 function Lib.Core.Local:OnSaveGameLoaded()
-    Lib.Core.Logging:OnSaveGameLoaded();
     Lib.Core.LuaExtension:OnSaveGameLoaded();
     Lib.Core.Report:OnSaveGameLoaded();
     Lib.Core.Text:OnSaveGameLoaded();
@@ -248,7 +295,6 @@ end
 
 function Lib.Core.Local:InitReportListener()
     GameCallback_Lib_OnEventReceived = function(_ID, ...)
-        Lib.Core.Logging:OnReportReceived(_ID, ...);
         Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
         Lib.Core.Report:OnReportReceived(_ID, ...);
         Lib.Core.Text:OnReportReceived(_ID, ...);

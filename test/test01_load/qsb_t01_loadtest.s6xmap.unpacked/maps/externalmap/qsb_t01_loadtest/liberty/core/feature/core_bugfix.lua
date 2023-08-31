@@ -1,13 +1,4 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
+---@diagnostic disable: duplicate-set-field
 
 Lib.Core.Bugfix = {};
 
@@ -26,6 +17,7 @@ function Lib.Core.Bugfix:Initialize()
     if IsLocalScript() then
         self:FixInteractiveObjectClicked();
 		self:FixBigCathedralName();
+        self:FixAbilityInfoWhenHomeless();
     end
 end
 
@@ -226,5 +218,30 @@ function Lib.Core.Bugfix:FixBigCathedralName()
         "Names/B_Cathedral_Big",
         {de = "Dom", en = "Cathedral", fr = "Cathédrale"}
     );
+end
+
+-- -------------------------------------------------------------------------- --
+-- Ability info
+
+function Lib.Core.Bugfix:FixAbilityInfoWhenHomeless()
+    StartKnightVoiceForActionSpecialAbility = function(_KnightType, _NoPriority)
+        local PlayerID = GUI.GetPlayerID();
+        local StorehouseID = Logic.GetStoreHouse(PlayerID);
+        local KnightType = Logic.GetEntityType(Logic.GetKnightID(PlayerID));
+        if  _KnightType == KnightType and StorehouseID ~= 0 and ActionAbilityIsExplained == nil then
+            LocalScriptCallback_StartVoiceMessage(PlayerID, "Hint_SpecialAbilityAction", false, PlayerID, _NoPriority);
+            ActionAbilityIsExplained  = true;
+        end
+    end
+
+    StartKnightVoiceForPermanentSpecialAbility = function(_KnightType)
+        local PlayerID = GUI.GetPlayerID();
+        local StorehouseID = Logic.GetStoreHouse(PlayerID);
+        local KnightType = Logic.GetEntityType(Logic.GetKnightID(PlayerID));
+        if _KnightType == KnightType and StorehouseID ~= 0 and PermanentAbilityIsExplained == nil then
+            LocalScriptCallback_StartVoiceMessage(PlayerID, "Hint_SpecialAbilityPermanetly", false, PlayerID);
+            PermanentAbilityIsExplained  = true;
+        end
+    end
 end
 

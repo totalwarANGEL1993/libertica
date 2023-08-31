@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Core.ScriptingValue = {
     SV = {
         Game = "Vanilla",
@@ -171,6 +160,7 @@ function GetInteger(_Entity, _SV)
     assert(IsExisting(ID), "Entity does not exist.");
     return Logic.GetEntityScriptingValue(ID, _SV);
 end
+API.GetInteger = GetInteger;
 
 --- Returns the value of the index as double.
 --- @param _Entity any ID or script name
@@ -182,6 +172,7 @@ function GetFloat(_Entity, _SV)
     local Value = Logic.GetEntityScriptingValue(ID, _SV);
     return ConvertIntegerToFloat(Value);
 end
+API.GetFloat = GetFloat;
 
 --- Sets an integer value at the index.
 --- @param _Entity any ID or script name
@@ -192,6 +183,7 @@ function SetInteger(_Entity, _SV, _Value)
     assert(IsExisting(ID), "Entity does not exist.");
     Logic.SetEntityScriptingValue(ID, _SV, _Value);
 end
+API.SetInteger = SetInteger;
 
 --- Sets a double value at the index.
 --- @param _Entity any ID or script name
@@ -202,6 +194,7 @@ function SetFloat(_Entity, _SV, _Value)
     assert(IsExisting(ID), "Entity does not exist.");
     Logic.SetEntityScriptingValue(ID, _SV, ConvertFloatToInteger(_Value));
 end
+API.SetFloat = SetFloat;
 
 --- Converts the double value into integer representation.
 --- @param _Value number Integer value
@@ -209,6 +202,7 @@ end
 function ConvertIntegerToFloat(_Value)
     return Lib.Core.ScriptingValue:IntegerToFloat(_Value);
 end
+API.ConvertIntegerToFloat = ConvertIntegerToFloat;
 
 --- Converts the integer value into double representation.
 --- @param _Value number Double value
@@ -216,4 +210,5 @@ end
 function ConvertFloatToInteger(_Value)
     return Lib.Core.ScriptingValue:FloatToInteger(_Value);
 end
+API.ConvertFloatToInteger = ConvertFloatToInteger;
 

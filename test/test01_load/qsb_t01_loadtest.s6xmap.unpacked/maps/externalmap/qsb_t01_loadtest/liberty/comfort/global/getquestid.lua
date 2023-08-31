@@ -16,4 +16,5 @@ function GetQuestID(_Name)
     end
     return -1;
 end
+API.GetQuestID = GetQuestID;
 

@@ -15,4 +15,5 @@ function ToBoolean(_Input)
     end
     return false;
 end
+API.ToBoolean = ToBoolean;
 

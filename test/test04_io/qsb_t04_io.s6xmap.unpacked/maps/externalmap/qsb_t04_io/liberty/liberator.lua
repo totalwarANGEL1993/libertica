@@ -6,12 +6,12 @@ Lib = {
             -- Search in script directory
             "script/",
         },
-    
-        Version = "1.0.0",
+
+        Version = "LIB 1.0.0",
         Root = "liberty",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = Network.IsNATReady ~= nil,
-    
+
         Sources = {},
         Loaded = {},
     },
@@ -19,6 +19,8 @@ Lib = {
 
 API = {};
 QSB = {};
+
+--- @diagnostic disable: duplicate-set-field
 
 --- Loads a component at the given relative path.
 ---

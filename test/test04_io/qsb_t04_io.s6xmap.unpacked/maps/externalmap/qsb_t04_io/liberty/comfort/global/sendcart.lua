@@ -12,7 +12,7 @@ Lib.Register("comfort/global/SendCart");
 --- @param _Overtake? boolean Replace script entity
 --- @return integer ID ID of cart
 function SendCart(_Position, _PlayerID, _GoodType, _Amount, _CartOverlay, _IgnoreReservation, _Overtake)
-    assert(Lib.IsLocalEnv == false, "Can only be used in global script.");
+    assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     local OriginalID = GetID(_Position);
     if not IsExisting(OriginalID) then
         return 0;
@@ -29,4 +29,5 @@ function SendCart(_Position, _PlayerID, _GoodType, _Amount, _CartOverlay, _Ignor
     end
     return ID;
 end
+API.SendCart = SendCart;
 

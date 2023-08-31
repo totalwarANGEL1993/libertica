@@ -1,14 +1,3 @@
--- ...................../´¯¯/)
--- ...................,/¯.../
--- .................../..../
--- .............../´¯/'..'/´¯¯`·¸
--- .........../'/.../..../....../¨¯\
--- ..........('(....´...´... ¯~/'..')
--- ...........\..............'...../
--- ............\....\.........._.·´
--- .............\..............(
--- ..............\..............\
-
 Lib.Core.Save = {
     HistoryEditionQuickSave = false,
     SavingDisabled = false,
@@ -29,18 +18,21 @@ function DisableAutoSave(_Flag)
         ExecuteLocal([[Lib.Core.Save.HistoryEditionQuickSave = %s]], tostring(_Flag == true))
     end
 end
+API.DisableAutoSave = DisableAutoSave;
 
 --- Deactivates saving the game.
 --- @param _Flag boolean Saving is disabled
 function DisableSaving(_Flag)
     Lib.Core.Save:DisableSaving(_Flag);
 end
+API.DisableSaving = DisableSaving;
 
 --- Deactivates loading of savegames.
 --- @param _Flag boolean Loading is disabled
 function DisableLoading(_Flag)
     Lib.Core.Save:DisableLoading(_Flag);
 end
+API.DisableLoading = DisableLoading;
 
 -- -------------------------------------------------------------------------- --
 

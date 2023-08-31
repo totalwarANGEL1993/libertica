@@ -15,22 +15,22 @@ Lib.UITools.Speed = {
 
 function Lib.UITools.Speed:SetSpeedLimit(_Limit)
     if Framework.IsNetworkGame() then
-        debug("ModuleGuiControl: Detect network game. Aborting!");
+        log("ModuleGuiControl: Detect network game. Aborting!");
         return;
     end
     _Limit = (_Limit < 1 and 1) or math.floor(_Limit);
-    debug("ModuleGuiControl: Setting speed limit to " .._Limit);
+    log("ModuleGuiControl: Setting speed limit to " .._Limit);
     self.SpeedLimit = _Limit;
 end
 
 function Lib.UITools.Speed:ActivateSpeedLimit(_Flag)
     if Framework.IsNetworkGame() then
-        debug("ModuleGuiControl: Detect network game. Aborting!");
+        log("ModuleGuiControl: Detect network game. Aborting!");
         return;
     end
     self.UseSpeedLimit = _Flag == true;
     if _Flag and Game.GameTimeGetFactor(GUI.GetPlayerID()) > self.SpeedLimit then
-        debug("ModuleGuiControl: Speed is capped at " ..self.SpeedLimit);
+        log("ModuleGuiControl: Speed is capped at " ..self.SpeedLimit);
         Game.GameTimeSetFactor(GUI.GetPlayerID(), self.SpeedLimit);
         g_GameSpeed = 1;
     end
@@ -41,9 +41,9 @@ function Lib.UITools.Speed:InitForbidSpeedUp()
     GameCallback_GameSpeedChanged = function( _Speed )
         GameCallback_GameSpeedChanged_Orig_Preferences_ForbidSpeedUp( _Speed );
         if Lib.UITools.Speed.UseSpeedLimit == true then
-            debug("ModuleGuiControl: Checking speed limit.");
+            log("ModuleGuiControl: Checking speed limit.");
             if _Speed > Lib.UITools.Speed.SpeedLimit then
-                debug("ModuleGuiControl: Speed is capped at " ..tostring(_Speed).. ".");
+                log("ModuleGuiControl: Speed is capped at " ..tostring(_Speed).. ".");
                 Game.GameTimeSetFactor(GUI.GetPlayerID(), Lib.UITools.Speed.SpeedLimit);
                 g_GameSpeed = 1;
                 Message(Lib.UITools.Speed.Text.Message.NoSpeedUp);

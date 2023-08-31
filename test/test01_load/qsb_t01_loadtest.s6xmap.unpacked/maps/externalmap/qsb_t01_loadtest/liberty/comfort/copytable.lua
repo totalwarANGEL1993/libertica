@@ -19,4 +19,5 @@ function CopyTable(_Table1, _Table2)
     end
     return _Table2;
 end
+API.CopyTable = CopyTable;
 

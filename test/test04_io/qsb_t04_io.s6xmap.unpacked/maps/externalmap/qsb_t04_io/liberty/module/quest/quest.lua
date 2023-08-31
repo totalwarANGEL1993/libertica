@@ -1,5 +1,16 @@
 ---@diagnostic disable: missing-return-value
 
+--- Offers a more comfortable way to create quests.
+---
+--- Quests can be created as single quests or as nested quests. A nested quest
+--- is a simplified notation for quests that are dependend on oneanother.
+---
+--- #### Debug commands
+--- * `stop <QuestName>`      - Interrupts a quest
+--- * `start <QuestName>`     - Triggers a quest
+--- * `win <QuestName>`       - Ends a quest successfuly
+--- * `fail <QuestName>`      - Ends a quest in failure
+--- * `restart <QuestName>`   - Resets and triggers a quest
 Lib.Quest = {
     Name = "Quest",
 
@@ -48,6 +59,7 @@ end
 function Lib.Quest.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    elseif _ID == Report.ChatClosed then
     end
 end
 
@@ -157,9 +169,7 @@ function Lib.Quest.Global:CreateSimpleQuest(_Data)
         AutomaticQuestNameCounter = (AutomaticQuestNameCounter or 0) +1;
         _Data.Name = string.format("AutoNamed_Quest_%d", AutomaticQuestNameCounter);
     end
-    if not IsValidQuestName(_Data.Name) then
-        error("Quest '"..tostring(_Data.Name).."': invalid questname! Contains forbidden characters!");
-    end
+    error(IsValidQuestName(_Data.Name), "Quest '%s': invalid questname! Contains forbidden characters!", tostring(_Data.Name));
 
     -- Fill quest data
     local QuestData = {
@@ -183,9 +193,8 @@ function Lib.Quest.Global:CreateSimpleQuest(_Data)
 
     -- Validate data
     if not self:QuestValidateQuestData(QuestData) then
-        error("ModuleQuest: Failed to vaidate quest data. Table has been copied to log.");
         DumpTable(QuestData, "Quest");
-        return;
+        error(false, "ModuleQuest: Failed to vaidate quest data. Table has been copied to log.");
     end
 
     -- Behaviour
@@ -371,7 +380,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Triggers[i], Triggers.Custom2, 4);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Trigger
                 triggered = triggered and self:IsTriggerActive(self.Triggers[i]);
@@ -405,7 +414,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Objectives[i], Objective.Custom2, 1);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Goal
                 local completed = self:IsObjectiveCompleted(self.Objectives[i]);
@@ -451,7 +460,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Rewards[i], Reward.Custom, 3);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
                 self:AddReward(self.Rewards[i]);
@@ -461,7 +470,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Reprisals[i], Reprisal.Custom, 3);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
                 self:AddReprisal(self.Reprisals[i]);
@@ -521,6 +530,53 @@ function Lib.Quest.Global:SerializeBehavior(_Data, _CustomType, _Typ)
 end
 
 -- -------------------------------------------------------------------------- --
+-- Chat Commands
+
+function Lib.Quest.Global:FindQuestNames(_Pattern, _ExactName)
+    local FoundQuests = FindQuestsByName(_Pattern, _ExactName);
+    if #FoundQuests == 0 then
+        return {};
+    end
+    local NamesOfFoundQuests = {};
+    for i= 1, #FoundQuests, 1 do
+        table.insert(NamesOfFoundQuests, FoundQuests[i].Identifier);
+    end
+    return NamesOfFoundQuests;
+end
+
+function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
+    if _IsDebug then
+        local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
+        for i= 1, #Commands, 1 do
+            if Commands[1] == "fail"
+            or Commands[1] == "start"
+            or Commands[1] == "restart"
+            or Commands[1] == "stop"
+            or Commands[1] == "win" then
+                local FoundQuests = self:FindQuestNames(Commands[2], true);
+                error(#FoundQuests == 1, "Unable to find quest containing '" ..Commands[2].. "'");
+                if Commands[1] == "fail" then
+                    FailQuest(FoundQuests[1]);
+                    log("fail quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "restart" then
+                    RestartQuest(FoundQuests[1]);
+                    log("restart quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "start" then
+                    StartQuest(FoundQuests[1]);
+                    log("trigger quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "stop" then
+                    StopQuest(FoundQuests[1]);
+                    log("interrupt quest '" ..FoundQuests[1].. "'");
+                elseif Commands[1] == "win" then
+                    WinQuest(FoundQuests[1]);
+                    log("win quest '" ..FoundQuests[1].. "'");
+                end
+            end
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
@@ -540,7 +596,19 @@ end
 function Lib.Quest.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    elseif _ID == Report.ChatClosed then
+        self:ProcessChatInput(arg[1], arg[2], arg[3]);
     end
+end
+
+function Lib.Quest.Local:ProcessChatInput(_Text, _PlayerID, _IsDebug)
+    if not _IsDebug or GUI.GetPlayerID() ~= _PlayerID then
+        return;
+    end
+    ExecuteGlobal(
+        [[Lib.Quest.Global:ProcessChatInput("%s", %d, %s)]],
+        _Text, _PlayerID, tostring(_IsDebug == true)
+    );
 end
 
 -- -------------------------------------------------------------------------- --

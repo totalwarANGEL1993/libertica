@@ -22,4 +22,5 @@ function GetDistance(_Pos1, _Pos2, _NoSqrt)
     end
     return math.sqrt((xDistance^2) + (yDistance^2));
 end
+API.GetDistance = GetDistance;
 
