@@ -97,7 +97,7 @@ function Lib.Technology.Shared:OverwriteLogic()
         if _Technology and Lib.Technology.Shared:IsCustomTechnology(_Technology) then
             local Index = CONST_TECHNOLOGY_TO_INDEX[_Technology];
             if self.CustomTechnologies[Index] then
-                return self.CustomTechnologies[Index][3][_PlayerID] or TechnologyStates.Locked;
+                return self.CustomTechnologies[Index][4][_PlayerID] or TechnologyStates.Locked;
             end
         end
         return Lib.Technology.Shared.Orig_Logic_TechnologyGetState(_PlayerID, _Technology);
@@ -110,10 +110,10 @@ function Lib.Technology.Shared:OverwriteLogic()
             if _Technology and Lib.Technology.Shared:IsCustomTechnology(_Technology) then
                 local Index = CONST_TECHNOLOGY_TO_INDEX[_Technology];
                 if self.CustomTechnologies[Index] then
-                    self.CustomTechnologies[Index][3][_PlayerID] = _State;
+                    self.CustomTechnologies[Index][4][_PlayerID] = _State;
                     RequestHiResDelay(
                         1, ExecuteLocal,
-                        [[Lib.Technology.Shared.CustomTechnologies[%d][3][%d] = %d]],
+                        [[Lib.Technology.Shared.CustomTechnologies[%d][4][%d] = %d]],
                         Index, _PlayerID, _State
                     );
                     return;

@@ -121,6 +121,8 @@ end
 API.InteractiveObjectUnsetQuestName = InteractiveObjectDeleteCustomName;
 
 --- Allows or forbids to refill iron mines.
+--- 
+--- #### Requires Addon!
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateIronMines(_PlayerID, _Allowed)
@@ -129,7 +131,27 @@ function AllowActivateIronMines(_PlayerID, _Allowed)
 end
 API.AllowActivateIronMines = AllowActivateIronMines;
 
+--- Sets the required title to refill iron mines.
+--- 
+--- #### Requires Addon!
+--- @param _Title integer  Knight title
+function RequireTitleToRefilIronMines(_Title)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_RefillIronMine)
+        CreateTechnologyKnightTitleTable()
+    ]], _Title);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_RefillIronMine);
+    CreateTechnologyKnightTitleTable()
+    for i= 1, 8 do
+        Logic.TechnologySetState(i, Technologies.R_RefillIronMine, 0);
+    end
+end
+API.RequireTitleToRefilIronMines = RequireTitleToRefilIronMines;
+
 --- Allows or forbids to refill stone mines.
+--- 
+--- #### Requires Addon!
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateStoneMines(_PlayerID, _Allowed)
@@ -138,7 +160,27 @@ function AllowActivateStoneMines(_PlayerID, _Allowed)
 end
 API.AllowActivateStoneMines = AllowActivateStoneMines;
 
+--- Sets the required title to refill stone quarries.
+--- 
+--- #### Requires Addon!
+--- @param _Title integer  Knight title
+function RequireTitleToRefilStoneMines(_Title)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_RefillStoneMine)
+        CreateTechnologyKnightTitleTable()
+    ]], _Title);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_RefillStoneMine);
+    CreateTechnologyKnightTitleTable()
+    for i= 1, 8 do
+        Logic.TechnologySetState(i, Technologies.R_RefillStoneMine, 0);
+    end
+end
+API.RequireTitleToRefilStoneMines = RequireTitleToRefilStoneMines;
+
 --- Allows or forbids to refill cisterns.
+--- 
+--- #### Requires Addon!
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateCisterns(_PlayerID, _Allowed)
@@ -147,7 +189,27 @@ function AllowActivateCisterns(_PlayerID, _Allowed)
 end
 API.AllowActivateCisterns = AllowActivateCisterns;
 
+--- Sets the required title to refill cisterns.
+--- 
+--- #### Requires Addon!
+--- @param _Title integer  Knight title
+function RequireTitleToRefilCisterns(_Title)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_RefillCisternMine)
+        CreateTechnologyKnightTitleTable()
+    ]], _Title);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_RefillCisternMine);
+    CreateTechnologyKnightTitleTable()
+    for i= 1, 8 do
+        Logic.TechnologySetState(i, Technologies.R_RefillCisternMine, 0);
+    end
+end
+API.RequireTitleToRefilCisterns = RequireTitleToRefilCisterns;
+
 --- Allows or forbids to build tradeposts.
+--- 
+--- #### Requires Addon!
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateTradepost(_PlayerID, _Allowed)
@@ -155,6 +217,24 @@ function AllowActivateTradepost(_PlayerID, _Allowed)
     Logic.TechnologySetState(_PlayerID, Technologies.R_Tradepost, (_Allowed and 3 or 1));
 end
 API.AllowActivateTradepost = AllowActivateTradepost;
+
+--- Sets the required title to build tradeposts.
+--- 
+--- #### Requires Addon!
+--- @param _Title integer  Knight title
+function RequireTitleToBuildTradeposts(_Title)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    ExecuteLocal([[
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_Tradepost)
+        CreateTechnologyKnightTitleTable()
+    ]], _Title);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_Tradepost);
+    CreateTechnologyKnightTitleTable();
+    for i= 1, 8 do
+        Logic.TechnologySetState(i, Technologies.R_Tradepost, 0);
+    end
+end
+API.RequireTitleToBuildTradeposts = RequireTitleToBuildTradeposts;
 
 --- Activates an interactive object.
 --- @param _ScriptName string Script name of entity

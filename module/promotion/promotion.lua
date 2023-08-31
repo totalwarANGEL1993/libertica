@@ -1,6 +1,7 @@
 --- @diagnostic disable: cast-local-type
 --- @diagnostic disable: missing-return-value
 
+--- Allows to change the promotion requirements.
 Lib.Promotion = {
     Name = "Promotion",
 
@@ -14,7 +15,6 @@ CONST_CONSUMED_GOODS_COUNTER = {};
 
 Lib.Require("core/Core");
 Lib.Require("module/uitools/UITools");
-Lib.Require("module/iomine/IOMine");
 Lib.Require("module/promotion/Promotion_API");
 Lib.Require("module/promotion/Promotion_Config");
 Lib.Require("module/promotion/Promotion_Helper");

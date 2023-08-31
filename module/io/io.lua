@@ -606,6 +606,31 @@ function Lib.IO.Local:OverrideGameFunctions()
             DisabledKey = "InteractiveObjectAvailableReward";
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             DisabledKey = "UpgradeOutpost";
+            if g_GameExtraNo > 0 then
+                if string.find(EntityTypeName, "R_StoneMine") then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillStoneMine) ~= TechnologyStates.Researched
+                    or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_RefillStoneMine) or DisabledKey;
+                    end
+                end
+                if string.find(EntityTypeName, "R_IronMine") then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillIronMine) ~= TechnologyStates.Researched
+                    or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_RefillIronMine) or DisabledKey;
+                    end
+                end
+                if (string.find(EntityTypeName, "B_Cistern") or string.find(EntityTypeName, "B_Well")) then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillCistern) ~= TechnologyStates.Researched
+                    or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_RefillCistern) or DisabledKey;
+                    end
+                end
+                if string.find(EntityTypeName, "I_X_TradePostConstructionSite") then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_Tradepost) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_Tradepost) or DisabledKey;
+                    end
+                end
+            end
         end
         local Title = "UI_ObjectNames/" ..Key;
         local Text = "UI_ObjectDescription/" ..Key;
