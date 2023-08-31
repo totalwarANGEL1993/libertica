@@ -1,4 +1,4 @@
---- Defines easy to use treasure chests
+--- Offers easy to use treasure chests
 ---
 --- #### Debug commands
 --- * `goldchest <ScriptName>`   - Creates a random gold chest
@@ -9,33 +9,6 @@ Lib.IOChest = {
 
     Global = {},
     Local  = {},
-
-    Text = {
-        Chest = {
-            Title = {
-                de = "Schatztruhe",
-                en = "Treasure Chest",
-                fr = "Coffre au trésor",
-            },
-            Text = {
-                de = "Diese Truhe enthält einen geheimen Schatz. Öffnet sie, um den Schatz zu bergen.",
-                en = "This chest contains a secred treasure. Open it to salvage the treasure.",
-                fr = "Ce coffre contient un trésor secret. Ouvrez-le pour récupérer le trésor.",
-            },
-        },
-        Treasure = {
-            Title = {
-                de = "Versteckter Schatz",
-                en = "Hidden treasure",
-                fr = "Trésor caché",
-            },
-            Text = {
-                de = "Ihr habt einen geheimen Schatz entdeckt. Beeilt Euch und beansprucht ihn für Euch!",
-                en = "You have discovered a secred treasure. Be quick to claim it before it is to late!",
-                fr = "Vous avez découvert un trésor secret. Dépêchez-vous de le revendiquer!",
-            },
-        }
-    },
 };
 
 Lib.Require("core/Core");
@@ -106,7 +79,7 @@ function Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, _DirectP
     assert(_Min <= _Max, "CreateRandomChest: min amount must be smaller or equal than max amount!");
 
     -- Debug Informationen schreiben
-    debug(string.format(
+    log(
         "Creating chest (%s, %s, %d, %d, %s, %s)",
         _Name,
         Logic.GetGoodTypeName(_Good),
@@ -114,7 +87,7 @@ function Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, _DirectP
         _Max,
         tostring(_DirectPay == true),
         tostring(_NoModelChange == true)
-    ))
+    );
 
     -- Model setzen
     if not _NoModelChange then

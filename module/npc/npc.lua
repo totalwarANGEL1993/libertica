@@ -314,13 +314,9 @@ function Lib.NPC.Global:OverrideQuestFunctions()
             return self:IsObjectiveCompleted_Orig_NPC(objective);
         else
             if data[1] == -65565 then
-                if not IsExisting(data[3]) then
-                    error(data[3].. " is dead! :(");
-                    objective.Completed = false;
-                else
-                    if NpcTalkedTo(data[4].NpcInstance, data[2], self.ReceivingPlayer) then
-                        objective.Completed = true;
-                    end
+                error(IsExisting(data[3]), data[3].. " is dead! :(");
+                if NpcTalkedTo(data[4].NpcInstance, data[2], self.ReceivingPlayer) then
+                    objective.Completed = true;
                 end
             else
                 return self:IsObjectiveCompleted_Orig_NPC(objective);

@@ -37,10 +37,7 @@ function SetupQuest(_Data)
     if GUI then
         return;
     end
-    if _Data.Name and Quests[GetQuestID(_Data.Name)] then
-        error("SetupQuest: A quest named " ..tostring(_Data.Name).. " already exists!");
-        return;
-    end
+    error(not _Data.Name or not Quests[GetQuestID(_Data.Name)], "SetupQuest: A quest named '%s' already exists!", tostring(_Data.Name));
     return Lib.Quest.Global:CreateSimpleQuest(_Data);
 end
 API.CreateQuest = SetupQuest;
@@ -114,10 +111,7 @@ function SetupNestedQuest(_Data)
     if GUI or type(_Data) ~= "table" then
         return;
     end
-    if _Data.Segments == nil or #_Data.Segments == 0 then
-        error(string.format("SetupNestedQuest: Segmented quest '%s' is missing it's segments!", tostring(_Data.Name)));
-        return;
-    end
+    error(_Data.Segments ~= nil and #_Data.Segments ~= 0, "SetupNestedQuest: Segmented quest '%s' is missing it's segments!", tostring(_Data.Name));
     return Lib.Quest.Global:CreateNestedQuest(_Data);
 end
 API.CreateNestedQuest = SetupNestedQuest;

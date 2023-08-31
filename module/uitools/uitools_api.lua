@@ -32,7 +32,7 @@ Lib.Register("module/uitools/UITools_API");
 --- @param _Size? number Optional icon size
 --- @param _Name? string Optional icon file
 function ChangeIcon(_WidgetID, _Coordinates, _Size, _Name)
-    assert(IsLocalScript(), "Can only be done in local script!");
+    error(IsLocalScript(), "Can only be done in local script!");
     _Coordinates = _Coordinates or {10, 14};
     Lib.UITools.Widget:SetIcon(_WidgetID, _Coordinates, _Size, _Name);
 end
@@ -43,7 +43,7 @@ API.SetIcon = ChangeIcon;
 --- @param _Text any Text or localized table
 --- @param _DisabledText any Text or localized table
 function SetTooltipNormal(_Title, _Text, _DisabledText)
-    assert(IsLocalScript(), "Can only be done in local script!");
+    error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipNormal(_Title, _Text, _DisabledText);
 end
 API.SetTooltipNormal = SetTooltipNormal;
@@ -55,7 +55,7 @@ API.SetTooltipNormal = SetTooltipNormal;
 --- @param _Costs table Table with costs
 --- @param _InSettlement boolean Check all sources in settlement
 function SetTooltipCosts(_Title, _Text, _DisabledText, _Costs, _InSettlement)
-    assert(IsLocalScript(), "Can only be done in local script!");
+    error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipCosts(_Title,_Text,_DisabledText,_Costs,_InSettlement);
 end
 API.SetTooltipCosts = SetTooltipCosts;
@@ -297,7 +297,7 @@ API.SetPlayerName = SetPlayerName;
 --- @param _Logo? number ID of logo
 --- @param _Pattern? number ID of pattern
 function SetPlayerColor(_PlayerID, _Color, _Logo, _Pattern)
-    assert(not IsLocalScript(), "Player color must be set from logic!");
+    error(not IsLocalScript(), "Player color must be set from logic!");
     g_ColorIndex["ExtraColor1"] = g_ColorIndex["ExtraColor1"] or 16;
     g_ColorIndex["ExtraColor2"] = g_ColorIndex["ExtraColor2"] or 17;
 
@@ -327,7 +327,7 @@ API.SetPlayerColor = SetPlayerColor;
 --- @param _PlayerID number  ID of player
 --- @param _Portrait? string Name of model
 function SetPlayerPortrait(_PlayerID, _Portrait)
-    assert(_PlayerID < 1 or _PlayerID > 8, "Invalid player ID!");
+    error(_PlayerID < 1 or _PlayerID > 8, "Invalid player ID!");
     if not IsLocalScript then
         local Portrait = (_Portrait ~= nil and "'" .._Portrait.. "'") or "nil";
         ExecuteLocal("SetPlayerPortrait(%d, %s)", _PlayerID, Portrait)

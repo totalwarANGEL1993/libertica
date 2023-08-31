@@ -169,9 +169,7 @@ function Lib.Quest.Global:CreateSimpleQuest(_Data)
         AutomaticQuestNameCounter = (AutomaticQuestNameCounter or 0) +1;
         _Data.Name = string.format("AutoNamed_Quest_%d", AutomaticQuestNameCounter);
     end
-    if not IsValidQuestName(_Data.Name) then
-        error("Quest '"..tostring(_Data.Name).."': invalid questname! Contains forbidden characters!");
-    end
+    error(IsValidQuestName(_Data.Name), "Quest '%s': invalid questname! Contains forbidden characters!", tostring(_Data.Name));
 
     -- Fill quest data
     local QuestData = {
@@ -195,9 +193,8 @@ function Lib.Quest.Global:CreateSimpleQuest(_Data)
 
     -- Validate data
     if not self:QuestValidateQuestData(QuestData) then
-        error("ModuleQuest: Failed to vaidate quest data. Table has been copied to log.");
         DumpTable(QuestData, "Quest");
-        return;
+        error(false, "ModuleQuest: Failed to vaidate quest data. Table has been copied to log.");
     end
 
     -- Behaviour
@@ -383,7 +380,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Triggers[i], Triggers.Custom2, 4);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Trigger
                 triggered = triggered and self:IsTriggerActive(self.Triggers[i]);
@@ -417,7 +414,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Objectives[i], Objective.Custom2, 1);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Goal
                 local completed = self:IsObjectiveCompleted(self.Objectives[i]);
@@ -463,7 +460,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Rewards[i], Reward.Custom, 3);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
                 self:AddReward(self.Rewards[i]);
@@ -473,7 +470,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Reprisals[i], Reprisal.Custom, 3);
                 if Text then
-                    debug("Quest '" ..self.Identifier.. "' " ..Text, true);
+                    log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
                 self:AddReprisal(self.Reprisals[i]);
@@ -557,25 +554,22 @@ function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
             or Commands[1] == "stop"
             or Commands[1] == "win" then
                 local FoundQuests = self:FindQuestNames(Commands[2], true);
-                if #FoundQuests ~= 1 then
-                    error("Unable to find quest containing '" ..Commands[2].. "'");
-                    return;
-                end
+                error(#FoundQuests == 1, "Unable to find quest containing '" ..Commands[2].. "'");
                 if Commands[1] == "fail" then
                     FailQuest(FoundQuests[1]);
-                    info("fail quest '" ..FoundQuests[1].. "'");
+                    log("fail quest '" ..FoundQuests[1].. "'");
                 elseif Commands[1] == "restart" then
                     RestartQuest(FoundQuests[1]);
-                    info("restart quest '" ..FoundQuests[1].. "'");
+                    log("restart quest '" ..FoundQuests[1].. "'");
                 elseif Commands[1] == "start" then
                     StartQuest(FoundQuests[1]);
-                    info("trigger quest '" ..FoundQuests[1].. "'");
+                    log("trigger quest '" ..FoundQuests[1].. "'");
                 elseif Commands[1] == "stop" then
                     StopQuest(FoundQuests[1]);
-                    info("interrupt quest '" ..FoundQuests[1].. "'");
+                    log("interrupt quest '" ..FoundQuests[1].. "'");
                 elseif Commands[1] == "win" then
                     WinQuest(FoundQuests[1]);
-                    info("win quest '" ..FoundQuests[1].. "'");
+                    log("win quest '" ..FoundQuests[1].. "'");
                 end
             end
         end

@@ -290,32 +290,23 @@ function Lib.IO.Global:ProcessChatInput(_Text)
         if Commands[1] == "enableobject" then
             local State = (Commands[3] and tonumber(Commands[3])) or nil;
             local PlayerID = (Commands[4] and tonumber(Commands[4])) or nil;
-            if not IsExisting(Commands[2]) then
-                error("object " ..Commands[2].. " does not exist!");
-                return;
-            end
+            error(IsExisting(Commands[2]), "object " ..Commands[2].. " does not exist!");
             ---@diagnostic disable-next-line: param-type-mismatch
             InteractiveObjectActivate(Commands[2], State, PlayerID);
-            info("activated object " ..Commands[2].. ".");
+            log("activated object " ..Commands[2].. ".");
         elseif Commands[1] == "disableobject" then
             local PlayerID = (Commands[3] and tonumber(Commands[3])) or nil;
-            if not IsExisting(Commands[2]) then
-                error("object " ..Commands[2].. " does not exist!");
-                return;
-            end
+            error(IsExisting(Commands[2]), "object " ..Commands[2].. " does not exist!");
             InteractiveObjectDeactivate(Commands[2], PlayerID);
-            info("deactivated object " ..Commands[2].. ".");
+            log("deactivated object " ..Commands[2].. ".");
         elseif Commands[1] == "initobject" then
-            if not IsExisting(Commands[2]) then
-                error("object " ..Commands[2].. " does not exist!");
-                return;
-            end
+            error(IsExisting(Commands[2]), "object " ..Commands[2].. " does not exist!");
             API.SetupObject({
                 Name     = Commands[2],
                 Waittime = 0,
                 State    = 0
             });
-            info("quick initalization of object " ..Commands[2].. ".");
+            log("quick initalization of object " ..Commands[2].. ".");
         end
     end
 end
@@ -330,20 +321,17 @@ function Lib.IO.Global:StartObjectDestructionController()
             if not Object then
                 return;
             end
-            info("slave " ..SlaveName.. " of master " ..MasterName.. " has been deleted!");
-            info("try to create new slave...");
+            log("slave " ..SlaveName.. " of master " ..MasterName.. " has been deleted!");
+            log("try to create new slave...");
             CONST_IO_SLAVE_TO_MASTER[SlaveName] = nil;
             ExecuteLocal([[CONST_IO_SLAVE_TO_MASTER["%s"] = nil]], SlaveName);
             local SlaveID = Lib.IO.Global:CreateSlaveObject(Object);
-            if not IsExisting(SlaveID) then
-                error("failed to create slave!");
-                return;
-            end
+            error(IsExisting(SlaveID), "failed to create slave!");
             Lib.IO.Global:SetupObject(Object);
             if Object.IsUsed == true or (CONST_IO_SLAVE_STATE[SlaveName] and CONST_IO_SLAVE_STATE[SlaveName] == 0) then
                 InteractiveObjectDeactivate(Object.Slave);
             end
-            info("new slave created for master " ..MasterName.. ".");
+            log("new slave created for master " ..MasterName.. ".");
         end
     end);
 end
