@@ -120,58 +120,39 @@ function InteractiveObjectDeleteCustomName(_Key)
 end
 API.InteractiveObjectUnsetQuestName = InteractiveObjectDeleteCustomName;
 
---- Allows or forbids to activate all types of objects.
---- @param _PlayerID integer ID of player
---- @param _Allowed boolean  Activation is allowed
-function AllowActivateObjects(_PlayerID, _Allowed)
-    assert(not IsLocalScript(), "Can not be used in local script!");
-    ExecuteLocal([[
-        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Regular, %s)
-    ]], _PlayerID, tostring(_Allowed == true));
-end
-API.AllowActivateObjects = AllowActivateObjects;
-
---- Allows or forbids to activate iron mines.
+--- Allows or forbids to refill iron mines.
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateIronMines(_PlayerID, _Allowed)
     assert(not IsLocalScript(), "Can not be used in local script!");
-    ExecuteLocal([[
-        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Mine, %s)
-    ]], _PlayerID, tostring(_Allowed == true));
+    Logic.TechnologySetState(_PlayerID, Technologies.R_RefillIronMine, (_Allowed and 3 or 1));
 end
 API.AllowActivateIronMines = AllowActivateIronMines;
 
---- Allows or forbids to activate stone mines.
+--- Allows or forbids to refill stone mines.
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateStoneMines(_PlayerID, _Allowed)
     assert(not IsLocalScript(), "Can not be used in local script!");
-    ExecuteLocal([[
-        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Quarry, %s)
-    ]], _PlayerID, tostring(_Allowed == true));
+    Logic.TechnologySetState(_PlayerID, Technologies.R_RefillStoneMine, (_Allowed and 3 or 1));
 end
 API.AllowActivateStoneMines = AllowActivateStoneMines;
 
---- Allows or forbids to activate cisterns.
+--- Allows or forbids to refill cisterns.
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateCisterns(_PlayerID, _Allowed)
     assert(not IsLocalScript(), "Can not be used in local script!");
-    ExecuteLocal([[
-        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Cistern, %s)
-    ]], _PlayerID, tostring(_Allowed == true));
+    Logic.TechnologySetState(_PlayerID, Technologies.R_RefillCistern, (_Allowed and 3 or 1));
 end
 API.AllowActivateCisterns = AllowActivateCisterns;
 
---- Allows or forbids to activate tradeposts.
+--- Allows or forbids to build tradeposts.
 --- @param _PlayerID integer ID of player
 --- @param _Allowed boolean  Activation is allowed
 function AllowActivateTradepost(_PlayerID, _Allowed)
     assert(not IsLocalScript(), "Can not be used in local script!");
-    ExecuteLocal([[
-        Lib.IO.Local:AllowObjectActivation(%d, ObjectType.Tradepost, %s)
-    ]], _PlayerID, tostring(_Allowed == true));
+    Logic.TechnologySetState(_PlayerID, Technologies.R_Tradepost, (_Allowed and 3 or 1));
 end
 API.AllowActivateTradepost = AllowActivateTradepost;
 

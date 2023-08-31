@@ -6,6 +6,7 @@ Lib.Promotion = {
 
     Global = {},
     Local = {},
+    Shared = {},
 };
 
 CONST_REQUIREMENT_TOOLTIP_TYPE = {};
@@ -13,6 +14,7 @@ CONST_CONSUMED_GOODS_COUNTER = {};
 
 Lib.Require("core/Core");
 Lib.Require("module/uitools/UITools");
+Lib.Require("module/iomine/IOMine");
 Lib.Require("module/promotion/Promotion_API");
 Lib.Require("module/promotion/Promotion_Config");
 Lib.Require("module/promotion/Promotion_Helper");
@@ -30,6 +32,8 @@ function Lib.Promotion.Global:Initialize()
 
         self:OverrideKnightTitleChanged();
         self:OverwriteConsumedGoods();
+
+        Lib.Promotion.Shared:UpdateInvisibleTechnologies();
 
         -- Garbage collection
         Lib.Promotion.Local = nil;
@@ -96,6 +100,8 @@ function Lib.Promotion.Local:Initialize()
         self:OverwriteTooltips();
         self:InitTexturePositions();
         self:OverwriteUpdateRequirements();
+
+        Lib.Promotion.Shared:UpdateInvisibleTechnologies();
 
         -- Garbage collection
         Lib.Promotion.Global = nil;
@@ -513,7 +519,7 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
     if _key == "Consume" or _key == "Goods" or _key == "DecoratedBuildings" then
         local GoodType     = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
         local GoodTypeName = Logic.GetGoodTypeName(GoodType);
-        local GoodName     = XGUIEng.GetStringTableText("UI_ObjectNames/" .. GoodTypeName);
+        local GoodName     = GetStringText("UI_ObjectNames/" .. GoodTypeName);
 
         if GoodName == nil then
             GoodName = "Goods." .. GoodTypeName;
@@ -535,7 +541,7 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
     elseif _key == "Entities" then
         local EntityType     = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
         local EntityTypeName = Logic.GetEntityTypeName(EntityType);
-        local EntityName = XGUIEng.GetStringTableText("Names/" .. EntityTypeName);
+        local EntityName = GetStringText("Names/" .. EntityTypeName);
 
         if EntityName == nil then
             EntityName = "Entities." .. EntityTypeName;
@@ -565,6 +571,38 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
         Text  = Lib.Promotion.Local.Description[_key].Text;
     end
     SetTooltipNormal(Localize(Title), Localize(Text), nil);
+end
+
+-- -------------------------------------------------------------------------- --
+-- Shared
+
+function Lib.Promotion.Shared:UpdateInvisibleTechnologies()
+    if not IsLocalScript() then
+        return;
+    end
+    if TechnologiesNotShownForKnightTitle == nil then
+        TechnologiesNotShownForKnightTitle = {};
+        TechnologiesNotShownForKnightTitle[Technologies.R_Nutrition] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Clothes] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Hygiene] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Entertainment] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Wealth] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Prosperity] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Military] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_Column] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_Pavilion] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_StatueDario] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_StatueFamily] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_StatueProduction] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_StatueSettler] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_Victory] = true;
+    end
+
+    -- If io module is used this pseudo technology exists
+    if g_GameExtraNo > 0 and Technologies.R_CallGeologist then
+        TechnologiesNotShownForKnightTitle[Technologies.R_CallGeologist] = true;
+    end
 end
 
 -- -------------------------------------------------------------------------- --

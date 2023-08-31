@@ -19,6 +19,8 @@ Lib.Require("module/io/IO");
 Lib.Require("module/iochest/IOChest");
 Lib.Require("module/iomine/IOMine");
 Lib.Require("module/uibuilding/UIBuilding");
+Lib.Require("module/technology/Technology");
+Lib.Require("module/promotion/Promotion");
 
 -- ========================================================================== --
 
