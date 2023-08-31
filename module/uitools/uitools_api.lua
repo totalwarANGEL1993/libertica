@@ -41,7 +41,7 @@ API.SetIcon = ChangeIcon;
 --- Changes the description of a button or icon.
 --- @param _Title any Title text or localized table
 --- @param _Text any Text or localized table
---- @param _DisabledText any Text or localized table
+--- @param _DisabledText any? Text or localized table
 function SetTooltipNormal(_Title, _Text, _DisabledText)
     error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipNormal(_Title, _Text, _DisabledText);
@@ -51,9 +51,9 @@ API.SetTooltipNormal = SetTooltipNormal;
 --- Changes the description of a button or icon with additional costs.
 --- @param _Title any Title text or localized table
 --- @param _Text any Text or localized table
---- @param _DisabledText any Text or localized table
---- @param _Costs table Table with costs
---- @param _InSettlement boolean Check all sources in settlement
+--- @param _DisabledText any? Text or localized table
+--- @param _Costs table? Table with costs
+--- @param _InSettlement boolean? Check all sources in settlement
 function SetTooltipCosts(_Title, _Text, _DisabledText, _Costs, _InSettlement)
     error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipCosts(_Title,_Text,_DisabledText,_Costs,_InSettlement);

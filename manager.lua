@@ -4,6 +4,7 @@ LibWriter = {
         "module/quest/Quest",
         "module/uitools/UITools",
         "module/uieffects/UIEffects",
+        "module/uibuilding/UIBuilding",
         "module/promotion/Promotion",
         "module/npc/NPC",
         "module/io/IO",

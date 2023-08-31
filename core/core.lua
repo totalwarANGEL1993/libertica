@@ -52,7 +52,7 @@ function log(_Text, ...)
 end
 
 --- Prints a warning message to the screen and writes to the log.
---- @param _Condition any
+--- @param _Condition boolean Success condition
 --- @param _Text string Message text
 --- @param ... any Parameter list
 --- @return string? Warning Warning text (if any)
@@ -70,10 +70,10 @@ function warn(_Condition, _Text, ...)
 end
 
 --- Asserts in case of error and writes a message to the log.
---- @param _Condition any
+--- @param _Condition boolean Success condition
 --- @param _Text string Message text
 --- @param ... any Parameter list
---- @return string? Error Error text (if any)
+--- @return ...? Return values
 function error(_Condition, _Text, ...)
     if not _Condition then
         local Text = log(_Text, unpack(arg));
