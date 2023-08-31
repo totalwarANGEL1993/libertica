@@ -7,6 +7,8 @@ LibWriter = {
         "module/promotion/Promotion",
         "module/npc/NPC",
         "module/io/IO",
+        "module/iochest/IOChest",
+        "module/iomine/IOMine",
     },
     Behaviors = "",
     Compile = false,
