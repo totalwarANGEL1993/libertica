@@ -1,6 +1,10 @@
---- 
-Lib.Trade = {
-    Name = "Trade",
+--- Allows to create warehouses.
+---
+--- Warehouses are modified tradeposts where the player can buy goods without
+--- an AI player involved. But goods can not be sold to the warehouse. Payment
+--- can be set to any type of resource.
+Lib.Warehouse = {
+    Name = "Warehouse",
     CinematicEvents = {},
 
     Global = {
@@ -24,20 +28,12 @@ Lib.Trade = {
     },
 
     Text = {
-        NoOffer = {
-            Title = {de = "Keine Angebote", en = "No Offers",},
-        },
-        BuyGood = {
-            Text = {de = "%d %s kaufen%s", en = "Purchase %d %s%s",},
-        },
-        BuyEntertainer = {
-            Text = {de = "%s anheuern", en = "Hire %s",},
-        },
-        BuyUnit = {
-            Text = {de = "%s anheuern%s", en = "Hire %s%s",},
-        },
-        BuyWarMachine = {
-            Text = {de = "%s kaufen%s", en = "Purchase %s%s",},
+        OfferTitle = {
+            {de = "Keine Angebote", en = "No Offers",},
+            {de = "%d %s kaufen%s", en = "Purchase %d %s%s",},
+            {de = "%s anheuern", en = "Hire %s",},
+            {de = "%s anheuern%s", en = "Hire %s%s",},
+            {de = "%s kaufen%s", en = "Purchase %s%s",},
         },
     }
 }
@@ -50,14 +46,14 @@ Lib.Require("core/Core");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/io/IO");
 Lib.Require("module/uibuilding/UIBuilding");
-Lib.Require("module/trade/Trade_API");
-Lib.Register("module/trade/Trade");
+Lib.Require("module/warehouse/Warehouse_API");
+Lib.Register("module/warehouse/Warehouse");
 
 -- -------------------------------------------------------------------------- --
 -- Global
 
 -- Global initalizer method
-function Lib.Trade.Global:Initialize()
+function Lib.Warehouse.Global:Initialize()
     if not self.IsInstalled then
         --- The player clicked an offer.
         ---
@@ -80,18 +76,18 @@ function Lib.Trade.Global:Initialize()
             self.Inflation.Players[i] = {};
         end
         self.Warehouses.Job = RequestJob(function()
-            Lib.Trade.Global:ControlWarehouse();
+            Lib.Warehouse.Global:ControlWarehouse();
         end);
     end
     self.IsInstalled = true;
 end
 
 -- Global load game
-function Lib.Trade.Global:OnSaveGameLoaded()
+function Lib.Warehouse.Global:OnSaveGameLoaded()
 end
 
 -- Global report listener
-function Lib.Trade.Global:OnReportReceived(_ID, ...)
+function Lib.Warehouse.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.WarehouseOfferClicked then
@@ -100,14 +96,21 @@ function Lib.Trade.Global:OnReportReceived(_ID, ...)
     end
 end
 
-function Lib.Trade.Global:CreateWarehouse(_Data)
+function Lib.Warehouse.Global:CreateWarehouse(_Data)
     local Warehouse = {
         ScriptName      = _Data.ScriptName,
         Offers          = {};
     }
     table.insert(self.Warehouses, Warehouse);
 
-    for i= 1, 6 do
+    if _Data.Costs and _Data.Costs[1] then
+        Logic.InteractiveObjectAddCosts(GetID(_Data.ScriptName), _Data.Costs[1], _Data.Costs[2]);
+    end
+    if _Data.Costs and _Data.Costs[3] then
+        Logic.InteractiveObjectAddCosts(GetID(_Data.ScriptName), _Data.Costs[3], _Data.Costs[4]);
+    end
+
+    for i= 1, #_Data.Offers do
         if _Data.Offers[i] then
             self:CreateOffer(
                 _Data.ScriptName,
@@ -120,10 +123,10 @@ function Lib.Trade.Global:CreateWarehouse(_Data)
             );
         end
     end
-    ExecuteLocal([[Lib.Trade.Local:InitTradeButtons("%s")]], _Data.ScriptName .. "_Post");
+    ExecuteLocal([[Lib.Warehouse.Local:InitTradeButtons("%s")]], _Data.ScriptName .. "_Post");
 end
 
-function Lib.Trade.Global:GetIndex(_Name)
+function Lib.Warehouse.Global:GetIndex(_Name)
     for i= 1, #self.Warehouses do
         if self.Warehouses[i].ScriptName == _Name then
             return i;
@@ -132,7 +135,7 @@ function Lib.Trade.Global:GetIndex(_Name)
     return 0;
 end
 
-function Lib.Trade.Global:CreateOffer(_Name, _Amount, _GoodType, _GoodAmount, _Payment, _BasePrice, _Refresh)
+function Lib.Warehouse.Global:CreateOffer(_Name, _Amount, _GoodType, _GoodAmount, _Payment, _BasePrice, _Refresh)
     local Index = self:GetIndex(_Name);
     if Index ~= 0 then
         -- Get amount
@@ -162,7 +165,7 @@ function Lib.Trade.Global:CreateOffer(_Name, _Amount, _GoodType, _GoodAmount, _P
     return 0;
 end
 
-function Lib.Trade.Global:RemoveOffer(_Name, _ID)
+function Lib.Warehouse.Global:RemoveOffer(_Name, _ID)
     local Index = self:GetIndex(_Name);
     if Index ~= 0 then
         for i= #self.Warehouses[Index].Offers, 1, -1 do
@@ -174,7 +177,7 @@ function Lib.Trade.Global:RemoveOffer(_Name, _ID)
     end
 end
 
-function Lib.Trade.Global:DeactivateOffer(_Name, _ID, _Active)
+function Lib.Warehouse.Global:ActivateOffer(_Name, _ID, _Active)
     local Index = self:GetIndex(_Name);
     if Index ~= 0 then
         for i= #self.Warehouses[Index].Offers, 1, -1 do
@@ -186,7 +189,36 @@ function Lib.Trade.Global:DeactivateOffer(_Name, _ID, _Active)
     end
 end
 
-function Lib.Trade.Global:ChangeOfferAmount(_Name, _ID, _Amount)
+--- @return table
+--- @return integer
+function Lib.Warehouse.Global:GetOfferByID(_Name, _ID)
+    local Offer, OfferIndex
+    local Index = self:GetIndex(_Name);
+    if Index ~= 0 then
+        for i= #self.Warehouses[Index].Offers, 1, -1 do
+            if self.Warehouses[Index].Offers[i].ID == _ID then
+                Offer = self.Warehouses[Index].Offers[i];
+                OfferIndex = i;
+            end
+        end
+    end
+    return Offer, OfferIndex;
+end
+
+function Lib.Warehouse.Global:GetActivOffers(_Name, _VisibleOnly)
+    local Offers = {};
+    local Index = self:GetIndex(_Name);
+    if Index ~= 0 then
+        for i= 1, #self.Warehouses[Index].Offers do
+            if (not _VisibleOnly or #Offers < 6) and self.Warehouses[Index].Offers[i].Active then
+                table.insert(Offers, self.Warehouses[Index].Offers[i].ID);
+            end
+        end
+    end
+    return Offers;
+end
+
+function Lib.Warehouse.Global:ChangeOfferAmount(_Name, _ID, _Amount)
     local Index = self:GetIndex(_Name);
     if Index ~= 0 then
         for i= #self.Warehouses[Index].Offers, 1, -1 do
@@ -199,28 +231,28 @@ function Lib.Trade.Global:ChangeOfferAmount(_Name, _ID, _Amount)
     end
 end
 
-function Lib.Trade.Global:GetInflation(_PlayerID, _GoodType)
+function Lib.Warehouse.Global:GetInflation(_PlayerID, _GoodType)
     return self.Inflation.Players[_PlayerID][_GoodType] or 1.0;
 end
 
-function Lib.Trade.Global:SetInflation(_PlayerID, _GoodType, _Inflation)
+function Lib.Warehouse.Global:SetInflation(_PlayerID, _GoodType, _Inflation)
     self.Inflation.Players[_PlayerID][_GoodType] = _Inflation or 1.0;
     ExecuteLocal(
-        [[Lib.Trade.Local.Inflation.Players[%d][%d] = %f]],
+        [[Lib.Warehouse.Local.Inflation.Players[%d][%d] = %f]],
         _PlayerID,
         _GoodType,
         _Inflation or 1.0
     )
 end
 
-function Lib.Trade.Global:CalculateInflation(_PlayerID, _GoodType)
+function Lib.Warehouse.Global:CalculateInflation(_PlayerID, _GoodType)
     local Factor = (self.Inflation.Players[_PlayerID][_GoodType] or 1.0) + self.Inflation.Inc;
     Factor = math.max(self.Inflation.Min, Factor);
     Factor = math.min(Factor, self.Inflation.Max);
     return Factor;
 end
 
-function Lib.Trade.Global:PerformTrade(_PlayerID, _ScriptName, _Inflation, _Index, _OfferGood, _GoodAmount, _PaymentGood, _BasePrice)
+function Lib.Warehouse.Global:PerformTrade(_PlayerID, _ScriptName, _Inflation, _OfferIndex, _OfferGood, _GoodAmount, _PaymentGood, _BasePrice)
     -- Send good type
     if KeyOf(_OfferGood, Goods) ~= nil then
         SendCart(_ScriptName.. "_Post", _PlayerID, _OfferGood, _GoodAmount);
@@ -241,45 +273,36 @@ function Lib.Trade.Global:PerformTrade(_PlayerID, _ScriptName, _Inflation, _Inde
     AddGood(_PaymentGood, (-1) * PaymentAmount, _PlayerID);
     ExecuteLocal([[GUI_FeedbackWidgets.GoldAdd(%d, nil, {3, 1, 1}, g_TexturePositions.Goods[%d])]], (-1) * PaymentAmount, _PaymentGood);
     -- Uodate offer
-    self:UpdateOnPurchase(_PlayerID, _ScriptName, _Index);
+    self:UpdateOnPurchase(_PlayerID, _ScriptName, _OfferIndex);
     -- Send reports
     SendReport(Report.WarehouseOfferBought, _OfferGood, _GoodAmount, _PaymentGood, PaymentAmount);
     SendReportToLocal(Report.WarehouseOfferBought, _OfferGood, _GoodAmount, _PaymentGood, PaymentAmount);
 end
 
-function Lib.Trade.Global:UpdateOnPurchase(_PlayerID, _ScriptName, _ButtonIndex)
+function Lib.Warehouse.Global:UpdateOnPurchase(_PlayerID, _ScriptName, _OfferIndex)
     local Index = self:GetIndex(_ScriptName);
     if Index ~= 0 then
-        local Offer = self.Warehouses[Index].Offers[_ButtonIndex];
+        local Offer = self.Warehouses[Index].Offers[_OfferIndex];
         -- Update offer amount
-        self.Warehouses[Index].Offers[_ButtonIndex].Current = Offer.Current - 1;
+        self.Warehouses[Index].Offers[_OfferIndex].Current = Offer.Current - 1;
         -- Update inflation
         local Inflation = self:CalculateInflation(_PlayerID, Offer.GoodType);
         self:SetInflation(_PlayerID, Offer.GoodType, Inflation);
     end
 end
 
-function Lib.Trade.Global:OverwriteGameCallbacks()
+function Lib.Warehouse.Global:OverwriteGameCallbacks()
     self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
     GameCallback_OnBuildingConstructionComplete = function(_PlayerID, _EntityID)
-        Lib.Trade.Global.Orig_GameCallback_OnBuildingConstructionComplete(_PlayerID, _EntityID);
+        Lib.Warehouse.Global.Orig_GameCallback_OnBuildingConstructionComplete(_PlayerID, _EntityID);
         local Type = Logic.GetEntityType(_EntityID);
         if Type == Entities.B_TradePost then
-            Lib.Trade.Global:OnTradepostConstructed(_EntityID);
-        end
-    end
-
-    self.Orig_GameCallback_BuildingDestroyed = GameCallback_BuildingDestroyed;
-    GameCallback_BuildingDestroyed = function(_EntityID, _PlayerID, _KnockedDown)
-        Lib.Trade.Global.Orig_GameCallback_BuildingDestroyed(_EntityID, _PlayerID, _KnockedDown);
-        local Type = Logic.GetEntityType(_EntityID);
-        if Type == Entities.B_TradePost then
-            Lib.Trade.Global:OnTradepostDestroyed(_EntityID);
+            Lib.Warehouse.Global:OnTradepostConstructed(_EntityID);
         end
     end
 end
 
-function Lib.Trade.Global:OnTradepostConstructed(_EntityID)
+function Lib.Warehouse.Global:OnTradepostConstructed(_EntityID)
     local x,y,z = Logic.EntityGetPos(_EntityID);
     local dx,dy = Logic.GetBuildingApproachPosition(_EntityID);
     local n, SiteID = Logic.GetEntitiesInArea(Entities.I_X_TradePostConstructionSite, x, y, 100, 1);
@@ -288,23 +311,11 @@ function Lib.Trade.Global:OnTradepostConstructed(_EntityID)
         local Index = self:GetIndex(ScriptName);
         if Index ~= 0 then
             Logic.SetEntityName(_EntityID, ScriptName .. "_Post");
-            local DoorPosID = Logic.CreateEntity(Entities.XD_ScriptEntity, dx, dy, 0, 0);
-            Logic.SetEntityName(DoorPosID, ScriptName .. "_DoorPos");
         end
     end
 end
 
-function Lib.Trade.Global:OnTradepostDestroyed(_EntityID)
-    local ScriptName = Logic.GetEntityName(_EntityID);
-    local s,e = string.find(ScriptName, "_Post");
-    local SiteName = string.sub(ScriptName, 1, s-1);
-    local Index = self:GetIndex(ScriptName);
-    if Index ~= 0 then
-        DestroyEntity(SiteName .. "_DoorPos");
-    end
-end
-
-function Lib.Trade.Global:ControlWarehouse()
+function Lib.Warehouse.Global:ControlWarehouse()
     -- Refresh goods
     for i= 1, #self.Warehouses do
         if self.Warehouses[i] then
@@ -324,14 +335,14 @@ function Lib.Trade.Global:ControlWarehouse()
     end
     -- Mirror in local script
     local Table = table.tostring(self.Warehouses);
-    ExecuteLocal([[Lib.Trade.Local.Warehouses = %s]], Table);
+    ExecuteLocal([[Lib.Warehouse.Local.Warehouses = %s]], Table);
 end
 
 -- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
-function Lib.Trade.Local:Initialize()
+function Lib.Warehouse.Local:Initialize()
     if not self.IsInstalled then
         Report.WarehouseOfferClicked = CreateReport("Event_WarehouseOfferClicked");
 
@@ -343,11 +354,11 @@ function Lib.Trade.Local:Initialize()
 end
 
 -- Local load game
-function Lib.Trade.Local:OnSaveGameLoaded()
+function Lib.Warehouse.Local:OnSaveGameLoaded()
 end
 
 -- Local report listener
-function Lib.Trade.Local:OnReportReceived(_ID, ...)
+function Lib.Warehouse.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.WarehouseOfferClicked then
@@ -360,7 +371,7 @@ function Lib.Trade.Local:OnReportReceived(_ID, ...)
     end
 end
 
-function Lib.Trade.Local:GetIndex(_Name)
+function Lib.Warehouse.Local:GetIndex(_Name)
     for i= 1, #self.Warehouses do
         if self.Warehouses[i].ScriptName == _Name then
             return i;
@@ -369,62 +380,89 @@ function Lib.Trade.Local:GetIndex(_Name)
     return 0;
 end
 
-function Lib.Trade.Local:GetPrice(_PlayerID, _GoodType, _BasePrice)
+function Lib.Warehouse.Local:GetPrice(_PlayerID, _GoodType, _BasePrice)
     return math.floor(((self.Inflation.Players[_PlayerID][_GoodType] or 1.0) * _BasePrice) + 0.5);
 end
 
-function Lib.Trade.Local:GetInflation(_PlayerID, _GoodType)
+function Lib.Warehouse.Local:GetInflation(_PlayerID, _GoodType)
     return self.Inflation.Players[_PlayerID][_GoodType] or 1.0;
+end
+
+function Lib.Warehouse.Local:GetOfferByID(_Name, _ID)
+    local Offer, OfferIndex
+    local Index = self:GetIndex(_Name);
+    if Index ~= 0 then
+        for i= #self.Warehouses[Index].Offers, 1, -1 do
+            if self.Warehouses[Index].Offers[i].ID == _ID then
+                Offer = self.Warehouses[Index].Offers[i];
+                OfferIndex = i;
+            end
+        end
+    end
+    return Offer, OfferIndex;
+end
+
+function Lib.Warehouse.Local:GetActivOffers(_Name, _VisibleOnly)
+    local Offers = {};
+    local Index = self:GetIndex(_Name);
+    if Index ~= 0 then
+        for i= 1, #self.Warehouses[Index].Offers do
+            if (not _VisibleOnly or #Offers < 6) and self.Warehouses[Index].Offers[i].Active then
+                table.insert(Offers, self.Warehouses[Index].Offers[i].ID);
+            end
+        end
+    end
+    return Offers;
 end
 
 -- -------------------------------------------------------------------------- --
 
-function Lib.Trade.Local:InitTradeButtons(_ScriptName)
+function Lib.Warehouse.Local:InitTradeButtons(_ScriptName)
     -- Button 1
     AddBuildingButtonByEntity(
         _ScriptName,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonAction(1, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonTooltip(1, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonUpdate(1, _WidgetID, _EntityID) end
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonAction(1, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonTooltip(1, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonUpdate(1, _WidgetID, _EntityID) end
     );
     -- Button 2
     AddBuildingButtonByEntity(
         _ScriptName,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonAction(2, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonTooltip(2, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonUpdate(2, _WidgetID, _EntityID) end
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonAction(2, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonTooltip(2, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonUpdate(2, _WidgetID, _EntityID) end
     );
     -- Button 3
     AddBuildingButtonByEntity(
         _ScriptName,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonAction(3, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonTooltip(3, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonUpdate(3, _WidgetID, _EntityID) end
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonAction(3, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonTooltip(3, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonUpdate(3, _WidgetID, _EntityID) end
     );
     -- Button 4
     AddBuildingButtonByEntity(
         _ScriptName,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonAction(4, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonTooltip(4, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonUpdate(4, _WidgetID, _EntityID) end
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonAction(4, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonTooltip(4, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonUpdate(4, _WidgetID, _EntityID) end
     );
     -- Button 5
     AddBuildingButtonByEntity(
         _ScriptName,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonAction(5, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonTooltip(5, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonUpdate(5, _WidgetID, _EntityID) end
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonAction(5, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonTooltip(5, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonUpdate(5, _WidgetID, _EntityID) end
     );
     -- Button 6
     AddBuildingButtonByEntity(
         _ScriptName,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonAction(6, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonTooltip(6, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.Trade.Local:WarehouseButtonUpdate(6, _WidgetID, _EntityID) end
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonAction(6, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonTooltip(6, _WidgetID, _EntityID) end,
+        function(_WidgetID, _EntityID) Lib.Warehouse.Local:WarehouseButtonUpdate(6, _WidgetID, _EntityID) end
     );
 end
 
-function Lib.Trade.Local:WarehouseButtonAction(_ButtonIndex, _WidgetID, _EntityID)
+function Lib.Warehouse.Local:WarehouseButtonAction(_ButtonIndex, _WidgetID, _EntityID)
     local PlayerID = GUI.GetPlayerID();
     local ScriptName = Logic.GetEntityName(_EntityID);
     local s,e = string.find(ScriptName, "_Post");
@@ -433,11 +471,13 @@ function Lib.Trade.Local:WarehouseButtonAction(_ButtonIndex, _WidgetID, _EntityI
     if Index == 0 then
         return;
     end
-    local Data = self.Warehouses[Index].Offers[_ButtonIndex];
+
+    local Offers = self:GetActivOffers(ScriptName);
+    local Data, OfferIndex = self:GetOfferByID(ScriptName, Offers[_ButtonIndex]);
     if not Data then
         return;
     end
-    if self.Warehouses[Index].Offers[_ButtonIndex].BuyLock then
+    if Data.BuyLock then
         return;
     end
 
@@ -448,14 +488,14 @@ function Lib.Trade.Local:WarehouseButtonAction(_ButtonIndex, _WidgetID, _EntityI
         return;
     end
     -- Prevent click spam
-    self.Warehouses[Index].Offers[_ButtonIndex].BuyLock = true;
+    self.Warehouses[Index].Offers[OfferIndex].BuyLock = true;
     -- Send repot to global
     SendReportToGlobal(
         Report.WarehouseOfferClicked,
         PlayerID,
         ScriptName,
         Inflation,
-        _ButtonIndex,
+        OfferIndex,
         Data.GoodType,
         Data.GoodAmount,
         Data.PaymentType,
@@ -463,20 +503,22 @@ function Lib.Trade.Local:WarehouseButtonAction(_ButtonIndex, _WidgetID, _EntityI
     );
 end
 
-function Lib.Trade.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _EntityID)
+function Lib.Warehouse.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _EntityID)
     local PlayerID = GUI.GetPlayerID();
     local ScriptName = Logic.GetEntityName(_EntityID);
     local s,e = string.find(ScriptName, "_Post");
     ScriptName = string.sub(ScriptName, 1, s-1);
     if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-        SetTooltipCosts(ConvertPlaceholders(Localize(Lib.Trade.Text.NoOffer.Title)), "");
+        SetTooltipCosts(ConvertPlaceholders(Localize(Lib.Warehouse.Text.OfferTitle[1])), "");
         return;
     end
     local Index = self:GetIndex(ScriptName);
     if Index == 0 then
         return;
     end
-    local Data = self.Warehouses[Index].Offers[_ButtonIndex];
+
+    local Offers = self:GetActivOffers(ScriptName);
+    local Data, OfferIndex = self:GetOfferByID(ScriptName, Offers[_ButtonIndex]);
     if not Data then
         return;
     end
@@ -514,14 +556,14 @@ function Lib.Trade.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _Entity
     -- Format tooltip text
     local OfferTitle = "";
     if KeyOf(Data.GoodType, Goods) ~= nil then
-        OfferTitle = string.format(Localize(Lib.Trade.Text.BuyGood.Text), Data.GoodAmount, OfferName, Quantity);
+        OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[2]), Data.GoodAmount, OfferName, Quantity);
     elseif KeyOf(Data.GoodType, Entities) ~= nil then
         if Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.Military) == 1 then
-            OfferTitle = string.format(Localize(Lib.Trade.Text.BuyUnit.Text), OfferName, Quantity);
-        elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SiegeEngine) == 1 then
-            OfferTitle = string.format(Localize(Lib.Trade.Text.BuyWarMachine.Text), OfferName, Quantity);
+            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[4]), OfferName, Quantity);
+        elseif EngineType or Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SiegeEngine) == 1 then
+            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[5]), OfferName, Quantity);
         else
-            OfferTitle = string.format(Localize(Lib.Trade.Text.BuyEntertainer.Text), OfferName);
+            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[3]), OfferName);
         end
     end
     -- Set text
@@ -534,29 +576,36 @@ function Lib.Trade.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _Entity
     );
 end
 
-function Lib.Trade.Local:WarehouseButtonUpdate(_ButtonIndex, _WidgetID, _EntityID)
+function Lib.Warehouse.Local:WarehouseButtonUpdate(_ButtonIndex, _WidgetID, _EntityID)
     local ScriptName = Logic.GetEntityName(_EntityID);
     local s,e = string.find(ScriptName, "_Post");
     ScriptName = string.sub(ScriptName, 1, s-1);
+    -- Hide if tradepost is no warehouse
     local Index = self:GetIndex(ScriptName);
-    if Index == 0 or not self.Warehouses[Index].Offers[_ButtonIndex]
-    or not self.Warehouses[Index].Offers[_ButtonIndex].Active then
+    if Index == 0 then
         XGUIEng.ShowWidget(_WidgetID, 0);
         return;
     end
-    if not self.Warehouses[Index].Offers[_ButtonIndex].BuyLock
-    and self.Warehouses[Index].Offers[_ButtonIndex].Current > 0 then
+    -- Hide if offer is invalid
+    local Offers = self:GetActivOffers(ScriptName);
+    local Data, OfferIndex = self:GetOfferByID(ScriptName, Offers[_ButtonIndex]);
+    if not Data or not Data.Active then
+        XGUIEng.ShowWidget(_WidgetID, 0);
+        return;
+    end
+    -- Disable button if locked or sold out
+    if not Data.BuyLock and Data.Current > 0 then
         XGUIEng.DisableButton(_WidgetID, 0);
     else
         XGUIEng.DisableButton(_WidgetID, 1);
     end
-
-    local Good = self.Warehouses[Index].Offers[_ButtonIndex].GoodType;
+    -- Set icon
+    local Good = Data.GoodType;
     local Icon = g_TexturePositions.Goods[Good] or g_TexturePositions.Entities[Good];
     ChangeIcon(_WidgetID, Icon);
 end
 
 -- -------------------------------------------------------------------------- --
 
-RegisterModule(Lib.Trade.Name);
+RegisterModule(Lib.Warehouse.Name);
 

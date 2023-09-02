@@ -1,4 +1,6 @@
---- Gives more utility over technologies.
+--- Allows to create user defined technologies.
+---
+--- Technologies should be defined directly on game start.
 Lib.Technology = {
     Name = "Technology",
 

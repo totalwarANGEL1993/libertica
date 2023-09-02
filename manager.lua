@@ -8,7 +8,7 @@ LibWriter = {
         "module/iomine/IOMine",
         "module/quest/Quest",
         "module/technology/Technology",
-        "module/trade/Trade",
+        "module/warehouse/Warehouse",
         "module/uitools/UITools",
         "module/uieffects/UIEffects",
         "module/uibuilding/UIBuilding",
