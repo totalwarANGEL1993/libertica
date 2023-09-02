@@ -111,7 +111,7 @@ function LibWriter:CreateSingleFile()
         return a < b;
     end);
     for i= 1, #imports do
-        fh = assert(io.open(imports[i].. ".lua", "rb"));
+        fh = assert(io.open("lua/" ..imports[i].. ".lua", "rb"));
         content = fh:read("*all");
         code = code .. content;
         fh:close();
@@ -141,7 +141,7 @@ function LibWriter:CopyModules()
         if not self:IsDir(Path) then
             os.execute('mkdir "'..Path..'"');
         end
-        os.execute('cp "'..imports[i]..'.lua" "'..Path..'/'..File..'.lua');
+        os.execute('cp "lua/'..imports[i]..'.lua" "'..Path..'/'..File..'.lua');
         self:CompileFile(imports[i].. ".lua", Path.. '/' ..File.. '.lua');
     end
 end
@@ -159,13 +159,13 @@ end
 --- Reads all behavior files from the components and returns them as lua string.
 function LibWriter:ConcatBehaviors()
     local fh, index, content, template, behaviors;
-    fh = assert(io.open("core/qsb.lua", "rb"));
+    fh = assert(io.open("lua/core/qsb.lua", "rb"));
     template = fh:read("*all");
     fh:close();
     behaviors = template;
     for i= 1, #self.ComponentList do
         index = string.find(self.ComponentList[i], "/[^/]*$");
-        fh = assert(io.open(self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb"));
+        fh = assert(io.open("lua/" ..self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb"));
         content = fh:read("*all");
         fh:close();
         behaviors = behaviors .. content;
@@ -200,7 +200,7 @@ end
 --- @param _Paths table Dependency array
 function LibWriter:ReadFileAndDependencies(_Path, _Paths)
     local Paths = {};
-    for line in io.lines(_Path:lower() .. ".lua") do
+    for line in io.lines("lua/" .._Path:lower() .. ".lua") do
         if line:find("Register") then
             break;
         end

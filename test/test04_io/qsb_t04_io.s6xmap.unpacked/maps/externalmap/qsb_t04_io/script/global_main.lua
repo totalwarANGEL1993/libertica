@@ -10,7 +10,7 @@
 Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
 
 if CONST_IS_IN_DEV then
-    Lib.Loader.PushPath("E:/Repositories/");
+    Lib.Loader.PushPath("E:/Repositories/liberty/var/");
 end
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
