@@ -87,7 +87,7 @@ function Lib.Technology.Shared:AddCustomTechnology(_Key, _Name, _Icon)
 end
 
 function Lib.Technology.Shared:IsCustomTechnology(_Technology)
-    return _Technology >= 100000 and CONST_TECHNOLOGY_TO_INDEX[_Technology] ~= nil;
+    return _Technology >= 1000 and CONST_TECHNOLOGY_TO_INDEX[_Technology] ~= nil;
 end
 
 function Lib.Technology.Shared:OverwriteLogic()
@@ -131,7 +131,7 @@ function Lib.Technology.Shared:InitNewTechnologies()
             self.CustomTechnologySequence = v;
         end
     end
-    self.CustomTechnologySequence = self.CustomTechnologySequence + (100000 - self.CustomTechnologySequence);
+    self.CustomTechnologySequence = self.CustomTechnologySequence + (1000 - self.CustomTechnologySequence);
     for i= 1, #self.CustomTechnologies do
         self.CustomTechnologySequence = self.CustomTechnologySequence + 1;
         self.CustomTechnologies[i][2] = self.CustomTechnologySequence;

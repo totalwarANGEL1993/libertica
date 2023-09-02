@@ -642,7 +642,7 @@ function Lib.UIBuilding.Local:BindButtons(_ID)
         local X = ButtonOverride[i].Position[1];
         local Y = ButtonOverride[i].Position[2];
         if not X or not Y then
-            local AnchorPosition = {12, 296};
+            local AnchorPosition = {15, 296};
             X = AnchorPosition[1] + (64 * (i-1));
             Y = AnchorPosition[2];
         end

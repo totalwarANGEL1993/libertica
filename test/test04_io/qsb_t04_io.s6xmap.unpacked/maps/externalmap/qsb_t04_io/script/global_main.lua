@@ -20,6 +20,7 @@ Lib.Require("module/iochest/IOChest");
 Lib.Require("module/iomine/IOMine");
 Lib.Require("module/uibuilding/UIBuilding");
 Lib.Require("module/technology/Technology");
+Lib.Require("module/trade/Trade");
 Lib.Require("module/promotion/Promotion");
 
 -- ========================================================================== --
@@ -32,7 +33,59 @@ end
 
 function TestSetupTradeposts()
     -- InteractiveObjectDeactivate("TP2");
-    InteractiveObjectDeactivate("TP3");
+    -- InteractiveObjectDeactivate("TP3");
+
+    CreateWarehouse {
+        ScriptName       = "TP2",
+        Offers           = {
+            {Amount      = 3,
+             GoodType    = Goods.G_Stone,
+             BasePrice   = 80},
+            {Amount      = 3,
+             GoodType    = Goods.G_Cheese,
+             BasePrice   = 150},
+            {GoodType    = Entities.U_Entertainer_NE_StrongestMan_Barrel,
+             BasePrice   = 150,
+             Refresh     = 500},
+            {Amount      = 3,
+             GoodType    = Entities.U_MilitaryBandit_Ranged_ME,
+             PaymentType = Goods.G_Wood,
+             BasePrice   = 3},
+            {Amount      = 3,
+             GoodType    = Entities.U_CatapultCart,
+             BasePrice   = 1000},
+            {Amount      = 3,
+             GoodType    = Goods.G_Olibanum,
+             GoodAmount  = 27,
+             BasePrice   = 300},
+        },
+    };
+
+    CreateWarehouse {
+        ScriptName       = "TP3",
+        Offers           = {
+            {Amount      = 3,
+             GoodType    = Goods.G_Iron,
+             BasePrice   = 80},
+            {Amount      = 3,
+             GoodType    = Goods.G_Sausage,
+             BasePrice   = 150},
+            {GoodType    = Entities.U_Entertainer_NA_FireEater,
+             BasePrice   = 150,
+             Refresh     = 500},
+            {Amount      = 3,
+             GoodType    = Entities.U_MilitaryBandit_Melee_ME,
+             PaymentType = Goods.G_Iron,
+             BasePrice   = 3},
+            {Amount      = 3,
+             GoodType    = Entities.U_CatapultCart,
+             BasePrice   = 1000},
+            {Amount      = 3,
+             GoodType    = Goods.G_Gems,
+             GoodAmount  = 27,
+             BasePrice   = 300},
+        },
+    };
 end
 
 function TestSetupRuins()
