@@ -20,7 +20,7 @@ Lib.Require("module/iochest/IOChest");
 Lib.Require("module/iomine/IOMine");
 Lib.Require("module/uibuilding/UIBuilding");
 Lib.Require("module/technology/Technology");
-Lib.Require("module/trade/Trade");
+Lib.Require("module/warehouse/Warehouse");
 Lib.Require("module/promotion/Promotion");
 
 -- ========================================================================== --
@@ -82,6 +82,10 @@ function TestSetupTradeposts()
              BasePrice   = 1000},
             {Amount      = 3,
              GoodType    = Goods.G_Gems,
+             GoodAmount  = 27,
+             BasePrice   = 300},
+            {Amount      = 3,
+             GoodType    = Goods.G_MusicalInstrument,
              GoodAmount  = 27,
              BasePrice   = 300},
         },
