@@ -13,6 +13,16 @@ Lib.IO = {
     Local  = {
         Data = {},
     };
+    Shared = {
+        TechnologyConfig = {
+            -- Tech name, Description, Icon, Extra Number
+            {"R_CallGeologist", {de = "Geologen rufen", en = "Order geologist", fr = "Ordre géologue"}, {8, 1, 1}, 1},
+            {"R_RefillIronMine", {de = "Eisenmine auffüllen", en = "Refill mine", fr = "Recharger le mien"}, {8, 2, 1}, 1},
+            {"R_RefillStoneMine", {de = "Steinbruch auffüllen", en = "Refill quarry", fr = "Carrière de recharge"}, {8, 3, 1}, 1},
+            {"R_RefillCistern", {de = "Brunnen auffüllen", en = "Refill well", fr = "Bien remplir"}, {8, 4, 1}, 1},
+            {"R_Tradepost", {de = "Handelsposten bauen", en = "Build Tradepost", fr = "Route commerciale"}, {3, 1, 1}, 1},
+        }
+    };
 };
 
 CONST_IO = {};
@@ -22,18 +32,12 @@ CONST_IO_SLAVE_STATE = {};
 CONST_IO_LAST_OBJECT = 0;
 CONST_IO_LAST_HERO = 0;
 
-ObjectType = {
-    Regular = 1,
-    Tradepost = 2,
-    Mine = 3,
-    Quarry = 4,
-    Cistern = 5,
-}
-
 Lib.Require("comfort/GetClosestToTarget");
+Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/uitools/UITools");
+Lib.Require("module/technology/Technology");
 Lib.Require("module/io/IO_API");
 Lib.Register("module/io/IO");
 
@@ -70,6 +74,8 @@ function Lib.IO.Global:Initialize()
     --- #### Parameters
     --- * `ScriptName` - Scriptname of entity
     Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+
+    Lib.IO.Shared:CreateTechnologies();
 
     self:OverrideObjectInteraction();
     self:StartObjectDestructionController();
@@ -366,30 +372,9 @@ function Lib.IO.Local:Initialize()
     Report.ObjectReset = CreateReport("Event_ObjectReset");
     Report.ObjectDelete = CreateReport("Event_ObjectDelete");
 
+    Lib.IO.Shared:CreateTechnologies();
+
     self:OverrideGameFunctions();
-
-    for i= 1, 8 do
-        self.Data[i] = {
-            [ObjectType.Regular] = true, -- Regular objects
-            [ObjectType.Tradepost] = true, -- Tradepost
-            [ObjectType.Mine] = true, -- Iron mine
-            [ObjectType.Quarry] = true, -- Stone mine
-            [ObjectType.Cistern] = true, -- Well
-        };
-    end
-end
-
-function Lib.IO.Local:AllowObjectActivation(_PlayerID, _Type, _IsAllowed)
-    if self.Data[_PlayerID] then
-        self.Data[_PlayerID][_Type] = _IsAllowed == true;
-    end
-end
-
-function Lib.IO.Local:IsObjectActivationAllowed(_PlayerID, _Type)
-    if self.Data[_PlayerID] then
-        return self.Data[_PlayerID][_Type] ~= false;
-    end
-    return true;
 end
 
 -- Local load game
@@ -513,27 +498,29 @@ function Lib.IO.Local:OverrideGameFunctions()
                     Disable = true
                 end
 
-                if Disable == false and not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Regular) then
-                    Disable = true;
-                end
-                if Disable == false and string.find(EntityTypeName, "R_StoneMine") then
-                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Quarry) then
-                        Disable = true;
+                if Logic.GetTime() > 1 and g_GameExtraNo > 0 then
+                    if Disable == false and string.find(EntityTypeName, "R_StoneMine") then
+                        if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillStoneMine) ~= TechnologyStates.Researched
+                        or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                            Disable = true;
+                        end
                     end
-                end
-                if Disable == false and string.find(EntityTypeName, "R_IronMine") then
-                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Mine) then
-                        Disable = true;
+                    if Disable == false and string.find(EntityTypeName, "R_IronMine") then
+                        if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillIronMine) ~= TechnologyStates.Researched
+                        or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                            Disable = true;
+                        end
                     end
-                end
-                if Disable == false and (string.find(EntityTypeName, "B_Cistern") or string.find(EntityTypeName, "B_Well")) then
-                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Cistern) then
-                        Disable = true;
+                    if Disable == false and (string.find(EntityTypeName, "B_Cistern") or string.find(EntityTypeName, "B_Well")) then
+                        if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillCistern) ~= TechnologyStates.Researched
+                        or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                            Disable = true;
+                        end
                     end
-                end
-                if Disable == false and string.find(EntityTypeName, "I_X_TradePostConstructionSite") then
-                    if not Lib.IO.Local:IsObjectActivationAllowed(PlayerID, ObjectType.Tradepost) then
-                        Disable = true;
+                    if Disable == false and string.find(EntityTypeName, "I_X_TradePostConstructionSite") then
+                        if Logic.TechnologyGetState(PlayerID, Technologies.R_Tradepost) ~= TechnologyStates.Researched then
+                            Disable = true;
+                        end
                     end
                 end
 
@@ -619,17 +606,40 @@ function Lib.IO.Local:OverrideGameFunctions()
             DisabledKey = "InteractiveObjectAvailableReward";
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             DisabledKey = "UpgradeOutpost";
+            if g_GameExtraNo > 0 then
+                if string.find(EntityTypeName, "R_StoneMine") then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillStoneMine) ~= TechnologyStates.Researched
+                    or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_RefillStoneMine) or DisabledKey;
+                    end
+                end
+                if string.find(EntityTypeName, "R_IronMine") then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillIronMine) ~= TechnologyStates.Researched
+                    or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_RefillIronMine) or DisabledKey;
+                    end
+                end
+                if (string.find(EntityTypeName, "B_Cistern") or string.find(EntityTypeName, "B_Well")) then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_RefillCistern) ~= TechnologyStates.Researched
+                    or Logic.TechnologyGetState(PlayerID, Technologies.R_CallGeologist) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_RefillCistern) or DisabledKey;
+                    end
+                end
+                if string.find(EntityTypeName, "I_X_TradePostConstructionSite") then
+                    if Logic.TechnologyGetState(PlayerID, Technologies.R_Tradepost) ~= TechnologyStates.Researched then
+                        DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies.R_Tradepost) or DisabledKey;
+                    end
+                end
+            end
         end
         local Title = "UI_ObjectNames/" ..Key;
         local Text = "UI_ObjectDescription/" ..Key;
         local Disabled = (DisabledKey ~= nil and "UI_ButtonDisabled/" ..DisabledKey) or nil;
         if IsGeologistTarget then
             Title = "UI_ObjectNames/InteractiveObjectGeologist";
-            Text = "";
         end
         if IsTradepost then
             Title = "UI_ObjectNames/InteractiveObjectTradepost";
-            Text = "";
         end
 
         -- Get default costs
@@ -746,6 +756,22 @@ function Lib.IO.Local:IsAvailableForGuiPlayer(_ScriptName)
         return false;
     end
     return true;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Shared
+
+function Lib.IO.Shared:CreateTechnologies()
+    for i= 1, #self.TechnologyConfig do
+        if g_GameExtraNo >= self.TechnologyConfig[i][4] then
+            AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
+            if not IsLocalScript() then
+                for j= 1, 8 do
+                    Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
+                end
+            end
+        end
+    end
 end
 
 -- -------------------------------------------------------------------------- --

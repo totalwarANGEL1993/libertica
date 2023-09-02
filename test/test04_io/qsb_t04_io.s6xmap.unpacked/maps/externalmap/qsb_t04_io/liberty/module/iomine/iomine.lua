@@ -25,12 +25,6 @@ function Lib.IOMine.Global:Initialize()
     --- * `KnightID`   - ID of activating hero
     --- * `PlayerID`   - ID of activating player
     Report.InteractiveMineErected = CreateReport("Event_InteractiveMineErected");
-
-    --- A erected mine is depleded
-    ---
-    --- #### Parameter
-    --- - `ScriptName` - Scriptname of mine
-    Report.InteractiveMineDepleted = CreateReport("Event_InteractiveMineDepleted");
 end
 
 -- Global load game
@@ -123,34 +117,12 @@ function Lib.IOMine.Global:ResetIOMine(_ScriptName, _Type)
     return BlockerID;
 end
 
-function Lib.IOMine.Global:ControlIOMines()
-    for k, v in pairs(CONST_IO) do
-        local EntityID = GetID(k);
-        if v.IsInteractiveMine and Logic.GetResourceDoodadGoodType(EntityID) ~= 0 then
-            if Logic.GetResourceDoodadGoodAmount(EntityID) == 0 then
-                if v.RefillAmount == 0 then
-                    local Model = Models.Doodads_D_SE_ResourceIron_Wrecked;
-                    if v.Type == Entities.R_StoneMine then
-                        Model = Models.R_ResorceStone_Scaffold_Destroyed;
-                    end
-                    InteractiveObjectDeactivate(EntityID);
-                    Logic.SetModel(EntityID, Model);
-                end
-
-                SendReport(Report.InteractiveMineDepleted, k);
-                SendReportToLocal(Report.InteractiveMineDepleted, k);
-            end
-        end
-    end
-end
-
 -- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
 function Lib.IOMine.Local:Initialize()
     Report.InteractiveMineErected = CreateReport("Event_InteractiveMineErected");
-    Report.InteractiveMineDepleted = CreateReport("Event_InteractiveMineDepleted");
 end
 
 -- Local load game
