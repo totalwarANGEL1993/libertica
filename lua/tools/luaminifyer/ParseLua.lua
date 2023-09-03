@@ -1226,7 +1226,7 @@ local function ParseLua(src)
 
 				local nodeLocal = {}
 				nodeLocal.AstType   = 'LocalStatement'
-				nodeLocal.LocalList = varList
+				nodeLocalList = varList
 				nodeLocal.InitList  = initList
 				nodeLocal.Tokens    = tokenList
 				--

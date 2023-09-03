@@ -1090,7 +1090,7 @@ function ParseLua(src)
 
 				local nodeLocal = {}
 				nodeLocal.AstType = 'LocalStatement'
-				nodeLocal.LocalList = varList
+				nodeLocalList = varList
 				nodeLocal.InitList = initList
 				--
 				stat = nodeLocal
