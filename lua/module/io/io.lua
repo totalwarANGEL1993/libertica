@@ -764,10 +764,12 @@ end
 function Lib.IO.Shared:CreateTechnologies()
     for i= 1, #self.TechnologyConfig do
         if g_GameExtraNo >= self.TechnologyConfig[i][4] then
-            AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
-            if not IsLocalScript() then
-                for j= 1, 8 do
-                    Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
+            if not Technologies[self.TechnologyConfig[i][1]] then
+                AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
+                if not IsLocalScript() then
+                    for j= 1, 8 do
+                        Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
+                    end
                 end
             end
         end
