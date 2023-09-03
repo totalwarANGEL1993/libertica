@@ -1,6 +1,7 @@
 LibWriter = {
     ComponentList = {
         "core/Core",
+        "module/construction/Construction",
         "module/npc/NPC",
         "module/promotion/Promotion",
         "module/io/IO",

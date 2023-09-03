@@ -177,19 +177,19 @@ function Lib.UIBuilding.Local:OverrideOnSelectionChanged()
 end
 
 function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
-    GUI_BuildingButtons.BuyAmmunitionCartClicked_Orig_Interface = GUI_BuildingButtons.BuyAmmunitionCartClicked;
+    self.Orig_BuyAmmunitionCartClicked = GUI_BuildingButtons.BuyAmmunitionCartClicked;
     GUI_BuildingButtons.BuyAmmunitionCartClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.BuyAmmunitionCartClicked_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_BuyAmmunitionCartClicked();
         end
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.BuyAmmunitionCartUpdate_Orig_Interface = GUI_BuildingButtons.BuyAmmunitionCartUpdate;
+    Lib.UIBuilding.Local.Orig_BuyAmmunitionCartUpdate = GUI_BuildingButtons.BuyAmmunitionCartUpdate;
     GUI_BuildingButtons.BuyAmmunitionCartUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -199,26 +199,26 @@ function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
             SetIcon(WidgetID, {10, 4});
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.BuyAmmunitionCartUpdate_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_BuyAmmunitionCartUpdate();
         end
         Button.Update(WidgetID, EntityID);
     end
 end
 
 function Lib.UIBuilding.Local:OverrideBuyBattalion()
-    GUI_BuildingButtons.BuyBattalionClicked_Orig_Interface = GUI_BuildingButtons.BuyBattalionClicked;
+    self.Orig_BuyBattalionClicked = GUI_BuildingButtons.BuyBattalionClicked;
     GUI_BuildingButtons.BuyBattalionClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.BuyBattalionClicked_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_BuyBattalionClicked();
         end
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.BuyBattalionMouseOver_Orig_Interface = GUI_BuildingButtons.BuyBattalionMouseOver;
+    self.Orig_BuyBattalionMouseOver = GUI_BuildingButtons.BuyBattalionMouseOver;
     GUI_BuildingButtons.BuyBattalionMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -228,12 +228,12 @@ function Lib.UIBuilding.Local:OverrideBuyBattalion()
             Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         end
         if not Button then
-            return GUI_BuildingButtons.BuyBattalionMouseOver_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_BuyBattalionMouseOver();
         end
         Button.Tooltip(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.BuyBattalionUpdate_Orig_Interface = GUI_BuildingButtons.BuyBattalionUpdate;
+    self.Orig_BuyBattalionUpdate = GUI_BuildingButtons.BuyBattalionUpdate;
     GUI_BuildingButtons.BuyBattalionUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -242,38 +242,39 @@ function Lib.UIBuilding.Local:OverrideBuyBattalion()
         if not Button then
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.BuyBattalionUpdate_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_BuyBattalionUpdate();
         end
         Button.Update(WidgetID, EntityID);
     end
 end
 
 function Lib.UIBuilding.Local:OverridePlaceField()
-    GUI_BuildingButtons.PlaceFieldClicked_Orig_Interface = GUI_BuildingButtons.PlaceFieldClicked;
+    self.Orig_PlaceFieldClicked = GUI_BuildingButtons.PlaceFieldClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.PlaceFieldClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.PlaceFieldClicked_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_PlaceFieldClicked();
         end
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.PlaceFieldMouseOver_Orig_Interface = GUI_BuildingButtons.PlaceFieldMouseOver;
+    self.Orig_PlaceFieldMouseOver = GUI_BuildingButtons.PlaceFieldMouseOver;
     GUI_BuildingButtons.PlaceFieldMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.PlaceFieldMouseOver_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_PlaceFieldMouseOver();
         end
         Button.Tooltip(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.PlaceFieldUpdate_Orig_Interface = GUI_BuildingButtons.PlaceFieldUpdate;
+    self.Orig_PlaceFieldUpdate = GUI_BuildingButtons.PlaceFieldUpdate;
     GUI_BuildingButtons.PlaceFieldUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -282,7 +283,7 @@ function Lib.UIBuilding.Local:OverridePlaceField()
         if not Button then
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.PlaceFieldUpdate_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_PlaceFieldUpdate();
         end
         Button.Update(WidgetID, EntityID);
     end
@@ -322,19 +323,19 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.StartFestivalMouseOver_Orig_Interface = GUI_BuildingButtons.StartFestivalMouseOver;
+    self.Orig_StartFestivalMouseOver = GUI_BuildingButtons.StartFestivalMouseOver;
     GUI_BuildingButtons.StartFestivalMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.StartFestivalMouseOver_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_StartFestivalMouseOver();
         end
         Button.Tooltip(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.StartFestivalUpdate_Orig_Interface = GUI_BuildingButtons.StartFestivalUpdate;
+    self.Orig_StartFestivalUpdate = GUI_BuildingButtons.StartFestivalUpdate;
     GUI_BuildingButtons.StartFestivalUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -344,7 +345,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
             SetIcon(WidgetID, {4, 15});
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.StartFestivalUpdate_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_StartFestivalUpdate();
         end
         Button.Update(WidgetID, EntityID);
     end
@@ -374,19 +375,19 @@ function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.StartTheatrePlayMouseOver_Orig_Interface = GUI_BuildingButtons.StartTheatrePlayMouseOver;
+    self.Orig_StartTheatrePlayMouseOver = GUI_BuildingButtons.StartTheatrePlayMouseOver;
     GUI_BuildingButtons.StartTheatrePlayMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.StartTheatrePlayMouseOver_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_StartTheatrePlayMouseOver();
         end
         Button.Tooltip(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.StartTheatrePlayUpdate_Orig_Interface = GUI_BuildingButtons.StartTheatrePlayUpdate;
+    self.Orig_StartTheatrePlayUpdate = GUI_BuildingButtons.StartTheatrePlayUpdate;
     GUI_BuildingButtons.StartTheatrePlayUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -396,38 +397,38 @@ function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
             SetIcon(WidgetID, {16, 2});
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.StartTheatrePlayUpdate_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_StartTheatrePlayUpdate();
         end
         Button.Update(WidgetID, EntityID);
     end
 end
 
 function Lib.UIBuilding.Local:OverrideUpgradeTurret()
-    GUI_BuildingButtons.UpgradeTurretClicked_Orig_Interface = GUI_BuildingButtons.UpgradeTurretClicked;
+    self.Orig_UpgradeTurretClicked = GUI_BuildingButtons.UpgradeTurretClicked;
     GUI_BuildingButtons.UpgradeTurretClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.UpgradeTurretClicked_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_UpgradeTurretClicked();
         end
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.UpgradeTurretMouseOver_Orig_Interface = GUI_BuildingButtons.UpgradeTurretMouseOver;
+    self.Orig_UpgradeTurretMouseOver = GUI_BuildingButtons.UpgradeTurretMouseOver;
     GUI_BuildingButtons.UpgradeTurretMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         if not Button then
-            return GUI_BuildingButtons.UpgradeTurretMouseOver_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_UpgradeTurretMouseOver();
         end
         Button.Tooltip(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.UpgradeTurretUpdate_Orig_Interface = GUI_BuildingButtons.UpgradeTurretUpdate;
+    self.Orig_UpgradeTurretUpdate = GUI_BuildingButtons.UpgradeTurretUpdate;
     GUI_BuildingButtons.UpgradeTurretUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -436,14 +437,14 @@ function Lib.UIBuilding.Local:OverrideUpgradeTurret()
         if not Button then
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.UpgradeTurretUpdate_Orig_Interface();
+            return Lib.UIBuilding.Local.Orig_UpgradeTurretUpdate();
         end
         Button.Update(WidgetID, EntityID);
     end
 end
 
 function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
-    GUI_BuildingButtons.BuySiegeEngineCartClicked_Orig_Interface = GUI_BuildingButtons.BuySiegeEngineCartClicked;
+    self.Orig_BuySiegeEngineCartClicked = GUI_BuildingButtons.BuySiegeEngineCartClicked;
     GUI_BuildingButtons.BuySiegeEngineCartClicked = function(_EntityType)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -455,12 +456,12 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
             Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         end
         if not Button then
-            return GUI_BuildingButtons.BuySiegeEngineCartClicked_Orig_Interface(_EntityType);
+            return Lib.UIBuilding.Local.Orig_BuySiegeEngineCartClicked(_EntityType);
         end
         Button.Action(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.BuySiegeEngineCartMouseOver_Orig_Interface = GUI_BuildingButtons.BuySiegeEngineCartMouseOver;
+    self.Orig_BuySiegeEngineCartMouseOver = GUI_BuildingButtons.BuySiegeEngineCartMouseOver;
     GUI_BuildingButtons.BuySiegeEngineCartMouseOver = function(_EntityType, _Right)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -472,12 +473,12 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
             Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         end
         if not Button then
-            return GUI_BuildingButtons.BuySiegeEngineCartMouseOver_Orig_Interface(_EntityType, _Right);
+            return Lib.UIBuilding.Local.Orig_BuySiegeEngineCartMouseOver(_EntityType, _Right);
         end
         Button.Tooltip(WidgetID, EntityID);
     end
 
-    GUI_BuildingButtons.BuySiegeEngineCartUpdate_Orig_Interface = GUI_BuildingButtons.BuySiegeEngineCartUpdate;
+    self.Orig_BuySiegeEngineCartUpdate = GUI_BuildingButtons.BuySiegeEngineCartUpdate;
     GUI_BuildingButtons.BuySiegeEngineCartUpdate = function(_EntityType)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -498,7 +499,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
             end
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
-            return GUI_BuildingButtons.BuySiegeEngineCartUpdate_Orig_Interface(_EntityType);
+            return Lib.UIBuilding.Local.Orig_BuySiegeEngineCartUpdate(_EntityType);
         end
         Button.Update(WidgetID, EntityID);
     end
