@@ -23,7 +23,6 @@ Lib.Core.Text = {
         olive   = "{@color:74,120,0,255}",
         celeste = "{@color:145,170,210,255}",
         tooltip = "{@color:51,51,120,255}",
-        lucid   = "{@color:0,0,0,0}",
         none    = "{@color:none}"
     },
 
@@ -91,7 +90,11 @@ function Lib.Core.Text:GetStringTableOverwrite(_Key)
     local Key = _Key:sub(i+1):lower();
     self.StringTables[File] = self.StringTables[File] or {};
     if self.StringTables[File][Key] then
-        return ConvertPlaceholders(Localize(self.StringTables[File][Key]));
+        local Text = self.StringTables[File][Key];
+        if type(Text) == "string" and Text:find("^[A-Za-Z0-9_]+/[A-Za-Z0-9_]+$") then
+            Text = XGUIEng.GetStringTableText_Orig_Core(Text);
+        end
+        return ConvertPlaceholders(Localize(Text));
     end
     return XGUIEng.GetStringTableText_Orig_Core(_Key);
 end

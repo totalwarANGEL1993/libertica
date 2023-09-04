@@ -345,6 +345,7 @@ end
 function Lib.Warehouse.Local:Initialize()
     if not self.IsInstalled then
         Report.WarehouseOfferClicked = CreateReport("Event_WarehouseOfferClicked");
+        Report.WarehouseOfferBought = CreateReport("Event_WarehouseOfferBought");
 
         for i= 1, 8 do
             self.Inflation.Players[i] = {};
