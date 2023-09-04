@@ -2,18 +2,50 @@
 --- @diagnostic disable: missing-return-value
 
 --- Allows to change the promotion requirements.
+--- 
+--- Some technologies are now hidden in the next title rights list:
+--- - Technologies.R_Barracks
+--- - Technologies.R_SwordSmith
+--- - Technologies.R_BarracksArchers
+--- - Technologies.R_BowMaker
+--- - Technologies.R_SiegeEngineWorkshop
+---
+--- To replace the technologies for swordmen and archers, 2 new technologies
+--- were introduced. They can not be used to forbid features but to show the
+--- player that they can recruit those units with the next rank. So the old
+--- technologies do not need to be added to the rights. If the technologies
+--- are forbidden they will not be unlocked.
+---
+--- ##### Technologies.R_MilitarySword
+--- This technology is to show the player they will be able to recruit swordmen.
+---
+--- Unlocks: Technologies.R_Barracks and Technologies.R_SwordSmith
+---
+--- ##### Technologies.R_MilitaryBow
+--- This technology is to show the player they will be able to recruit archers.
+---
+--- Unlocks: Technologies.R_BarracksArchers and Technologies.R_BowMaker
 Lib.Promotion = {
     Name = "Promotion",
 
-    Global = {},
-    Local = {},
-    Shared = {},
+    Global = {
+        TechnologiesToResearch = {},
+    };
+    Local = {};
+    Shared = {
+        TechnologyConfig = {
+            -- Tech name, Description, Icon, Extra Number
+            {"R_MilitarySword", "UI_ObjectNames/BuySwordfighters", {9, 7, 0}, 0},
+            {"R_MilitaryBow",   "UI_ObjectNames/BuyBowmen",        {9, 8, 0}, 0},
+        }
+    };
 };
 
 CONST_REQUIREMENT_TOOLTIP_TYPE = {};
 CONST_CONSUMED_GOODS_COUNTER = {};
 
 Lib.Require("core/Core");
+Lib.Require("module/technology/Technology");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/promotion/Promotion_API");
 Lib.Require("module/promotion/Promotion_Config");
@@ -30,10 +62,12 @@ function Lib.Promotion.Global:Initialize()
         Report.KnightTitleChanged = CreateReport("Event_KnightTitleChanged");
         Report.GoodsConsumed = CreateReport("Event_GoodsConsumed");
 
+        Lib.Promotion.Shared:CreateTechnologies();
+        Lib.Promotion.Shared:UpdateInvisibleTechnologies();
+
         self:OverrideKnightTitleChanged();
         self:OverwriteConsumedGoods();
-
-        Lib.Promotion.Shared:UpdateInvisibleTechnologies();
+        self:InitRelatedTechnologies();
 
         -- Garbage collection
         Lib.Promotion.Local = nil;
@@ -51,8 +85,12 @@ function Lib.Promotion.Global:OnReportReceived(_ID, ...)
         Lib.Promotion.Helper.OverwritePromotionHelper();
         InitKnightTitleTables = Lib.Promotion.Requirements.InitKnightTitleTables;
         InitKnightTitleTables();
+        for i= 1, 8 do
+            ActivateNeedsAndRightsForPlayerByKnightTitle(i, 0);
+        end
         self.LoadscreenClosed = true;
     elseif _ID == Report.KnightTitleChanged then
+        self:UnlockRelatedTechnologies(arg[1], arg[2]);
         local Consume = CONST_CONSUMED_GOODS_COUNTER[arg[1]];
         CONST_CONSUMED_GOODS_COUNTER[arg[1]] = Consume or {};
         for k,v in pairs(CONST_CONSUMED_GOODS_COUNTER[arg[1]]) do
@@ -88,6 +126,35 @@ function Lib.Promotion.Global:OverwriteConsumedGoods()
     end
 end
 
+--- Init technologies that are researched transitively.
+function Lib.Promotion.Global:InitRelatedTechnologies()
+    self.TechnologiesToResearch[Technologies.R_MilitaryBow] = {
+        Technologies.R_BarracksArchers,
+        Technologies.R_BowMaker,
+    }
+    self.TechnologiesToResearch[Technologies.R_MilitarySword] = {
+        Technologies.R_Barracks,
+        Technologies.R_SwordSmith,
+    }
+end
+
+-- Unlocks technologies mapped to a technology researched by the new knight
+-- title if they are still prohibited.
+function Lib.Promotion.Global:UnlockRelatedTechnologies(_PlayerID, _TitleID)
+    if NeedsAndRightsByKnightTitle[_TitleID] then
+        for k,v in pairs(NeedsAndRightsByKnightTitle[_TitleID][4]) do
+            if self.TechnologiesToResearch[v] then
+                for _,Technology in pairs(self.TechnologiesToResearch[v]) do
+                    if Logic.TechnologyGetState(_PlayerID, Technology) == 0
+                    or Logic.TechnologyGetState(_PlayerID, Technology) == 2 then
+                        Logic.TechnologySetState(_PlayerID, Technology, 3);
+                    end
+                end
+            end
+        end
+    end
+end
+
 -- -------------------------------------------------------------------------- --
 -- Local
 
@@ -97,11 +164,12 @@ function Lib.Promotion.Local:Initialize()
         Report.KnightTitleChanged = CreateReport("Event_KnightTitleChanged");
         Report.GoodsConsumed = CreateReport("Event_GoodsConsumed");
 
+        Lib.Promotion.Shared:CreateTechnologies();
+        Lib.Promotion.Shared:UpdateInvisibleTechnologies();
+
         self:OverwriteTooltips();
         self:InitTexturePositions();
         self:OverwriteUpdateRequirements();
-
-        Lib.Promotion.Shared:UpdateInvisibleTechnologies();
 
         -- Garbage collection
         Lib.Promotion.Global = nil;
@@ -597,11 +665,31 @@ function Lib.Promotion.Shared:UpdateInvisibleTechnologies()
         TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_StatueProduction] = true;
         TechnologiesNotShownForKnightTitle[Technologies.R_SpecialEdition_StatueSettler] = true;
         TechnologiesNotShownForKnightTitle[Technologies.R_Victory] = true;
+
+        -- Disabled to make space in the window
+        TechnologiesNotShownForKnightTitle[Technologies.R_Barracks] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_BarracksArchers] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_BowMaker] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SwordSmith] = true;
+        TechnologiesNotShownForKnightTitle[Technologies.R_SiegeEngineWorkshop] = true;
     end
 
     -- If io module is used this pseudo technology exists
     if g_GameExtraNo > 0 and Technologies.R_CallGeologist then
         TechnologiesNotShownForKnightTitle[Technologies.R_CallGeologist] = true;
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Shared
+
+function Lib.Promotion.Shared:CreateTechnologies()
+    for i= 1, #self.TechnologyConfig do
+        if g_GameExtraNo >= self.TechnologyConfig[i][4] then
+            if not Technologies[self.TechnologyConfig[i][1]] then
+                AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
+            end
+        end
     end
 end
 
