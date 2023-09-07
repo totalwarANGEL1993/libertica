@@ -12,6 +12,7 @@ Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/libe
 if CONST_IS_IN_DEV then
     Lib.Loader.PushPath("E:/Repositories/liberty/var/");
 end
+Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/npc/NPC");
@@ -32,6 +33,8 @@ function TestSetupChests()
 end
 
 function TestSetupTradeposts()
+    ReplaceEntity("TP2", Entities.B_TradePost, 1);
+    ReplaceEntity("TP3", Entities.B_TradePost, 1);
     -- InteractiveObjectDeactivate("TP2");
     -- InteractiveObjectDeactivate("TP3");
 

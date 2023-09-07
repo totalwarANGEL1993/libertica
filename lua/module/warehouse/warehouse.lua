@@ -41,6 +41,7 @@ Lib.Warehouse = {
 Lib.Require("comfort/GetSiegeengineTypeByCartType");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/KeyOf");
+Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("comfort/global/SendCart");
 Lib.Require("core/Core");
 Lib.Require("module/uitools/UITools");
@@ -99,21 +100,40 @@ end
 function Lib.Warehouse.Global:CreateWarehouse(_Data)
     local Warehouse = {
         ScriptName      = _Data.ScriptName,
+        BuildingName    = _Data.ScriptName.. "_Post",
+        Costs           = _Data.Costs,
         Offers          = {};
     }
     table.insert(self.Warehouses, Warehouse);
 
-    if _Data.Costs and _Data.Costs[1] then
-        Logic.InteractiveObjectAddCosts(GetID(_Data.ScriptName), _Data.Costs[1], _Data.Costs[2]);
+    local ID = GetID(_Data.ScriptName);
+    local x,y,z = Logic.EntityGetPos(ID);
+    local Orientation = Logic.GetEntityOrientation(ID);
+    local PlayerID = Logic.EntityGetPlayer(ID);
+    local Type = Logic.GetEntityType(ID);
+    DestroyEntity(Warehouse.ScriptName);
+    local SiteID = Logic.CreateEntity(Entities.I_X_TradePostConstructionSite, x, y, Orientation, PlayerID);
+    Logic.SetEntityName(SiteID, Warehouse.ScriptName);
+    if Type == Entities.B_TradePost then
+        SiteID = ReplaceEntity(SiteID, Entities.XD_ScriptEntity);
+        local BuildingID = Logic.CreateEntity(Entities.B_TradePost, x, y, Orientation, PlayerID);
+        Logic.SetEntityName(BuildingID, Warehouse.BuildingName);
     end
-    if _Data.Costs and _Data.Costs[3] then
-        Logic.InteractiveObjectAddCosts(GetID(_Data.ScriptName), _Data.Costs[3], _Data.Costs[4]);
+
+    if _Data.Costs then
+        Logic.InteractiveObjectClearCosts(GetID(Warehouse.ScriptName));
+        if _Data.Costs[1] then
+            Logic.InteractiveObjectAddCosts(GetID(Warehouse.ScriptName), _Data.Costs[1], _Data.Costs[2]);
+        end
+        if _Data.Costs[3] then
+            Logic.InteractiveObjectAddCosts(GetID(Warehouse.ScriptName), _Data.Costs[3], _Data.Costs[4]);
+        end
     end
 
     for i= 1, #_Data.Offers do
         if _Data.Offers[i] then
             self:CreateOffer(
-                _Data.ScriptName,
+                Warehouse.ScriptName,
                 _Data.Offers[i].Amount,
                 _Data.Offers[i].GoodType,
                 _Data.Offers[i].GoodAmount,
@@ -123,7 +143,7 @@ function Lib.Warehouse.Global:CreateWarehouse(_Data)
             );
         end
     end
-    ExecuteLocal([[Lib.Warehouse.Local:InitTradeButtons("%s")]], _Data.ScriptName .. "_Post");
+    ExecuteLocal([[Lib.Warehouse.Local:InitTradeButtons("%s")]], Warehouse.BuildingName);
 end
 
 function Lib.Warehouse.Global:GetIndex(_Name)
@@ -295,22 +315,46 @@ function Lib.Warehouse.Global:OverwriteGameCallbacks()
     self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
     GameCallback_OnBuildingConstructionComplete = function(_PlayerID, _EntityID)
         Lib.Warehouse.Global.Orig_GameCallback_OnBuildingConstructionComplete(_PlayerID, _EntityID);
-        local Type = Logic.GetEntityType(_EntityID);
-        if Type == Entities.B_TradePost then
+        if Logic.GetEntityType(_EntityID) == Entities.B_TradePost then
             Lib.Warehouse.Global:OnTradepostConstructed(_EntityID);
+        end
+    end
+
+    self.Orig_GameCallback_BuildingDestroyed = GameCallback_BuildingDestroyed;
+    GameCallback_BuildingDestroyed = function(_EntityID, _PlayerID, _KnockedDown)
+        Lib.Warehouse.Global.Orig_GameCallback_BuildingDestroyed(_EntityID, _PlayerID, _KnockedDown);
+        if Logic.GetEntityType(_EntityID) == Entities.B_TradePost then
+            Lib.Warehouse.Global:OnTradepostDestroyed(_PlayerID, _EntityID);
         end
     end
 end
 
+-- When a tradepost is constructed from a site and the site is a warehouse then
+-- the created building becomes a script name.
 function Lib.Warehouse.Global:OnTradepostConstructed(_EntityID)
     local x,y,z = Logic.EntityGetPos(_EntityID);
-    local dx,dy = Logic.GetBuildingApproachPosition(_EntityID);
     local n, SiteID = Logic.GetEntitiesInArea(Entities.I_X_TradePostConstructionSite, x, y, 100, 1);
     if SiteID ~= 0 then
         local ScriptName = Logic.GetEntityName(SiteID);
         local Index = self:GetIndex(ScriptName);
         if Index ~= 0 then
-            Logic.SetEntityName(_EntityID, ScriptName .. "_Post");
+            Logic.SetEntityName(_EntityID, self.Warehouses[Index].BuildingName);
+        end
+    end
+end
+
+-- When a tradepost is destroyed that was a warehouse an new construction site
+-- is created if it don't exist anymore.
+function Lib.Warehouse.Global:OnTradepostDestroyed(_PlayerID, _EntityID)
+    local x,y,z = Logic.EntityGetPos(_EntityID);
+    local Orientation = Logic.GetEntityOrientation(_EntityID);
+    local ScriptName = Logic.GetEntityName(_EntityID);
+    local Index = (ScriptName and self:GetIndex(ScriptName:sub(1, ScriptName:len() -5))) or 0;
+    if Index ~= 0 then
+        local Data = self.Warehouses[Index];
+        local ID = ReplaceEntity(Data.ScriptName, Entities.I_X_TradePostConstructionSite);
+        for i= 1, 8 do
+            Logic.InteractiveObjectSetPlayerState(ID, i, 1);
         end
     end
 end
