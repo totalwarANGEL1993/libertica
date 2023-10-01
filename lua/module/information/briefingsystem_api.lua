@@ -3,7 +3,7 @@ Lib.Register("module/information/BriefingSystem_API");
 
 --- Starts a briefing.
 ---
---- <h4>Settings</h4>
+--- #### Settings
 ---
 --- Possible fields for the briefing table:
 --- * `Starting`                - Function called when briefing is started              
@@ -17,7 +17,7 @@ Lib.Register("module/information/BriefingSystem_API");
 ---
 --- *-> Example #1*
 ---
---- <h4>Animations</h4>
+--- #### Animations
 --- The camera settings can be separated from the text of the page. Not only
 --- allows this to fluetly write dialogs, also more possibilities are unlocked
 --- when using the notation. Th create a animation the page musn't have a
@@ -29,7 +29,7 @@ Lib.Register("module/information/BriefingSystem_API");
 ---
 --- *-> Example #4*
 ---
---- <h4>Parallax</h4>
+--- #### Parallax
 --- In the context of a video game parallaxes are scrollable backgrounds. This
 --- technique was used by side scrollers. During a briefing page up to 4 layers
 --- of graphics can be shown and animated. Parallaxes are notated similar to
@@ -43,7 +43,7 @@ Lib.Register("module/information/BriefingSystem_API");
 ---
 --- *-> Example #6*
 ---
---- <h4>Examples</h4>
+--- #### Examples
 ---
 --- * Example #1: Basic structure
 --- ```lua
@@ -253,7 +253,7 @@ end
 
 --- Creates a page.
 ---
---- <h4>Briefing Page</h4>
+--- #### Briefing Page
 --- Possible fields for the page:
 ---
 --- * `Title`           - Displayed page title
@@ -277,7 +277,7 @@ end
 ---
 --- *-> Example #1*
 ---
---- <h4>Flow control</h4>
+--- #### Flow control
 --- In a briefing the player can be forced to make a choice that will have
 --- different results. That is called multiple choice. Options must be provided
 --- in a table. The target page can be defined with it's name or a function can
@@ -312,7 +312,7 @@ end
 ---
 --- *-> Example #7*
 ---
---- <h4>Examples</h4>
+--- #### Examples
 ---
 --- * Example #1: A simple page
 --- ```lua
@@ -383,7 +383,7 @@ end
 --- The function can create a automatic page name based of the page index. A
 --- name can be an optional parameter at the start.
 ---
---- <h4>Settings</h4>
+--- #### Settings
 --- The function expects the following parameters:
 --- 
 --- * `Name`           - (Optional) Name of page
@@ -394,7 +394,7 @@ end
 --- * `Action`         - (Optional) Action when page is shown
 --- * `EnableSkipping` - (Optional) Allow/Forbid skipping page
 ---
---- <h4>Examples</h4>
+--- #### Examples
 ---
 --- ```lua
 --- -- Long shot

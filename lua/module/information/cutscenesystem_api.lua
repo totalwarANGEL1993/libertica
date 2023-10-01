@@ -3,7 +3,7 @@ Lib.Register("module/information/CutsceneSystem_API");
 
 --- Starts a cutscene.
 ---
---- <h4>Settings</h4>
+--- #### Settings
 --- 
 --- Possible fields for the cutscene table:
 --- * `Starting`                - Function called when cutscene is started              
@@ -13,7 +13,7 @@ Lib.Register("module/information/CutsceneSystem_API");
 --- * `EnableFoW`               - Displays the fog of war during the cutscene           
 --- * `EnableBorderPins`        - Displays the border pins during the cutscene 
 ---
---- <h4>Example</h4>
+--- #### Example
 ---
 --- ```lua
 --- function Cutscene1(_Name, _PlayerID)
@@ -93,7 +93,7 @@ end
 
 --- Creates a page.
 ---
---- <h4>Cutscene Page</h4>
+--- #### Cutscene Page
 --- Possible fields for the page:
 ---
 --- * `Flight`          - Name of flight XML (without .cs)
@@ -108,7 +108,7 @@ end
 --- * `BarOpacity`      - Opacity of bars
 --- * `BigBars`         - Use big bars
 ---
---- <h4>Example</h4>
+--- #### Example
 ---
 --- ```lua
 --- AP {

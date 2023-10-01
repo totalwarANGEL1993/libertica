@@ -3,7 +3,7 @@ Lib.Register("module/information/DialogSystem_API");
 
 --- Starts a dialog.
 ---
---- <h4>Settings</h4>
+--- #### Settings
 ---
 --- Possible fields for the dialog table:
 --- * `Starting`                - Function called when dialog is started              
@@ -15,7 +15,7 @@ Lib.Register("module/information/DialogSystem_API");
 --- * `EnableFoW`               - Displays the fog of war during the dialog           
 --- * `EnableBorderPins`        - Displays the border pins during the dialog 
 ---
---- <h4>Example</h4>
+--- #### Example
 ---
 --- ```lua
 --- function Dialog1(_Name, _PlayerID)
@@ -141,7 +141,7 @@ end
 
 --- Creates a page.
 ---
---- <h4>Dialog Page</h4>
+--- #### Dialog Page
 --- Possible fields for the page:
 ---
 --- * `Actor`           - (optional) PlayerID of speaker
@@ -158,7 +158,7 @@ end
 ---
 --- *-> Example #1*
 ---
---- <h5>Flow control</h5>
+--- #### Flow control
 --- In a dialog the player can be forced to make a choice that will have
 --- different results. That is called multiple choice. Options must be provided
 --- in a table. The target page can be defined with it's name or a function can
@@ -193,7 +193,7 @@ end
 ---
 --- *-> Example #7*
 ---
---- <h5>Examples</h5>
+--- #### Examples
 ---
 --- * Example #1: A simple page
 --- ```lua
@@ -273,7 +273,7 @@ end
 --- The function can create a automatic page name based of the page index. A
 --- name can be an optional parameter at the start.
 ---
---- <h4>Settings</h4>
+--- #### Settings
 --- The function expects the following parameters:
 --- 
 --- * `Name`           - (Optional) Name of page
@@ -284,7 +284,7 @@ end
 --- * `DialogCamera`   - Use closeup camera
 --- * `Action`         - (Optional) Action when page is shown
 ---
---- <h4>Examples</h4>
+--- #### Examples
 ---
 --- ```lua
 --- -- Long shot
