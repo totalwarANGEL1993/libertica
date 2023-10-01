@@ -213,7 +213,7 @@ function Lib.UIEffects.Global:FinishTypewriter(_PlayerID)
                 ActivateNormalInterface(GUI.GetPlayerID())
                 ActivateBorderScroll(GUI.GetPlayerID())
                 if ModuleGuiControl then
-                    ModuleGuiControl.Local:UpdateHiddenWidgets()
+                    Lib.UITools.Local:UpdateHiddenWidgets()
                 end
                 Input.GameMode()
                 GUI.ClearNotes()

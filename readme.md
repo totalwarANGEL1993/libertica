@@ -12,6 +12,11 @@ instructions in the readme file.
 (You can also use any other Lua distribution but keep in mind that the game
 uses Lua 5.1!)
 
+In addition the lua package manager `luarocks` may be needed to install 
+additional lua modules:
+
+https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Windows
+
 ## Usage
 
 #### Default

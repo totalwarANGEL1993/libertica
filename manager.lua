@@ -16,6 +16,7 @@ LibWriter = {
     },
     Behaviors = "",
     Compile = false,
+    LoadOrderFromFile = false,
     SingleFile = false,
 }
 
@@ -25,11 +26,12 @@ function LibWriter:Run(...)
     local Action = self:ProcessArguments();
     if Action == 0 then
         print("Usage:");
-        print("-b [-c] [-s] [Files] - build library in var/liberty");
-        print("                       * -c compiles files to bytecode");
-        print("                       * -s creates a single file version");
-        print("-l [Files]           - alphabetical list of loaded dependencies");
-        print("-h                   - show this help");
+        print("-b [-c] [-s] [-o] [Files] - build library in var/liberty");
+        print("                            * -c compiles files to bytecode");
+        print("                            * -s creates a single file version");
+        print("                            * -o loadorder from following wile");
+        print("-l [-o] [Files]                - alphabetical list of loaded dependencies");
+        print("-h                        - show this help");
         return;
     end
 
@@ -74,14 +76,35 @@ function LibWriter:ProcessArguments()
                 self.SingleFile = true;
                 table.remove(arg, 1);
             end
+            -- load order from file?
+            Command = arg[1];
+            if Command and Command == "-o" then
+                self.LoadOrderFromFile = true;
+                table.remove(arg, 1);
+            end
 
             if #Parameter > 0 then
-                self.ComponentList = Parameter;
+                if self.LoadOrderFromFile then
+                    self.ComponentList = self:GetLoadOrderFromFile(Parameter[1]);
+                else
+                    self.ComponentList = Parameter;
+                end
             end
             return 1;
         elseif Command == "-l" or Command == "list" then
+            -- load order from file?
+            Command = arg[1];
+            if Command and Command == "-o" then
+                self.LoadOrderFromFile = true;
+                table.remove(arg, 1);
+            end
+
             if #Parameter > 0 then
-                self.ComponentList = Parameter;
+                if self.LoadOrderFromFile then
+                    self.ComponentList = self:GetLoadOrderFromFile(Parameter[1]);
+                else
+                    self.ComponentList = Parameter;
+                end
             end
             return 2;
         end
@@ -142,8 +165,8 @@ function LibWriter:CopyModules()
         if not self:IsDir(Path) then
             os.execute('mkdir "'..Path..'"');
         end
-        os.execute('cp "lua/'..imports[i]..'.lua" "'..Path..'/'..File..'.lua');
-        self:CompileFile(imports[i].. ".lua", Path.. '/' ..File.. '.lua');
+        os.execute('cp "lua/'..imports[i]..'.lua" "'..Path..'/'..File..'.lua"');
+        self:CompileFile('"lua/'..imports[i]..'.lua"', Path.. '/' ..File.. '.lua');
     end
 end
 
@@ -254,6 +277,19 @@ function LibWriter:CompileFile(_Source, _Dest)
         os.execute('luac "'.._Source..'"');
         os.execute('mv "luac.out" "'.._Dest..'"');
     end
+end
+
+--- Reads the load order from a file.
+--- @param _Path string File location
+--- @return table List List of modules
+function LibWriter:GetLoadOrderFromFile(_Path)
+    local Paths = {};
+    if self:FileExists(_Path) then
+        for line in io.lines(_Path:lower()) do
+            table.insert(Paths, line);
+        end
+    end
+    return Paths;
 end
 
 -- -------------------------------------------------------------------------- --
