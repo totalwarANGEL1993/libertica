@@ -1,0 +1,667 @@
+--- Allows to place up to 6 additional buttons in building menus.
+Lib.UIBuilding = {
+    Name = "UIBuilding",
+    CinematicEvents = {},
+
+    Global = {},
+    Local = {
+        BuildingButtons = {
+            BindingCounter = 0,
+            Bindings = {},
+            Configuration = {
+                ["BuyAmmunitionCart"] = {
+                    TypeExclusion = "^B_.*StoreHouse",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["BuyBattallion"] = {
+                    TypeExclusion = "^B_[CB]a[sr][tr][la][ec]",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["PlaceField"] = {
+                    TypeExclusion = "^B_.*[BFH][aei][erv][kme]",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["StartFestival"] = {
+                    TypeExclusion = "^B_Marketplace",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["StartTheatrePlay"] = {
+                    TypeExclusion = "^B_Theatre",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["UpgradeTurret"] = {
+                    TypeExclusion = "^B_WallTurret",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["BuyBatteringRamCart"] = {
+                    TypeExclusion = "^B_SiegeEngineWorkshop",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["BuyCatapultCart"] = {
+                    TypeExclusion = "^B_SiegeEngineWorkshop",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+                ["BuySiegeTowerCart"] = {
+                    TypeExclusion = "^B_SiegeEngineWorkshop",
+                    OriginalPosition = nil,
+                    Bind = nil,
+                },
+            },
+        },
+    },
+}
+
+Lib.Require("core/Core");
+Lib.Require("module/uibuilding/UIBuilding_API");
+Lib.Register("module/uibuilding/UIBuilding");
+
+-- -------------------------------------------------------------------------- --
+-- Global
+
+-- Global initalizer method
+function Lib.UIBuilding.Global:Initialize()
+    if not self.IsInstalled then
+        --- The player clicked the cancel upgrade button.
+        --- 
+        --- #### Parameter
+        --- * `EntityID` - ID of building
+        --- * `PlayerID` - ID of owner
+        Report.CancelUpgradeClicked = CreateReport("Event_CancelUpgradeClicked");
+
+        --- The player clicked the start upgrade button.
+        --- 
+        --- #### Parameter
+        --- * `EntityID` - ID of building
+        --- * `PlayerID` - ID of owner
+        Report.StartUpgradeClicked = CreateReport("Event_StartUpgradeClicked");
+
+        --- The player clicked the start festival button.
+        --- 
+        --- #### Parameter
+        --- * `PlayerID` - ID of player
+        --- * `Type`     - Type of festival
+        Report.FestivalClicked = CreateReport("Event_FestivalClicked");
+
+        --- The player clicked the start sermon button.
+        --- 
+        --- #### Parameter
+        --- * `PlayerID` - ID of player
+        Report.SermonClicked = CreateReport("Event_SermonClicked");
+
+        --- The player clicked the start theatre play button.
+        --- 
+        --- #### Parameter
+        --- * `EntityID` - ID of building
+        --- * `PlayerID` - ID of owner
+        Report.TheatrePlayClicked = CreateReport("Event_TheatrePlayClicked");
+    end
+    self.IsInstalled = true;
+end
+
+-- Global load game
+function Lib.UIBuilding.Global:OnSaveGameLoaded()
+end
+
+-- Global report listener
+function Lib.UIBuilding.Global:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    elseif _ID == Report.StartUpgradeClicked then
+        SendReportToLocal(_ID, unpack(arg));
+    elseif _ID == Report.CancelUpgradeClicked then
+        SendReportToLocal(_ID, unpack(arg));
+    elseif _ID == Report.FestivalClicked then
+        SendReportToLocal(_ID, unpack(arg));
+    elseif _ID == Report.SermonClicked then
+        SendReportToLocal(_ID, unpack(arg));
+    elseif _ID == Report.TheatrePlayClicked then
+        SendReportToLocal(_ID, unpack(arg));
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Local
+
+-- Local initalizer method
+function Lib.UIBuilding.Local:Initialize()
+    if not self.IsInstalled then
+        Report.CancelUpgradeClicked = CreateReport("Event_CancelUpgradeClicked");
+        Report.StartUpgradeClicked = CreateReport("Event_StartUpgradeClicked");
+        Report.FestivalClicked = CreateReport("Event_FestivalClicked");
+        Report.SermonClicked = CreateReport("Event_SermonClicked");
+        Report.TheatrePlayClicked = CreateReport("Event_TheatrePlayClicked");
+
+        self:InitBackupPositions();
+        self:OverrideOnSelectionChanged();
+        self:OverrideBuyAmmunitionCart();
+        self:OverrideBuyBattalion();
+        self:OverrideBuySiegeEngineCart();
+        self:OverridePlaceField();
+        self:OverrideStartFestival();
+        self:OverrideStartTheatrePlay();
+        self:OverrideUpgradeTurret();
+        self:OverrideUpgradeBuilding();
+        self:OverrideStartSermon();
+    end
+    self.IsInstalled = true;
+end
+
+-- Local load game
+function Lib.UIBuilding.Local:OnSaveGameLoaded()
+end
+
+-- Local report listener
+function Lib.UIBuilding.Local:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.UIBuilding.Local:OverrideOnSelectionChanged()
+    self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
+    GameCallback_GUI_SelectionChanged = function(_Source)
+        Lib.UIBuilding.Local.Orig_GameCallback_GUI_SelectionChanged(_Source);
+        Lib.UIBuilding.Local:UnbindButtons();
+        Lib.UIBuilding.Local:BindButtons(GUI.GetSelectedEntity());
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
+    self.Orig_BuyAmmunitionCartClicked = GUI_BuildingButtons.BuyAmmunitionCartClicked;
+    GUI_BuildingButtons.BuyAmmunitionCartClicked = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_BuyAmmunitionCartClicked();
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    Lib.UIBuilding.Local.Orig_BuyAmmunitionCartUpdate = GUI_BuildingButtons.BuyAmmunitionCartUpdate;
+    GUI_BuildingButtons.BuyAmmunitionCartUpdate = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            SetIcon(WidgetID, {10, 4});
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_BuyAmmunitionCartUpdate();
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideBuyBattalion()
+    self.Orig_BuyBattalionClicked = GUI_BuildingButtons.BuyBattalionClicked;
+    GUI_BuildingButtons.BuyBattalionClicked = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_BuyBattalionClicked();
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    self.Orig_BuyBattalionMouseOver = GUI_BuildingButtons.BuyBattalionMouseOver;
+    GUI_BuildingButtons.BuyBattalionMouseOver = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button;
+        if Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName] then
+            Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        end
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_BuyBattalionMouseOver();
+        end
+        Button.Tooltip(WidgetID, EntityID);
+    end
+
+    self.Orig_BuyBattalionUpdate = GUI_BuildingButtons.BuyBattalionUpdate;
+    GUI_BuildingButtons.BuyBattalionUpdate = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_BuyBattalionUpdate();
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverridePlaceField()
+    self.Orig_PlaceFieldClicked = GUI_BuildingButtons.PlaceFieldClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_BuildingButtons.PlaceFieldClicked = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_PlaceFieldClicked();
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    self.Orig_PlaceFieldMouseOver = GUI_BuildingButtons.PlaceFieldMouseOver;
+    GUI_BuildingButtons.PlaceFieldMouseOver = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_PlaceFieldMouseOver();
+        end
+        Button.Tooltip(WidgetID, EntityID);
+    end
+
+    self.Orig_PlaceFieldUpdate = GUI_BuildingButtons.PlaceFieldUpdate;
+    GUI_BuildingButtons.PlaceFieldUpdate = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_PlaceFieldUpdate();
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideStartFestival()
+    self.Orig_StartKnightsPromotionCelebration = StartKnightsPromotionCelebration;
+    StartKnightsPromotionCelebration = function(_PlayerID, _OldTitle, _FirstTime)
+        Lib.UIBuilding.Local.Orig_StartKnightsPromotionCelebration(_PlayerID, _OldTitle, _FirstTime);
+        SendReportToGlobal(Report.FestivalClicked, _PlayerID, 1);
+    end
+
+    GUI_BuildingButtons.StartFestivalClicked = function(_FestivalIndex)
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            local PlayerID = GUI.GetPlayerID();
+            local Costs = {Logic.GetFestivalCost(PlayerID, _FestivalIndex)};
+            local CanBuyBoolean, CanNotBuyString = AreCostsAffordable(Costs);
+            if EntityID ~= Logic.GetMarketplace(PlayerID) then
+                return;
+            end
+            if CanBuyBoolean == true then
+                Sound.FXPlay2DSound("ui\\menu_click");
+                GUI.StartFestival(PlayerID, _FestivalIndex);
+                StartEventMusic(MusicSystem.EventFestivalMusic, PlayerID);
+                StartKnightVoiceForPermanentSpecialAbility(Entities.U_KnightSong);
+                GUI.AddBuff(Buffs.Buff_Festival);
+                SendReportToGlobal(Report.FestivalClicked, PlayerID, 0);
+            else
+                Message(CanNotBuyString);
+            end
+            return;
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    self.Orig_StartFestivalMouseOver = GUI_BuildingButtons.StartFestivalMouseOver;
+    GUI_BuildingButtons.StartFestivalMouseOver = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_StartFestivalMouseOver();
+        end
+        Button.Tooltip(WidgetID, EntityID);
+    end
+
+    self.Orig_StartFestivalUpdate = GUI_BuildingButtons.StartFestivalUpdate;
+    GUI_BuildingButtons.StartFestivalUpdate = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            SetIcon(WidgetID, {4, 15});
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_StartFestivalUpdate();
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
+    GUI_BuildingButtons.StartTheatrePlayClicked = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            local PlayerID = GUI.GetPlayerID();
+            local GoodType = Logic.GetGoodTypeOnOutStockByIndex(EntityID, 0);
+            local Amount = Logic.GetMaxAmountOnStock(EntityID);
+            local Costs = {GoodType, Amount};
+            local CanBuyBoolean, CanNotBuyString = AreCostsAffordable(Costs);
+            if Logic.CanStartTheatrePlay(EntityID) == true then
+                Sound.FXPlay2DSound("ui\\menu_click");
+                GUI.StartTheatrePlay(EntityID);
+                SendReportToGlobal(Report.TheatrePlayClicked, PlayerID);
+            elseif CanBuyBoolean == false then
+                Message(CanNotBuyString);
+            end
+            return;
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    self.Orig_StartTheatrePlayMouseOver = GUI_BuildingButtons.StartTheatrePlayMouseOver;
+    GUI_BuildingButtons.StartTheatrePlayMouseOver = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_StartTheatrePlayMouseOver();
+        end
+        Button.Tooltip(WidgetID, EntityID);
+    end
+
+    self.Orig_StartTheatrePlayUpdate = GUI_BuildingButtons.StartTheatrePlayUpdate;
+    GUI_BuildingButtons.StartTheatrePlayUpdate = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            SetIcon(WidgetID, {16, 2});
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_StartTheatrePlayUpdate();
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideUpgradeTurret()
+    self.Orig_UpgradeTurretClicked = GUI_BuildingButtons.UpgradeTurretClicked;
+    GUI_BuildingButtons.UpgradeTurretClicked = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_UpgradeTurretClicked();
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    self.Orig_UpgradeTurretMouseOver = GUI_BuildingButtons.UpgradeTurretMouseOver;
+    GUI_BuildingButtons.UpgradeTurretMouseOver = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_UpgradeTurretMouseOver();
+        end
+        Button.Tooltip(WidgetID, EntityID);
+    end
+
+    self.Orig_UpgradeTurretUpdate = GUI_BuildingButtons.UpgradeTurretUpdate;
+    GUI_BuildingButtons.UpgradeTurretUpdate = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        if not Button then
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_UpgradeTurretUpdate();
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
+    self.Orig_BuySiegeEngineCartClicked = GUI_BuildingButtons.BuySiegeEngineCartClicked;
+    GUI_BuildingButtons.BuySiegeEngineCartClicked = function(_EntityType)
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button;
+        if WidgetName == "BuyCatapultCart"
+        or WidgetName == "BuySiegeTowerCart"
+        or WidgetName == "BuyBatteringRamCart" then
+            Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        end
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_BuySiegeEngineCartClicked(_EntityType);
+        end
+        Button.Action(WidgetID, EntityID);
+    end
+
+    self.Orig_BuySiegeEngineCartMouseOver = GUI_BuildingButtons.BuySiegeEngineCartMouseOver;
+    GUI_BuildingButtons.BuySiegeEngineCartMouseOver = function(_EntityType, _Right)
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button;
+        if WidgetName == "BuyCatapultCart"
+        or WidgetName == "BuySiegeTowerCart"
+        or WidgetName == "BuyBatteringRamCart" then
+            Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        end
+        if not Button then
+            return Lib.UIBuilding.Local.Orig_BuySiegeEngineCartMouseOver(_EntityType, _Right);
+        end
+        Button.Tooltip(WidgetID, EntityID);
+    end
+
+    self.Orig_BuySiegeEngineCartUpdate = GUI_BuildingButtons.BuySiegeEngineCartUpdate;
+    GUI_BuildingButtons.BuySiegeEngineCartUpdate = function(_EntityType)
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
+        local EntityID = GUI.GetSelectedEntity();
+        local Button;
+        if WidgetName == "BuyCatapultCart"
+        or WidgetName == "BuySiegeTowerCart"
+        or WidgetName == "BuyBatteringRamCart" then
+            Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        end
+        if not Button then
+            if WidgetName == "BuyBatteringRamCart" then
+                SetIcon(WidgetID, {9, 2});
+            elseif WidgetName == "BuySiegeTowerCart" then
+                SetIcon(WidgetID, {9, 3});
+            elseif WidgetName == "BuyCatapultCart" then
+                SetIcon(WidgetID, {9, 1});
+            end
+            XGUIEng.ShowWidget(WidgetID, 1);
+            XGUIEng.DisableButton(WidgetID, 0);
+            return Lib.UIBuilding.Local.Orig_BuySiegeEngineCartUpdate(_EntityType);
+        end
+        Button.Update(WidgetID, EntityID);
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideUpgradeBuilding()
+    GUI_BuildingButtons.UpgradeClicked = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local EntityID = GUI.GetSelectedEntity();
+        if Logic.CanCancelUpgradeBuilding(EntityID) then
+            Sound.FXPlay2DSound("ui\\menu_click");
+            GUI.CancelBuildingUpgrade(EntityID);
+            XGUIEng.ShowAllSubWidgets("/InGame/Root/Normal/BuildingButtons", 1);
+            SendReportToGlobal(Report.CancelUpgradeClickede, EntityID, GUI.GetPlayerID());
+            return;
+        end
+        local Costs = GUI_BuildingButtons.GetUpgradeCosts();
+        local CanBuyBoolean, CanNotBuyString = AreCostsAffordable(Costs);
+        if CanBuyBoolean == true then
+            Sound.FXPlay2DSound("ui\\menu_click");
+            GUI.UpgradeBuilding(EntityID, nil);
+            StartKnightVoiceForPermanentSpecialAbility(Entities.U_KnightWisdom);
+            if WidgetID ~= 0 then
+                SaveButtonPressed(WidgetID);
+            end
+            SendReportToGlobal(Report.StartUpgradeClicked, EntityID, GUI.GetPlayerID());
+        else
+            Message(CanNotBuyString);
+        end
+    end
+end
+
+function Lib.UIBuilding.Local:OverrideStartSermon()
+    function GUI_BuildingButtons.StartSermonClicked()
+        local PlayerID = GUI.GetPlayerID();
+        if Logic.CanSermonBeActivated(PlayerID) then
+            GUI.ActivateSermon(PlayerID);
+            StartKnightVoiceForPermanentSpecialAbility(Entities.U_KnightHealing);
+            GUI.AddBuff(Buffs.Buff_Sermon);
+            local CathedralID = Logic.GetCathedral(PlayerID);
+            local x, y = Logic.GetEntityPosition(CathedralID);
+            local z = 0;
+            Sound.FXPlay3DSound("buildings\\building_start_sermon", x, y, z);
+            SendReportToGlobal(Report.SermonClicked, GUI.GetPlayerID());
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.UIBuilding.Local:InitBackupPositions()
+    for k, v in pairs(self.BuildingButtons.Configuration) do
+        local x, y = XGUIEng.GetWidgetLocalPosition("/InGame/Root/Normal/BuildingButtons/" ..k);
+        self.BuildingButtons.Configuration[k].OriginalPosition = {x, y};
+    end
+end
+
+function Lib.UIBuilding.Local:GetButtonsForOverwrite(_ID, _Amount)
+    local Buttons = {};
+    local Type = Logic.GetEntityType(_ID);
+    local TypeName = Logic.GetEntityTypeName(Type);
+    for k, v in pairs(self.BuildingButtons.Configuration) do
+        if #Buttons == _Amount then
+            break;
+        end
+        if not TypeName:find(v.TypeExclusion) then
+            table.insert(Buttons, k);
+        end
+    end
+    assert(#Buttons == _Amount);
+    table.sort(Buttons);
+    return Buttons;
+end
+
+function Lib.UIBuilding.Local:AddButtonBinding(_Type, _X, _Y, _ActionFunction, _TooltipController, _UpdateController)
+    if not self.BuildingButtons.Bindings[_Type] then
+        self.BuildingButtons.Bindings[_Type] = {};
+    end
+    if #self.BuildingButtons.Bindings[_Type] < 6 then
+        self.BuildingButtons.BindingCounter = self.BuildingButtons.BindingCounter +1;
+        table.insert(self.BuildingButtons.Bindings[_Type], {
+            ID       = self.BuildingButtons.BindingCounter,
+            Position = {_X, _Y},
+            Action   = _ActionFunction,
+            Tooltip  = _TooltipController,
+            Update   = _UpdateController,
+        });
+        return self.BuildingButtons.BindingCounter;
+    end
+    return 0;
+end
+
+function Lib.UIBuilding.Local:RemoveButtonBinding(_Type, _ID)
+    if not self.BuildingButtons.Bindings[_Type] then
+        self.BuildingButtons.Bindings[_Type] = {};
+    end
+    for i= #self.BuildingButtons.Bindings[_Type], 1, -1 do
+        if self.BuildingButtons.Bindings[_Type][i].ID == _ID then
+            table.remove(self.BuildingButtons.Bindings[_Type], i);
+        end
+    end
+end
+
+function Lib.UIBuilding.Local:BindButtons(_ID)
+    if _ID == nil or _ID == 0 or (Logic.IsBuilding(_ID) == 0 and not Logic.IsWall(_ID)) then
+        return self:UnbindButtons();
+    end
+    local Name = Logic.GetEntityName(_ID);
+    local Type = Logic.GetEntityType(_ID);
+
+    local WidgetsForOverride = self:GetButtonsForOverwrite(_ID, 6);
+    local ButtonOverride = {};
+    -- Add buttons for named entity
+    if self.BuildingButtons.Bindings[Name] and #self.BuildingButtons.Bindings[Name] > 0 then
+        for i= 1, #self.BuildingButtons.Bindings[Name] do
+            table.insert(ButtonOverride, self.BuildingButtons.Bindings[Name][i]);
+        end
+    end
+    -- Add buttons for type
+    if self.BuildingButtons.Bindings[Type] and #self.BuildingButtons.Bindings[Type] > 0 then
+        for i= 1, #self.BuildingButtons.Bindings[Type] do
+            table.insert(ButtonOverride, self.BuildingButtons.Bindings[Type][i]);
+        end
+    end
+    -- Add buttons for all
+    if self.BuildingButtons.Bindings[0] and #self.BuildingButtons.Bindings[0] > 0 then
+        for i= 1, #self.BuildingButtons.Bindings[0] do
+            table.insert(ButtonOverride, self.BuildingButtons.Bindings[0][i]);
+        end
+    end
+
+    -- Place first six buttons (if present)
+    for i= 1, #ButtonOverride do
+        if i > 6 then
+            break;
+        end
+        local ButtonName = WidgetsForOverride[i];
+        self.BuildingButtons.Configuration[ButtonName].Bind = ButtonOverride[i];
+        XGUIEng.ShowWidget("/InGame/Root/Normal/BuildingButtons/" ..ButtonName, 1);
+        XGUIEng.DisableButton("/InGame/Root/Normal/BuildingButtons/" ..ButtonName, 0);
+        local X = ButtonOverride[i].Position[1];
+        local Y = ButtonOverride[i].Position[2];
+        if not X or not Y then
+            local AnchorPosition = {15, 296};
+            X = AnchorPosition[1] + (64 * (i-1));
+            Y = AnchorPosition[2];
+        end
+        XGUIEng.SetWidgetLocalPosition("/InGame/Root/Normal/BuildingButtons/" ..ButtonName, X, Y);
+    end
+end
+
+function Lib.UIBuilding.Local:UnbindButtons()
+    for k, v in pairs(self.BuildingButtons.Configuration) do
+        local Position = self.BuildingButtons.Configuration[k].OriginalPosition;
+        if Position then
+            XGUIEng.SetWidgetLocalPosition("/InGame/Root/Normal/BuildingButtons/" ..k, Position[1], Position[2]);
+        end
+        self.BuildingButtons.Configuration[k].Bind = nil;
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+RegisterModule(Lib.UIBuilding.Name);
+
