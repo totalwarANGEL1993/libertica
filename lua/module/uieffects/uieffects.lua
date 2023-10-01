@@ -213,7 +213,7 @@ function Lib.UIEffects.Global:FinishTypewriter(_PlayerID)
                 ActivateNormalInterface(GUI.GetPlayerID())
                 ActivateBorderScroll(GUI.GetPlayerID())
                 if ModuleGuiControl then
-                    Lib.UITools.Local:UpdateHiddenWidgets()
+                    Lib.UITools.Widget:UpdateHiddenWidgets()
                 end
                 Input.GameMode()
                 GUI.ClearNotes()
@@ -231,7 +231,7 @@ end
 function Lib.UIEffects.Global:TokenizeText(_Data)
     local TextTokens = {};
     local TempTokens = {};
-    local Text = ConvertPlaceholders(_Data.Text);
+    local Text = ConvertPlaceholders(Localize(_Data.Text));
     Text = Text:gsub("%s+", " ");
     while (true) do
         local s1, e1 = Text:find("{");

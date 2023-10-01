@@ -13,6 +13,9 @@ LibWriter = {
         "module/uitools/UITools",
         "module/uieffects/UIEffects",
         "module/uibuilding/UIBuilding",
+        "module/information/BriefingSystem",
+        "module/information/CutsceneSystem",
+        "module/information/DialogSystem",
     },
     Behaviors = "",
     Compile = false,
@@ -30,7 +33,7 @@ function LibWriter:Run(...)
         print("                            * -c compiles files to bytecode");
         print("                            * -s creates a single file version");
         print("                            * -o loadorder from following wile");
-        print("-l [-o] [Files]                - alphabetical list of loaded dependencies");
+        print("-l [-o] [Files]           - alphabetical list of loaded dependencies");
         print("-h                        - show this help");
         return;
     end

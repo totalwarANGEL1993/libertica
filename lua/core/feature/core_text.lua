@@ -148,7 +148,7 @@ function Lib.Core.Text:Localize(_Text)
 end
 
 function Lib.Core.Text:ConvertPlaceholders(_Text)
-    if type(_Text) == "table" then
+    if type(_Text) == "string" then
         while true do
             local Before, Placeholder, After, Replacement, s1, e1, s2, e2;
             if _Text:find("{n:") then

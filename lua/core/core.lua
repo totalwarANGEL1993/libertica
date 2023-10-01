@@ -1,3 +1,4 @@
+
 Lib.Core = Lib.Core or {
     ModuleList = {},
     Global = {
@@ -24,6 +25,8 @@ Lib.Require("core/feature/Core_Save");
 Lib.Require("core/feature/Core_Quest");
 
 Lib.Register("core/Core");
+
+---@diagnostic disable: deprecated
 
 -- -------------------------------------------------------------------------- --
 
@@ -185,12 +188,11 @@ function Lib.Core.Global:InitReportListener()
 end
 
 function Lib.Core.Global:ExecuteLocal(_Command, ...)
-    local arg = {...};
-    local Command = _Command;
-    if #arg > 0 then
-        Command = Command:format(...);
+    local CommandString = _Command;
+    if arg and #arg > 0 then
+        CommandString = CommandString:format(unpack(arg));
     end
-    Logic.ExecuteInLuaLocalState(Command);
+    Logic.ExecuteInLuaLocalState(CommandString);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -310,16 +312,15 @@ function Lib.Core.Local:InitReportListener()
 end
 
 function Lib.Core.Local:ExecuteGlobal(_Command, ...)
-    local arg = {...};
-    local Command = _Command;
+    local CommandString = _Command;
     assert(
         not (IsHistoryEdition() and IsMultiplayer()),
         "Script command is not allowed in history edition multiplayer."
     );
-    if #arg > 0 then
-        Command = Command:format(unpack(arg));
+    if arg and #arg > 0 then
+        CommandString = CommandString:format(unpack(arg));
     end
-    GUI.SendScriptCommand(Command);
+    GUI.SendScriptCommand(CommandString);
 end
 
 -- -------------------------------------------------------------------------- --
