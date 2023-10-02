@@ -161,6 +161,7 @@ function StartBriefing(_Briefing, _Name, _PlayerID)
     end
     Lib.BriefingSystem.Global:StartBriefing(_Name, PlayerID, _Briefing);
 end
+API.StartBriefing = StartBriefing;
 
 --- Checks if a briefing ist active.
 --- @param _PlayerID integer PlayerID of receiver
@@ -171,6 +172,7 @@ function IsBriefingActive(_PlayerID)
     end
     return Lib.BriefingSystem.Local:GetCurrentBriefing(_PlayerID) ~= nil;
 end
+API.IsBriefingActive = IsBriefingActive;
 
 --- Prepares the briefing and returns the page functions.
 ---
@@ -250,6 +252,7 @@ function AddBriefingPages(_Briefing)
 
     return AP, ASP;
 end
+API.AddBriefingPages = AddBriefingPages;
 
 --- Creates a page.
 ---

@@ -31,6 +31,7 @@ function CreateIOIronMine(_Data)
         _Data.ConstructionAction
     );
 end
+API.CreateIOIronMine = CreateIOIronMine;
 
 --- Creates a buried stone mine.
 ---
@@ -62,6 +63,7 @@ function CreateIOStoneMine(_Data)
         _Data.ConstructionAction
     );
 end
+API.CreateIOStoneMine = CreateIOStoneMine;
 
 function CheckIOMineParameter(_Data)
     error(not IsLocalScript(), "Must be used in global script!");

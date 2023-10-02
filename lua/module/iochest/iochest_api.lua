@@ -24,6 +24,7 @@ function CreateRandomChest(_Name, _Good, _Min, _Max, _Condition, _Action)
     assert(_Max >= _Min, "Maximum can not be lower than minimum!");
     Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, false, false, _Condition, _Action);
 end
+API.CreateRandomChest = CreateRandomChest;
 
 --- Creates a random ruin with specific content.
 --- @param _Name string Script name of entity
@@ -48,6 +49,7 @@ function CreateRandomChest(_Name, _Good, _Min, _Max, _Condition, _Action)
     assert(_Max >= _Min, "Maximum can not be lower than minimum!");
     Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, false, true, _Condition, _Action);
 end
+API.CreateRandomChest = CreateRandomChest;
 
 --- Creates a chest with random gold.
 --- @param _Name string Script name of entity
@@ -58,6 +60,7 @@ function CreateRandomGoldChest(_Name)
     assert(IsExisting(_Name), "Entity does not exist!");
     Lib.IOChest.Global:CreateRandomGoldChest(_Name);
 end
+API.CreateRandomGoldChest = CreateRandomGoldChest;
 
 --- Creates a chest with random resources.
 --- @param _Name string Script name of entity
@@ -68,6 +71,7 @@ function CreateRandomResourceChest(_Name)
     assert(IsExisting(_Name), "Entity does not exist!");
     Lib.IOChest.Global:CreateRandomResourceChest(_Name);
 end
+API.CreateRandomResourceChest = CreateRandomResourceChest;
 
 --- Creates a chest with a random luxury.
 --- @param _Name string Script name of entity
@@ -78,4 +82,5 @@ function CreateRandomLuxuryChest(_Name)
     assert(IsExisting(_Name), "Entity does not exist!");
     Lib.IOChest.Global:CreateRandomLuxuryChest(_Name);
 end
+API.CreateRandomLuxuryChest = CreateRandomLuxuryChest;
 

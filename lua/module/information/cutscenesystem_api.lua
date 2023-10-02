@@ -65,6 +65,7 @@ function StartCutscene(_Cutscene, _Name, _PlayerID)
     end
     Lib.CutsceneSystem.Global:StartCutscene(_Name, PlayerID, _Cutscene);
 end
+API.StartCutscene = StartCutscene;
 
 --- Checks if a cutscene ist active.
 --- @param _PlayerID integer PlayerID of receiver
@@ -75,6 +76,7 @@ function IsCutsceneActive(_PlayerID)
     end
     return Lib.CutsceneSystem.Local:GetCurrentCutscene(_PlayerID) ~= nil;
 end
+API.IsCutsceneActive = IsCutsceneActive;
 
 --- Prepares the cutscene and returns the page function.
 ---
@@ -90,6 +92,7 @@ function AddCutscenePages(_Cutscene)
     end
     return AP;
 end
+API.AddCutscenePages = AddCutscenePages;
 
 --- Creates a page.
 ---

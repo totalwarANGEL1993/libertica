@@ -76,6 +76,7 @@ function StartDialog(_Dialog, _Name, _PlayerID)
     end
     Lib.DialogSystem.Global:StartDialog(_Name, PlayerID, _Dialog);
 end
+API.StartDialog = StartDialog;
 
 --- Checks if a dialog ist active.
 --- @param _PlayerID integer PlayerID of receiver
@@ -86,6 +87,7 @@ function IsDialogActive(_PlayerID)
     end
     return Lib.DialogSystem.Local:GetCurrentDialog(_PlayerID) ~= nil;
 end
+API.IsDialogActive = IsDialogActive;
 
 --- Prepares the dialog and returns the page functions.
 ---
@@ -138,6 +140,7 @@ function AddDialogPages(_Dialog)
     end
     return AP, ASP;
 end
+API.AddDialogPages = AddDialogPages;
 
 --- Creates a page.
 ---
