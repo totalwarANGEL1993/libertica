@@ -114,13 +114,6 @@ function Lib.Core.Global:Initialize()
         self:InitLoadscreenHandler();
         LoadBehaviors();
 
-        -- Loading finished callback
-        RequestHiResDelay(1, function()
-            if GameCallback_Lib_LoadingFinished then
-                GameCallback_Lib_LoadingFinished();
-            end
-        end);
-
         -- Cleanup (garbage collection)
         Lib.Core.Local = nil;
     end
@@ -182,6 +175,13 @@ function Lib.Core.Global:InitReportListener()
             local Module = Lib[Lib.Core.ModuleList[i]];
             if Module.Global and Module.Global.OnReportReceived then
                 Module.Global:OnReportReceived(_ID, ...);
+            end
+        end
+
+        -- Loading finished callback
+        if _ID == Report.LoadingFinished then
+            if GameCallback_Lib_LoadingFinished then
+                GameCallback_Lib_LoadingFinished();
             end
         end
     end
@@ -246,13 +246,6 @@ function Lib.Core.Local:Initialize()
         self:InitEscapeHandler();
         self:InitLoadscreenHandler();
 
-        -- Loading finished callback
-        RequestHiResDelay(1, function()
-            if GameCallback_Lib_LoadingFinished then
-                GameCallback_Lib_LoadingFinished();
-            end
-        end);
-
         -- Cleanup (garbage collection)
         Lib.Core.Global = nil;
     end
@@ -306,6 +299,13 @@ function Lib.Core.Local:InitReportListener()
             local Module = Lib[Lib.Core.ModuleList[i]];
             if Module.Local and Module.Local.OnReportReceived then
                 Module.Local:OnReportReceived(_ID, ...);
+            end
+        end
+
+        -- Loading finished callback
+        if _ID == Report.LoadingFinished then
+            if GameCallback_Lib_LoadingFinished then
+                GameCallback_Lib_LoadingFinished();
             end
         end
     end

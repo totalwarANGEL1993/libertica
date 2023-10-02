@@ -14,7 +14,9 @@ if CONST_IS_IN_DEV then
 end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
+Lib.Require("module/promotion/Promotion");
 Lib.Require("module/construction/Construction");
+Lib.Require("module/lifestock/LifestockSystem");
 
 -- ========================================================================== --
 
@@ -85,8 +87,8 @@ function GameCallback_Lib_LoadingFinished()
     ActivateDebugMode(true, false, true, true);
 
     AddGood(Goods.G_Gold, 2500, 1);
-    AddGood(Goods.G_Wood, 90, 1);
-    AddGood(Goods.G_Stone, 75, 1);
+    AddGood(Goods.G_Wood, 20, 1);
+    AddGood(Goods.G_Stone, 25, 1);
     AddGood(Goods.G_Grain, 10, 1);
     AddGood(Goods.G_RawFish, 10, 1);
     AddGood(Goods.G_Milk, 10, 1);

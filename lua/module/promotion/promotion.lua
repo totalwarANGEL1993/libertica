@@ -167,9 +167,9 @@ function Lib.Promotion.Local:Initialize()
         Lib.Promotion.Shared:CreateTechnologies();
         Lib.Promotion.Shared:UpdateInvisibleTechnologies();
 
-        self:OverwriteTooltips();
         self:InitTexturePositions();
         self:OverwriteUpdateRequirements();
+        self:OverwriteTooltips();
 
         -- Garbage collection
         Lib.Promotion.Global = nil;
@@ -566,6 +566,10 @@ function Lib.Promotion.Local:OverwriteTooltips()
         GUI_Tooltip.SetNameAndDescription_Orig_QSB_Requirements(...);
     end
 
+    GUI_Knight.RewardTooltip = function(_ButtonIndex)
+        Lib.Promotion.Local:RewardTooltipWrapped(_ButtonIndex);
+    end
+
     GUI_Knight.RequiredGoodTooltip = function()
         local key = CONST_REQUIREMENT_TOOLTIP_TYPE[2];
         local num = tonumber(string.sub(key, string.len(key)));
@@ -576,6 +580,27 @@ function Lib.Promotion.Local:OverwriteTooltips()
     end
 
     Lib.Promotion.Config:InitAddonText();
+end
+
+function Lib.Promotion.Local:RewardTooltipWrapped(_i)
+    local TechnologyType = GUI_Knight.NextRightsForTitle[_i];
+    local TechnologyTypeName =  GetNameOfKeyInTable(Technologies, TechnologyType);
+    local Name = string.gsub(TechnologyTypeName, "R_", "");
+    local TooltipName = "";
+
+    local Key = "B_" .. Name;
+    if GetStringText("UI_ObjectNames/" .. Key) == "" then
+        Key = "U_" .. Name;
+    end
+    if GetStringText("UI_ObjectNames/" .. Key) == "" then
+        Key = "Start" .. Name;
+    end
+    if GetStringText("UI_ObjectNames/" .. Key) == "" then
+        Key = "R_" .. Name;
+    end
+
+    TooltipName = GetStringText("UI_ObjectNames/" .. Key);
+    SetTooltipNormal(Localize(TooltipName), "");
 end
 
 function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)

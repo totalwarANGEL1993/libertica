@@ -14,7 +14,9 @@ if CONST_IS_IN_DEV then
 end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
+Lib.Require("module/promotion/Promotion");
 Lib.Require("module/construction/Construction");
+Lib.Require("module/lifestock/LifestockSystem");
 
 -- ========================================================================== --
 

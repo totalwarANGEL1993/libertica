@@ -265,11 +265,11 @@ API.StaticNote = AddStaticNote;
 function AddMessage(_Text, _Sound)
     _Text = ConvertPlaceholders(Localize(_Text));
     if not IsLocalScript() then
-        ExecuteLocal([[AddMessage("%s", %s)]], _Text, _Sound);
+        ExecuteLocal([[AddMessage("%s", "%s")]], _Text, _Sound or "");
         return;
     end
     _Text = ConvertPlaceholders(Localize(_Text));
-    Message(_Text, (_Sound and _Sound:gsub("/", "\\")) or nil);
+    Message(_Text, (_Sound and _Sound ~= "" and _Sound:gsub("/", "\\")) or nil);
 end
 
 ---Removes all text from the debug text window.
