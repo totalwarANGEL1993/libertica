@@ -14,6 +14,7 @@ if CONST_IS_IN_DEV then
 end
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
+Lib.Require("module/quest/QuestJornal");
 Lib.Require("module/npc/NPC");
 Lib.Require("module/information/BriefingSystem");
 Lib.Require("module/information/CutsceneSystem");

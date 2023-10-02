@@ -48,7 +48,7 @@ B_Reward_ObjectInit.CustomFunction = function(self, _Quest)
     if EntityID == 0 then
         return;
     end
-    QSB.InitalizedObjekts[EntityID] = _Quest.Identifier;
+    CONST_INITIALIZED_OBJECTS[EntityID] = _Quest.Identifier;
 
     local GoodReward;
     if self.RewardType and self.RewardType ~= "-" then

@@ -15,12 +15,35 @@ end
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
+Lib.Require("module/quest/QuestJornal");
 Lib.Require("module/npc/NPC");
 Lib.Require("module/information/BriefingSystem");
 Lib.Require("module/information/CutsceneSystem");
 Lib.Require("module/information/DialogSystem");
 
 -- ========================================================================== --
+
+-- |||| JOURNAL |||| --
+
+function QuestJournalTest()
+    SetupQuest {
+        Name        = "TestJornalQuest1",
+        Suggestion  = "Look at your jornal",
+        Receiver    = 1,
+
+        Goal_NoChange(),
+        Trigger_Time(0),
+    }
+
+    ShowJournalForQuest("TestJornalQuest1", true);
+    AllowNotesForQuest("TestJornalQuest1", true);
+
+    local Entry1 = CreateJournalEntry("Normal Tier entry");
+    local Entry2 = CreateJournalEntry("Higher Tier entry");
+    AddJournalEntryToQuest(Entry1, "TestJornalQuest1");
+    AddJournalEntryToQuest(Entry2, "TestJornalQuest1");
+    HighlightJournalEntry(Entry2, true);
+end
 
 -- |||| BRIEFING |||| --
 

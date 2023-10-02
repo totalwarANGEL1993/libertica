@@ -8,6 +8,7 @@ LibWriter = {
         "module/iochest/IOChest",
         "module/iomine/IOMine",
         "module/quest/Quest",
+        "module/quest/QuestJornal",
         "module/technology/Technology",
         "module/warehouse/Warehouse",
         "module/uitools/UITools",

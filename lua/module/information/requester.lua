@@ -1,4 +1,5 @@
-
+--- Provides dialog and text windows.
+---
 Lib.Requester = {
     Name = "Requester",
 
