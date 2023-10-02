@@ -44,6 +44,7 @@ Lib.Register("core/feature/Core_Text");
 
 function Lib.Core.Text:Initialize()
     Report.LanguageChanged = CreateReport("Event_LanguageChanged");
+
     self:DetectLanguage();
     if IsLocalScript() then
         self:OverwriteGetStringTableText();
@@ -109,23 +110,16 @@ function Lib.Core.Text:DetectLanguage()
     CONST_LANGUAGE = DefaultLanguage;
 end
 
-function Lib.Core.Text:OnLanguageChanged(_PlayerID, _GUI_PlayerID, _Language)
-    self:ChangeSystemLanguage(_PlayerID, _Language, _GUI_PlayerID);
-end
-
-function Lib.Core.Text:ChangeSystemLanguage(_PlayerID, _Language, _GUI_PlayerID)
+function Lib.Core.Text:ChangeSystemLanguage(_PlayerID, _IsGuiPlayer, _Language)
     local OldLanguage = CONST_LANGUAGE;
     local NewLanguage = _Language;
-    if _GUI_PlayerID == nil or _GUI_PlayerID == _PlayerID then
-        CONST_LANGUAGE = _Language;
-    end
 
-    SendReport(Report.LanguageChanged, OldLanguage, NewLanguage);
-    ExecuteLocal([[
-        if GUI.GetPlayerID() == %d then
-            SendReport(Report.LanguageChanged, "%s", "%s")
-        end
-    ]],_PlayerID, OldLanguage, NewLanguage);
+    if _IsGuiPlayer == nil or _IsGuiPlayer == true then
+        CONST_LANGUAGE = _Language;
+        ExecuteLocal([[CONST_LANGUAGE = "%s"]], _Language);
+        SendReport(Report.LanguageChanged, OldLanguage, NewLanguage);
+        SendReportToLocal(Report.LanguageChanged, OldLanguage, NewLanguage);
+    end
 end
 
 function Lib.Core.Text:Localize(_Text)
@@ -307,4 +301,25 @@ function GetStringText(_Key)
     return Lib.Core.Text:GetStringTableOverwrite(_Key)
 end
 API.GetStringText = GetStringText;
+
+--- Adds a new language to the list.
+--- @param _Shortcut string Language shortcut
+--- @param _Name string     Display name of language
+--- @param _Fallback string Fallback language shortcut
+--- @param _Index? integer  List position
+function DefineLanguage(_Shortcut, _Name, _Fallback, _Index)
+    assert(type(_Shortcut) == "string");
+    assert(type(_Name) == "string");
+    assert(type(_Fallback) == "string");
+    for k, v in pairs(Lib.Core.Text.Languages) do
+        if v[1] == _Shortcut then
+            return;
+        end
+    end
+    _Index = _Index or #Lib.Core.Text.Languages +1
+    table.insert(Lib.Core.Text.Languages, _Index, {_Shortcut, _Name, _Fallback});
+    ExecuteLocal([[
+        table.insert(Lib.Core.Text.Languages, %d, {"%s", "%s", "%s"})
+    ]], _Index, _Shortcut, _Name, _Fallback);
+end
 

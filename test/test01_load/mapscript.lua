@@ -16,6 +16,7 @@ Lib.Require("module/quest/Quest");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/uieffects/UIEffects");
 Lib.Require("module/promotion/Promotion");
+Lib.Require("module/information/Requester");
 
 function Mission_FirstMapAction()
     Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/questsystembehavior.lua");
@@ -42,10 +43,7 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    -- Logic.DEBUG_AddNote("Global: Listener initialized");
-    -- CreateReportReceiver(Report.EscapePressed, function(...)
-    --     Logic.DEBUG_AddNote("Global: It just works!");
-    -- end);
+    ActivateDebugMode(true, false, true, true);
 
     CreateReportReceiver(Report.CinematicConcluded, function(...)
         LuaDebugger.Break();

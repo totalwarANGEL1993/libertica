@@ -16,6 +16,7 @@ Lib.Require("module/quest/Quest");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/uieffects/UIEffects");
 Lib.Require("module/promotion/Promotion");
+Lib.Require("module/information/Requester");
 
 function Mission_LocalOnMapStart()
 end

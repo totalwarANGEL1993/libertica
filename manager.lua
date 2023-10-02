@@ -17,6 +17,7 @@ LibWriter = {
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",
         "module/lifestock/LifestockSystem",
+        "module/information/Requester",
     },
     Behaviors = "",
     Compile = false,

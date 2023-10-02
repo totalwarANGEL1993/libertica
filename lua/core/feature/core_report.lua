@@ -196,6 +196,11 @@ function SendReport(_ID, ...)
 end
 API.SendScriptEvent = SendReport;
 
+--- Sends a report with optional parameter to the global script.
+---
+--- This will always be a broadcast!
+--- @param _ID integer Report ID
+--- @param ... unknown Parameters
 function SendReportToGlobal(_ID, ...)
     assert(IsLocalScript(), "Was called from global script.");
     local arg = {...};
