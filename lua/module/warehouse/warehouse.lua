@@ -79,6 +79,9 @@ function Lib.Warehouse.Global:Initialize()
         self.Warehouses.Job = RequestJob(function()
             Lib.Warehouse.Global:ControlWarehouse();
         end);
+
+        -- Garbage collection
+        Lib.Warehouse.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -394,6 +397,9 @@ function Lib.Warehouse.Local:Initialize()
         for i= 1, 8 do
             self.Inflation.Players[i] = {};
         end
+
+        -- Garbage collection
+        Lib.Warehouse.Global = nil;
     end
     self.IsInstalled = true;
 end

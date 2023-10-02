@@ -62,6 +62,9 @@ function Lib.DialogSystem.Global:Initialize()
             Lib.DialogSystem.Global:UpdateQueue();
             Lib.DialogSystem.Global:DialogExecutionController();
         end);
+
+        -- Garbage collection
+        Lib.DialogSystem.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -447,6 +450,9 @@ function Lib.DialogSystem.Local:Initialize()
         Report.DialogOptionSelected = CreateReport("Event_DialogOptionSelected");
 
         self:OverrideThroneRoomFunctions();
+
+        -- Garbage collection
+        Lib.DialogSystem.Global = nil;
     end
     self.IsInstalled = true;
 end

@@ -148,6 +148,9 @@ function Lib.LifestockSystem.Global:Initialize()
         RequestJob(function()
             Lib.LifestockSystem.Global:ControlDecay();
         end);
+
+        -- Garbage collection
+        Lib.LifestockSystem.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -317,6 +320,9 @@ function Lib.LifestockSystem.Local:Initialize()
         Lib.LifestockSystem.Shared:CreateTechnologies();
         self:InitBuyCowButton();
         self:InitBuySheepButton();
+
+        -- Garbage collection
+        Lib.LifestockSystem.Global = nil;
     end
     self.IsInstalled = true;
 end

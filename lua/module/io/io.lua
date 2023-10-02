@@ -46,40 +46,46 @@ Lib.Register("module/io/IO");
 
 -- Global initalizer method
 function Lib.IO.Global:Initialize()
-    --- The player clicked the interaction button.
-    --- 
-    --- #### Parameters
-    --- * `ScriptName` - Scriptname of entity
-    --- * `KnightID`   - ID of activating hero
-    --- * `PlayerID`   - ID of activating player
-    Report.ObjectClicked = CreateReport("Event_ObjectClicked");
+    if not self.IsInstalled then
+        --- The player clicked the interaction button.
+        --- 
+        --- #### Parameters
+        --- * `ScriptName` - Scriptname of entity
+        --- * `KnightID`   - ID of activating hero
+        --- * `PlayerID`   - ID of activating player
+        Report.ObjectClicked = CreateReport("Event_ObjectClicked");
 
-    --- The interaction of the object was successfull.
-    --- If the object has costs the activation concludes when the costs arrive.
-    --- 
-    --- #### Parameters
-    --- * `ScriptName` - Scriptname of entity
-    --- * `KnightID`   - ID of activating hero
-    --- * `PlayerID`   - ID of activating player
-    Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
+        --- The interaction of the object was successfull.
+        --- If the object has costs the activation concludes when the costs arrive.
+        --- 
+        --- #### Parameters
+        --- * `ScriptName` - Scriptname of entity
+        --- * `KnightID`   - ID of activating hero
+        --- * `PlayerID`   - ID of activating player
+        Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
 
-    --- The interaction is deleted from the object.
-    ---
-    --- #### Parameters
-    --- * `ScriptName` - Scriptname of entity
-    Report.ObjectReset = CreateReport("Event_ObjectReset");
+        --- The interaction is deleted from the object.
+        ---
+        --- #### Parameters
+        --- * `ScriptName` - Scriptname of entity
+        Report.ObjectReset = CreateReport("Event_ObjectReset");
 
-    --- The state of an object has been reset.
-    ---
-    --- #### Parameters
-    --- * `ScriptName` - Scriptname of entity
-    Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+        --- The state of an object has been reset.
+        ---
+        --- #### Parameters
+        --- * `ScriptName` - Scriptname of entity
+        Report.ObjectDelete = CreateReport("Event_ObjectDelete");
 
-    Lib.IO.Shared:CreateTechnologies();
+        Lib.IO.Shared:CreateTechnologies();
 
-    self:OverrideObjectInteraction();
-    self:StartObjectDestructionController();
-    self:StartObjectConditionController();
+        self:OverrideObjectInteraction();
+        self:StartObjectDestructionController();
+        self:StartObjectConditionController();
+
+        -- Garbage collection
+        Lib.IO.Local = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Global load game
@@ -367,14 +373,20 @@ end
 
 -- Local initalizer method
 function Lib.IO.Local:Initialize()
-    Report.ObjectClicked = CreateReport("Event_ObjectClicked");
-    Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
-    Report.ObjectReset = CreateReport("Event_ObjectReset");
-    Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+    if not self.IsInstalled then
+        Report.ObjectClicked = CreateReport("Event_ObjectClicked");
+        Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
+        Report.ObjectReset = CreateReport("Event_ObjectReset");
+        Report.ObjectDelete = CreateReport("Event_ObjectDelete");
 
-    Lib.IO.Shared:CreateTechnologies();
+        Lib.IO.Shared:CreateTechnologies();
 
-    self:OverrideGameFunctions();
+        self:OverrideGameFunctions();
+
+        -- Garbage collection
+        Lib.IO.Global = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Local load game

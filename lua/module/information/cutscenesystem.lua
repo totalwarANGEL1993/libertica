@@ -49,6 +49,9 @@ function Lib.CutsceneSystem.Global:Initialize()
         RequestHiResJob(function()
             Lib.CutsceneSystem.Global:UpdateQueue();
         end);
+
+        -- Garbage collection
+        Lib.CutsceneSystem.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -243,6 +246,9 @@ function Lib.CutsceneSystem.Local:Initialize()
         Report.CutsceneFlightEnded = CreateReport("Event_CutsceneFlightEnded");
 
         self:OverrideThroneRoomFunctions();
+
+        -- Garbage collection
+        Lib.CutsceneSystem.Global = nil;
     end
     self.IsInstalled = true;
 end

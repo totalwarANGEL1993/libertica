@@ -21,13 +21,19 @@ Lib.Register("module/iochest/IOChest");
 
 -- Global initalizer method
 function Lib.IOChest.Global:Initialize()
-    --- The player activated a treasure
-    --- 
-    --- #### Parameters
-    --- * `ScriptName` - Scriptname of entity
-    --- * `KnightID`   - ID of activating hero
-    --- * `PlayerID`   - ID of activating player
-    Report.InteractiveTreasureActivated = CreateReport("Event_InteractiveTreasureActivated");
+    if not self.IsInstalled then
+        --- The player activated a treasure
+        --- 
+        --- #### Parameters
+        --- * `ScriptName` - Scriptname of entity
+        --- * `KnightID`   - ID of activating hero
+        --- * `PlayerID`   - ID of activating player
+        Report.InteractiveTreasureActivated = CreateReport("Event_InteractiveTreasureActivated");
+
+        -- Garbage collection
+        Lib.IOChest.Local = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Global load game
@@ -184,9 +190,15 @@ end
 
 -- Local initalizer method
 function Lib.IOChest.Local:Initialize()
-    Report.InteractiveTreasureActivated = CreateReport("Event_InteractiveTreasureActivated");
+    if not self.IsInstalled then
+        Report.InteractiveTreasureActivated = CreateReport("Event_InteractiveTreasureActivated");
 
-    self:CreateDefaultObjectNames();
+        self:CreateDefaultObjectNames();
+
+        -- Garbage collection
+        Lib.IOChest.Global = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Local load game

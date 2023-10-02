@@ -73,6 +73,9 @@ function Lib.BriefingSystem.Global:Initialize()
             Lib.BriefingSystem.Global:UpdateQueue();
             Lib.BriefingSystem.Global:BriefingExecutionController();
         end);
+
+        -- Garbage collection
+        Lib.BriefingSystem.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -547,6 +550,9 @@ function Lib.BriefingSystem.Local:Initialize()
         Report.BriefingSkipButtonPressed = CreateReport("Event_BriefingSkipButtonPressed");
 
         self:OverrideThroneRoomFunctions();
+
+        -- Garbage collection
+        Lib.BriefingSystem.Global = nil;
     end
     self.IsInstalled = true;
 end

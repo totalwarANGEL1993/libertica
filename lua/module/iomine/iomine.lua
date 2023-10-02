@@ -18,13 +18,19 @@ Lib.Register("module/iomine/IOMine");
 
 -- Global initalizer method
 function Lib.IOMine.Global:Initialize()
-    --- A resource source was constructed.
-    ---
-    --- #### Parameter
-    --- - `ScriptName` - Scriptname of mine
-    --- * `KnightID`   - ID of activating hero
-    --- * `PlayerID`   - ID of activating player
-    Report.InteractiveMineErected = CreateReport("Event_InteractiveMineErected");
+    if not self.IsInstalled then
+        --- A resource source was constructed.
+        ---
+        --- #### Parameter
+        --- - `ScriptName` - Scriptname of mine
+        --- * `KnightID`   - ID of activating hero
+        --- * `PlayerID`   - ID of activating player
+        Report.InteractiveMineErected = CreateReport("Event_InteractiveMineErected");
+
+        -- Garbage collection
+        Lib.IOMine.Local = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Global load game
@@ -122,7 +128,13 @@ end
 
 -- Local initalizer method
 function Lib.IOMine.Local:Initialize()
-    Report.InteractiveMineErected = CreateReport("Event_InteractiveMineErected");
+    if not self.IsInstalled then
+        Report.InteractiveMineErected = CreateReport("Event_InteractiveMineErected");
+
+        -- Garbage collection
+        Lib.IOMine.Global = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Local load game

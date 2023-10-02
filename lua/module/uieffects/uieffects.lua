@@ -58,6 +58,9 @@ function Lib.UIEffects.Global:Initialize()
         RequestHiResJob(function()
             Lib.UIEffects.Global:ControlTypewriter();
         end);
+
+        -- Garbage collection
+        Lib.UIEffects.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -351,6 +354,9 @@ function Lib.UIEffects.Local:Initialize()
         self:OverrideInterfaceUpdateForCinematicMode();
         self:OverrideInterfaceThroneroomForCinematicMode();
         self:ResetFarClipPlane();
+
+        -- Garbage collection
+        Lib.UIEffects.Global = nil;
     end
     self.IsInstalled = true;
 end

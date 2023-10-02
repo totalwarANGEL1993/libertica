@@ -24,8 +24,14 @@ Lib.Register("module/technology/Technology");
 
 -- Global initalizer method
 function Lib.Technology.Global:Initialize()
-    Lib.Technology.Shared:OverwriteLogic();
-    Lib.Technology.Shared:InitNewTechnologies();
+    if not self.IsInstalled then
+        Lib.Technology.Shared:OverwriteLogic();
+        Lib.Technology.Shared:InitNewTechnologies();
+
+        -- Garbage collection
+        Lib.Technology.Local = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Global load game
@@ -46,8 +52,14 @@ end
 
 -- Local initalizer method
 function Lib.Technology.Local:Initialize()
-    Lib.Technology.Shared:OverwriteLogic();
-    Lib.Technology.Shared:InitNewTechnologies();
+    if not self.IsInstalled then
+        Lib.Technology.Shared:OverwriteLogic();
+        Lib.Technology.Shared:InitNewTechnologies();
+
+        -- Garbage collection
+        Lib.Technology.Global = nil;
+    end
+    self.IsInstalled = true;
 end
 
 -- Local load game
