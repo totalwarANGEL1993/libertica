@@ -19,6 +19,7 @@ Lib.Require("module/uieffects/UIEffects");
 Lib.Require("module/promotion/Promotion");
 Lib.Require("module/information/Requester");
 Lib.Require("module/entity/Selection");
+Lib.Require("module/entity/ScourgeSystem");
 
 -- ========================================================================== --
 
