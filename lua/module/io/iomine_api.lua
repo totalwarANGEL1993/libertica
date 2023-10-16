@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/iomine/IOMine_API");
+Lib.Register("module/io/IOMine_API");
 
 --- Creates a buried iron mine.
 ---

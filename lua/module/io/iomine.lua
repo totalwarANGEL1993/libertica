@@ -10,8 +10,8 @@ Lib.IOMine = {
 
 Lib.Require("core/Core");
 Lib.Require("module/io/IO");
-Lib.Require("module/iomine/IOMine_API");
-Lib.Register("module/iomine/IOMine");
+Lib.Require("module/io/IOMine_API");
+Lib.Register("module/io/IOMine");
 
 -- -------------------------------------------------------------------------- --
 -- Global

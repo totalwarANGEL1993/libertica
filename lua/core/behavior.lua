@@ -2844,7 +2844,8 @@ RegisterBehavior(B_Goal_TributeDiplomacy);
 --
 -- @param _Territory  Name des Territorium
 -- @param _PlayerID   PlayerID des Zahlungsanforderer
--- @param _Cost       Menge an Gold
+-- @param _GoodType   Warentyp des Tribut
+-- @param _Cost       Menge an Waren
 -- @param _Periode    Zahlungsperiode in Sekunden
 -- @param _Time       Zeitbegrenzung in Sekunden
 -- @param _StartMsg   Vorschlagnachricht
@@ -2870,6 +2871,7 @@ B_Goal_TributeClaim = {
     Parameter = {
         { ParameterType.TerritoryName, en = "Territory", de = "Territorium", fr = "Territoire", },
         { ParameterType.PlayerID, en = "PlayerID", de = "PlayerID", fr = "PlayerID", },
+        { ParameterType.Custom, en = "Good Type", de = "Warentyp", fr = "Type de biens", },
         { ParameterType.Number, en = "Amount", de = "Menge", fr = "Quantité", },
         { ParameterType.Number, en = "Length of Period in seconds", de = "Sekunden bis zur nächsten Forderung", fr = "secondes jusqu'à la prochaine demande", },
         { ParameterType.Number, en = "Time to pay Tribut in seconds", de = "Zeit bis zur Zahlung in Sekunden", fr = "Délai avant paiement en secondes", },
@@ -2895,22 +2897,24 @@ function B_Goal_TributeClaim:AddParameter(_Index, _Parameter)
     elseif (_Index == 1) then
         self.PlayerID = _Parameter * 1;
     elseif (_Index == 2) then
-        self.Amount = _Parameter * 1;
+        self.GoodType = Goods[_Parameter or "G_Gold"];
     elseif (_Index == 3) then
-        self.PeriodLength = _Parameter * 1;
+        self.Amount = _Parameter * 1;
     elseif (_Index == 4) then
-        self.TributTime = _Parameter * 1;
+        self.PeriodLength = _Parameter * 1;
     elseif (_Index == 5) then
-        self.StartMsg = _Parameter;
+        self.TributTime = _Parameter * 1;
     elseif (_Index == 6) then
-        self.SuccessMsg = _Parameter;
+        self.StartMsg = _Parameter;
     elseif (_Index == 7) then
-        self.FailureMsg = _Parameter;
+        self.SuccessMsg = _Parameter;
     elseif (_Index == 8) then
-        self.HowOften = _Parameter * 1;
+        self.FailureMsg = _Parameter;
     elseif (_Index == 9) then
-        self.OtherOwnerCancels = ToBoolean(_Parameter);
+        self.HowOften = _Parameter * 1;
     elseif (_Index == 10) then
+        self.OtherOwnerCancels = ToBoolean(_Parameter);
+    elseif (_Index == 11) then
         self.DontPayCancels = ToBoolean(_Parameter);
     end
 end
@@ -2962,7 +2966,7 @@ function B_Goal_TributeClaim:CreateTributeQuest(_Quest)
             _Quest.Identifier.."_TributeClaimQuest" ..Lib.Core.Quest.QuestCounter,
             self.PlayerID,
             _Quest.ReceivingPlayer,
-            {{ Objective.Deliver, {Goods.G_Gold, self.Amount}}},
+            {{ Objective.Deliver, {self.GoodType, self.Amount}}},
             {{ Triggers.Time, 0 }},
             self.TributTime, nil, nil, OnFinished, nil, true, true, nil,
             StartMsg,
@@ -3099,7 +3103,16 @@ function B_Goal_TributeClaim:Interrupt(_Quest)
 end
 
 function B_Goal_TributeClaim:GetCustomData(_Index)
-    if (_Index == 9) or (_Index == 10) then
+    if _Index == 2 then
+        local Data = {};
+        for k, v in pairs(Goods) do
+            if string.find(k, "^G_") then
+                table.insert(Data, k);
+            end
+        end
+        table.sort(Data);
+        return Data;
+    elseif (_Index == 10) or (_Index == 11) then
         return {"false", "true"};
     end
 end

@@ -13,8 +13,8 @@ Lib.IOChest = {
 
 Lib.Require("core/Core");
 Lib.Require("module/io/IO");
-Lib.Require("module/iochest/IOChest_API");
-Lib.Register("module/iochest/IOChest");
+Lib.Require("module/io/IOChest_API");
+Lib.Register("module/io/IOChest");
 
 -- -------------------------------------------------------------------------- --
 -- Global
@@ -62,11 +62,11 @@ end
 function Lib.IOChest.Global:ProcessChatInput(_Text)
     local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
     for i= 1, #Commands, 1 do
-        if Commands[1] == "goldchest" then
+        if Commands[1] == "spawncow" then
             if not IsExisting(Commands[2]) then
                 CreateRandomGoldChest(Commands[2]);
             end
-        elseif Commands[1] == "goodchest" then
+        elseif Commands[1] == "spawnsheep" then
             if not IsExisting(Commands[2]) then
                 CreateRandomResourceChest(Commands[2]);
             end

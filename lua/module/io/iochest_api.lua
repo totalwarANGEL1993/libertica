@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/iochest/IOChest_API");
+Lib.Register("module/io/IOChest_API");
 
 --- Creates a random chest with specific content.
 --- @param _Name string Script name of entity
