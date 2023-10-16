@@ -2925,7 +2925,8 @@ RegisterBehavior(B_Goal_TributeDiplomacy);
 --
 -- @param _Territory  Name des Territorium
 -- @param _PlayerID   PlayerID des Zahlungsanforderer
--- @param _Cost       Menge an Gold
+-- @param _GoodType   Warentyp des Tribut
+-- @param _Cost       Menge an Waren
 -- @param _Periode    Zahlungsperiode in Sekunden
 -- @param _Time       Zeitbegrenzung in Sekunden
 -- @param _StartMsg   Vorschlagnachricht
@@ -2951,6 +2952,7 @@ B_Goal_TributeClaim = {
     Parameter = {
         { ParameterType.TerritoryName, en = "Territory", de = "Territorium", fr = "Territoire", },
         { ParameterType.PlayerID, en = "PlayerID", de = "PlayerID", fr = "PlayerID", },
+        { ParameterType.Custom, en = "Good Type", de = "Warentyp", fr = "Type de biens", },
         { ParameterType.Number, en = "Amount", de = "Menge", fr = "Quantité", },
         { ParameterType.Number, en = "Length of Period in seconds", de = "Sekunden bis zur nächsten Forderung", fr = "secondes jusqu'à la prochaine demande", },
         { ParameterType.Number, en = "Time to pay Tribut in seconds", de = "Zeit bis zur Zahlung in Sekunden", fr = "Délai avant paiement en secondes", },
@@ -2976,22 +2978,24 @@ function B_Goal_TributeClaim:AddParameter(_Index, _Parameter)
     elseif (_Index == 1) then
         self.PlayerID = _Parameter * 1;
     elseif (_Index == 2) then
-        self.Amount = _Parameter * 1;
+        self.GoodType = Goods[_Parameter or "G_Gold"];
     elseif (_Index == 3) then
-        self.PeriodLength = _Parameter * 1;
+        self.Amount = _Parameter * 1;
     elseif (_Index == 4) then
-        self.TributTime = _Parameter * 1;
+        self.PeriodLength = _Parameter * 1;
     elseif (_Index == 5) then
-        self.StartMsg = _Parameter;
+        self.TributTime = _Parameter * 1;
     elseif (_Index == 6) then
-        self.SuccessMsg = _Parameter;
+        self.StartMsg = _Parameter;
     elseif (_Index == 7) then
-        self.FailureMsg = _Parameter;
+        self.SuccessMsg = _Parameter;
     elseif (_Index == 8) then
-        self.HowOften = _Parameter * 1;
+        self.FailureMsg = _Parameter;
     elseif (_Index == 9) then
-        self.OtherOwnerCancels = ToBoolean(_Parameter);
+        self.HowOften = _Parameter * 1;
     elseif (_Index == 10) then
+        self.OtherOwnerCancels = ToBoolean(_Parameter);
+    elseif (_Index == 11) then
         self.DontPayCancels = ToBoolean(_Parameter);
     end
 end
@@ -3043,7 +3047,7 @@ function B_Goal_TributeClaim:CreateTributeQuest(_Quest)
             _Quest.Identifier.."_TributeClaimQuest" ..Lib.Core.Quest.QuestCounter,
             self.PlayerID,
             _Quest.ReceivingPlayer,
-            {{ Objective.Deliver, {Goods.G_Gold, self.Amount}}},
+            {{ Objective.Deliver, {self.GoodType, self.Amount}}},
             {{ Triggers.Time, 0 }},
             self.TributTime, nil, nil, OnFinished, nil, true, true, nil,
             StartMsg,
@@ -3180,7 +3184,16 @@ function B_Goal_TributeClaim:Interrupt(_Quest)
 end
 
 function B_Goal_TributeClaim:GetCustomData(_Index)
-    if (_Index == 9) or (_Index == 10) then
+    if _Index == 2 then
+        local Data = {};
+        for k, v in pairs(Goods) do
+            if string.find(k, "^G_") then
+                table.insert(Data, k);
+            end
+        end
+        table.sort(Data);
+        return Data;
+    elseif (_Index == 10) or (_Index == 11) then
         return {"false", "true"};
     end
 end
@@ -8780,7 +8793,7 @@ B_Reward_ObjectInit.CustomFunction = function(self, _Quest)
     if EntityID == 0 then
         return;
     end
-    QSB.InitalizedObjekts[EntityID] = _Quest.Identifier;
+    CONST_INITIALIZED_OBJECTS[EntityID] = _Quest.Identifier;
 
     local GoodReward;
     if self.RewardType and self.RewardType ~= "-" then
@@ -8807,6 +8820,2028 @@ B_Reward_ObjectInit.CustomFunction = function(self, _Quest)
         Costs                  = GoodCosts,
     };
     InteractiveObjectActivate(self.ScriptName, self.UsingState);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Der Spieler muss bis zu 4 interaktive Objekte benutzen.
+---
+--- @param ... string List of scriptnames
+function Goal_ActivateSeveralObjects(...)
+    return B_Goal_ActivateSeveralObjects:new(...);
+end
+
+B_Goal_ActivateSeveralObjects = {
+    Name = "Goal_ActivateSeveralObjects",
+    Description = {
+        en = "Goal: Activate an interactive object",
+        de = "Ziel: Aktiviere ein interaktives Objekt",
+        fr = "Objectif: activer un objet interactif",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Object name 1", de = "Skriptname 1", fr = "Nom de l'entité 1" },
+        { ParameterType.Default, en = "Object name 2", de = "Skriptname 2", fr = "Nom de l'entité 2" },
+        { ParameterType.Default, en = "Object name 3", de = "Skriptname 3", fr = "Nom de l'entité 3" },
+        { ParameterType.Default, en = "Object name 4", de = "Skriptname 4", fr = "Nom de l'entité 4" },
+    },
+    ScriptNames = {};
+}
+
+function B_Goal_ActivateSeveralObjects:GetGoalTable()
+    return {Objective.Object, { unpack(self.ScriptNames) } }
+end
+
+function B_Goal_ActivateSeveralObjects:AddParameter(_Index, _Parameter)
+    if _Index == 0 then
+        assert(_Parameter ~= nil and _Parameter ~= "", "Goal_ActivateSeveralObjects: At least one IO needed!");
+    end
+    if _Parameter ~= nil and _Parameter ~= "" then
+        table.insert(self.ScriptNames, _Parameter);
+    end
+end
+
+function B_Goal_ActivateSeveralObjects:GetMsgKey()
+    return "Quest_Object_Activate"
+end
+
+RegisterBehavior(B_Goal_ActivateSeveralObjects);
+
+-- -------------------------------------------------------------------------- --
+
+--- @diagnostic disable-next-line: duplicate-set-field
+B_Reward_ObjectInit.CustomFunction = function(self, _Quest)
+    local EntityID = GetID(self.ScriptName);
+    if EntityID == 0 then
+        return;
+    end
+    CONST_INITIALIZED_OBJECTS[EntityID] = _Quest.Identifier;
+
+    local GoodReward;
+    if self.RewardType and self.RewardType ~= "-" then
+        GoodReward = {Goods[self.RewardType], self.RewardAmount};
+    end
+
+    local GoodCosts;
+    if self.FirstCostType and self.FirstCostType ~= "-" then
+        GoodCosts = GoodReward or {};
+        table.insert(GoodCosts, Goods[self.FirstCostType]);
+        table.insert(GoodCosts, Goods[self.FirstCostAmount]);
+    end
+    if self.SecondCostType and self.SecondCostType ~= "-" then
+        GoodCosts = GoodReward or {};
+        table.insert(GoodCosts, Goods[self.SecondCostType]);
+        table.insert(GoodCosts, Goods[self.SecondCostAmount]);
+    end
+
+    SetupObject {
+        Name                   = self.ScriptName,
+        Distance               = self.Distance,
+        Waittime               = self.Waittime,
+        Reward                 = GoodReward,
+        Costs                  = GoodCosts,
+    };
+    InteractiveObjectActivate(self.ScriptName, self.UsingState);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Der Spieler muss bis zu 4 interaktive Objekte benutzen.
+---
+--- @param ... string List of scriptnames
+function Goal_ActivateSeveralObjects(...)
+    return B_Goal_ActivateSeveralObjects:new(...);
+end
+
+B_Goal_ActivateSeveralObjects = {
+    Name = "Goal_ActivateSeveralObjects",
+    Description = {
+        en = "Goal: Activate an interactive object",
+        de = "Ziel: Aktiviere ein interaktives Objekt",
+        fr = "Objectif: activer un objet interactif",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Object name 1", de = "Skriptname 1", fr = "Nom de l'entité 1" },
+        { ParameterType.Default, en = "Object name 2", de = "Skriptname 2", fr = "Nom de l'entité 2" },
+        { ParameterType.Default, en = "Object name 3", de = "Skriptname 3", fr = "Nom de l'entité 3" },
+        { ParameterType.Default, en = "Object name 4", de = "Skriptname 4", fr = "Nom de l'entité 4" },
+    },
+    ScriptNames = {};
+}
+
+function B_Goal_ActivateSeveralObjects:GetGoalTable()
+    return {Objective.Object, { unpack(self.ScriptNames) } }
+end
+
+function B_Goal_ActivateSeveralObjects:AddParameter(_Index, _Parameter)
+    if _Index == 0 then
+        assert(_Parameter ~= nil and _Parameter ~= "", "Goal_ActivateSeveralObjects: At least one IO needed!");
+    end
+    if _Parameter ~= nil and _Parameter ~= "" then
+        table.insert(self.ScriptNames, _Parameter);
+    end
+end
+
+function B_Goal_ActivateSeveralObjects:GetMsgKey()
+    return "Quest_Object_Activate"
+end
+
+RegisterBehavior(B_Goal_ActivateSeveralObjects);
+
+-- -------------------------------------------------------------------------- --
+
+--- @diagnostic disable-next-line: duplicate-set-field
+B_Reward_ObjectInit.CustomFunction = function(self, _Quest)
+    local EntityID = GetID(self.ScriptName);
+    if EntityID == 0 then
+        return;
+    end
+    CONST_INITIALIZED_OBJECTS[EntityID] = _Quest.Identifier;
+
+    local GoodReward;
+    if self.RewardType and self.RewardType ~= "-" then
+        GoodReward = {Goods[self.RewardType], self.RewardAmount};
+    end
+
+    local GoodCosts;
+    if self.FirstCostType and self.FirstCostType ~= "-" then
+        GoodCosts = GoodReward or {};
+        table.insert(GoodCosts, Goods[self.FirstCostType]);
+        table.insert(GoodCosts, Goods[self.FirstCostAmount]);
+    end
+    if self.SecondCostType and self.SecondCostType ~= "-" then
+        GoodCosts = GoodReward or {};
+        table.insert(GoodCosts, Goods[self.SecondCostType]);
+        table.insert(GoodCosts, Goods[self.SecondCostAmount]);
+    end
+
+    SetupObject {
+        Name                   = self.ScriptName,
+        Distance               = self.Distance,
+        Waittime               = self.Waittime,
+        Reward                 = GoodReward,
+        Costs                  = GoodCosts,
+    };
+    InteractiveObjectActivate(self.ScriptName, self.UsingState);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reprisal_Briefing(_Name, _Briefing)
+    return B_Reprisal_Briefing:new(_Name, _Briefing);
+end
+
+B_Reprisal_Briefing = {
+    Name = "Reprisal_Briefing",
+    Description = {
+        en = "Reprisal: Calls a function to start an new briefing.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Briefing.",
+        fr = "Rétribution: Appelle la fonction et démarre le briefing qu'elle contient.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Briefing name",     de = "Name des Briefing",     fr = "Nom du briefing" },
+        { ParameterType.Default, en = "Briefing function", de = "Funktion mit Briefing", fr = "Fonction avec briefing" },
+    },
+}
+
+function B_Reprisal_Briefing:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Briefing:CustomFunction(_Quest)
+    _G[self.Function](self.BriefingName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Briefing:Debug(_Quest)
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reprisal_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reward_Briefing(_Name, _Briefing)
+    return B_Reward_Briefing:new(_Name, _Briefing);
+end
+
+B_Reward_Briefing = CopyTable(B_Reprisal_Briefing);
+B_Reward_Briefing.Name = "Reward_Briefing";
+B_Reward_Briefing.Description.en = "Reward: Calls a function to start an new briefing.";
+B_Reward_Briefing.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Briefing.";
+B_Reward_Briefing.Description.fr = "Récompense: Appelle la fonction et démarre le briefing qu'elle contient.";
+B_Reward_Briefing.GetReprisalTable = nil;
+
+B_Reward_Briefing.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reward_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a briefing has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Briefing(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Briefing:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Briefing = {
+    Name = "Trigger_Briefing",
+    Description = {
+        en = "Trigger: Checks if an briefing has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Briefing beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un briefing est terminé et lance ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Briefing name", de = "Name des Briefing", fr = "Nom du briefing" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Briefing:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Briefing:CustomFunction(_Quest)
+    if GetCinematicEvent(self.BriefingName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Briefing:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Trigger_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reprisal_Cutscene(_Name, _Cutscene)
+    return B_Reprisal_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reprisal_Cutscene = {
+    Name = "Reprisal_Cutscene",
+    Description = {
+        en = "Reprisal: Calls a function to start an new Cutscene.",
+        de = "Vergeltung: Ruft die Funktion auf und startet die enthaltene Cutscene.",
+        fr = "Rétribution : Appelle la fonction et démarre la cutscene contenue.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Cutscene name",     de = "Name der Cutscene",     fr = "Nom de la cutscene", },
+        { ParameterType.Default, en = "Cutscene function", de = "Funktion mit Cutscene", fr = "Fonction avec cutscene", },
+    },
+}
+
+function B_Reprisal_Cutscene:GetReprisalTable()
+    return { Reprisal.Custom, {self, self.CustomFunction} }
+end
+
+function B_Reprisal_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Cutscene:CustomFunction(_Quest)
+    _G[self.Function](self.CutsceneName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Cutscene:Debug(_Quest)
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reprisal_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reward_Cutscene(_Name, _Cutscene)
+    return B_Reward_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reward_Cutscene = CopyTable(B_Reprisal_Cutscene);
+B_Reward_Cutscene.Name = "Reward_Cutscene";
+B_Reward_Cutscene.Description.en = "Reward: Calls a function to start an new Cutscene.";
+B_Reward_Cutscene.Description.de = "Lohn: Ruft die Funktion auf und startet die enthaltene Cutscene.";
+B_Reward_Cutscene.Description.fr = "Récompense: Appelle la fonction et démarre la cutscene contenue.";
+B_Reward_Cutscene.GetReprisalTable = nil;
+
+B_Reward_Cutscene.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom, {self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reward_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a cutscene has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Cutscene(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Cutscene:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Cutscene = {
+    Name = "Trigger_Cutscene",
+    Description = {
+        en = "Trigger: Checks if an Cutscene has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob eine Cutscene beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si une cutscene est terminée et démarre ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Cutscene name", de = "Name der Cutscene", fr  ="Nom de la cutscene" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr  ="Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr  ="Temps d'attente" },
+    },
+}
+
+function B_Trigger_Cutscene:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Cutscene:CustomFunction(_Quest)
+    if GetCinematicEvent(self.CutsceneName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Cutscene:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Trigger_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reprisal_Dialog(_Name, _Dialog)
+    return B_Reprisal_Dialog:new(_Name, _Dialog);
+end
+
+B_Reprisal_Dialog = {
+    Name = "Reprisal_Dialog",
+    Description = {
+        en = "Reprisal: Calls a function to start an new dialog.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Dialog.",
+        fr = "Rétribution: Appelle la fonction et démarre le dialogue contenu.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Dialog name",     de = "Name des Dialog",     fr = "Nom du dialogue" },
+        { ParameterType.Default, en = "Dialog function", de = "Funktion mit Dialog", fr = "Fonction du dialogue" },
+    },
+}
+
+function B_Reprisal_Dialog:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Dialog:CustomFunction(_Quest)
+    _G[self.Function](self.DialogName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Dialog:Debug(_Quest)
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reprisal_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reward_Dialog(_Name, _Dialog)
+    return B_Reward_Dialog:new(_Name, _Dialog);
+end
+
+B_Reward_Dialog = CopyTable(B_Reprisal_Dialog);
+B_Reward_Dialog.Name = "Reward_Dialog";
+B_Reward_Dialog.Description.en = "Reward: Calls a function to start an new dialog.";
+B_Reward_Dialog.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Dialog.";
+B_Reward_Dialog.Description.fr = "Récompense: Appelle la fonction et lance le dialogue qu'elle contient.";
+B_Reward_Dialog.GetReprisalTable = nil;
+
+B_Reward_Dialog.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reward_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a dialog has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Dialog(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Dialog:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Dialog = {
+    Name = "Trigger_Dialog",
+    Description = {
+        en = "Trigger: Checks if an dialog has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Dialog beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un dialogue est terminé et démarre alors la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Dialog name", de = "Name des Dialog", fr = "Nom du dialogue" },
+        { ParameterType.PlayerID, en = "Player ID",   de = "Player ID",       fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",   de = "Wartezeit",       fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Dialog:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Dialog:CustomFunction(_Quest)
+    if GetCinematicEvent(self.DialogName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Dialog:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Trigger_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reprisal_Briefing(_Name, _Briefing)
+    return B_Reprisal_Briefing:new(_Name, _Briefing);
+end
+
+B_Reprisal_Briefing = {
+    Name = "Reprisal_Briefing",
+    Description = {
+        en = "Reprisal: Calls a function to start an new briefing.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Briefing.",
+        fr = "Rétribution: Appelle la fonction et démarre le briefing qu'elle contient.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Briefing name",     de = "Name des Briefing",     fr = "Nom du briefing" },
+        { ParameterType.Default, en = "Briefing function", de = "Funktion mit Briefing", fr = "Fonction avec briefing" },
+    },
+}
+
+function B_Reprisal_Briefing:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Briefing:CustomFunction(_Quest)
+    _G[self.Function](self.BriefingName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Briefing:Debug(_Quest)
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reprisal_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reward_Briefing(_Name, _Briefing)
+    return B_Reward_Briefing:new(_Name, _Briefing);
+end
+
+B_Reward_Briefing = CopyTable(B_Reprisal_Briefing);
+B_Reward_Briefing.Name = "Reward_Briefing";
+B_Reward_Briefing.Description.en = "Reward: Calls a function to start an new briefing.";
+B_Reward_Briefing.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Briefing.";
+B_Reward_Briefing.Description.fr = "Récompense: Appelle la fonction et démarre le briefing qu'elle contient.";
+B_Reward_Briefing.GetReprisalTable = nil;
+
+B_Reward_Briefing.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reward_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a briefing has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Briefing(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Briefing:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Briefing = {
+    Name = "Trigger_Briefing",
+    Description = {
+        en = "Trigger: Checks if an briefing has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Briefing beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un briefing est terminé et lance ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Briefing name", de = "Name des Briefing", fr = "Nom du briefing" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Briefing:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Briefing:CustomFunction(_Quest)
+    if GetCinematicEvent(self.BriefingName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Briefing:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Trigger_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reprisal_Cutscene(_Name, _Cutscene)
+    return B_Reprisal_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reprisal_Cutscene = {
+    Name = "Reprisal_Cutscene",
+    Description = {
+        en = "Reprisal: Calls a function to start an new Cutscene.",
+        de = "Vergeltung: Ruft die Funktion auf und startet die enthaltene Cutscene.",
+        fr = "Rétribution : Appelle la fonction et démarre la cutscene contenue.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Cutscene name",     de = "Name der Cutscene",     fr = "Nom de la cutscene", },
+        { ParameterType.Default, en = "Cutscene function", de = "Funktion mit Cutscene", fr = "Fonction avec cutscene", },
+    },
+}
+
+function B_Reprisal_Cutscene:GetReprisalTable()
+    return { Reprisal.Custom, {self, self.CustomFunction} }
+end
+
+function B_Reprisal_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Cutscene:CustomFunction(_Quest)
+    _G[self.Function](self.CutsceneName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Cutscene:Debug(_Quest)
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reprisal_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reward_Cutscene(_Name, _Cutscene)
+    return B_Reward_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reward_Cutscene = CopyTable(B_Reprisal_Cutscene);
+B_Reward_Cutscene.Name = "Reward_Cutscene";
+B_Reward_Cutscene.Description.en = "Reward: Calls a function to start an new Cutscene.";
+B_Reward_Cutscene.Description.de = "Lohn: Ruft die Funktion auf und startet die enthaltene Cutscene.";
+B_Reward_Cutscene.Description.fr = "Récompense: Appelle la fonction et démarre la cutscene contenue.";
+B_Reward_Cutscene.GetReprisalTable = nil;
+
+B_Reward_Cutscene.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom, {self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reward_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a cutscene has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Cutscene(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Cutscene:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Cutscene = {
+    Name = "Trigger_Cutscene",
+    Description = {
+        en = "Trigger: Checks if an Cutscene has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob eine Cutscene beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si une cutscene est terminée et démarre ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Cutscene name", de = "Name der Cutscene", fr  ="Nom de la cutscene" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr  ="Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr  ="Temps d'attente" },
+    },
+}
+
+function B_Trigger_Cutscene:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Cutscene:CustomFunction(_Quest)
+    if GetCinematicEvent(self.CutsceneName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Cutscene:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Trigger_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reprisal_Dialog(_Name, _Dialog)
+    return B_Reprisal_Dialog:new(_Name, _Dialog);
+end
+
+B_Reprisal_Dialog = {
+    Name = "Reprisal_Dialog",
+    Description = {
+        en = "Reprisal: Calls a function to start an new dialog.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Dialog.",
+        fr = "Rétribution: Appelle la fonction et démarre le dialogue contenu.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Dialog name",     de = "Name des Dialog",     fr = "Nom du dialogue" },
+        { ParameterType.Default, en = "Dialog function", de = "Funktion mit Dialog", fr = "Fonction du dialogue" },
+    },
+}
+
+function B_Reprisal_Dialog:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Dialog:CustomFunction(_Quest)
+    _G[self.Function](self.DialogName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Dialog:Debug(_Quest)
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reprisal_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reward_Dialog(_Name, _Dialog)
+    return B_Reward_Dialog:new(_Name, _Dialog);
+end
+
+B_Reward_Dialog = CopyTable(B_Reprisal_Dialog);
+B_Reward_Dialog.Name = "Reward_Dialog";
+B_Reward_Dialog.Description.en = "Reward: Calls a function to start an new dialog.";
+B_Reward_Dialog.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Dialog.";
+B_Reward_Dialog.Description.fr = "Récompense: Appelle la fonction et lance le dialogue qu'elle contient.";
+B_Reward_Dialog.GetReprisalTable = nil;
+
+B_Reward_Dialog.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reward_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a dialog has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Dialog(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Dialog:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Dialog = {
+    Name = "Trigger_Dialog",
+    Description = {
+        en = "Trigger: Checks if an dialog has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Dialog beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un dialogue est terminé et démarre alors la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Dialog name", de = "Name des Dialog", fr = "Nom du dialogue" },
+        { ParameterType.PlayerID, en = "Player ID",   de = "Player ID",       fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",   de = "Wartezeit",       fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Dialog:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Dialog:CustomFunction(_Quest)
+    if GetCinematicEvent(self.DialogName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Dialog:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Trigger_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reprisal_Briefing(_Name, _Briefing)
+    return B_Reprisal_Briefing:new(_Name, _Briefing);
+end
+
+B_Reprisal_Briefing = {
+    Name = "Reprisal_Briefing",
+    Description = {
+        en = "Reprisal: Calls a function to start an new briefing.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Briefing.",
+        fr = "Rétribution: Appelle la fonction et démarre le briefing qu'elle contient.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Briefing name",     de = "Name des Briefing",     fr = "Nom du briefing" },
+        { ParameterType.Default, en = "Briefing function", de = "Funktion mit Briefing", fr = "Fonction avec briefing" },
+    },
+}
+
+function B_Reprisal_Briefing:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Briefing:CustomFunction(_Quest)
+    _G[self.Function](self.BriefingName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Briefing:Debug(_Quest)
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reprisal_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reward_Briefing(_Name, _Briefing)
+    return B_Reward_Briefing:new(_Name, _Briefing);
+end
+
+B_Reward_Briefing = CopyTable(B_Reprisal_Briefing);
+B_Reward_Briefing.Name = "Reward_Briefing";
+B_Reward_Briefing.Description.en = "Reward: Calls a function to start an new briefing.";
+B_Reward_Briefing.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Briefing.";
+B_Reward_Briefing.Description.fr = "Récompense: Appelle la fonction et démarre le briefing qu'elle contient.";
+B_Reward_Briefing.GetReprisalTable = nil;
+
+B_Reward_Briefing.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reward_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a briefing has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Briefing(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Briefing:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Briefing = {
+    Name = "Trigger_Briefing",
+    Description = {
+        en = "Trigger: Checks if an briefing has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Briefing beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un briefing est terminé et lance ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Briefing name", de = "Name des Briefing", fr = "Nom du briefing" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Briefing:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Briefing:CustomFunction(_Quest)
+    if GetCinematicEvent(self.BriefingName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Briefing:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Trigger_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reprisal_Cutscene(_Name, _Cutscene)
+    return B_Reprisal_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reprisal_Cutscene = {
+    Name = "Reprisal_Cutscene",
+    Description = {
+        en = "Reprisal: Calls a function to start an new Cutscene.",
+        de = "Vergeltung: Ruft die Funktion auf und startet die enthaltene Cutscene.",
+        fr = "Rétribution : Appelle la fonction et démarre la cutscene contenue.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Cutscene name",     de = "Name der Cutscene",     fr = "Nom de la cutscene", },
+        { ParameterType.Default, en = "Cutscene function", de = "Funktion mit Cutscene", fr = "Fonction avec cutscene", },
+    },
+}
+
+function B_Reprisal_Cutscene:GetReprisalTable()
+    return { Reprisal.Custom, {self, self.CustomFunction} }
+end
+
+function B_Reprisal_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Cutscene:CustomFunction(_Quest)
+    _G[self.Function](self.CutsceneName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Cutscene:Debug(_Quest)
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reprisal_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reward_Cutscene(_Name, _Cutscene)
+    return B_Reward_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reward_Cutscene = CopyTable(B_Reprisal_Cutscene);
+B_Reward_Cutscene.Name = "Reward_Cutscene";
+B_Reward_Cutscene.Description.en = "Reward: Calls a function to start an new Cutscene.";
+B_Reward_Cutscene.Description.de = "Lohn: Ruft die Funktion auf und startet die enthaltene Cutscene.";
+B_Reward_Cutscene.Description.fr = "Récompense: Appelle la fonction et démarre la cutscene contenue.";
+B_Reward_Cutscene.GetReprisalTable = nil;
+
+B_Reward_Cutscene.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom, {self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reward_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a cutscene has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Cutscene(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Cutscene:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Cutscene = {
+    Name = "Trigger_Cutscene",
+    Description = {
+        en = "Trigger: Checks if an Cutscene has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob eine Cutscene beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si une cutscene est terminée et démarre ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Cutscene name", de = "Name der Cutscene", fr  ="Nom de la cutscene" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr  ="Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr  ="Temps d'attente" },
+    },
+}
+
+function B_Trigger_Cutscene:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Cutscene:CustomFunction(_Quest)
+    if GetCinematicEvent(self.CutsceneName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Cutscene:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Trigger_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reprisal_Dialog(_Name, _Dialog)
+    return B_Reprisal_Dialog:new(_Name, _Dialog);
+end
+
+B_Reprisal_Dialog = {
+    Name = "Reprisal_Dialog",
+    Description = {
+        en = "Reprisal: Calls a function to start an new dialog.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Dialog.",
+        fr = "Rétribution: Appelle la fonction et démarre le dialogue contenu.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Dialog name",     de = "Name des Dialog",     fr = "Nom du dialogue" },
+        { ParameterType.Default, en = "Dialog function", de = "Funktion mit Dialog", fr = "Fonction du dialogue" },
+    },
+}
+
+function B_Reprisal_Dialog:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Dialog:CustomFunction(_Quest)
+    _G[self.Function](self.DialogName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Dialog:Debug(_Quest)
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reprisal_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reward_Dialog(_Name, _Dialog)
+    return B_Reward_Dialog:new(_Name, _Dialog);
+end
+
+B_Reward_Dialog = CopyTable(B_Reprisal_Dialog);
+B_Reward_Dialog.Name = "Reward_Dialog";
+B_Reward_Dialog.Description.en = "Reward: Calls a function to start an new dialog.";
+B_Reward_Dialog.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Dialog.";
+B_Reward_Dialog.Description.fr = "Récompense: Appelle la fonction et lance le dialogue qu'elle contient.";
+B_Reward_Dialog.GetReprisalTable = nil;
+
+B_Reward_Dialog.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reward_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a dialog has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Dialog(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Dialog:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Dialog = {
+    Name = "Trigger_Dialog",
+    Description = {
+        en = "Trigger: Checks if an dialog has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Dialog beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un dialogue est terminé et démarre alors la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Dialog name", de = "Name des Dialog", fr = "Nom du dialogue" },
+        { ParameterType.PlayerID, en = "Player ID",   de = "Player ID",       fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",   de = "Wartezeit",       fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Dialog:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Dialog:CustomFunction(_Quest)
+    if GetCinematicEvent(self.DialogName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Dialog:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Trigger_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reprisal_Briefing(_Name, _Briefing)
+    return B_Reprisal_Briefing:new(_Name, _Briefing);
+end
+
+B_Reprisal_Briefing = {
+    Name = "Reprisal_Briefing",
+    Description = {
+        en = "Reprisal: Calls a function to start an new briefing.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Briefing.",
+        fr = "Rétribution: Appelle la fonction et démarre le briefing qu'elle contient.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Briefing name",     de = "Name des Briefing",     fr = "Nom du briefing" },
+        { ParameterType.Default, en = "Briefing function", de = "Funktion mit Briefing", fr = "Fonction avec briefing" },
+    },
+}
+
+function B_Reprisal_Briefing:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Briefing:CustomFunction(_Quest)
+    _G[self.Function](self.BriefingName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Briefing:Debug(_Quest)
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reprisal_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a briefing.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Briefing string Name of function containing the briefing
+function Reward_Briefing(_Name, _Briefing)
+    return B_Reward_Briefing:new(_Name, _Briefing);
+end
+
+B_Reward_Briefing = CopyTable(B_Reprisal_Briefing);
+B_Reward_Briefing.Name = "Reward_Briefing";
+B_Reward_Briefing.Description.en = "Reward: Calls a function to start an new briefing.";
+B_Reward_Briefing.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Briefing.";
+B_Reward_Briefing.Description.fr = "Récompense: Appelle la fonction et démarre le briefing qu'elle contient.";
+B_Reward_Briefing.GetReprisalTable = nil;
+
+B_Reward_Briefing.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Reward_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a briefing has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Briefing(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Briefing:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Briefing = {
+    Name = "Trigger_Briefing",
+    Description = {
+        en = "Trigger: Checks if an briefing has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Briefing beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un briefing est terminé et lance ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Briefing name", de = "Name des Briefing", fr = "Nom du briefing" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Briefing:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Briefing:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.BriefingName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Briefing:CustomFunction(_Quest)
+    if GetCinematicEvent(self.BriefingName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Briefing:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.BriefingName == nil or self.BriefingName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.BriefingSystem then
+    RegisterBehavior(B_Trigger_Briefing);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reprisal_Cutscene(_Name, _Cutscene)
+    return B_Reprisal_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reprisal_Cutscene = {
+    Name = "Reprisal_Cutscene",
+    Description = {
+        en = "Reprisal: Calls a function to start an new Cutscene.",
+        de = "Vergeltung: Ruft die Funktion auf und startet die enthaltene Cutscene.",
+        fr = "Rétribution : Appelle la fonction et démarre la cutscene contenue.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Cutscene name",     de = "Name der Cutscene",     fr = "Nom de la cutscene", },
+        { ParameterType.Default, en = "Cutscene function", de = "Funktion mit Cutscene", fr = "Fonction avec cutscene", },
+    },
+}
+
+function B_Reprisal_Cutscene:GetReprisalTable()
+    return { Reprisal.Custom, {self, self.CustomFunction} }
+end
+
+function B_Reprisal_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Cutscene:CustomFunction(_Quest)
+    _G[self.Function](self.CutsceneName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Cutscene:Debug(_Quest)
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reprisal_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a cutscene.
+---
+--- Every cutscene needs a unique name!
+--- @param _Name string     Name of cutscene
+--- @param _Cutscene string Name of function containing the cutscene
+function Reward_Cutscene(_Name, _Cutscene)
+    return B_Reward_Cutscene:new(_Name, _Cutscene);
+end
+
+B_Reward_Cutscene = CopyTable(B_Reprisal_Cutscene);
+B_Reward_Cutscene.Name = "Reward_Cutscene";
+B_Reward_Cutscene.Description.en = "Reward: Calls a function to start an new Cutscene.";
+B_Reward_Cutscene.Description.de = "Lohn: Ruft die Funktion auf und startet die enthaltene Cutscene.";
+B_Reward_Cutscene.Description.fr = "Récompense: Appelle la fonction et démarre la cutscene contenue.";
+B_Reward_Cutscene.GetReprisalTable = nil;
+
+B_Reward_Cutscene.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom, {self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Reward_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a cutscene has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Cutscene(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Cutscene:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Cutscene = {
+    Name = "Trigger_Cutscene",
+    Description = {
+        en = "Trigger: Checks if an Cutscene has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob eine Cutscene beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si une cutscene est terminée et démarre ensuite la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Cutscene name", de = "Name der Cutscene", fr  ="Nom de la cutscene" },
+        { ParameterType.PlayerID, en = "Player ID",     de = "Player ID",         fr  ="Player ID" },
+        { ParameterType.Number,   en = "Wait time",     de = "Wartezeit",         fr  ="Temps d'attente" },
+    },
+}
+
+function B_Trigger_Cutscene:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Cutscene:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.CutsceneName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Cutscene:CustomFunction(_Quest)
+    if GetCinematicEvent(self.CutsceneName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Cutscene:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.CutsceneName == nil or self.CutsceneName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.CutsceneSystem then
+    RegisterBehavior(B_Trigger_Cutscene);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reprisal_Dialog(_Name, _Dialog)
+    return B_Reprisal_Dialog:new(_Name, _Dialog);
+end
+
+B_Reprisal_Dialog = {
+    Name = "Reprisal_Dialog",
+    Description = {
+        en = "Reprisal: Calls a function to start an new dialog.",
+        de = "Vergeltung: Ruft die Funktion auf und startet das enthaltene Dialog.",
+        fr = "Rétribution: Appelle la fonction et démarre le dialogue contenu.",
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Dialog name",     de = "Name des Dialog",     fr = "Nom du dialogue" },
+        { ParameterType.Default, en = "Dialog function", de = "Funktion mit Dialog", fr = "Fonction du dialogue" },
+    },
+}
+
+function B_Reprisal_Dialog:GetReprisalTable()
+    return { Reprisal.Custom,{self, self.CustomFunction} }
+end
+
+function B_Reprisal_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.Function = _Parameter;
+    end
+end
+
+function B_Reprisal_Dialog:CustomFunction(_Quest)
+    _G[self.Function](self.DialogName, _Quest.ReceivingPlayer);
+end
+
+function B_Reprisal_Dialog:Debug(_Quest)
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if not type(_G[self.Function]) == "function" then
+        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reprisal_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Calls a mapscript function assuming it beeing a dialog.
+---
+--- Every briefing needs a unique name!
+--- @param _Name string     Name of briefing
+--- @param _Dialog string Name of function containing the briefing
+function Reward_Dialog(_Name, _Dialog)
+    return B_Reward_Dialog:new(_Name, _Dialog);
+end
+
+B_Reward_Dialog = CopyTable(B_Reprisal_Dialog);
+B_Reward_Dialog.Name = "Reward_Dialog";
+B_Reward_Dialog.Description.en = "Reward: Calls a function to start an new dialog.";
+B_Reward_Dialog.Description.de = "Lohn: Ruft die Funktion auf und startet das enthaltene Dialog.";
+B_Reward_Dialog.Description.fr = "Récompense: Appelle la fonction et lance le dialogue qu'elle contient.";
+B_Reward_Dialog.GetReprisalTable = nil;
+
+B_Reward_Dialog.GetRewardTable = function(self, _Quest)
+    return { Reward.Custom,{self, self.CustomFunction} }
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Reward_Dialog);
+end
+
+-- -------------------------------------------------------------------------- --
+
+--- Checks if a dialog has concluded and then starts a quest.
+--- @param _Name string      Name of briefing
+--- @param _PlayerID integer Receiving player
+--- @param _Waittime integer Time to wait after
+function Trigger_Dialog(_Name, _PlayerID, _Waittime)
+    return B_Trigger_Dialog:new(_Name, _PlayerID, _Waittime);
+end
+
+B_Trigger_Dialog = {
+    Name = "Trigger_Dialog",
+    Description = {
+        en = "Trigger: Checks if an dialog has concluded and starts the quest if so.",
+        de = "Auslöser: Prüft, ob ein Dialog beendet ist und startet dann den Quest.",
+        fr = "Déclencheur: Vérifie si un dialogue est terminé et démarre alors la quête.",
+    },
+    Parameter = {
+        { ParameterType.Default,  en = "Dialog name", de = "Name des Dialog", fr = "Nom du dialogue" },
+        { ParameterType.PlayerID, en = "Player ID",   de = "Player ID",       fr = "Player ID" },
+        { ParameterType.Number,   en = "Wait time",   de = "Wartezeit",       fr = "Temps d'attente" },
+    },
+}
+
+function B_Trigger_Dialog:GetTriggerTable()
+    return { Triggers.Custom2,{self, self.CustomFunction} }
+end
+
+function B_Trigger_Dialog:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.DialogName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 2) then
+        _Parameter = _Parameter or 0;
+        self.WaitTime = _Parameter * 1;
+    end
+end
+
+function B_Trigger_Dialog:CustomFunction(_Quest)
+    if GetCinematicEvent(self.DialogName, self.PlayerID) == CinematicEventState.Concluded then
+        if self.WaitTime and self.WaitTime > 0 then
+            self.WaitTimeTimer = self.WaitTimeTimer or Logic.GetTime();
+            if Logic.GetTime() >= self.WaitTimeTimer + self.WaitTime then
+                return true;
+            end
+        else
+            return true;
+        end
+    end
+    return false;
+end
+
+function B_Trigger_Dialog:Debug(_Quest)
+    if self.WaitTime < 0 then
+        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.PlayerID < 1 or self.PlayerID > 8 then
+        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    if self.DialogName == nil or self.DialogName == "" then
+        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        return true;
+    end
+    return false;
+end
+
+if MapEditor or Lib.DialogSystem then
+    RegisterBehavior(B_Trigger_Dialog);
 end
 
 -- -------------------------------------------------------------------------- --

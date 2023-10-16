@@ -237,7 +237,7 @@ API.IsCinematicEventActive = IsCinematicEventActive;
 --- @return string? EventName Name of event
 function StartTypewriter(_Data)
     if Framework.IsNetworkGame() ~= true then
-        _Data.PlayerID = _Data.PlayerID or QSB.HumanPlayerID;
+        _Data.PlayerID = _Data.PlayerID or 1; -- Human Player
     end
     if _Data.PlayerID == nil or (_Data.PlayerID < 1 or _Data.PlayerID > 8) then
         return;

@@ -192,17 +192,15 @@ API.CreateScriptEvent = CreateReport;
 --- @param ... unknown Parameters
 function SendReport(_ID, ...)
     local arg = {...};
-    for i= 1, #arg do
-        assert(
-            type(arg[i]) == "string" or type(arg[i]) == "number" or
-            type(arg[i]) == "boolean" or type(arg[i]) == "nil",
-            "Can only use string, number, boolean or nil as parameter."
-        );
-    end
     Lib.Core.Report:SendReport(_ID, unpack(arg));
 end
 API.SendScriptEvent = SendReport;
 
+--- Sends a report with optional parameter to the global script.
+---
+--- This will always be a broadcast!
+--- @param _ID integer Report ID
+--- @param ... unknown Parameters
 function SendReportToGlobal(_ID, ...)
     assert(IsLocalScript(), "Was called from global script.");
     local arg = {...};
@@ -224,6 +222,8 @@ function SendReportToLocal(_ID, ...)
             end
             if type(arg[i]) == "string" then
                 Parameter = Parameter.. "\"" ..arg[i].. "\"";
+            elseif type(arg[i]) == "table" then
+                Parameter = Parameter.. table.tostring(arg[i]);
             else
                 Parameter = Parameter.. tostring(arg[i]);
             end

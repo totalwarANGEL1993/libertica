@@ -58,6 +58,9 @@ function Lib.UIEffects.Global:Initialize()
         RequestHiResJob(function()
             Lib.UIEffects.Global:ControlTypewriter();
         end);
+
+        -- Garbage collection
+        Lib.UIEffects.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -213,7 +216,7 @@ function Lib.UIEffects.Global:FinishTypewriter(_PlayerID)
                 ActivateNormalInterface(GUI.GetPlayerID())
                 ActivateBorderScroll(GUI.GetPlayerID())
                 if ModuleGuiControl then
-                    ModuleGuiControl.Local:UpdateHiddenWidgets()
+                    Lib.UITools.Widget:UpdateHiddenWidgets()
                 end
                 Input.GameMode()
                 GUI.ClearNotes()
@@ -231,7 +234,7 @@ end
 function Lib.UIEffects.Global:TokenizeText(_Data)
     local TextTokens = {};
     local TempTokens = {};
-    local Text = ConvertPlaceholders(_Data.Text);
+    local Text = ConvertPlaceholders(Localize(_Data.Text));
     Text = Text:gsub("%s+", " ");
     while (true) do
         local s1, e1 = Text:find("{");
@@ -351,6 +354,9 @@ function Lib.UIEffects.Local:Initialize()
         self:OverrideInterfaceUpdateForCinematicMode();
         self:OverrideInterfaceThroneroomForCinematicMode();
         self:ResetFarClipPlane();
+
+        -- Garbage collection
+        Lib.UIEffects.Global = nil;
     end
     self.IsInstalled = true;
 end

@@ -138,10 +138,10 @@ API.AllowActivateIronMines = AllowActivateIronMines;
 function RequireTitleToRefilIronMines(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[
-        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_RefillIronMine)
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], 1, Technologies.R_RefillIronMine)
         CreateTechnologyKnightTitleTable()
     ]], _Title);
-    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_RefillIronMine);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], 1, Technologies.R_RefillIronMine);
     CreateTechnologyKnightTitleTable()
     for i= 1, 8 do
         Logic.TechnologySetState(i, Technologies.R_RefillIronMine, 0);
@@ -167,10 +167,10 @@ API.AllowActivateStoneMines = AllowActivateStoneMines;
 function RequireTitleToRefilStoneMines(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[
-        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_RefillStoneMine)
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], 1, Technologies.R_RefillStoneMine)
         CreateTechnologyKnightTitleTable()
     ]], _Title);
-    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_RefillStoneMine);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], 1, Technologies.R_RefillStoneMine);
     CreateTechnologyKnightTitleTable()
     for i= 1, 8 do
         Logic.TechnologySetState(i, Technologies.R_RefillStoneMine, 0);
@@ -196,10 +196,10 @@ API.AllowActivateCisterns = AllowActivateCisterns;
 function RequireTitleToRefilCisterns(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[
-        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_RefillCisternMine)
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], 1, Technologies.R_RefillCistern)
         CreateTechnologyKnightTitleTable()
     ]], _Title);
-    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_RefillCisternMine);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], 1, Technologies.R_RefillCistern);
     CreateTechnologyKnightTitleTable()
     for i= 1, 8 do
         Logic.TechnologySetState(i, Technologies.R_RefillCisternMine, 0);
@@ -225,10 +225,10 @@ API.AllowActivateTradepost = AllowActivateTradepost;
 function RequireTitleToBuildTradeposts(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[
-        table.insert(NeedsAndRightsByKnightTitle[%d][4], Technologies.R_Tradepost)
+        table.insert(NeedsAndRightsByKnightTitle[%d][4], 1, Technologies.R_Tradepost)
         CreateTechnologyKnightTitleTable()
     ]], _Title);
-    table.insert(NeedsAndRightsByKnightTitle[_Title][4], Technologies.R_Tradepost);
+    table.insert(NeedsAndRightsByKnightTitle[_Title][4], 1, Technologies.R_Tradepost);
     CreateTechnologyKnightTitleTable();
     for i= 1, 8 do
         Logic.TechnologySetState(i, Technologies.R_Tradepost, 0);

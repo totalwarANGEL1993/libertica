@@ -6,22 +6,17 @@ Lib.Register("comfort/SerializeTable");
 function SerializeTable(_Table)
     local String = "{";
     for k, v in pairs(_Table) do
-        local key;
-        if (tonumber(k)) then
-            key = ""..k;
-        else
-            key = "\""..k.."\"";
-        end
+        local key = (type(k) == "string" and k) or ("[" .. k .. "]");
         if type(v) == "table" then
-            String = String .. "[" .. key .. "] = " .. SerializeTable(v) .. ", ";
+            String = String .. key .. " = " .. SerializeTable(v) .. ", ";
         elseif type(v) == "number" then
-            String = String .. "[" .. key .. "] = " .. v .. ", ";
+            String = String .. key .. " = " .. v .. ", ";
         elseif type(v) == "string" then
-            String = String .. "[" .. key .. "] = \"" .. v .. "\", ";
+            String = String .. key .. " = \"" .. v .. "\", ";
         elseif type(v) == "boolean" or type(v) == "nil" then
-            String = String .. "[" .. key .. "] = " .. tostring(v) .. ", ";
+            String = String .. key .. " = " .. tostring(v) .. ", ";
         else
-            String = String .. "[" .. key .. "] = \"" .. tostring(v) .. "\", ";
+            String = String .. key .. " = \"" .. tostring(v) .. "\", ";
         end
     end
     String = String .. "}";

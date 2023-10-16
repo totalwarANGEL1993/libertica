@@ -172,9 +172,9 @@ end
 -- Local initalizer method
 function Lib.Selection.Local:Initialize()
     if not self.IsInstalled then
-        Report.ForceTrebuchetTasklist = CreateReport("Event_ForceTrebuchetTasklist");
         Report.ExpelSettler = CreateReport("Event_ExpelSettler");
         Report.SelectionChanged = CreateReport("Event_SelectionChanged");
+        Report.ForceTrebuchetTasklist = CreateReport("Event_ForceTrebuchetTasklist");
         Report.ErectTrebuchet = CreateReport("Event_ErectTrebuchet");
         Report.DisambleTrebuchet = CreateReport("Event_DisambleTrebuchet");
 

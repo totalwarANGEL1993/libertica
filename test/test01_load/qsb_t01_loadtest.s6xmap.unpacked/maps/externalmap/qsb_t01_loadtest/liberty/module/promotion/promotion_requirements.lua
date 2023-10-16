@@ -2,6 +2,13 @@ Lib.Register("module/promotion/Promotion_Requirements");
 
 Lib.Promotion.Requirements = {};
 
+-- A workaround that clears all technologies.
+InitKnightTitleTables = function()
+    NeedsAndRightsByKnightTitle = {};
+    KnightTitleRequirements = {};
+end
+
+-- This is the real deal. Defines the requirements, needs and rights.
 Lib.Promotion.Requirements.InitKnightTitleTables = function()
     KnightTitles = {}
     KnightTitles.Knight     = 0
@@ -17,6 +24,11 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
     -- ---------------------------------------------------------------------- --
 
     NeedsAndRightsByKnightTitle = {}
+
+    -- The following applies to rights and needs: Both are displayed in the
+    -- order they are listed in the table. There are only 8 icons available
+    -- for the rights and only 3 for the needs. So if something needs to be
+    -- visible for the player it must be put first in the table.
 
     -- Knight ------------------------------------------------------------------
 
@@ -48,13 +60,9 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
             Technologies.R_Tanner,                              -- Right: Tanner
             Technologies.R_Weaver,                              -- Right: Weaver
             Technologies.R_Construction,                        -- Right: Construction
-            Technologies.R_Wall,                                -- Right: Wall
-            Technologies.R_Pallisade,                           -- Right: Palisade
             Technologies.R_Trail,                               -- Right: Path
             Technologies.R_KnockDown,                           -- Right: Demolition
             Technologies.R_Sermon,                              -- Right: Sermon
-            Technologies.R_SpecialEdition,                      -- Right: Special Edition
-            Technologies.R_SpecialEdition_Pavilion,             -- Right: Pavilion (AeK SE)
         }
     }
 
@@ -65,15 +73,19 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
         {
             Needs.Clothes,                                      -- Need: Clothes
         },
-        ActivateRightForPlayer, {
+        ActivateRightForPlayer,
+        {
+            Technologies.R_Military,                            -- Right: Military
+            Technologies.R_MilitarySword,                       -- Right: Swordmen
+            Technologies.R_Thieves,                             -- Right: Thief
             Technologies.R_Hygiene,                             -- Right: Hygiene
             Technologies.R_Soapmaker,                           -- Right: Soap Maker
             Technologies.R_BroomMaker,                          -- Right: Broom Maker
-            Technologies.R_Military,                            -- Right: Military
-            Technologies.R_SwordSmith,                          -- Right: Sword Smith
-            Technologies.R_Barracks,                            -- Right: Swordmen Barracks
-            Technologies.R_Thieves,                             -- Right: Thief
+            Technologies.R_SpecialEdition,                      -- Right: Special Edition
+            Technologies.R_SpecialEdition_Pavilion,             -- Right: Pavilion (AeK SE)
             Technologies.R_SpecialEdition_StatueFamily,         -- Right: Statue of Family (AeK SE)
+            -- Technologies.R_SwordSmith,                          -- Right: Sword Smith
+            -- Technologies.R_Barracks,                            -- Right: Swordmen Barracks
         },
         StartKnightsPromotionCelebration                        -- Start promotion celebration
     }
@@ -85,14 +97,16 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
         {
             Needs.Hygiene,                                      -- Need: Hygiene
         },
-        ActivateRightForPlayer, {
+        ActivateRightForPlayer,
+        {
             Technologies.R_SiegeEngineWorkshop,                 -- Right: Siege Engine Workshop
             Technologies.R_BatteringRam,                        -- Right: Battering Ram
+            Technologies.R_Pallisade,                           -- Right: Palisade
             Technologies.R_Medicine,                            -- Right: Medicine
             Technologies.R_Entertainment,                       -- Right: Entertainment
             Technologies.R_Tavern,                              -- Right: Tavern
-            Technologies.R_Festival,                            -- Right: Festival
             Technologies.R_Street,                              -- Right: Street
+            Technologies.R_Festival,                            -- Right: Festival
             Technologies.R_SpecialEdition_Column,               -- Right: Pilar (AeK SE)
         },
         StartKnightsPromotionCelebration                        -- Start promotion celebration
@@ -106,15 +120,15 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
             Needs.Entertainment,                                -- Need: Entertainment
             Needs.Prosperity,                                   -- Need: Prosperity
         },
-        ActivateRightForPlayer, {
-            Technologies.R_BowMaker,                            -- Right: Bow Maker
-            Technologies.R_BarracksArchers,                     -- Right: Archers Barracks
+        ActivateRightForPlayer,
+        {
+            Technologies.R_MilitaryBow,                         -- Right: Swordmen
             Technologies.R_Baths,                               -- Right: Baths
-            Technologies.R_AmmunitionCart,                      -- Right: Ammunition Cart
             Technologies.R_Prosperity,                          -- Right: Prosperity
             Technologies.R_Taxes,                               -- Right: Adjust taxes
-            Technologies.R_Ballista,                            -- Right: Wall Catapult
             Technologies.R_SpecialEdition_StatueSettler,        -- Right: Statue of Settlers (AeK SE)
+            Technologies.R_BowMaker,                            -- Right: Bow Maker
+            Technologies.R_BarracksArchers,                     -- Right: Archers Barracks
         },
         StartKnightsPromotionCelebration                        -- Start promotion celebration
     }
@@ -126,11 +140,15 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
         {
             Needs.Wealth,                                       -- Need: Decoration
         },
-        ActivateRightForPlayer, {
+        ActivateRightForPlayer,
+        {
             Technologies.R_Theater,                             -- Right: Theathre
             Technologies.R_Wealth,                              -- Right: Decorations
             Technologies.R_BannerMaker,                         -- Right: Banner Maker
             Technologies.R_SiegeTower,                          -- Right: Siege Tower
+            Technologies.R_Wall,                                -- Right: Wall
+            Technologies.R_Ballista,                            -- Right: Wall Catapult
+            Technologies.R_AmmunitionCart,                      -- Right: Ammunition Cart
             Technologies.R_SpecialEdition_StatueProduction,     -- Right: Statue of Production (AeK SE)
         },
         StartKnightsPromotionCelebration                        -- Start promotion celebration
@@ -139,8 +157,10 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
     -- Duke --------------------------------------------------------------------
 
     NeedsAndRightsByKnightTitle[KnightTitles.Duke] = {
-        ActivateNeedForPlayer, nil,
-        ActivateRightForPlayer, {
+        ActivateNeedForPlayer,
+        nil,
+        ActivateRightForPlayer,
+        {
             Technologies.R_Catapult,                            -- Right: Catapult
             Technologies.R_Carpenter,                           -- Right: Carpenter
             Technologies.R_CandleMaker,                         -- Right: Cancle Maker
@@ -153,11 +173,13 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
     -- Archduke ----------------------------------------------------------------
 
     NeedsAndRightsByKnightTitle[KnightTitles.Archduke] = {
-        ActivateNeedForPlayer,nil,
-        ActivateRightForPlayer, {
-            Technologies.R_Victory                              -- Sieg
+        ActivateNeedForPlayer,
+        nil,
+        ActivateRightForPlayer,
+        {
+            Technologies.R_Victory                              -- Victory
         },
-        -- VictroryBecauseOfTitle,                              -- Sieg wegen Titel
+        -- VictroryBecauseOfTitle,                              -- Victory because of title
         StartKnightsPromotionCelebration                        -- Start promotion celebration
     }
 
@@ -167,13 +189,13 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
         local TechnologiesTableIndex = 4;
         table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Mayor][TechnologiesTableIndex],Technologies.R_Cistern);
         table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Mayor][TechnologiesTableIndex],Technologies.R_Beautification_Brazier);
-        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Mayor][TechnologiesTableIndex],Technologies.R_Beautification_Shrine);
+        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Baron][TechnologiesTableIndex],Technologies.R_Beautification_Shrine);
         table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Baron][TechnologiesTableIndex],Technologies.R_Beautification_Pillar);
         table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Earl][TechnologiesTableIndex],Technologies.R_Beautification_StoneBench);
-        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Earl][TechnologiesTableIndex],Technologies.R_Beautification_Vase);
-        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Marquees][TechnologiesTableIndex],Technologies.R_Beautification_Sundial);
-        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Archduke][TechnologiesTableIndex],Technologies.R_Beautification_TriumphalArch);
+        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Earl][TechnologiesTableIndex],Technologies.R_Beautification_Sundial);
+        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Marquees][TechnologiesTableIndex],Technologies.R_Beautification_Vase);
         table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Duke][TechnologiesTableIndex],Technologies.R_Beautification_VictoryColumn);
+        table.insert(NeedsAndRightsByKnightTitle[KnightTitles.Archduke][TechnologiesTableIndex],Technologies.R_Beautification_TriumphalArch);
     end
 
     -- ---------------------------------------------------------------------- --
@@ -241,7 +263,7 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
     KnightTitleRequirements[KnightTitles.Archduke].RichBuildings = 30
     KnightTitleRequirements[KnightTitles.Archduke].FullDecoratedBuildings = 30
 
-    -- Einstellungen Aktivieren
+    -- Activate settings
     CreateTechnologyKnightTitleTable()
 end
 

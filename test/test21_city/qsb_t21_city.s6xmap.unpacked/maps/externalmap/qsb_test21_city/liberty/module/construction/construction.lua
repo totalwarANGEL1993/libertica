@@ -116,28 +116,34 @@ Lib.Register("module/construction/Construction");
 
 -- Global initalizer method
 function Lib.Construction.Global:Initialize()
-    for i= 1, 8 do
-        self.Construction.Restriction.BuildingCustomRule[i] = {};
-        self.Construction.Restriction.BuildingTerritoryBlacklist[i] = {};
-        self.Construction.Restriction.BuildingAreaBlacklist[i] = {};
-        self.Construction.Restriction.BuildingTerritoryWhitelist[i] = {};
-        self.Construction.Restriction.BuildingAreaWhitelist[i] = {};
-        self.Construction.Restriction.RoadCustomRule[i] = {};
-        self.Construction.Restriction.RoadTerritoryBlacklist[i] = {};
-        self.Construction.Restriction.RoadAreaBlacklist[i] = {};
-        self.Construction.Restriction.RoadTerritoryWhitelist[i] = {};
-        self.Construction.Restriction.RoadAreaWhitelist[i] = {};
-        self.Construction.Restriction.WallCustomRule[i] = {};
-        self.Construction.Restriction.WallTerritoryBlacklist[i] = {};
-        self.Construction.Restriction.WallAreaBlacklist[i] = {};
-        self.Construction.Restriction.WallTerritoryWhitelist[i] = {};
-        self.Construction.Restriction.WallAreaWhitelist[i] = {};
-        self.Knockdown.Restriction.BuildingCustomRule[i] = {};
-        self.Knockdown.Restriction.BuildingTerritoryBlacklist[i] = {};
-        self.Knockdown.Restriction.BuildingAreaBlacklist[i] = {};
-        self.Knockdown.Restriction.BuildingTerritoryWhitelist[i] = {};
-        self.Knockdown.Restriction.BuildingAreaWhitelist[i] = {};
+    if not self.IsInstalled then
+        for i= 1, 8 do
+            self.Construction.Restriction.BuildingCustomRule[i] = {};
+            self.Construction.Restriction.BuildingTerritoryBlacklist[i] = {};
+            self.Construction.Restriction.BuildingAreaBlacklist[i] = {};
+            self.Construction.Restriction.BuildingTerritoryWhitelist[i] = {};
+            self.Construction.Restriction.BuildingAreaWhitelist[i] = {};
+            self.Construction.Restriction.RoadCustomRule[i] = {};
+            self.Construction.Restriction.RoadTerritoryBlacklist[i] = {};
+            self.Construction.Restriction.RoadAreaBlacklist[i] = {};
+            self.Construction.Restriction.RoadTerritoryWhitelist[i] = {};
+            self.Construction.Restriction.RoadAreaWhitelist[i] = {};
+            self.Construction.Restriction.WallCustomRule[i] = {};
+            self.Construction.Restriction.WallTerritoryBlacklist[i] = {};
+            self.Construction.Restriction.WallAreaBlacklist[i] = {};
+            self.Construction.Restriction.WallTerritoryWhitelist[i] = {};
+            self.Construction.Restriction.WallAreaWhitelist[i] = {};
+            self.Knockdown.Restriction.BuildingCustomRule[i] = {};
+            self.Knockdown.Restriction.BuildingTerritoryBlacklist[i] = {};
+            self.Knockdown.Restriction.BuildingAreaBlacklist[i] = {};
+            self.Knockdown.Restriction.BuildingTerritoryWhitelist[i] = {};
+            self.Knockdown.Restriction.BuildingAreaWhitelist[i] = {};
+        end
+
+        -- Garbage collection
+        Lib.Construction.Local = nil;
     end
+    self.IsInstalled = true;
 end
 
 -- Global load game
@@ -436,30 +442,36 @@ end
 
 -- Local initalizer method
 function Lib.Construction.Local:Initialize()
-    for i= 1, 8 do
-        self.Construction.Restriction.BuildingCustomRule[i] = {};
-        self.Construction.Restriction.BuildingTerritoryBlacklist[i] = {};
-        self.Construction.Restriction.BuildingAreaBlacklist[i] = {};
-        self.Construction.Restriction.BuildingTerritoryWhitelist[i] = {};
-        self.Construction.Restriction.BuildingAreaWhitelist[i] = {};
-        self.Construction.Restriction.RoadCustomRule[i] = {};
-        self.Construction.Restriction.RoadTerritoryBlacklist[i] = {};
-        self.Construction.Restriction.RoadAreaBlacklist[i] = {};
-        self.Construction.Restriction.RoadTerritoryWhitelist[i] = {};
-        self.Construction.Restriction.RoadAreaWhitelist[i] = {};
-        self.Construction.Restriction.WallCustomRule[i] = {};
-        self.Construction.Restriction.WallTerritoryBlacklist[i] = {};
-        self.Construction.Restriction.WallAreaBlacklist[i] = {};
-        self.Construction.Restriction.WallTerritoryWhitelist[i] = {};
-        self.Construction.Restriction.WallAreaWhitelist[i] = {};
-        self.Knockdown.Restriction.BuildingCustomRule[i] = {};
-        self.Knockdown.Restriction.BuildingTerritoryBlacklist[i] = {};
-        self.Knockdown.Restriction.BuildingAreaBlacklist[i] = {};
-        self.Knockdown.Restriction.BuildingTerritoryWhitelist[i] = {};
-        self.Knockdown.Restriction.BuildingAreaWhitelist[i] = {};
+    if not self.IsInstalled then
+        for i= 1, 8 do
+            self.Construction.Restriction.BuildingCustomRule[i] = {};
+            self.Construction.Restriction.BuildingTerritoryBlacklist[i] = {};
+            self.Construction.Restriction.BuildingAreaBlacklist[i] = {};
+            self.Construction.Restriction.BuildingTerritoryWhitelist[i] = {};
+            self.Construction.Restriction.BuildingAreaWhitelist[i] = {};
+            self.Construction.Restriction.RoadCustomRule[i] = {};
+            self.Construction.Restriction.RoadTerritoryBlacklist[i] = {};
+            self.Construction.Restriction.RoadAreaBlacklist[i] = {};
+            self.Construction.Restriction.RoadTerritoryWhitelist[i] = {};
+            self.Construction.Restriction.RoadAreaWhitelist[i] = {};
+            self.Construction.Restriction.WallCustomRule[i] = {};
+            self.Construction.Restriction.WallTerritoryBlacklist[i] = {};
+            self.Construction.Restriction.WallAreaBlacklist[i] = {};
+            self.Construction.Restriction.WallTerritoryWhitelist[i] = {};
+            self.Construction.Restriction.WallAreaWhitelist[i] = {};
+            self.Knockdown.Restriction.BuildingCustomRule[i] = {};
+            self.Knockdown.Restriction.BuildingTerritoryBlacklist[i] = {};
+            self.Knockdown.Restriction.BuildingAreaBlacklist[i] = {};
+            self.Knockdown.Restriction.BuildingTerritoryWhitelist[i] = {};
+            self.Knockdown.Restriction.BuildingAreaWhitelist[i] = {};
+        end
+        self:OverrideBuildButtonClicked();
+        self:OverridePlacementUpdate();
+
+        -- Garbage collection
+        Lib.Construction.Global = nil;
     end
-    self:OverrideBuildButtonClicked();
-    self:OverridePlacementUpdate();
+    self.IsInstalled = true;
 end
 
 -- Local load game

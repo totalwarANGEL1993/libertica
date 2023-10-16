@@ -327,8 +327,8 @@ API.SetPlayerColor = SetPlayerColor;
 --- @param _PlayerID number  ID of player
 --- @param _Portrait? string Name of model
 function SetPlayerPortrait(_PlayerID, _Portrait)
-    error(_PlayerID < 1 or _PlayerID > 8, "Invalid player ID!");
-    if not IsLocalScript then
+    error(_PlayerID >= 1 and _PlayerID <= 8, "Invalid player ID!");
+    if not IsLocalScript() then
         local Portrait = (_Portrait ~= nil and "'" .._Portrait.. "'") or "nil";
         ExecuteLocal("SetPlayerPortrait(%d, %s)", _PlayerID, Portrait)
         return;

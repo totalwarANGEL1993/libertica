@@ -74,7 +74,7 @@ API.CreateQuest = SetupQuest;
 ---         },
 ---         {
 ---             -- This ignores a failure
----             Result      = QSB.SegmentResult.Ignore,
+---             Result      = SegmentResult.Ignore,
 ---
 ---             Suggestion  = "We need mor bucks. And fast!",
 ---             Success     = "We done it!",

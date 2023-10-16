@@ -405,6 +405,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideUpgradeTurret()
     self.Orig_UpgradeTurretClicked = GUI_BuildingButtons.UpgradeTurretClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeTurretClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
