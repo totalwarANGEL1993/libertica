@@ -19,6 +19,7 @@ LibWriter = {
         "module/information/DialogSystem",
         "module/lifestock/LifestockSystem",
         "module/information/Requester",
+        "module/entity/Selection",
     },
     Behaviors = "",
     Compile = false,

@@ -11,12 +11,30 @@ Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/libe
 
 Lib.Loader.PushPath("E:/Repositories/liberty/var/");
 
+Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/uieffects/UIEffects");
 Lib.Require("module/promotion/Promotion");
 Lib.Require("module/information/Requester");
+Lib.Require("module/entity/Selection");
+
+-- ========================================================================== --
+
+function GameCallback_Lib_LoadingFinished()
+    ActivateDebugMode(true, false, true, true);
+
+    AddGood(Goods.G_Gold, 2500, 1);
+    AddGood(Goods.G_Wood, 20, 1);
+    AddGood(Goods.G_Stone, 25, 1);
+    AddGood(Goods.G_Grain, 10, 1);
+    AddGood(Goods.G_RawFish, 10, 1);
+    AddGood(Goods.G_Milk, 10, 1);
+    AddGood(Goods.G_Carcass, 10, 1);
+end
+
+-- ========================================================================== --
 
 function Mission_FirstMapAction()
     Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/questsystembehavior.lua");
