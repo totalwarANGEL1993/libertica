@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/technology/Technology_API");
+Lib.Register("module/faker/Technology_API");
 
 --- Initializes a pseudo technology.
 --- @param _Key string Name of technology

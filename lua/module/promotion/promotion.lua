@@ -45,7 +45,7 @@ CONST_REQUIREMENT_TOOLTIP_TYPE = {};
 CONST_CONSUMED_GOODS_COUNTER = {};
 
 Lib.Require("core/Core");
-Lib.Require("module/technology/Technology");
+Lib.Require("module/faker/Technology");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/promotion/Promotion_API");
 Lib.Require("module/promotion/Promotion_Config");

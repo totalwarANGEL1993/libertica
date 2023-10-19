@@ -16,8 +16,8 @@ CONST_TECHNOLOGY_TO_INDEX = {};
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("core/Core");
-Lib.Require("module/technology/Technology_API");
-Lib.Register("module/technology/Technology");
+Lib.Require("module/faker/Technology_API");
+Lib.Register("module/faker/Technology");
 
 -- -------------------------------------------------------------------------- --
 -- Global

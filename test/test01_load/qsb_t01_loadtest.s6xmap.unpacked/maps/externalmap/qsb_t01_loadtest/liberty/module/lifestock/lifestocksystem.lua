@@ -79,7 +79,7 @@ Lib.Require("core/Core");
 Lib.Require("module/uieffects/UIEffects");
 Lib.Require("module/uitools/UITools");
 Lib.Require("module/uibuilding/UIBuilding");
-Lib.Require("module/technology/Technology");
+Lib.Require("module/faker/Technology");
 Lib.Require("module/promotion/Promotion");
 Lib.Require("module/lifestock/LifestockSystem_API");
 Lib.Register("module/lifestock/LifestockSystem");
