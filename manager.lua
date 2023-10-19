@@ -20,7 +20,7 @@ LibWriter = {
         "module/lifestock/LifestockSystem",
         "module/information/Requester",
         "module/entity/Selection",
-        "module/entity/ScourgeSystem",
+        "module/city/SettlementSurvival",
     },
     Behaviors = "",
     Compile = false,

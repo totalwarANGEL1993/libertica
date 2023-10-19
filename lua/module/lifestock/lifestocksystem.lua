@@ -144,8 +144,6 @@ function Lib.LifestockSystem.Global:Initialize()
         Lib.LifestockSystem.Shared:CreateTechnologies();
         RequestJob(function()
             Lib.LifestockSystem.Global:ControlFeeding();
-        end);
-        RequestJob(function()
             Lib.LifestockSystem.Global:ControlDecay();
         end);
 
