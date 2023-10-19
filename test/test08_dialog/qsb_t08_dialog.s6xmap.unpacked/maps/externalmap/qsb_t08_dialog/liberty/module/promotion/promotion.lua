@@ -46,7 +46,7 @@ CONST_CONSUMED_GOODS_COUNTER = {};
 
 Lib.Require("core/Core");
 Lib.Require("module/faker/Technology");
-Lib.Require("module/uitools/UITools");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/promotion/Promotion_API");
 Lib.Require("module/promotion/Promotion_Config");
 Lib.Require("module/promotion/Promotion_Helper");

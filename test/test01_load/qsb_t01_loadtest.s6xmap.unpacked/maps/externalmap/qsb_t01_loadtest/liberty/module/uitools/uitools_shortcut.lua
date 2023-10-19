@@ -1,4 +1,4 @@
-Lib.Register("module/uitools/UITools_Shortcut");
+Lib.Register("module/ui/UITools_Shortcut");
 
 Lib.UITools.Shortcut = {
     HotkeyDescriptions = {},

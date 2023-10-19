@@ -26,7 +26,7 @@ Lib.Selection = {
 Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
-Lib.Require("module/uitools/UITools");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/entity/Selection_API");
 Lib.Require("module/entity/Selection_Text");
 Lib.Register("module/entity/Selection");

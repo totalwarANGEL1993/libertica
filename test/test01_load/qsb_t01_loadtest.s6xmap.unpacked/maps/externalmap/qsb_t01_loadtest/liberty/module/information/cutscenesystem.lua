@@ -23,8 +23,8 @@ Lib.CutsceneSystem = {
 }
 
 Lib.Require("core/Core");
-Lib.Require("module/uieffects/UIEffects");
-Lib.Require("module/uitools/UITools");
+Lib.Require("module/ui/UIEffects");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/information/CutsceneSystem_API");
 Lib.Register("module/information/CutsceneSystem");
 

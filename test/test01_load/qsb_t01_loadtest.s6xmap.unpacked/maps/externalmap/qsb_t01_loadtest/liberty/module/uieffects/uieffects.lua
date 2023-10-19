@@ -31,8 +31,8 @@ CinematicEventState = {
 };
 
 Lib.Require("core/Core");
-Lib.Require("module/uieffects/UIEffects_API");
-Lib.Register("module/uieffects/UIEffects");
+Lib.Require("module/ui/UIEffects_API");
+Lib.Register("module/ui/UIEffects");
 
 -- -------------------------------------------------------------------------- --
 -- Global

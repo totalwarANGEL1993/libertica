@@ -19,7 +19,7 @@ Lib.Require("module/npc/NPC");
 Lib.Require("module/io/IO");
 Lib.Require("module/io/IOChest");
 Lib.Require("module/io/IOMine");
-Lib.Require("module/uibuilding/UIBuilding");
+Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/warehouse/Warehouse");
 Lib.Require("module/promotion/Promotion");

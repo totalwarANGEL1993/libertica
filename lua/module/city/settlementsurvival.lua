@@ -79,7 +79,7 @@ Lib.SettlementSurvival = {
 
 Lib.Require("comfort/global/SetHealth");
 Lib.Require("core/Core");
-Lib.Require("module/uitools/UITools");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/city/SettlementSurvival_API");
 Lib.Require("module/city/SettlementSurvival_Text");
 Lib.Register("module/city/SettlementSurvival");

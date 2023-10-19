@@ -36,7 +36,7 @@ Lib.Require("comfort/GetClosestToTarget");
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
-Lib.Require("module/uitools/UITools");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/io/IO_API");
 Lib.Register("module/io/IO");

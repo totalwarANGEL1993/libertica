@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/uitools/UITools_API");
+Lib.Register("module/ui/UITools_API");
 
 --- Sets an icon from an icon matrix.
 ---

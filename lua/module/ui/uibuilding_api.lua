@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/uibuilding/UIBuilding_API");
+Lib.Register("module/ui/UIBuilding_API");
 
 --- Creates a building button at the menu position.
 --- @param _X integer X position for button

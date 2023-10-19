@@ -60,8 +60,8 @@ Lib.UIBuilding = {
 }
 
 Lib.Require("core/Core");
-Lib.Require("module/uibuilding/UIBuilding_API");
-Lib.Register("module/uibuilding/UIBuilding");
+Lib.Require("module/ui/UIBuilding_API");
+Lib.Register("module/ui/UIBuilding");
 
 -- -------------------------------------------------------------------------- --
 -- Global

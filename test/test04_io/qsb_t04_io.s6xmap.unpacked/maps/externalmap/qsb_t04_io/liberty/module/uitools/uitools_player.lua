@@ -1,4 +1,4 @@
-Lib.Register("module/uitools/UITools_Player");
+Lib.Register("module/ui/UITools_Player");
 
 Lib.UITools.Player = {};
 

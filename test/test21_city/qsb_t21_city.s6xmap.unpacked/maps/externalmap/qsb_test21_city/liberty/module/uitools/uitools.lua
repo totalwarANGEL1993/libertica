@@ -27,12 +27,12 @@ Lib.UITools = {
 CONST_PLAYER_NAMES = {};
 
 Lib.Require("core/Core");
-Lib.Require("module/uitools/UITools_Player");
-Lib.Require("module/uitools/UITools_Shortcut");
-Lib.Require("module/uitools/UITools_Widget");
-Lib.Require("module/uitools/UITools_Speed");
-Lib.Require("module/uitools/UITools_API");
-Lib.Register("module/uitools/UITools");
+Lib.Require("module/ui/UITools_Player");
+Lib.Require("module/ui/UITools_Shortcut");
+Lib.Require("module/ui/UITools_Widget");
+Lib.Require("module/ui/UITools_Speed");
+Lib.Require("module/ui/UITools_API");
+Lib.Register("module/ui/UITools");
 
 -- -------------------------------------------------------------------------- --
 -- Global

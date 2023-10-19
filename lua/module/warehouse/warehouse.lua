@@ -44,9 +44,9 @@ Lib.Require("comfort/KeyOf");
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("comfort/global/SendCart");
 Lib.Require("core/Core");
-Lib.Require("module/uitools/UITools");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/io/IO");
-Lib.Require("module/uibuilding/UIBuilding");
+Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/warehouse/Warehouse_API");
 Lib.Register("module/warehouse/Warehouse");
 

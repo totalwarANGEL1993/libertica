@@ -1,4 +1,4 @@
-Lib.Register("module/uitools/UITools_Widget");
+Lib.Register("module/ui/UITools_Widget");
 
 Lib.UITools.Widget = {
     HiddenWidgets = {},

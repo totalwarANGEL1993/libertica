@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/uieffects/UIEffects_API");
+Lib.Register("module/ui/UIEffects_API");
 
 --- Shows a black background behind the interface and over the game world.
 --- @param _PlayerID integer ID of player
