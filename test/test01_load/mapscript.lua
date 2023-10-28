@@ -24,7 +24,7 @@ Lib.Require("module/city/SettlementSurvival");
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    ActivateDebugMode(true, false, true, true);
+    ActivateDebugMode(true, true, true, true, false);
 
     AddGood(Goods.G_Gold, 2500, 1);
     AddGood(Goods.G_Wood, 20, 1);
@@ -62,7 +62,7 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    ActivateDebugMode(true, false, true, true);
+    ActivateDebugMode(true, true, true, true, false);
 
     CreateReportReceiver(Report.CinematicConcluded, function(...)
         LuaDebugger.Break();

@@ -111,7 +111,7 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    ActivateDebugMode(true, false, true, true);
+    ActivateDebugMode(true, true, true, true, false);
     TestSetupChests();
     TestSetupTradeposts();
     TestSetupRuins();

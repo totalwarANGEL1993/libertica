@@ -36,44 +36,49 @@ end
 function Lib.Core.Debug:OnReportReceived(_ID, ...)
 end
 
-function Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
+function Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
     if IsLocalScript() then
         return;
     end
 
-    self.CheckAtRun       = _CheckAtRun == true;
-    self.TraceQuests      = _TraceQuests == true;
-    self.DevelopingCheats = _DevelopingCheats == true;
-    self.DevelopingShell  = _DevelopingShell == true;
+    self.DisplayScriptErrors = _DisplayScriptErrors == true;
+    self.CheckAtRun          = _CheckAtRun == true;
+    self.DevelopingCheats    = _DevelopingCheats == true;
+    self.DevelopingShell     = _DevelopingShell == true;
+    self.TraceQuests         = _TraceQuests == true;
 
     SendReport(
         Report.DebugConfigChanged,
+        self.DisplayScriptErrors,
         self.CheckAtRun,
-        self.TraceQuests,
         self.DevelopingCheats,
-        self.DevelopingShell
+        self.DevelopingShell,
+        self.TraceQuests
     );
 
     ExecuteLocal(
         [[
-            Lib.Core.Debug.CheckAtRun       = %s;
-            Lib.Core.Debug.TraceQuests      = %s;
-            Lib.Core.Debug.DevelopingCheats = %s;
-            Lib.Core.Debug.DevelopingShell  = %s;
+            Lib.Core.Debug.DisplayScriptErrors = %s;
+            Lib.Core.Debug.CheckAtRun          = %s;
+            Lib.Core.Debug.DevelopingCheats    = %s;
+            Lib.Core.Debug.DevelopingShell     = %s;
+            Lib.Core.Debug.TraceQuests         = %s;
 
             SendReport(
                 Report.DebugConfigChanged,
+                Lib.Core.Debug.DisplayScriptErrors,
                 Lib.Core.Debug.CheckAtRun,
-                Lib.Core.Debug.TraceQuests,
                 Lib.Core.Debug.DevelopingCheats,
-                Lib.Core.Debug.DevelopingShell
+                Lib.Core.Debug.DevelopingShell,
+                Lib.Core.Debug.TraceQuests
             );
             Lib.Core.Debug:InitializeDebugWidgets();
         ]],
+        tostring(self.DisplayScriptErrors),
         tostring(self.CheckAtRun),
-        tostring(self.TraceQuests),
         tostring(self.DevelopingCheats),
-        tostring(self.DevelopingShell)
+        tostring(self.DevelopingShell),
+        tostring(self.TraceQuests)
     );
 end
 
@@ -219,12 +224,13 @@ end
 -- -------------------------------------------------------------------------- --
 
 --- Activates the debug mode of the game.
---- @param _CheckAtRun boolean       Check custom behavior on/off
---- @param _TraceQuests boolean      Trace quests on/off
---- @param _DevelopingCheats boolean Cheats on/off
---- @param _DevelopingShell boolean  Input commands on/off
-function ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
-    Lib.Core.Debug:ActivateDebugMode(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell);
+--- @param _DisplayScriptErrors boolean Show script errors
+--- @param _CheckAtRun boolean          Check custom behavior on/off
+--- @param _DevelopingCheats boolean    Cheats on/off
+--- @param _DevelopingShell boolean     Input commands on/off
+--- @param _TraceQuests boolean         Trace quests on/off
+function ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
+    Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests);
 end
 API.ActivateDebugMode = ActivateDebugMode;
 

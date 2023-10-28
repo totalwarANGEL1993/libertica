@@ -361,7 +361,7 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
-    ActivateDebugMode(true, false, true, true);
+    ActivateDebugMode(true, true, true, true, false);
     SetPlayerPortrait(1);
 end
 
