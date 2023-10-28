@@ -37,12 +37,38 @@ Lib.Register("module/entity/Selection");
 -- Global initalizer method
 function Lib.Selection.Global:Initialize()
     if not self.IsInstalled then
-        Report.ForceTrebuchetTasklist = CreateReport("Event_ForceTrebuchetTasklist");
+        --- A entity has been expelled.
+        ---
+        --- #### Parameters
+        --- * `EntityID` - ID of entity
         Report.ExpelSettler = CreateReport("Event_ExpelSettler");
+
+        --- The selection of entities of a player has changed.
+        ---
+        --- #### Parameters
+        --- * `PlayerID` - ID of player
+        --- * `...`      - List of entities
         Report.SelectionChanged = CreateReport("Event_SelectionChanged");
 
-        -- Deprecated?
+        --- A trebuchet is forced to stop.
+        ---
+        --- #### Parameters
+        --- * `EntityID` - ID of entity
+        --- * `TaskList` - ID of Tasklist
+        Report.ForceTrebuchetTasklist = CreateReport("Event_ForceTrebuchetTasklist");
+
+        --- A trebuchet is build from a siege engine cart.
+        --- (Currently not used)
+        ---
+        --- #### Parameters
+        --- * `EntityID` - ID of entity
         Report.ErectTrebuchet = CreateReport("Event_ErectTrebuchet");
+
+        --- A trebuchet is broken down to a siege engine cart.
+        --- (Currently not used)
+        ---
+        --- #### Parameters
+        --- * `EntityID` - ID of entity
         Report.DisambleTrebuchet = CreateReport("Event_DisambleTrebuchet");
 
         for i= 1, 8 do
@@ -146,11 +172,9 @@ end
 -- Local initalizer method
 function Lib.Selection.Local:Initialize()
     if not self.IsInstalled then
-        Report.ForceTrebuchetTasklist = CreateReport("Event_ForceTrebuchetTasklist");
         Report.ExpelSettler = CreateReport("Event_ExpelSettler");
         Report.SelectionChanged = CreateReport("Event_SelectionChanged");
-
-        -- Deprecated?
+        Report.ForceTrebuchetTasklist = CreateReport("Event_ForceTrebuchetTasklist");
         Report.ErectTrebuchet = CreateReport("Event_ErectTrebuchet");
         Report.DisambleTrebuchet = CreateReport("Event_DisambleTrebuchet");
 

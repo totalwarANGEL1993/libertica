@@ -16,7 +16,8 @@ function Lib.Core.Bugfix:Initialize()
     end
     if IsLocalScript() then
         self:FixInteractiveObjectClicked();
-		self:FixBigCathedralName();
+        self:FixBigCathedralName();
+        self:FixClimateZoneForHouseMenu();
         self:FixAbilityInfoWhenHomeless();
     end
 end
@@ -218,6 +219,111 @@ function Lib.Core.Bugfix:FixBigCathedralName()
         "Names/B_Cathedral_Big",
         {de = "Dom", en = "Cathedral", fr = "Cathédrale"}
     );
+end
+
+-- -------------------------------------------------------------------------- --
+-- House menu
+
+Lib.Core.Bugfix.HouseMenuWidgetToCategory = {
+    ["B_Castle_ME"]     = EntityCategories.Headquarters,
+    ["B_Cathedral"]     = EntityCategories.Cathedrals,
+    ["B_Cathedral_Big"] = EntityCategories.Cathedrals,
+    ["B_Outpost_ME"]    = EntityCategories.Outpost,
+};
+
+function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
+    HouseMenuGetNextBuildingID = function(WidgetName)
+        local BuildingsList;
+        local FoundNumber = 0;
+        local HigherBuildingFound = false;
+        local PlayerID = GUI.GetPlayerID();
+        local Category = Lib.Core.Bugfix.HouseMenuWidgetToCategory[WidgetName];
+        WidgetName = GetClimateEntityName(WidgetName);
+        if HouseMenu.Widget.CurrentBuilding ~= WidgetName then
+            HouseMenu.Widget.CurrentBuilding = WidgetName;
+            HouseMenu.Widget.CurrentBuildingNumber = 0;
+        end
+        if Category ~= nil then
+            BuildingsList = {Logic.GetPlayerEntitiesInCategory(PlayerID, Category)};
+        else
+            BuildingsList = {Logic.GetBuildingsByPlayer(PlayerID)};
+        end
+        for i= 1, #BuildingsList do
+            local EntityType = Logic.GetEntityType(BuildingsList[i]);
+            local EntityName = Logic.GetEntityTypeName(EntityType);
+            if Category ~= nil or EntityName == WidgetName then
+                FoundNumber = i;
+                if FoundNumber > HouseMenu.Widget.CurrentBuildingNumber then
+                    HouseMenu.Widget.CurrentBuildingNumber = FoundNumber;
+                    HigherBuildingFound = true;
+                    break;
+                end
+            end
+        end
+        if FoundNumber ~= 0 then
+            if not HigherBuildingFound then
+                for i = 1, #BuildingsList do
+                    local EntityType = Logic.GetEntityType(BuildingsList[i]);
+                    local EntityName = Logic.GetEntityTypeName(EntityType);
+                    if Category ~= nil or EntityName == WidgetName then
+                        HouseMenu.Widget.CurrentBuildingNumber = i;
+                        break;
+                    end
+                end
+            end
+            return BuildingsList[HouseMenu.Widget.CurrentBuildingNumber];
+        end
+        return nil;
+    end
+
+    HouseMenuSetIconsPart = function(_Part, _HighlightBool)
+		local PlayerID = GUI.GetPlayerID();
+		local HouseMenuButtons = {XGUIEng.ListSubWidgets(_Part)};
+		local Buildings = {Logic.GetBuildingsByPlayer(PlayerID)};
+		local WidgetName, Category;
+		for i = 1, #HouseMenuButtons do
+			WidgetName = XGUIEng.GetWidgetNameByID(HouseMenuButtons[i]);
+			Category = Lib.Core.Bugfix.HouseMenuWidgetToCategory[WidgetName];
+			local WidgetPosEntry = Entities[WidgetName];
+			local Button = _Part .. "/" .. WidgetName .. "/Button";
+			SetIcon(Button, g_TexturePositions.Entities[WidgetPosEntry]);
+			local Count = 0;
+			local CategoryBuildings;
+			if Category ~= nil then
+				CategoryBuildings = {Logic.GetPlayerEntitiesInCategory(PlayerID, Category)};
+				Count = #CategoryBuildings;
+			else
+				for j = 1, #Buildings do
+					local EntityType = Logic.GetEntityType(Buildings[j]);
+					local EntityName = Logic.GetEntityTypeName(EntityType);
+					local ClimateWidgetName = GetClimateEntityName(WidgetName);
+					if EntityName == ClimateWidgetName then
+						Count = Count + 1;
+					end
+				end
+			end
+            XGUIEng.DisableButton(Button, (Count == 0 and 1) or 0);
+			local Amount = _Part .. "/" .. WidgetName .. "/Amount";
+			XGUIEng.SetText(Amount, "{center}" .. Count);
+			local StopWidget = _Part .. "/" .. WidgetName .. "/Stop";
+			UpdateStopOverlay(StopWidget, WidgetName, Count);
+			if WidgetName == HouseMenu.Widget.CurrentBuilding then
+				UpdateStopOverlay(HouseMenu.Widget.CurrentStop, HouseMenu.Widget.CurrentBuilding, Count);
+			end
+		end
+		HouseMenu.Counter = HouseMenu.Counter + 1;
+		if _HighlightBool or HouseMenu.Counter % 20 == 0 then
+			for j = 1, #HouseMenuButtons do
+				local WidgetNameHighlighted = XGUIEng.GetWidgetNameByID(HouseMenuButtons[j]);
+				local ButtonHighlighted = _Part .. "/" .. WidgetNameHighlighted .. "/Button";
+				WidgetNameHighlighted = GetClimateEntityName(WidgetNameHighlighted);
+                XGUIEng.HighLightButton(
+                    ButtonHighlighted,
+                    (WidgetNameHighlighted == HouseMenu.Widget.CurrentBuilding and 1) or 0
+                );
+			end
+		end
+	end
 end
 
 -- -------------------------------------------------------------------------- --

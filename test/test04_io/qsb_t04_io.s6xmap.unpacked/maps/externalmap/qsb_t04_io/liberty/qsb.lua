@@ -81,12 +81,13 @@ end
 
 --- Aktiviert den Debug.
 ---
+--- @param _DisplayScriptErrors boolean Prüfe Quests zur Laufzeit
 --- @param _CheckAtRun boolean Prüfe Quests zur Laufzeit
---- @param _TraceQuests boolean Aktiviert Questverfolgung
 --- @param _DevelopingCheats boolean Aktiviert Cheats
 --- @param _DevelopingShell boolean Aktiviert Eingabe
-function Reward_DEBUG(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell)
-    return B_Reward_DEBUG:new(_CheckAtRun, _TraceQuests, _DevelopingCheats, _DevelopingShell);
+--- @param _TraceQuests boolean Aktiviert Questverfolgung
+function Reward_DEBUG(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
+    return B_Reward_DEBUG:new(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests);
 end
 
 B_Reward_DEBUG = {
@@ -97,10 +98,11 @@ B_Reward_DEBUG = {
         fr = "Récompense: Démarre le mode de débug. Pour plus d'informations, voir la documentation.",
     },
     Parameter = {
-        { ParameterType.Custom, en = "Check quest while runtime",  de = "Quests zur Laufzeit prüfen",  fr = "Vérifier les quêtes au cours de l'exécution" },
-        { ParameterType.Custom, en = "Use quest trace",            de = "Questverfolgung",             fr = "Suivi de quête" },
-        { ParameterType.Custom, en = "Activate developing cheats", de = "Cheats aktivieren",           fr = "Activer les cheats" },
-        { ParameterType.Custom, en = "Activate developing shell",  de = "Eingabe aktivieren",          fr = "Activer la saisie" },
+        { ParameterType.Custom, en = "Activate script errors",     de = "Skriptfeleranzeige nutzen",  fr = "Afficher les erreurs de script" },
+        { ParameterType.Custom, en = "Check quest while runtime",  de = "Quests zur Laufzeit prüfen", fr = "Vérifier les quêtes au cours de l'exécution" },
+        { ParameterType.Custom, en = "Activate developing cheats", de = "Cheats aktivieren",          fr = "Activer les cheats" },
+        { ParameterType.Custom, en = "Activate developing shell",  de = "Eingabe aktivieren",         fr = "Activer la saisie" },
+        { ParameterType.Custom, en = "Use quest trace",            de = "Questverfolgung",            fr = "Suivi de quête" },
     },
 }
 
@@ -110,18 +112,20 @@ end
 
 function B_Reward_DEBUG:AddParameter(_Index, _Parameter)
     if (_Index == 0) then
-        self.CheckWhileRuntime = ToBoolean(_Parameter);
+        self.DisplayScriptErrors = ToBoolean(_Parameter);
     elseif (_Index == 1) then
-        self.UseQuestTrace = ToBoolean(_Parameter);
+        self.CheckWhileRuntime = ToBoolean(_Parameter);
     elseif (_Index == 2) then
         self.DevelopingCheats = ToBoolean(_Parameter);
     elseif (_Index == 3) then
         self.DevelopingShell = ToBoolean(_Parameter);
+    elseif (_Index == 4) then
+        self.UseQuestTrace = ToBoolean(_Parameter);
     end
 end
 
 function B_Reward_DEBUG:CustomFunction(_Quest)
-    ActivateDebugMode(self.CheckWhileRuntime, self.UseQuestTrace, self.DevelopingCheats, self.DevelopingShell);
+    ActivateDebugMode(self.DisplayScriptErrors, self.CheckWhileRuntime, self.DevelopingCheats, self.DevelopingShell, self.UseQuestTrace );
 end
 
 function B_Reward_DEBUG:GetCustomData(_Index)

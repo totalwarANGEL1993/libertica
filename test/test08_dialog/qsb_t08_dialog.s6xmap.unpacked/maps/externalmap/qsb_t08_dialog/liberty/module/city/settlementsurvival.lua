@@ -1,0 +1,779 @@
+--- Implements settlement survival aspects in the game.
+---
+--- Settlers (and farm animals) can now die or become sick from different
+--- causes and might die permamently. If a settler dies, they will still be
+--- attached to the building so that no other settler can replace them. After
+--- some time new settler will arrive.
+---
+--- Things that makes settlers sick:
+--- * Having not enough hygiene
+--- * Having not enough entertainment
+--- * Having not enough firewood
+---
+--- Things that kills settlers:
+--- * being sick (5% chance each period)
+--- * being hungry (5% chance each period)
+---
+--- Things that kills animals:
+--- * being sick (5% chance each period)
+Lib.SettlementSurvival = {
+    Name = "SettlementSurvival",
+
+    Global = {
+        AnimalPlague = {
+            AnimalsBecomeSick = false,
+            IsActive = false,
+            AffectAI = false,
+        },
+        Famine = {
+            IsActive = false,
+            AffectAI = false,
+        },
+        ColdWeather = {
+            IsActive = false,
+            AffectAI = false,
+        },
+        Negligence = {
+            IsActive = false,
+            AffectAI = false,
+        },
+        Plague = {
+            IsActive = false,
+            AffectAI = false,
+        },
+        SuspendedSettlers = {},
+    },
+    Local  = {
+        SuspendedSettlers = {},
+    },
+    Shared = {
+        AnimalPlague = {
+            InfectionChance = 6,
+            InfectionTimer = 60,
+            DeathChance = 12,
+            DeathTimer = 30,
+        },
+        ColdWeather = {
+            ConsumptionFactor = 0.01,
+            ConsumptionTimer = 30,
+            Temperature = 10,
+            InfectionChance = 12,
+        },
+        Famine = {
+            DeathChance = 6,
+            DeathTimer = 30,
+        },
+        Negligence = {
+            InfectionChance = 6,
+            InfectionTimer = 90,
+        },
+        Plague = {
+            DeathChance = 12,
+            DeathTimer = 30,
+        },
+        SuspendedSettlers = {
+            MourningTime = 5*60,
+        },
+    }
+};
+
+Lib.Require("comfort/global/SetHealth");
+Lib.Require("core/Core");
+Lib.Require("module/ui/UITools");
+Lib.Require("module/city/SettlementSurvival_API");
+Lib.Require("module/city/SettlementSurvival_Text");
+Lib.Register("module/city/SettlementSurvival");
+
+-- -------------------------------------------------------------------------- --
+-- Global
+
+-- Global initalizer method
+function Lib.SettlementSurvival.Global:Initialize()
+    if not self.IsInstalled then
+        Report.FireAlarmDeactivated_Internal = CreateReport("Event_FireAlarmDeactivated_Internal");
+        Report.FireAlarmActivated_Internal = CreateReport("Event_FireAlarmActivated_Internal");
+        Report.RepairAlarmDeactivated_Internal = CreateReport("Event_RepairAlarmFeactivated");
+        Report.ReRepairAlarmActivated_Internal = CreateReport("Event_ReRepairAlarmActivated_Internal");
+
+        --- An animal has died from illness.
+        ---
+        --- #### Parameters
+        --- `EntityID` - ID of animal
+        Report.AnimalDiedFromIllness = CreateReport("Event_AnimalDiedFromIllness");
+
+        --- A settler has starved to death.
+        ---
+        --- #### Parameters
+        --- `EntityID` - ID of settler
+        Report.SettlerDiedFromStarvation = CreateReport("Event_SettlerDiedFromStarvation");
+
+        --- A settler has died from illness.
+        ---
+        --- #### Parameters
+        --- `EntityID` - ID of settler
+        Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
+
+        for PlayerID= 1,8 do
+            self.AnimalPlague[PlayerID] = {};
+            self.ColdWeather[PlayerID] = {Consumption = 0};
+            self.Famine[PlayerID] = {};
+            self.Negligence[PlayerID] = {};
+            self.Plague[PlayerID] = {};
+            self.SuspendedSettlers[PlayerID] = {};
+        end
+
+        RequestJobByEventType(
+            Events.LOGIC_EVENT_EVERY_TURN,
+            function()
+                local Turn = Logic.GetCurrentTurn();
+                Lib.SettlementSurvival.Global:ResumeSettlersAfterMourning(Turn);
+                Lib.SettlementSurvival.Global:ControlSettlersBecomeIllDueToNegligence(Turn);
+                Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(Turn);
+                Lib.SettlementSurvival.Global:ControlAnimalInfections(Turn);
+                Lib.SettlementSurvival.Global:ControlAnimalCorpsesDecay(Turn);
+                Lib.SettlementSurvival.Global:ControlAnimalsSuccumToPlague(Turn);
+                Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(Turn);
+            end
+        );
+
+        -- Garbage collection
+        Lib.SettlementSurvival.Local = nil;
+    end
+    self.IsInstalled = true;
+end
+
+-- Global load game
+function Lib.SettlementSurvival.Global:OnSaveGameLoaded()
+    self:RestoreSettlerSuspension();
+end
+
+-- Global report listener
+function Lib.SettlementSurvival.Global:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    elseif _ID == Report.FireAlarmDeactivated_Internal then
+        self:RestoreSettlerSuspension();
+    elseif _ID == Report.FireAlarmActivated_Internal then
+        self:RestoreSettlerSuspension();
+    elseif _ID == Report.RepairAlarmDeactivated_Internal then
+        self:RestoreSettlerSuspension();
+    elseif _ID == Report.ReRepairAlarmActivated_Internal then
+        self:RestoreSettlerSuspension();
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- Makes infected animals succum to their sickness if not treated. As an
+-- intended exploit only animals in a pasture can die.
+function Lib.SettlementSurvival.Global:ControlAnimalsSuccumToPlague(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime());
+    local PlayerID = _Turn % 10;
+    if self.AnimalPlague.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+        if self.AnimalPlague.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+            -- Get animals
+            local SheepList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.SheepPasture)};
+            local CowList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.CattlePasture)};
+            local AnimalList = Array_Append(SheepList, CowList);
+            -- Register ill animals
+            for i= 1, #AnimalList do
+                if  not self.AnimalPlague[PlayerID][AnimalList[i]]
+                and Logic.IsFarmAnimalInPasture(AnimalList[i])
+                and Logic.IsFarmAnimalIll(AnimalList[i]) then
+                    self.AnimalPlague[PlayerID][AnimalList[i]] = {CurrentTime};
+                end
+            end
+            -- Unregister animals who recovered
+            for AnimalID,v in pairs(self.AnimalPlague[PlayerID]) do
+                if not IsExisting(AnimalID)
+                or not Logic.IsFarmAnimalInPasture(AnimalID)
+                or not Logic.IsFarmAnimalIll(AnimalID) then
+                    self.AnimalPlague[PlayerID][AnimalID] = nil;
+                end
+            end
+            -- Check who has to die
+            local DeathTime = Lib.SettlementSurvival.Shared.AnimalPlague.DeathTimer;
+            local ShowMessage = false;
+            if CurrentTime % DeathTime == 0 then
+                for AnimalID,_ in pairs(self.AnimalPlague[PlayerID]) do
+                    local Chance = Lib.SettlementSurvival.Shared.AnimalPlague.DeathChance;
+                    if GetPlayerResources(Goods.G_Herb, PlayerID) > 10 then
+                        AddGood(Goods.G_Herb, -1, PlayerID);
+                        Chance = Chance / 2;
+                    end
+                    if Chance >= 1 and math.random(1, 100) <= math.min(Chance, 100) then
+                        SendReport(Report.AnimalDiedFromIllness, AnimalID);
+                        SendReportToLocal(Report.AnimalDiedFromIllness, AnimalID);
+                        SetHealth(AnimalID, 0);
+                        ShowMessage = true;
+                    end
+                end
+            end
+            -- Show info
+            if ShowMessage then
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.AnimalDiedFromIllness);
+            end
+        end
+    end
+end
+
+-- Job that makes animal corpses inside pastures decay if the lifestock module
+-- is not installed what would do that automatically.
+function Lib.SettlementSurvival.Global:ControlAnimalCorpsesDecay(_Turn)
+    if not Lib.LifestockSystem or not Lib.LifestockSystem.Global.IsInstalled then
+        if Logic.GetTime() % 10 == 0 then
+            -- Cattle
+            local CattleCorpses = Logic.GetEntitiesOfType(Entities.R_DeadCow);
+            for k,v in pairs(CattleCorpses) do
+                local x,y,z = Logic.EntityGetPos(v);
+                local _,PastureID = Logic.GetEntitiesInArea(Entities.B_CattlePasture, x, y, 900, 1);
+                if IsExisting(PastureID) then
+                    local GoodAmount = Logic.GetResourceDoodadGoodAmount(v);
+                    Logic.SetResourceDoodadGoodAmount(v, GoodAmount -1);
+                end
+            end
+            -- Sheep
+            local SheepCorpses = Logic.GetEntitiesOfType(Entities.R_DeadSheep);
+            for k,v in pairs(SheepCorpses) do
+                local x,y,z = Logic.EntityGetPos(v);
+                local _,PastureID = Logic.GetEntitiesInArea(Entities.B_SheepPasture, x, y, 900, 1);
+                if IsExisting(PastureID) then
+                    local GoodAmount = Logic.GetResourceDoodadGoodAmount(v);
+                    Logic.SetResourceDoodadGoodAmount(v, GoodAmount -1);
+                end
+            end
+        end
+    end
+end
+
+-- Controls the automatic infection of animals if activated. Animals not in
+-- a pasture can not become sick.
+function Lib.SettlementSurvival.Global:ControlAnimalInfections(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime())
+    local PlayerID = _Turn % 10;
+    if self.AnimalPlague.AnimalsBecomeSick then
+        if self.AnimalPlague.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+            if self.AnimalPlague.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+                local InfectionTimer = Lib.SettlementSurvival.Shared.AnimalPlague.InfectionTimer;
+                if CurrentTime % InfectionTimer == 0 then
+                    -- Get animals
+                    local SheepList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.SheepPasture)};
+                    local CowList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.CattlePasture)};
+                    local AnimalList = Array_Append(SheepList, CowList);
+                    -- Infect animals
+                    local Chance = Lib.SettlementSurvival.Shared.AnimalPlague.InfectionChance;
+                    for i= #AnimalList, 1, -1 do
+                        if  Logic.IsFarmAnimalInPasture(AnimalList[i])
+                        and not Logic.IsFarmAnimalIll(AnimalList[i]) then
+                            if math.random(1, 100) <= Chance then
+                                Logic.MakeFarmAnimalIll(AnimalList[i]);
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- When it is cold outside, wood will be consumed by all buildings according to
+-- the amount of settlers. If there is not enough firewood available, settlers
+-- will start to become sick.
+function Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime());
+    local PlayerID = _Turn % 10;
+    if  self.ColdWeather.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+        if self.ColdWeather.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+            if Logic.GetCurrentTemperature() <= Lib.SettlementSurvival.Shared.ColdWeather.Temperature then
+                local FirewoodFrequency = Lib.SettlementSurvival.Shared.ColdWeather.ConsumptionTimer;
+                if CurrentTime % FirewoodFrequency == 0 then
+                    -- Get settler amount
+                    local EmployedSettlers = 0;
+                    local OuterRim = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.OuterRimBuilding)};
+                    local City = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.CityBuilding)};
+                    local BuildingList = Array_Append(OuterRim, City);
+                    for i= 1, #BuildingList do
+                        local AttachedSettlersAmount = 0;
+                        for _, SettlerID in pairs({Logic.GetWorkersAndSpousesForBuilding(BuildingList[i])}) do
+                            if not self:IsSettlerSuspended(SettlerID) then
+                                AttachedSettlersAmount = AttachedSettlersAmount +1
+                            end
+                        end
+                        if  Logic.IsNeedActive(BuildingList[i], Needs.Clothes)
+                        and Logic.GetNeedState(BuildingList[i], Needs.Clothes) > 0.5 then
+                            AttachedSettlersAmount = AttachedSettlersAmount * 0.5;
+                        end
+                        EmployedSettlers = EmployedSettlers + AttachedSettlersAmount;
+                    end
+                    -- Subtract firewood
+                    local WoodCost = Lib.SettlementSurvival.Shared.ColdWeather.ConsumptionFactor * EmployedSettlers;
+                    local WoodAmount = GetPlayerResources(Goods.G_Wood, PlayerID);
+                    self.ColdWeather[PlayerID].Consumption = self.ColdWeather[PlayerID].Consumption + WoodCost;
+                    if self.ColdWeather[PlayerID].Consumption > 1 then
+                        local WoodCostFloored = math.floor(WoodCost);
+                        AddGood(Goods.G_Wood, (-1) * math.min(WoodCostFloored, WoodAmount), PlayerID);
+                        self.ColdWeather[PlayerID].Consumption = self.ColdWeather[PlayerID].Consumption - WoodCostFloored;
+                    end
+                    -- Enforce punishment
+                    if WoodCost > WoodAmount then
+                        local InfectionChance = Lib.SettlementSurvival.Shared.ColdWeather.InfectionChance;
+                        for i= 1, #BuildingList do
+                            if math.random(1, 100) <= InfectionChance then
+                                Logic.MakeBuildingIll(BuildingList[i]);
+                            end
+                        end
+                        self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerTemperature);
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- When the need for hygiene or entertainment is not fulfilled, settlers will
+-- become sick because of dirt or depression. Or maybe both...
+function Lib.SettlementSurvival.Global:ControlSettlersBecomeIllDueToNegligence(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime());
+    local PlayerID = _Turn % 10;
+    if  self.Negligence.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+        if self.Negligence.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+            -- Get settlers
+            local SpouseList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.Spouse)};
+            local WorkerList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.Worker)};
+            WorkerList = Array_Append(SpouseList, WorkerList);
+            -- Register settlers
+            for i= 1, #WorkerList do
+                if  not self.Negligence[PlayerID][WorkerList[i]]
+                and Logic.GetEntityType(WorkerList[i]) ~= Entities.U_Pharmacist
+                and (self:IsSettlerDirty(WorkerList[i]) or self:IsSettlerBored(WorkerList[i]))
+                and not self:IsSettlerSuspended(WorkerList[i])
+                and not Logic.IsIll(WorkerList[i]) then
+                    self.Negligence[PlayerID][WorkerList[i]] = {CurrentTime};
+                end
+            end
+            -- Unregister settlers
+            for SettlerID,v in pairs(self.Negligence[PlayerID]) do
+                if  not self:IsSettlerBored(SettlerID) and not self:IsSettlerDirty(SettlerID) then
+                    self.Negligence[PlayerID][SettlerID] = nil;
+                end
+            end
+            -- Check who becomes ill
+            local InfectionTimer = Lib.SettlementSurvival.Shared.Negligence.InfectionTimer;
+            local ShowMessage = false;
+            if CurrentTime % InfectionTimer == 0 then
+                for SettlerID,v in pairs(self.Negligence[PlayerID]) do
+                    if v[1] + InfectionTimer < CurrentTime then
+                        local Chance = Lib.SettlementSurvival.Shared.AnimalPlague.InfectionChance;
+                        if math.random(1, 100) <= Chance then
+                            if  not self:IsSettlerCarryingHygiene(SettlerID)
+                            and not self:IsSettlerCarryingBeer(SettlerID)
+                            and not self:IsSettlerSuspended(SettlerID)  then
+                                Logic.MakeSettlerIll(SettlerID);
+                                ShowMessage = true;
+                            end
+                        end
+                    end
+                end
+            end
+
+            -- Show info
+            if ShowMessage then
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerNegligence);
+            end
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerDirty(_Entity)
+    local EntityID = GetID(_Entity);
+    local BuildingID = Logic.GetSettlersWorkBuilding(EntityID);
+    return Logic.IsNeedCritical(BuildingID, Needs.Hygiene);
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerBored(_Entity)
+    local EntityID = GetID(_Entity);
+    local BuildingID = Logic.GetSettlersWorkBuilding(EntityID);
+    return Logic.IsNeedCritical(BuildingID, Needs.Entertainment);
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerCarryingHygiene(_Entity)
+    local EntityID = GetID(_Entity);
+    local TaskList = Logic.GetCurrentTaskList(EntityID);
+    return TaskList and TaskList:find("_HYGIENE");
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerCarryingBeer(_Entity)
+    local EntityID = GetID(_Entity);
+    local TaskList = Logic.GetCurrentTaskList(EntityID);
+    return TaskList and TaskList:find("_ENTERTAINMENT");
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- Controls if a settler starves to death.
+function Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime());
+    local PlayerID = _Turn % 10;
+    if  self.Famine.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+        if self.Famine.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+            -- Get settlers
+            local SpouseList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.Spouse)};
+            local WorkerList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.Worker)};
+            WorkerList = Array_Append(SpouseList, WorkerList);
+            -- Register ill settlers
+            for i= 1, #WorkerList do
+                if  not self.Famine[PlayerID][WorkerList[i]]
+                and self:IsSettlerHungry(WorkerList[i])
+                and not self:IsSettlerSuspended(WorkerList[i]) then
+                    self.Famine[PlayerID][WorkerList[i]] = {CurrentTime};
+                end
+            end
+            -- Unregister settlers who recovered
+            for SettlerID,v in pairs(self.Famine[PlayerID]) do
+                if not IsExisting(SettlerID) or not self:IsSettlerHungry(SettlerID) then
+                    self.Famine[PlayerID][SettlerID] = nil;
+                end
+            end
+            -- Check who has to die
+            local DeathTime = Lib.SettlementSurvival.Shared.Famine.DeathTimer;
+            local ShowMessage = false;
+            if CurrentTime % DeathTime == 0 then
+                for SettlerID,v in pairs(self.Famine[PlayerID]) do
+                    if  not self:IsSettlerCarryingFood(SettlerID)
+                    and not self:IsSettlerSuspended(SettlerID) then
+                        local Chance = Lib.SettlementSurvival.Shared.Famine.DeathChance;
+                        if Chance >= 1 and math.random(1, 100) <= math.ceil(Chance) then
+                            SendReport(Report.SettlerDiedFromStarvation, SettlerID);
+                            SendReportToLocal(Report.SettlerDiedFromStarvation, SettlerID);
+                            self:SuspendSettler(SettlerID, true);
+                            ShowMessage = true;
+                        end
+                    end
+                end
+            end
+            -- Show info
+            if ShowMessage then
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerDiedFromHunger);
+            end
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerHungry(_Entity)
+    local EntityID = GetID(_Entity);
+    local BuildingID = Logic.GetSettlersWorkBuilding(EntityID);
+    return Logic.IsNeedCritical(BuildingID, Needs.Nutrition);
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerCarryingFood(_Entity)
+    local EntityID = GetID(_Entity);
+    local TaskList = Logic.GetCurrentTaskList(EntityID);
+    return TaskList and (TaskList:find("_NUTRITION") or TaskList:find("_FOOD"));
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- Makes settler die from illness if not treated.
+function Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime());
+    local PlayerID = _Turn % 10;
+    if  self.Plague.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+        if self.Plague.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+            -- Get settlers
+            local SpouseList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.Spouse)};
+            local WorkerList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.Worker)};
+            WorkerList = Array_Append(SpouseList, WorkerList);
+            -- Register ill settlers
+            for i= 1, #WorkerList do
+                if  not self.Plague[PlayerID][WorkerList[i]]
+                and Logic.GetEntityType(WorkerList[i]) ~= Entities.U_Pharmacist
+                and Logic.IsIll(WorkerList[i])
+                and not self:IsSettlerSuspended(WorkerList[i]) then
+                    self.Plague[PlayerID][WorkerList[i]] = {CurrentTime};
+                end
+            end
+            -- Unregister settlers who recovered
+            for SettlerID,v in pairs(self.Plague[PlayerID]) do
+                if not IsExisting(SettlerID) or not Logic.IsIll(SettlerID) then
+                    self.Plague[PlayerID][SettlerID] = nil;
+                end
+            end
+            -- Check who has to die
+            local DeathTime = Lib.SettlementSurvival.Shared.Plague.DeathTimer;
+            local ShowMessage = false;
+            if CurrentTime % DeathTime == 0 then
+                for SettlerID,v in pairs(self.Plague[PlayerID]) do
+                    if  not self:IsSettlerCarryingMedicine(SettlerID)
+                    and not self:IsSettlerSuspended(SettlerID) then
+                        local Chance = Lib.SettlementSurvival.Shared.Plague.DeathChance;
+                        if GetPlayerResources(Goods.G_Herb, PlayerID) > 10 then
+                            AddGood(Goods.G_Herb, -1, PlayerID);
+                            Chance = Chance / 2;
+                        end
+                        if Chance >= 1 and math.random(1, 100) <= math.ceil(Chance) then
+                            SendReport(Report.SettlerDiedFromIllness, SettlerID);
+                            SendReportToLocal(Report.SettlerDiedFromIllness, SettlerID);
+                            self:SuspendSettler(SettlerID, true);
+                            ShowMessage = true;
+                        end
+                    end
+                end
+            end
+            -- Show info
+            if ShowMessage then
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerDiedFromIllness);
+            end
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerCarryingMedicine(_Entity)
+    local EntityID = GetID(_Entity);
+    local TaskList = Logic.GetCurrentTaskList(EntityID);
+    return TaskList and TaskList:find("_MEDICINE");
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- Resumes a settler.
+function Lib.SettlementSurvival.Global:ResumeSettler(_Entity)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    local StoreHouseID = Logic.GetStoreHouse(PlayerID);
+    if StoreHouseID ~= 0 then
+        -- Resume settler
+        Logic.SetTaskList(EntityID, TaskLists.TL_WAIT_THEN_WALK);
+        Logic.SetVisible(EntityID, true);
+        -- Remove from suspension list
+        if self.SuspendedSettlers[PlayerID][EntityID] then
+            ExecuteLocal("Lib.SettlementSurvival.Local.SuspendedSettlers[%d][%d] = nil", PlayerID, EntityID);
+            self.SuspendedSettlers[PlayerID][EntityID] = nil;
+        end
+    end
+end
+
+-- Suspend a settler.
+function Lib.SettlementSurvival.Global:SuspendSettler(_Entity, _Mourn)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    local StoreHouseID = Logic.GetStoreHouse(PlayerID);
+    if StoreHouseID ~= 0 then
+        -- Reset needs if building empty
+        local BuildingID = Logic.GetSettlersWorkBuilding(EntityID);
+        local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(BuildingID)};
+        local AnyNotSuspended = false;
+        for i= 1, #AttachedSettlers do
+            if not self:IsSettlerSuspended(_Entity) then
+                AnyNotSuspended= true;
+                break;
+            end
+        end
+        if AnyNotSuspended == false then
+            Logic.SetNeedState(EntityID, Needs.Nutrition, 1.0);
+            Logic.SetNeedState(EntityID, Needs.Entertainment, 1.0);
+            Logic.SetNeedState(EntityID, Needs.Clothes, 1.0);
+            Logic.SetNeedState(EntityID, Needs.Hygiene, 1.0);
+            Logic.SetNeedState(EntityID, Needs.Medicine, 1.0);
+        end
+        -- Relocate inside storehouse and make invisible
+        local x,y,z = Logic.EntityGetPos(StoreHouseID);
+        Logic.DEBUG_SetSettlerPosition(EntityID, x, y);
+        Logic.SetVisible(EntityID, false);
+        Logic.SetTaskList(EntityID, TaskLists.TL_NPC_IDLE);
+        -- Add to suspended settler map
+        if not self.SuspendedSettlers[PlayerID][EntityID] then
+            local Time = (_Mourn and Logic.GetTime()) or -1;
+            ExecuteLocal("Lib.SettlementSurvival.Local.SuspendedSettlers[%d][%d] = {%d}", PlayerID, EntityID, Time);
+            self.SuspendedSettlers[PlayerID][EntityID] = {Time};
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:IsSettlerSuspended(_Entity)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    return self.SuspendedSettlers[PlayerID] and self.SuspendedSettlers[PlayerID][EntityID] ~= nil;
+end
+
+-- Restores tasklist and position of fake dead settlers.
+function Lib.SettlementSurvival.Global:RestoreSettlerSuspension()
+    for PlayerID = 1, 8 do
+        for k,v in pairs(self.SuspendedSettlers[PlayerID]) do
+            if not IsExisting(k) then
+                ExecuteLocal("Lib.SettlementSurvival.Local.SuspendedSettlers[%d][%d] = nil", PlayerID, k);
+                self.SuspendedSettlers[PlayerID][k] = nil;
+            else
+                self:SuspendSettler(k);
+            end
+        end
+    end
+end
+
+-- Removes the suspended settler after the mourning time is over.
+function Lib.SettlementSurvival.Global:ResumeSettlersAfterMourning(_Turn)
+    local MournTime = Lib.SettlementSurvival.Shared.SuspendedSettlers.MourningTime;
+    local CurrentTime = Logic.GetTime();
+    local PlayerID = _Turn % 10;
+    if PlayerID >= 1 and PlayerID <= 8 then
+        for k,v in pairs(self.SuspendedSettlers[PlayerID]) do
+            if v[1] > -1 and v[1] + MournTime <= CurrentTime then
+                self:ResumeSettler(k);
+                DestroyEntity(k);
+            end
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.SettlementSurvival.Global:Print(_PlayerID, _Text)
+    local Text = ConvertPlaceholders(Localize(_Text));
+    ExecuteLocal([[
+        if GUI.GetPlayerID() == %d then
+            GUI.ClearNotes()
+            GUI.AddNote("%s")
+        end
+    ]], _PlayerID, Text);
+end
+
+-- -------------------------------------------------------------------------- --
+-- Local
+
+-- Local initalizer method
+function Lib.SettlementSurvival.Local:Initialize()
+    if not self.IsInstalled then
+        Report.FireAlarmDeactivated_Internal = CreateReport("Event_FireAlarmDeactivated_Internal");
+        Report.FireAlarmActivated_Internal = CreateReport("Event_FireAlarmActivated_Internal");
+        Report.RepairAlarmDeactivated_Internal = CreateReport("Event_RepairAlarmFeactivated");
+        Report.ReRepairAlarmActivated_Internal = CreateReport("Event_ReRepairAlarmActivated_Internal");
+        Report.AnimalDiedFromIllness = CreateReport("Event_AnimalDiedFromIllness");
+        Report.SettlerDiedFromStarvation = CreateReport("Event_SettlerDiedFromStarvation");
+        Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
+
+        self:OverwriteAlarmButtons();
+        self:OverwriteOnBuildingBurning();
+        self:OverwriteJumpToWorker();
+
+        for PlayerID = 1,8 do
+            self.SuspendedSettlers[PlayerID] = {};
+        end
+
+        -- Garbage collection
+        Lib.SettlementSurvival.Global = nil;
+    end
+    self.IsInstalled = true;
+end
+
+-- Local load game
+function Lib.SettlementSurvival.Local:OnSaveGameLoaded()
+end
+
+-- Local report listener
+function Lib.SettlementSurvival.Local:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    end
+end
+
+function Lib.SettlementSurvival.Local:OverwriteJumpToWorker()
+    GUI_BuildingInfo.JumpToWorkerClicked = function()
+        Sound.FXPlay2DSound( "ui\\menu_click");
+        local PlayerID = GUI.GetPlayerID();
+        local SelectedEntityID = GUI.GetSelectedEntity();
+        local InhabitantsBuildingID = 0;
+        local IsSettlerSelected;
+        if Logic.IsBuilding(SelectedEntityID) == 1 then
+            InhabitantsBuildingID = SelectedEntityID;
+            IsSettlerSelected = false;
+        else
+            if Logic.IsWorker(SelectedEntityID) == 1
+            or Logic.IsSpouse(SelectedEntityID) == true
+            or Logic.GetEntityType(SelectedEntityID) == Entities.U_Priest then
+                InhabitantsBuildingID = Logic.GetSettlersWorkBuilding(SelectedEntityID);
+                IsSettlerSelected = true;
+            end
+        end
+        if InhabitantsBuildingID ~= 0 then
+            local WorkersAndSpousesInBuilding = {Logic.GetWorkersAndSpousesForBuilding(InhabitantsBuildingID)}
+
+            -- To pretend settlers of the building have died, we need to remove
+            -- them from the intabitants list.
+            for i = #WorkersAndSpousesInBuilding, 1, -1 do
+                local SettlerID = WorkersAndSpousesInBuilding[i];
+                if Lib.SettlementSurvival.Local.SuspendedSettlers[PlayerID] then
+                    if Lib.SettlementSurvival.Local.SuspendedSettlers[PlayerID][SettlerID] then
+                        table.remove(WorkersAndSpousesInBuilding, i);
+                    end
+                end
+            end
+
+            local InhabitantID
+            if g_CloseUpView.Active == false and IsSettlerSelected == true then
+                InhabitantID = SelectedEntityID;
+            else
+                local InhabitantPosition = 1;
+                for i = 1, #WorkersAndSpousesInBuilding do
+                    if WorkersAndSpousesInBuilding[i] == g_LastSelectedInhabitant then
+                        InhabitantPosition = i + 1;
+                        break;
+                    end
+                end
+                InhabitantID = WorkersAndSpousesInBuilding[InhabitantPosition];
+                if InhabitantID == 0 then
+                    InhabitantID = WorkersAndSpousesInBuilding[InhabitantPosition + 1];
+                end
+            end
+            if InhabitantID == nil then
+                local x,y = Logic.GetEntityPosition(InhabitantsBuildingID);
+                g_LastSelectedInhabitant = nil;
+                ShowCloseUpView(0, x, y);
+                GUI.SetSelectedEntity(InhabitantsBuildingID);
+            else
+                GUI.SetSelectedEntity(InhabitantID);
+                ShowCloseUpView(InhabitantID);
+                g_LastSelectedInhabitant = InhabitantID;
+            end
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Local:OverwriteOnBuildingBurning()
+    GameCallback_Feedback_OnBuildingBurning_Orig_SettlementSurvival = GameCallback_Feedback_OnBuildingBurning;
+    GameCallback_Feedback_OnBuildingBurning = function(_PlayerID, _EntityID)
+        GameCallback_Feedback_OnBuildingBurning_Orig_SettlementSurvival(_PlayerID, _EntityID);
+        SendReportToGlobal(Report.FireAlarmActivated_Internal, _EntityID);
+    end
+end
+
+function Lib.SettlementSurvival.Local:OverwriteAlarmButtons()
+    GUI_BuildingButtons.StartStopFireAlarmClicked_Orig_SettlementSurvival = GUI_BuildingButtons.StartStopFireAlarmClicked;
+    GUI_BuildingButtons.StartStopFireAlarmClicked = function()
+        GUI_BuildingButtons.StartStopFireAlarmClicked_Orig_SettlementSurvival();
+        local EntityID = GUI.GetSelectedEntity()
+        if Logic.IsFireAlarmActiveAtBuilding(EntityID) == true then
+            SendReportToGlobal(Report.FireAlarmActivated_Internal, EntityID);
+        else
+            SendReportToGlobal(Report.FireAlarmDeactivated_Internal, EntityID);
+        end
+    end
+
+    GUI_BuildingButtons.StartStopRepairAlarmClicked_Orig_SettlementSurvival = GUI_BuildingButtons.StartStopRepairAlarmClicked;
+    GUI_BuildingButtons.StartStopRepairAlarmClicked = function()
+        GUI_BuildingButtons.StartStopRepairAlarmClicked_Orig_SettlementSurvival();
+        local EntityID = GUI.GetSelectedEntity()
+        if Logic.IsRepairAlarmActiveAtBuilding(EntityID) == true then
+            SendReportToGlobal(Report.ReRepairAlarmActivated_Internal, EntityID);
+        else
+            SendReportToGlobal(Report.RepairAlarmDeactivated_Internal, EntityID);
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+RegisterModule(Lib.SettlementSurvival.Name);
+
