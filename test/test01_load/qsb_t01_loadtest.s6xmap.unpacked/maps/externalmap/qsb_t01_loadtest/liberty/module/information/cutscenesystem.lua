@@ -351,7 +351,7 @@ function Lib.CutsceneSystem.Local:FlightStarted(_Duration)
         -- desired value, we must update it here.
         local Page = self.Cutscene[PlayerID][PageID];
         if Page.FarClipPlane then
-            Lib.CutsceneSystem.Local:SetFarClipPlane(Page.FarClipPlane);
+            SetRenderDistance(Page.FarClipPlane);
         end
 
         SendReportToGlobal(Report.CutsceneFlightStarted, PlayerID, PageID, _Duration);
@@ -395,7 +395,7 @@ function Lib.CutsceneSystem.Local:DisplayPage(_PlayerID, _PageID, _Duration)
     if type(self.Cutscene[_PlayerID][_PageID]) == "table" then
         self.Cutscene[_PlayerID][_PageID].Started = Logic.GetTime();
         self.Cutscene[_PlayerID][_PageID].Duration = _Duration;
-        Lib.UIEffects.Local:ResetFarClipPlane();
+        ResetRenderDistance();
         self:DisplayPageBars(_PlayerID, _PageID);
         self:DisplayPageTitle(_PlayerID, _PageID);
         self:DisplayPageText(_PlayerID, _PageID);
@@ -722,7 +722,7 @@ function Lib.CutsceneSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
     XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", " ");
 
-    Lib.UIEffects.Local:ResetFarClipPlane();
+    ResetRenderDistance();
 end
 
 -- -------------------------------------------------------------------------- --

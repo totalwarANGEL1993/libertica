@@ -16,12 +16,8 @@ Lib.UIEffects = {
         MessageLogWasShown = false,
         PauseScreenShown = false,
         NormalModeHidden = false,
-        BorderScrollDeactivated = false,
     },
 }
-
-CONST_FARCLIPPANE = 45000;
-CONST_FARCLIPPANE_DEFAULT = 0;
 
 CinematicEventTypes = {};
 CinematicEventState = {
@@ -31,6 +27,7 @@ CinematicEventState = {
 };
 
 Lib.Require("core/Core");
+Lib.Require("module/camera/Camera");
 Lib.Require("module/ui/UIEffects_API");
 Lib.Register("module/ui/UIEffects");
 
@@ -42,8 +39,6 @@ function Lib.UIEffects.Global:Initialize()
     if not self.IsInstalled then
         Report.CinematicActivated = CreateReport("Event_CinematicEventActivated");
         Report.CinematicConcluded = CreateReport("Event_CinematicEventConcluded");
-        Report.BorderScrollLocked = CreateReport("Event_BorderScrollLocked");
-        Report.BorderScrollReset = CreateReport("Event_BorderScrollReset");
         Report.GameInterfaceShown = CreateReport("Event_GameInterfaceShown");
         Report.GameInterfaceHidden = CreateReport("Event_GameInterfaceHidden");
         Report.ImageScreenShown = CreateReport("Event_ImageScreenShown");
@@ -211,7 +206,7 @@ function Lib.UIEffects.Global:FinishTypewriter(_PlayerID)
 
         ExecuteLocal([[
             if GUI.GetPlayerID() == %d then
-                Lib.UIEffects.Local:ResetFarClipPlane()
+                ResetRenderDistance()
                 DeactivateImageScreen(GUI.GetPlayerID())
                 ActivateNormalInterface(GUI.GetPlayerID())
                 ActivateBorderScroll(GUI.GetPlayerID())
@@ -339,8 +334,6 @@ function Lib.UIEffects.Local:Initialize()
     if not self.IsInstalled then
         Report.CinematicActivated = CreateReport("Event_CinematicEventActivated");
         Report.CinematicConcluded = CreateReport("Event_CinematicEventConcluded");
-        Report.BorderScrollLocked = CreateReport("Event_BorderScrollLocked");
-        Report.BorderScrollReset  = CreateReport("Event_BorderScrollReset");
         Report.GameInterfaceShown = CreateReport("Event_GameInterfaceShown");
         Report.GameInterfaceHidden = CreateReport("Event_GameInterfaceHidden");
         Report.ImageScreenShown = CreateReport("Event_ImageScreenShown");
@@ -353,7 +346,6 @@ function Lib.UIEffects.Local:Initialize()
         end
         self:OverrideInterfaceUpdateForCinematicMode();
         self:OverrideInterfaceThroneroomForCinematicMode();
-        self:ResetFarClipPlane();
 
         -- Garbage collection
         Lib.UIEffects.Global = nil;
@@ -377,19 +369,7 @@ function Lib.UIEffects.Local:OnReportReceived(_ID, ...)
                 self.CinematicEventStatus[i][arg[1]] = 2;
             end
         end
-    elseif _ID == Report.SaveGameLoaded then
-        self:ResetFarClipPlane();
     end
-end
-
-function Lib.UIEffects.Local:SetFarClipPlane(_View)
-    Camera.Cutscene_SetFarClipPlane(_View, _View);
-    Display.SetFarClipPlaneMinAndMax(_View, _View);
-end
-
-function Lib.UIEffects.Local:ResetFarClipPlane()
-    Camera.Cutscene_SetFarClipPlane(CONST_FARCLIPPANE);
-    Display.SetFarClipPlaneMinAndMax(CONST_FARCLIPPANE_DEFAULT, CONST_FARCLIPPANE_DEFAULT);
 end
 
 function Lib.UIEffects.Local:GetCinematicEventStatus(_InfoID)
@@ -515,34 +495,6 @@ function Lib.UIEffects.Local:InterfaceDeactivateImageBackground(_PlayerID)
     XGUIEng.PopPage();
     SendReportToGlobal(Report.ImageScreenHidden, _PlayerID);
     SendReport(Report.ImageScreenHidden, _PlayerID);
-end
-
-function Lib.UIEffects.Local:InterfaceDeactivateBorderScroll(_PlayerID, _PositionID)
-    if _PlayerID ~= GUI.GetPlayerID() or self.BorderScrollDeactivated then
-        return;
-    end
-    self.BorderScrollDeactivated = true;
-    if _PositionID then
-        Camera.RTS_FollowEntity(_PositionID);
-    end
-    Camera.RTS_SetBorderScrollSize(0);
-    Camera.RTS_SetZoomWheelSpeed(0);
-
-    SendReportToGlobal(Report.BorderScrollLocked, _PlayerID, (_PositionID or 0));
-    SendReport(Report.BorderScrollLocked, _PlayerID, _PositionID);
-end
-
-function Lib.UIEffects.Local:InterfaceActivateBorderScroll(_PlayerID)
-    if _PlayerID ~= GUI.GetPlayerID() or not self.BorderScrollDeactivated then
-        return;
-    end
-    self.BorderScrollDeactivated = false;
-    Camera.RTS_FollowEntity(0);
-    Camera.RTS_SetBorderScrollSize(3.0);
-    Camera.RTS_SetZoomWheelSpeed(4.2);
-
-    SendReportToGlobal(Report.BorderScrollReset, _PlayerID);
-    SendReport(Report.BorderScrollReset, _PlayerID);
 end
 
 function Lib.UIEffects.Local:InterfaceDeactivateNormalInterface(_PlayerID)
