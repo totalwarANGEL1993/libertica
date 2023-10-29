@@ -5,6 +5,7 @@ LibWriter = {
         "core/Core",
         "module/city/Construction",
         "module/npc/NPC",
+        "module/sound/Sound",
         "module/promotion/Promotion",
         "module/io/IO",
         "module/io/IOChest",
