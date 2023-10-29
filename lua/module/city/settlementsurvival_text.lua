@@ -28,5 +28,5 @@ Lib.SettlementSurvival.Text = {
             fr = "{scarlet}Vos colons succombent à la peste!",
         },
     },
-}
+};
 

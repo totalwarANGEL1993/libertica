@@ -23,7 +23,7 @@ LibWriter = {
         "module/information/Requester",
         "module/entity/Selection",
         "module/city/SettlementSurvival",
-        -- "module/camera/Camera",
+        "module/camera/Camera",
     },
     Behaviors = "",
     Compile = false,

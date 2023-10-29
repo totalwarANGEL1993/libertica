@@ -653,10 +653,10 @@ function Lib.BriefingSystem.Local:DisplayPage(_PlayerID, _PageID)
 end
 
 function Lib.BriefingSystem.Local:SetPageFarClipPlane(_PlayerID, _PageID)
-    Lib.UIEffects.Local:ResetFarClipPlane();
+    ResetRenderDistance();
     local Page = self.Briefing[_PlayerID][_PageID];
     if Page.FarClipPlane then
-        Lib.UIEffects.Local:SetFarClipPlane(Page.FarClipPlane);
+        SetRenderDistance(Page.FarClipPlane);
     end
 end
 
@@ -1247,7 +1247,7 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_Dodge", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
 
-    Lib.UIEffects.Local:ResetFarClipPlane();
+    ResetRenderDistance();
 end
 
 -- -------------------------------------------------------------------------- --

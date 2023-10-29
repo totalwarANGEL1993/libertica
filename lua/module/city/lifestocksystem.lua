@@ -59,19 +59,6 @@ Lib.LifestockSystem = {
             {"R_Sheep",  {de = "Schafe züchten", en = "Breeding Sheeps", fr = "Moutons reproducteurs"}, {4,  1, 0}, 0},
         },
     },
-
-    Text = {
-        CattleStarved = {
-            de = "Eure Kühe sind verhungert!",
-            en = "Your cows have starved to death!",
-            fr = "Tes vaches sont mortes de faim !",
-        },
-        SheepStarved = {
-            de = "Eure Schafe sind verhungert!",
-            en = "Your sheep have starved to death!",
-            fr = "Vos moutons sont morts de faim!",
-        },
-    },
 };
 
 Lib.Require("comfort/global/SetHealth");
@@ -82,6 +69,7 @@ Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/promotion/Promotion");
 Lib.Require("module/city/LifestockSystem_API");
+Lib.Require("module/city/LifestockSystem_Text");
 Lib.Register("module/city/LifestockSystem");
 
 -- -------------------------------------------------------------------------- --
