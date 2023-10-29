@@ -108,8 +108,8 @@ Lib.Require("comfort/GetCategoriesOfType");
 Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("core/Core");
-Lib.Require("module/construction/Construction_API");
-Lib.Register("module/construction/Construction");
+Lib.Require("module/city/Construction_API");
+Lib.Register("module/city/Construction");
 
 -- -------------------------------------------------------------------------- --
 -- Global

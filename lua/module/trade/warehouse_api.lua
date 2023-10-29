@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/warehouse/Warehouse_API");
+Lib.Register("module/trade/Warehouse_API");
 
 --- Defines a tradepost construction site as warehouse.
 ---

@@ -81,8 +81,8 @@ Lib.Require("module/ui/UITools");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/promotion/Promotion");
-Lib.Require("module/lifestock/LifestockSystem_API");
-Lib.Register("module/lifestock/LifestockSystem");
+Lib.Require("module/city/LifestockSystem_API");
+Lib.Register("module/city/LifestockSystem");
 
 -- -------------------------------------------------------------------------- --
 -- Global

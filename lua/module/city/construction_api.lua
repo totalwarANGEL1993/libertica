@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/construction/Construction_API");
+Lib.Register("module/city/Construction_API");
 
 --- Defines a custom rule for construction buildings.
 ---

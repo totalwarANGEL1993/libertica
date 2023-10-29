@@ -47,8 +47,8 @@ Lib.Require("core/Core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/io/IO");
 Lib.Require("module/ui/UIBuilding");
-Lib.Require("module/warehouse/Warehouse_API");
-Lib.Register("module/warehouse/Warehouse");
+Lib.Require("module/trade/Warehouse_API");
+Lib.Register("module/trade/Warehouse");
 
 -- -------------------------------------------------------------------------- --
 -- Global

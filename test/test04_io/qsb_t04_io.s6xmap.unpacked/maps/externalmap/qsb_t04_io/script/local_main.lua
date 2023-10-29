@@ -20,7 +20,7 @@ Lib.Require("module/io/IOChest");
 Lib.Require("module/io/IOMine");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Technology");
-Lib.Require("module/warehouse/Warehouse");
+Lib.Require("module/trade/Warehouse");
 Lib.Require("module/promotion/Promotion");
 
 -- ========================================================================== --

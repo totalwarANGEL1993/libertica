@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/lifestock/LifestockSystem_API");
+Lib.Register("module/city/LifestockSystem_API");
 
 --- Changes the parameters for raising cows.
 ---
