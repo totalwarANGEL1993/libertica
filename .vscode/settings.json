@@ -250,7 +250,8 @@
         "SetPlayerIcon",
         "GetKnightActor",
         "GetClimateEntityName",
-        "UpdateStopOverlay"
+        "UpdateStopOverlay",
+        "g_Outlaws"
     ],
     "Lua.workspace.ignoreDir": [
         "test",

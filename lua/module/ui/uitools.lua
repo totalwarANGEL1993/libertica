@@ -55,7 +55,6 @@ end
 
 -- Global load game
 function Lib.UITools.Global:OnSaveGameLoaded()
-    Lib.UITools.Widget:UpdateHiddenWidgets();
 end
 
 -- Global report listener
@@ -94,6 +93,7 @@ end
 
 -- Local load game
 function Lib.UITools.Local:OnSaveGameLoaded()
+    Lib.UITools.Widget:UpdateHiddenWidgets();
 end
 
 -- Global report listener

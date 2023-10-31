@@ -13,6 +13,7 @@ function Lib.Core.Bugfix:Initialize()
         self:FixMiddleEuropeNpcBarracks();
         self:FixMerchantArrivedCheckpoints();
         self:FixDestroyAllPlayerUnits();
+        self:FixBanditCampFireplace();
     end
     if IsLocalScript() then
         self:FixInteractiveObjectClicked();
@@ -334,9 +335,9 @@ function Lib.Core.Bugfix:FixAbilityInfoWhenHomeless()
         local PlayerID = GUI.GetPlayerID();
         local StorehouseID = Logic.GetStoreHouse(PlayerID);
         local KnightType = Logic.GetEntityType(Logic.GetKnightID(PlayerID));
-        if  _KnightType == KnightType and StorehouseID ~= 0 and ActionAbilityIsExplained == nil then
+        if _KnightType == KnightType and StorehouseID ~= 0 and ActionAbilityIsExplained == nil then
             LocalScriptCallback_StartVoiceMessage(PlayerID, "Hint_SpecialAbilityAction", false, PlayerID, _NoPriority);
-            ActionAbilityIsExplained  = true;
+            ActionAbilityIsExplained = true;
         end
     end
 
@@ -346,7 +347,57 @@ function Lib.Core.Bugfix:FixAbilityInfoWhenHomeless()
         local KnightType = Logic.GetEntityType(Logic.GetKnightID(PlayerID));
         if _KnightType == KnightType and StorehouseID ~= 0 and PermanentAbilityIsExplained == nil then
             LocalScriptCallback_StartVoiceMessage(PlayerID, "Hint_SpecialAbilityPermanetly", false, PlayerID);
-            PermanentAbilityIsExplained  = true;
+            PermanentAbilityIsExplained = true;
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Bandit fireplace
+
+function Lib.Core.Bugfix:FixBanditCampFireplace()
+    g_Outlaws.ReplaceCampType = {};
+    g_Outlaws.ReplaceCampType[Entities.D_X_Fireplace01] = Entities.D_X_Fireplace01_Expired;
+    g_Outlaws.ReplaceCampType[Entities.D_X_Fireplace02] = Entities.D_X_Fireplace02_Expired;
+
+    ActivateFireplaceforBanditPack = function(_CampID)
+        local BanditsPlayerID = Logic.EntityGetPlayer(_CampID);
+        if g_Outlaws.Players[BanditsPlayerID][_CampID].CampFire == nil then
+            local ApX, ApY = Logic.GetBuildingApproachPosition(_CampID);
+            local PosX, PosY = Logic.GetEntityPosition(_CampID);
+            local x = (ApX - PosX) * 1.3 + ApX;
+            local y = (ApY - PosY) * 1.3 + ApY;
+
+            local FireplaceType = Entities.D_X_Fireplace01;
+            if Logic.IsEntityInCategory( _CampID, EntityCategories.Storehouse) == 1 then
+                FireplaceType = Entities.D_X_Fireplace02;
+            end
+
+            g_Outlaws.Players[BanditsPlayerID][_CampID].CampFireType = FireplaceType;
+            local OldID = g_Outlaws.Players[BanditsPlayerID][_CampID].ExtinguishedFire;
+            Logic.DestroyEntity(OldID);
+            local NewID = Logic.CreateEntityOnUnblockedLand(FireplaceType, x, y, 0, 0);
+            g_Outlaws.Players[BanditsPlayerID][_CampID].CampFire = NewID
+            g_Outlaws.Players[BanditsPlayerID][_CampID].CampFirePos = {X= x, Y= y};
+            return true;
+        end
+        return false;
+    end
+
+    DisableFireplaceforBanditPack = function(_CampID)
+        local BanditsPlayerID = Logic.EntityGetPlayer(_CampID);
+        if g_Outlaws.Players[BanditsPlayerID][_CampID].CampFire ~= nil then
+            local x = g_Outlaws.Players[BanditsPlayerID][_CampID].CampFirePos.X;
+            local y = g_Outlaws.Players[BanditsPlayerID][_CampID].CampFirePos.Y;
+
+            local OldID = g_Outlaws.Players[BanditsPlayerID][_CampID].CampFire;
+            Logic.DestroyEntity(OldID);
+
+            local CampfireType = g_Outlaws.Players[BanditsPlayerID][_CampID].CampFireType;
+            local FireplaceType = g_Outlaws.ReplaceCampType[CampfireType];
+            local NewID = Logic.CreateEntityOnUnblockedLand(FireplaceType, x, y, 0, 0);
+            g_Outlaws.Players[BanditsPlayerID][_CampID].ExtinguishedFire = NewID;
+            g_Outlaws.Players[BanditsPlayerID][_CampID].CampFire = nil;
         end
     end
 end
