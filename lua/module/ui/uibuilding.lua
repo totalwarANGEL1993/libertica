@@ -507,6 +507,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
 end
 
 function Lib.UIBuilding.Local:OverrideUpgradeBuilding()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local EntityID = GUI.GetSelectedEntity();

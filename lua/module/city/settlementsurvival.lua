@@ -1,9 +1,12 @@
 --- Implements settlement survival aspects in the game.
 ---
---- Settlers (and farm animals) can now die or become sick from different
---- causes and might die permamently. If a settler dies, they will still be
---- attached to the building so that no other settler can replace them. After
---- some time new settler will arrive.
+--- Settlers (and farm animals) can now become sick from different causes and
+--- might die permamently. If a settler dies, they will still be attached to
+--- the building so that no other settler can replace them. After some time a
+--- new settler will arrive.
+---
+--- Things that ignite buildings:
+--- * Hot temperature
 ---
 --- Things that makes settlers sick:
 --- * Having not enough hygiene
@@ -33,6 +36,10 @@ Lib.SettlementSurvival = {
             IsActive = false,
             AffectAI = false,
         },
+        HotWeather = {
+            IsActive = false,
+            AffectAI = false,
+        },
         Negligence = {
             IsActive = false,
             AffectAI = false,
@@ -56,8 +63,13 @@ Lib.SettlementSurvival = {
         ColdWeather = {
             ConsumptionFactor = 0.01,
             ConsumptionTimer = 30,
-            Temperature = 10,
+            Temperature = 5,
             InfectionChance = 12,
+        },
+        HotWeather = {
+            IgnitionChance = 5,
+            IgnitionTimer = 30,
+            Temperature = 30,
         },
         Famine = {
             DeathChance = 6,
@@ -79,6 +91,7 @@ Lib.SettlementSurvival = {
 
 Lib.Require("comfort/global/SetHealth");
 Lib.Require("core/Core");
+Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/city/SettlementSurvival_API");
 Lib.Require("module/city/SettlementSurvival_Text");
@@ -128,6 +141,8 @@ function Lib.SettlementSurvival.Global:Initialize()
                 local Turn = Logic.GetCurrentTurn();
                 Lib.SettlementSurvival.Global:ResumeSettlersAfterMourning(Turn);
                 Lib.SettlementSurvival.Global:ControlSettlersBecomeIllDueToNegligence(Turn);
+                Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(Turn);
+                Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(Turn);
                 Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(Turn);
                 Lib.SettlementSurvival.Global:ControlAnimalInfections(Turn);
                 Lib.SettlementSurvival.Global:ControlAnimalCorpsesDecay(Turn);
@@ -211,7 +226,7 @@ function Lib.SettlementSurvival.Global:ControlAnimalsSuccumToPlague(_Turn)
             end
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.AnimalDiedFromIllness);
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.AnimalDiedFromIllness);
             end
         end
     end
@@ -278,13 +293,49 @@ end
 
 -- -------------------------------------------------------------------------- --
 
--- When it is cold outside, wood will be consumed by all buildings according to
--- the amount of settlers. If there is not enough firewood available, settlers
--- will start to become sick.
+-- When it is hot outside (usually 30°C ore more), buildings might catch fire
+-- and water will be needed to extinguish them.
+function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
+    local CurrentTime = math.floor(Logic.GetTime());
+    local PlayerID = _Turn % 10;
+    if self.HotWeather.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+        if self.HotWeather.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
+            if Logic.GetCurrentTemperature() >= Lib.SettlementSurvival.Shared.HotWeather.Temperature then
+                local FireFrequency = Lib.SettlementSurvival.Shared.HotWeather.IgnitionTimer;
+                if CurrentTime % FireFrequency == 0 then
+                    -- Get buildings
+                    local OuterRim = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.OuterRimBuilding)};
+                    local City = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.CityBuilding)};
+                    local BuildingList = Array_Append(OuterRim, City);
+                    local AnyIgnited = false;
+                    for i= 1, #BuildingList do
+                        if  Logic.IsConstructionComplete(BuildingList[i]) == 1
+                        and not Logic.IsBurning(BuildingList[i]) then
+                            local IgnitionChance = Lib.SettlementSurvival.Shared.HotWeather.IgnitionChance;
+                            if math.random(1, 100) <= IgnitionChance then
+                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 50);
+                                AnyIgnited = true;
+                            end
+                        end
+                    end
+                    if AnyIgnited then
+                        self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.BuildingBurning);
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+-- When it is cold outside (usually 5°C or less), wood will be consumed by all
+-- buildings according to the amount of settlers. If there is not enough
+-- firewood available, settlers will start to become sick.
 function Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(_Turn)
     local CurrentTime = math.floor(Logic.GetTime());
     local PlayerID = _Turn % 10;
-    if  self.ColdWeather.IsActive and PlayerID >= 1 and PlayerID <= 8 then
+    if self.ColdWeather.IsActive and PlayerID >= 1 and PlayerID <= 8 then
         if self.ColdWeather.AffectAI or Logic.PlayerGetIsHumanFlag(PlayerID) then
             if Logic.GetCurrentTemperature() <= Lib.SettlementSurvival.Shared.ColdWeather.Temperature then
                 local FirewoodFrequency = Lib.SettlementSurvival.Shared.ColdWeather.ConsumptionTimer;
@@ -295,17 +346,19 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(_Turn)
                     local City = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.CityBuilding)};
                     local BuildingList = Array_Append(OuterRim, City);
                     for i= 1, #BuildingList do
-                        local AttachedSettlersAmount = 0;
-                        for _, SettlerID in pairs({Logic.GetWorkersAndSpousesForBuilding(BuildingList[i])}) do
-                            if not self:IsSettlerSuspended(SettlerID) then
-                                AttachedSettlersAmount = AttachedSettlersAmount +1
+                        if Logic.IsConstructionComplete(BuildingList[i]) == 1 then
+                            local AttachedSettlersAmount = 0;
+                            for _, SettlerID in pairs({Logic.GetWorkersAndSpousesForBuilding(BuildingList[i])}) do
+                                if not self:IsSettlerSuspended(SettlerID) then
+                                    AttachedSettlersAmount = AttachedSettlersAmount +1
+                                end
                             end
+                            if  Logic.IsNeedActive(BuildingList[i], Needs.Clothes)
+                            and Logic.GetNeedState(BuildingList[i], Needs.Clothes) > 0.5 then
+                                AttachedSettlersAmount = AttachedSettlersAmount * 0.5;
+                            end
+                            EmployedSettlers = EmployedSettlers + AttachedSettlersAmount;
                         end
-                        if  Logic.IsNeedActive(BuildingList[i], Needs.Clothes)
-                        and Logic.GetNeedState(BuildingList[i], Needs.Clothes) > 0.5 then
-                            AttachedSettlersAmount = AttachedSettlersAmount * 0.5;
-                        end
-                        EmployedSettlers = EmployedSettlers + AttachedSettlersAmount;
                     end
                     -- Subtract firewood
                     local WoodCost = Lib.SettlementSurvival.Shared.ColdWeather.ConsumptionFactor * EmployedSettlers;
@@ -324,7 +377,7 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(_Turn)
                                 Logic.MakeBuildingIll(BuildingList[i]);
                             end
                         end
-                        self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerTemperature);
+                        self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerTemperature);
                     end
                 end
             end
@@ -382,7 +435,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersBecomeIllDueToNegligence(_
 
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerNegligence);
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerNegligence);
             end
         end
     end
@@ -457,7 +510,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(_Turn)
             end
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerDiedFromHunger);
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerDiedFromHunger);
             end
         end
     end
@@ -525,7 +578,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(_Turn)
             end
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Messages.SettlerDiedFromIllness);
+                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerDiedFromIllness);
             end
         end
     end
@@ -568,7 +621,7 @@ function Lib.SettlementSurvival.Global:SuspendSettler(_Entity, _Mourn)
         local AnyNotSuspended = false;
         for i= 1, #AttachedSettlers do
             if not self:IsSettlerSuspended(_Entity) then
-                AnyNotSuspended= true;
+                AnyNotSuspended = true;
                 break;
             end
         end
@@ -597,6 +650,17 @@ function Lib.SettlementSurvival.Global:IsSettlerSuspended(_Entity)
     local EntityID = GetID(_Entity);
     local PlayerID = Logic.EntityGetPlayer(EntityID);
     return self.SuspendedSettlers[PlayerID] and self.SuspendedSettlers[PlayerID][EntityID] ~= nil;
+end
+
+function Lib.SettlementSurvival.Global:HasSuspendedInhabitants(_Entity)
+    local BuildingID = GetID(_Entity)
+    local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(BuildingID)};
+    for i= 1, #AttachedSettlers do
+        if self:IsSettlerSuspended(_Entity) then
+            return true;
+        end
+    end
+    return false;
 end
 
 -- Restores tasklist and position of fake dead settlers.
@@ -655,8 +719,9 @@ function Lib.SettlementSurvival.Local:Initialize()
         Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
 
         self:OverwriteAlarmButtons();
-        self:OverwriteOnBuildingBurning();
+        self:OverwriteGameCallbacks();
         self:OverwriteJumpToWorker();
+        self:OverwriteUpgradeButton();
 
         for PlayerID = 1,8 do
             self.SuspendedSettlers[PlayerID] = {};
@@ -741,11 +806,38 @@ function Lib.SettlementSurvival.Local:OverwriteJumpToWorker()
     end
 end
 
-function Lib.SettlementSurvival.Local:OverwriteOnBuildingBurning()
-    GameCallback_Feedback_OnBuildingBurning_Orig_SettlementSurvival = GameCallback_Feedback_OnBuildingBurning;
+function Lib.SettlementSurvival.Local:IsSettlerSuspended(_Entity)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    return self.SuspendedSettlers[PlayerID] and self.SuspendedSettlers[PlayerID][EntityID] ~= nil;
+end
+
+function Lib.SettlementSurvival.Local:HasSuspendedInhabitants(_Entity)
+    local BuildingID = GetID(_Entity)
+    local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(BuildingID)};
+    for i= 1, #AttachedSettlers do
+        if self:IsSettlerSuspended(_Entity) then
+            return true;
+        end
+    end
+    return false;
+end
+
+function Lib.SettlementSurvival.Local:OverwriteGameCallbacks()
+    self.Orig_GameCallback_Feedback_OnBuildingBurning = GameCallback_Feedback_OnBuildingBurning;
     GameCallback_Feedback_OnBuildingBurning = function(_PlayerID, _EntityID)
-        GameCallback_Feedback_OnBuildingBurning_Orig_SettlementSurvival(_PlayerID, _EntityID);
+        Lib.SettlementSurvival.Local.Orig_GameCallback_Feedback_OnBuildingBurning(_PlayerID, _EntityID);
         SendReportToGlobal(Report.FireAlarmActivated_Internal, _EntityID);
+    end
+
+    self.Orig_GameCallback_GUI_DeleteEntityStateBuilding = GameCallback_GUI_DeleteEntityStateBuilding;
+    GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
+        if Lib.SettlementSurvival.Local:HasSuspendedInhabitants(_BuildingID) then
+            Message(Localize(Lib.SettlementSurvival.Text.Messages.BuildingMourning));
+            GUI.CancelBuildingKnockDown(_BuildingID);
+            return;
+        end
+        Lib.Construction.Local.Orig_GameCallback_GUI_DeleteEntityStateBuilding(_BuildingID, _State);
     end
 end
 
@@ -770,6 +862,21 @@ function Lib.SettlementSurvival.Local:OverwriteAlarmButtons()
         else
             SendReportToGlobal(Report.RepairAlarmDeactivated_Internal, EntityID);
         end
+    end
+end
+
+function Lib.SettlementSurvival.Local:OverwriteUpgradeButton()
+    -- This creates a dependency to module/ui/uibuilding
+    GUI_BuildingButtons.UpgradeClicked_Orig_SettlementSurvival = GUI_BuildingButtons.UpgradeClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_BuildingButtons.UpgradeClicked = function()
+        local BuildingID = GUI.GetSelectedEntity();
+        if Lib.SettlementSurvival.Local:HasSuspendedInhabitants(BuildingID) then
+            Message(Localize(Lib.SettlementSurvival.Text.Messages.BuildingMourning));
+            GUI.CancelBuildingKnockDown(BuildingID);
+            return;
+        end
+        GUI_BuildingButtons.UpgradeClicked_Orig_SettlementSurvival();
     end
 end
 

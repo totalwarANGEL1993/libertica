@@ -1,6 +1,6 @@
 LibWriter = {
     -- Do not change the order of files because it may cause
-    -- "to many open files" error! Only add at the end!
+    -- "to many open files" error!
     ComponentList = {
         "core/Core",
         "module/city/Construction",
@@ -14,17 +14,17 @@ LibWriter = {
         "module/quest/QuestJornal",
         "module/faker/Technology",
         "module/trade/Warehouse",
+        "module/camera/Camera",
         "module/ui/UITools",
         "module/ui/UIEffects",
         "module/ui/UIBuilding",
+        "module/city/SettlementSurvival",
         "module/information/BriefingSystem",
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",
         "module/city/LifestockSystem",
         "module/information/Requester",
         "module/entity/Selection",
-        "module/city/SettlementSurvival",
-        "module/camera/Camera",
     },
     Behaviors = "",
     Compile = false,
