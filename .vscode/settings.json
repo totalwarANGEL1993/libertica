@@ -258,6 +258,12 @@
         "demo"
     ],
     "Lua.workspace.library": [
+        "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Global",
+        "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Local",
+        "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Shared",
+        "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/extra1/shr/Script/Global",
+        "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/extra1/shr/Script/Local",
+        "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/extra1/shr/Script/Shared",
         "lua"
     ]
 }
