@@ -6061,7 +6061,9 @@ function B_Reward_AI_SetNumericalFact:AddParameter(_Index, _Parameter)
 end
 
 function B_Reward_AI_SetNumericalFact:CustomFunction(_Quest)
-    AICore.SetNumericalFact(self.AIPlayerID, self.NumericalFact, self.Value)
+    if self.NumericalFact ~= nil then
+        AICore.SetNumericalFact(self.AIPlayerID, self.NumericalFact, self.Value)
+    end
 end
 
 function B_Reward_AI_SetNumericalFact:GetCustomData(_Index)
