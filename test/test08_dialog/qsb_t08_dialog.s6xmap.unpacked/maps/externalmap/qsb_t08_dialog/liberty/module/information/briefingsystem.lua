@@ -141,7 +141,7 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
         -- Briefing length
         self.Length = (self.Length or 0) +1;
         -- Animations
-        _Briefing.PageAnimations = _Briefing.PageAnimations or {};
+        _Briefing.PageAnimation = _Briefing.PageAnimation or {};
         -- Parallaxes
         _Briefing.PageParallax = _Briefing.PageParallax or {};
 
@@ -196,7 +196,7 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
                 Angle2    = _Page.FlyTo.Angle or Angle2;
             end
             -- Create the animation
-            _Briefing.PageAnimations[Identifier] = {
+            _Briefing.PageAnimation[Identifier] = {
                 Clear = true,
                 {_Page.Duration or 1,
                  _Page.Position, _Page.Rotation, _Page.Zoom, _Page.Angle,
@@ -309,7 +309,7 @@ function Lib.BriefingSystem.Global:NextBriefing(_PlayerID)
         Briefing.CurrentPage = 0;
         self.Briefing[_PlayerID] = Briefing;
         self:TransformAnimations(_PlayerID);
-        self:TransformParallax(_PlayerID);
+        self:TransformParallaxes(_PlayerID);
 
         if Briefing.EnableGlobalImmortality then
             Logic.SetGlobalInvulnerability(1);
@@ -326,19 +326,18 @@ function Lib.BriefingSystem.Global:NextBriefing(_PlayerID)
 end
 
 function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
-    if self.Briefing[_PlayerID].PageAnimations then
-        for k, v in pairs(self.Briefing[_PlayerID].PageAnimations) do
+    if self.Briefing[_PlayerID].PageAnimation then
+        for k, v in pairs(self.Briefing[_PlayerID].PageAnimation) do
             local PageID = self:GetPageIDByName(_PlayerID, k);
             if PageID ~= 0 then
                 self.Briefing[_PlayerID][PageID].Animations = {};
                 self.Briefing[_PlayerID][PageID].Animations.Repeat = v.Repeat == true;
                 self.Briefing[_PlayerID][PageID].Animations.Clear = v.Clear == true;
                 for i= 1, #v, 1 do
-                    -- Relaive position
-                    if type(v[i][3]) == "number" then
-                        local Entry = {};
-                        Entry.Interpolation = v[i].Interpolation;
-                        Entry.Duration = v[i][1] or (2 * 60);
+                    local Entry = {};
+                    Entry.Interpolation = v[i].Interpolation;
+                    Entry.Duration = v[i][1] or (2 * 60);
+                    if v[i][4] and type(v[i][4]) ~= "table" then
                         Entry.Start = {
                             Position = (type(v[i][2]) ~= "table" and {v[i][2],0}) or v[i][2],
                             Rotation = v[i][3] or CONST_BRIEFING.CAMERA_ROTATIONDEFAULT,
@@ -353,31 +352,21 @@ function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
                             Angle    = v[i][9] or Entry.Start.Angle,
                         };
                         table.insert(self.Briefing[_PlayerID][PageID].Animations, Entry);
-                    -- Vector
-                    elseif type(v[i][3]) == "table" then
-                        local Entry = {};
-                        Entry.Interpolation = v[i].Interpolation;
-                        Entry.Duration = v[i][1] or (2 * 60);
-                        Entry.Start = {
-                            Position = (type(v[i][2]) ~= "table" and {v[i][2],0}) or v[i][2],
-                            LookAt   = (type(v[i][3]) ~= "table" and {v[i][3],0}) or v[i][3],
-                        };
-                        local EndPosition = v[i][4] or Entry.Start.Position;
-                        local EndLookAt   = v[i][5] or Entry.Start.LookAt;
-                        Entry.End = {
-                            Position = (type(EndPosition) ~= "table" and {EndPosition,0}) or EndPosition,
-                            LookAt   = (type(EndLookAt) ~= "table" and {EndLookAt,0}) or EndLookAt,
-                        };
-                        table.insert(self.Briefing[_PlayerID][PageID].Animations, Entry);
+                    else
+                       Entry.AnimFrames = {};
+                       for j= 2, #v[i] do
+                           table.insert(Entry.AnimFrames, v[i][j]);
+                       end
                     end
+                    table.insert(self.Briefing[_PlayerID][PageID].Animations, Entry);
                 end
             end
         end
-        self.Briefing[_PlayerID].PageAnimations = nil;
+        self.Briefing[_PlayerID].PageAnimation = nil;
     end
 end
 
-function Lib.BriefingSystem.Global:TransformParallax(_PlayerID)
+function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
     if self.Briefing[_PlayerID].PageParallax then
         for k, v in pairs(self.Briefing[_PlayerID].PageParallax) do
             local PageID = self:GetPageIDByName(_PlayerID, k);
@@ -390,20 +379,10 @@ function Lib.BriefingSystem.Global:TransformParallax(_PlayerID)
                         Entry.Image = v[i][1];
                         Entry.Interpolation = v[i].Interpolation;
                         Entry.Duration = v[i][2] or (2 * 60);
-                        Entry.Start = {
-                            U0 = v[i][3] or 0,
-                            V0 = v[i][4] or 0,
-                            U1 = v[i][5] or 1,
-                            V1 = v[i][6] or 1,
-                            A  = v[i][7] or 255
-                        };
-                        Entry.End = {
-                            U0 = v[i][8] or Entry.Start.U0,
-                            V0 = v[i][9] or Entry.Start.V0,
-                            U1 = v[i][10] or Entry.Start.U1,
-                            V1 = v[i][11] or Entry.Start.V1,
-                            A  = v[i][12] or Entry.Start.A
-                        };
+                        Entry.AnimData = {};
+                        for j= 3, #v[i] do
+                            table.insert(Entry.AnimData, v[i][j]);
+                        end
                         self.Briefing[_PlayerID][PageID].Parallax[i] = Entry;
                     end
                 end
@@ -643,7 +622,7 @@ function Lib.BriefingSystem.Local:DisplayPage(_PlayerID, _PageID)
         self:DisplayPageTitle(_PlayerID, _PageID);
         self:DisplayPageText(_PlayerID, _PageID);
         self:DisplayPageControls(_PlayerID, _PageID);
-        self:DisplayPageAnimations(_PlayerID, _PageID);
+        self:DisplayPageAnimation(_PlayerID, _PageID);
         self:DisplayPageFader(_PlayerID, _PageID);
         self:DisplayPageParallaxes(_PlayerID, _PageID);
         if self.Briefing[_PlayerID][_PageID].MC then
@@ -733,7 +712,7 @@ function Lib.BriefingSystem.Local:DisplayPageControls(_PlayerID, _PageID)
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/Skip", SkipFlag);
 end
 
-function Lib.BriefingSystem.Local:DisplayPageAnimations(_PlayerID, _PageID)
+function Lib.BriefingSystem.Local:DisplayPageAnimation(_PlayerID, _PageID)
     local Page = self.Briefing[_PlayerID][_PageID];
     if Page.Animations then
         if Page.Animations.Clear then
@@ -791,24 +770,57 @@ end
 function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
     if self.Briefing[_PlayerID].ParallaxLayers then
         local CurrentTime = XGUIEng.GetSystemTime();
-        for k, v in pairs(self.Briefing[_PlayerID].ParallaxLayers) do
-            local Widget = self.ParallaxWidgets[k][1];
+        for Index, Data in pairs(self.Briefing[_PlayerID].ParallaxLayers) do
+            local Widget = self.ParallaxWidgets[Index][1];
             local Size = {GUI.GetScreenSize()};
-            local Factor = math.min(math.lerp(v.Started, CurrentTime, v.Duration), 1);
-            if v.Interpolation then
-                Factor = math.min(v:Interpolation(CurrentTime), 1);
+            local Factor = math.min(math.lerp(Data.Started, CurrentTime, Data.Duration), 1);
+            if Data.Interpolation then
+                Factor = math.min(Data:Interpolation(CurrentTime), 1);
             end
-            local Alpha = v.Start.A  + (v.End.A - v.Start.A)   * Factor;
-            local u0    = v.Start.U0 + (v.End.U0 - v.Start.U0) * Factor;
-            local v0    = v.Start.V0 + (v.End.V0 - v.Start.V0) * Factor;
-            local u1    = v.Start.U1 + (v.End.U1 - v.Start.U1) * Factor;
-            local v1    = v.Start.U1 + (v.End.U1 - v.Start.U1) * Factor;
+
+            local Image = Data.Image;
+            if type(Image) == "function" then
+                Image = Data:Image(Factor, Data.Started, CurrentTime, Data.Duration);
+            end
+            if type(Image) == "table" then
+                local CurrentImageIndex = math.min(math.ceil(#Image * Factor), #Image);
+                Image = Image[CurrentImageIndex];
+            end
+
+            local u0,v0,u1,v1,Alpha = 0, 0, 1, 1, 255;
+            if Data.AnimData then
+                local FrameCount = #Data.AnimData;
+                if Data.AnimData[3] and type(Data.AnimData[3]) ~= "table" then
+                    u0,v0,u1,v1,Alpha = unpack(Data.AnimData);
+                else
+                    if #Data.AnimData >= 4 then
+                        local FirstFrame = math.floor(Factor * (FrameCount - 3)) + 1;
+                        FirstFrame = math.min(FirstFrame, FrameCount - 3);
+                        u0,v0,u1,v1,Alpha = self:CubicParallaxInterpolation(
+                            Data.AnimData[FirstFrame],
+                            Data.AnimData[FirstFrame +1],
+                            Data.AnimData[FirstFrame +2],
+                            Data.AnimData[FirstFrame +3],
+                            Factor
+                        );
+                    elseif #Data.AnimData >= 2 then
+                        local FirstFrame = math.floor(Factor * (FrameCount - 1)) + 1;
+                        FirstFrame = math.min(FirstFrame, FrameCount - 1);
+                        u0,v0,u1,v1,Alpha = self:LinearParallaxInterpolation(
+                            Data.AnimData[FirstFrame],
+                            Data.AnimData[FirstFrame +1],
+                            Factor
+                        );
+                    end
+                end
+            end
             if Size[1]/Size[2] < 1.6 then
                 u0 = u0 + (u0 / 0.125);
                 u1 = u1 - (u1 * 0.125);
             end
+
             XGUIEng.SetMaterialAlpha(Widget, 1, Alpha or 255);
-            XGUIEng.SetMaterialTexture(Widget, 1, v.Image);
+            XGUIEng.SetMaterialTexture(Widget, 1, Image);
             XGUIEng.SetMaterialUV(Widget, 1, u0, v0, u1, v1);
         end
     end
@@ -865,10 +877,40 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
         -- Camera
         self:ControlCameraAnimation(_PlayerID);
         local FOV = (type(_Page) == "table" and _Page.FOV) or 42;
-        local PX, PY, PZ = self:GetPagePosition(_PlayerID);
-        local LX, LY, LZ = self:GetPageLookAt(_PlayerID);
-        if PX and not LX then
-            LX, LY, LZ, PX, PY, PZ, FOV = self:GetCameraProperties(_PlayerID, FOV);
+        local PX, PY, PZ, LX, LY, LZ = 0, 0, 0, 0, 0, 0;
+        local CurrentAnimation = self.Briefing[_PlayerID].CurrentAnimation;
+        if CurrentAnimation and CurrentAnimation.AnimFrames then
+            if #CurrentAnimation.AnimFrames >= 4 then
+                local Factor = self:GetInterpolationFactor(_PlayerID);
+                local FrameCount = #CurrentAnimation.AnimFrames;
+                local FirstFrame = math.floor(Factor * (FrameCount - 3)) + 1;
+                FirstFrame = math.min(FirstFrame, #CurrentAnimation.AnimFrames - 3);
+                PX, PY, PZ, LX, LY, LZ = self:CubicInterpolation(
+                    CurrentAnimation.AnimFrames[FirstFrame],
+                    CurrentAnimation.AnimFrames[FirstFrame +1],
+                    CurrentAnimation.AnimFrames[FirstFrame +2],
+                    CurrentAnimation.AnimFrames[FirstFrame +3],
+                    Factor
+                );
+            elseif #CurrentAnimation.AnimFrames >= 2 then
+                local Factor = self:GetInterpolationFactor(_PlayerID);
+                local FrameCount = #CurrentAnimation.AnimFrames;
+                local FirstFrame = math.floor(Factor * (FrameCount - 1)) + 1;
+                FirstFrame = math.min(FirstFrame, #CurrentAnimation.AnimFrames - 1);
+                PX, PY, PZ, LX, LY, LZ = self:LinearInterpolation(
+                    CurrentAnimation.AnimFrames[FirstFrame],
+                    CurrentAnimation.AnimFrames[FirstFrame +1],
+                    Factor
+                );
+            else
+                PX, PY, PZ, LX, LY, LZ = unpack(CurrentAnimation.AnimFrames[1]);
+            end
+        else
+            PX, PY, PZ = self:GetPagePosition(_PlayerID);
+            LX, LY, LZ = self:GetPageLookAt(_PlayerID);
+            if PX and not LX then
+                LX, LY, LZ, PX, PY, PZ, FOV = self:GetCameraProperties(_PlayerID, FOV);
+            end
         end
         Camera.ThroneRoom_SetPosition(PX, PY, PZ);
         Camera.ThroneRoom_SetLookAt(LX, LY, LZ);
@@ -921,19 +963,19 @@ function Lib.BriefingSystem.Local:ControlCameraAnimation(_PlayerID)
 end
 
 function Lib.BriefingSystem.Local:GetPagePosition(_PlayerID)
+    local x, y, z = 0,0,0;
     local Position, FlyTo;
     if self.Briefing[_PlayerID].CurrentAnimation then
         Position = self.Briefing[_PlayerID].CurrentAnimation.Start.Position;
         FlyTo = self.Briefing[_PlayerID].CurrentAnimation.End;
-    end
-
-    local x, y, z = self:ConvertPosition(Position);
-    if FlyTo then
-        local lX, lY, lZ = self:ConvertPosition(FlyTo.Position);
-        if lX and lY and lZ then
-            x = x + (lX - x) * self:GetInterpolationFactor(_PlayerID);
-            y = y + (lY - y) * self:GetInterpolationFactor(_PlayerID);
-            z = z + (lZ - z) * self:GetInterpolationFactor(_PlayerID);
+        x, y, z = self:ConvertPosition(Position);
+        if FlyTo then
+            local lX, lY, lZ = self:ConvertPosition(FlyTo.Position);
+            if lX and lY and lZ then
+                x = x + (lX - x) * self:GetInterpolationFactor(_PlayerID);
+                y = y + (lY - y) * self:GetInterpolationFactor(_PlayerID);
+                z = z + (lZ - z) * self:GetInterpolationFactor(_PlayerID);
+            end
         end
     end
     return x, y, z;
@@ -991,6 +1033,58 @@ function Lib.BriefingSystem.Local:GetInterpolationFactor(_PlayerID)
         return math.min(Factor, 1);
     end
     return 1;
+end
+
+function Lib.BriefingSystem.Local:LinearInterpolation(_Pos1, _Pos2, _Factor)
+    local Position = {
+        PX = (1 - _Factor) * _Pos1[1] + _Factor * _Pos2[1],
+        PY = (1 - _Factor) * _Pos1[2] + _Factor * _Pos2[2],
+        PZ = (1 - _Factor) * _Pos1[3] + _Factor * _Pos2[3]
+    }
+    local LookAt = {
+        LX = (1 - _Factor) * _Pos1[4] + _Factor * _Pos2[4],
+        LY = (1 - _Factor) * _Pos1[5] + _Factor * _Pos2[5],
+        LZ = (1 - _Factor) * _Pos1[6] + _Factor * _Pos2[6]
+    }
+    return Position.PX, Position.PY, Position.PZ, LookAt.LX, LookAt.LY, LookAt.LZ
+end
+
+function Lib.BriefingSystem.Local:LinearParallaxInterpolation(_UV1, _UV2, _Factor)
+    _Factor = math.max(0, math.min(1, _Factor));
+    local UV = {
+        U0 = (1 - _Factor) * _UV1[1] + _Factor * _UV2[1],
+        V0 = (1 - _Factor) * _UV1[2] + _Factor * _UV2[2],
+        U1 = (1 - _Factor) * _UV1[3] + _Factor * _UV2[3],
+        V1 = (1 - _Factor) * _UV1[4] + _Factor * _UV2[4],
+        A  = (1 - _Factor) * _UV1[5] + _Factor * _UV2[5]
+    }
+    return UV.U0, UV.V0, UV.U1, UV.V1, UV.A;
+end
+
+function Lib.BriefingSystem.Local:CubicInterpolation(_Pos1, _Pos2, _Pos3, _Pos4, _Factor)
+    local Position = {
+        PX = 0.5 * (2 * _Pos2[1] + (_Pos3[1] - _Pos1[1]) * _Factor + (2 * _Pos1[1] - 5 * _Pos2[1] + 4 * _Pos3[1] - _Pos4[1]) * (_Factor^2) + (3 * (_Pos2[1] - _Pos3[1]) + _Pos4[1] - _Pos1[1]) * (_Factor^3)),
+        PY = 0.5 * (2 * _Pos2[2] + (_Pos3[2] - _Pos1[2]) * _Factor + (2 * _Pos1[2] - 5 * _Pos2[2] + 4 * _Pos3[2] - _Pos4[2]) * (_Factor^2) + (3 * (_Pos2[2] - _Pos3[2]) + _Pos4[2] - _Pos1[2]) * (_Factor^3)),
+        PZ = 0.5 * (2 * _Pos2[3] + (_Pos3[3] - _Pos1[3]) * _Factor + (2 * _Pos1[3] - 5 * _Pos2[3] + 4 * _Pos3[3] - _Pos4[3]) * (_Factor^2) + (3 * (_Pos2[3] - _Pos3[3]) + _Pos4[3] - _Pos1[3]) * (_Factor^3))
+    }
+    local LookAt = {
+        LX = 0.5 * (2 * _Pos2[1] + (_Pos3[4] - _Pos1[4]) * _Factor + (2 * _Pos1[4] - 5 * _Pos2[4] + 4 * _Pos3[4] - _Pos4[4]) * (_Factor^2) + (3 * (_Pos2[4] - _Pos3[4]) + _Pos4[4] - _Pos1[4]) * (_Factor^3)),
+        LY = 0.5 * (2 * _Pos2[5] + (_Pos3[5] - _Pos1[5]) * _Factor + (2 * _Pos1[5] - 5 * _Pos2[5] + 4 * _Pos3[5] - _Pos4[5]) * (_Factor^2) + (3 * (_Pos2[5] - _Pos3[5]) + _Pos4[5] - _Pos1[5]) * (_Factor^3)),
+        LZ = 0.5 * (2 * _Pos2[6] + (_Pos3[6] - _Pos1[6]) * _Factor + (2 * _Pos1[6] - 5 * _Pos2[6] + 4 * _Pos3[6] - _Pos4[6]) * (_Factor^2) + (3 * (_Pos2[6] - _Pos3[6]) + _Pos4[6] - _Pos1[6]) * (_Factor^3))
+    }
+    return Position.PX, Position.PY, Position.PZ, LookAt.LX, LookAt.LY, LookAt.LZ;
+end
+
+function Lib.BriefingSystem.Local:CubicParallaxInterpolation(_UV1, _UV2, _UV3, _UV4, _Factor)
+    _Factor = math.max(0, math.min(1, _Factor));
+    local UV = {
+        U0 = 0.5 * ((2 * _UV2[1]) + (_UV3[1] - _UV1[1]) * _Factor + (2 * _UV1[1] - 5 * _UV2[1] + 4 * _UV3[1] - _UV4[1]) * (_Factor^2) + (3 * (_UV2[1] - _UV3[1]) + _UV4[1] - _UV1[1]) * (_Factor^3)),
+        V0 = 0.5 * ((2 * _UV2[2]) + (_UV3[2] - _UV1[2]) * _Factor + (2 * _UV1[2] - 5 * _UV2[2] + 4 * _UV3[2] - _UV4[2]) * (_Factor^2) + (3 * (_UV2[2] - _UV3[2]) + _UV4[2] - _UV1[2]) * (_Factor^3)),
+        U1 = 0.5 * ((2 * _UV2[3]) + (_UV3[3] - _UV1[3]) * _Factor + (2 * _UV1[3] - 5 * _UV2[3] + 4 * _UV3[3] - _UV4[3]) * (_Factor^2) + (3 * (_UV2[3] - _UV3[3]) + _UV4[3] - _UV1[3]) * (_Factor^3)),
+        V1 = 0.5 * ((2 * _UV2[4]) + (_UV3[4] - _UV1[4]) * _Factor + (2 * _UV1[4] - 5 * _UV2[4] + 4 * _UV3[4] - _UV4[4]) * (_Factor^2) + (3 * (_UV2[4] - _UV3[4]) + _UV4[4] - _UV1[4]) * (_Factor^3)),
+        A  = 0.5 * ((2 * _UV2[5]) + (_UV3[5] - _UV1[5]) * _Factor + (2 * _UV1[5] - 5 * _UV2[5] + 4 * _UV3[5] - _UV4[5]) * (_Factor^2) + (3 * (_UV2[5] - _UV3[5]) + _UV4[5] - _UV1[5]) * (_Factor^3))
+    }
+    return UV.U0, UV.V0, UV.U1, UV.V1, UV.A;
 end
 
 function Lib.BriefingSystem.Local:GetCameraProperties(_PlayerID, _FOV)

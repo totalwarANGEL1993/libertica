@@ -1,11 +1,16 @@
 Lib.Register("module/city/SettlementSurvival_Text");
 
 Lib.SettlementSurvival.Text = {
-    Messages = {
+    Alarms = {
         AnimalDiedFromIllness = {
             de = "{scarlet}Eure Nutztiere sterben an Krankheiten!",
             en = "{scarlet}Your farm animals succumb to the plague!",
             fr = "{scarlet}Vos animaux de ferme succombent à la peste!",
+        },
+        BuildingBurning = {
+            de = "{scarlet}Brände wüten in Eurer Stadt!",
+            en = "{scarlet}Fires are raging in your city!",
+            fr = "{scarlet}Les incendies font rage dans votre ville !",
         },
         SettlerTemperature = {
             de = "{scarlet}Eure Siedler haben kein Feuerholz und frieren!",
@@ -28,5 +33,12 @@ Lib.SettlementSurvival.Text = {
             fr = "{scarlet}Vos colons succombent à la peste!",
         },
     },
+    Messages = {
+        BuildingMourning = {
+            de = "Keine Baumaßnahmen möglich, solange Siedler trauern.",
+            en = "No construction work possible as long as settlers mourn.",
+            fr = "Aucun travail de construction possible tant que les colons pleurent.",
+        },
+    }
 };
 

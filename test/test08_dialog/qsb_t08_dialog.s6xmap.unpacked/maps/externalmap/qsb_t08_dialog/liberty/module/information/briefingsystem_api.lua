@@ -20,8 +20,12 @@ Lib.Register("module/information/BriefingSystem_API");
 --- #### Animations
 --- The camera settings can be separated from the text of the page. Not only
 --- allows this to fluetly write dialogs, also more possibilities are unlocked
---- when using the notation. Th create a animation the page musn't have a
+--- when using the notation. To create a animation the page musn't have a
 --- position. Otherwise defaults will be used.
+---
+--- The animation frames should be provided as a table. Frames are linearly 
+--- interpolated if there are at least 2 entries, and cubically interpolated 
+--- if there are at least 4 entries.
 ---
 --- *-> Example #2*
 ---
@@ -35,9 +39,13 @@ Lib.Register("module/information/BriefingSystem_API");
 --- of graphics can be shown and animated. Parallaxes are notated similar to
 --- camera animations. Scrolling is done by setting UV coordinates.
 ---
---- Graphics mus allways be in 16:9 format. If a player has a 4:3 resolution
+--- Graphics must allways be in 16:9 format. If a player has a 4:3 resolution
 --- the image is cropped left and right to fit the frame. Coordinates - as long
 --- as provided as relative coordinates - will be adjusted.
+---
+--- It is also possible to provide a table of animation frames for the image.
+--- The frames are linearly interpolated, if there are at least 2 entries and
+--- interpolated cubically if there are at least 4 entries.
 ---
 --- *-> Example #5*
 ---
@@ -63,33 +71,40 @@ Lib.Register("module/information/BriefingSystem_API");
 ---
 --- * Example #2: Notation for animations
 --- ```lua
---- Briefing.PageAnimations = {
+--- Briefing.PageAnimation = {
 ---     ["Page1"] = {
----         {30, "pos4", -60, 2000, 35, "pos4", -30, 2000, 25},
+---         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
+---              {GetFrameVector("pos3", 500, "pos4", 1000)}},
 ---     },
 ---     ["Page3"] = {
----         {30, {"pos2", 500}, {"pos4", 0}, {"pos7", 1000}, {"pos8", 0}},
+---         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
+---              {GetFrameVector("pos3", 500, "pos4", 1000)},
+---              {GetFrameVector("pos7", 500, "pos8", 1000)},
+---              {GetFrameVector("pos5", 500, "pos6", 1000)}},
 ---     },
 --- };
 --- ```
 ---
 --- * Example #3: Replace animations
 --- ```lua
---- Briefing.PageAnimations = {
+--- Briefing.PageAnimation = {
 ---     ["Page1"] = {
 ---         Clear = true,
----         {30, "pos4", -60, 2000, 35, "pos4", -30, 2000, 25},
+---         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
+---              {GetFrameVector("pos3", 500, "pos4", 1000)}},
 ---     },
 --- };
 --- ```
 ---
---- * Example #4: Animation in Endlosschleife
+--- * Example #4: Endlessly repeating animation
 --- ```lua
---- Briefing.PageAnimations = {
+--- Briefing.PageAnimation = {
 ---     ["Page1"] = {
 ---         Repeat = true,
----         {30, "pos4",   0, 4000, 35, "pos4", 180, 4000, 35},
----         {30, "pos4", 180, 4000, 35, "pos4", 360, 4000, 35},
+---         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
+---              {GetFrameVector("pos3", 500, "pos4", 1000)},
+---              {GetFrameVector("pos7", 500, "pos8", 1000)},
+---              {GetFrameVector("pos5", 500, "pos6", 1000)}},
 ---     },
 --- };
 --- ```
@@ -99,13 +114,20 @@ Lib.Register("module/information/BriefingSystem_API");
 --- Briefing.PageParallax = {
 ---     ["Page1"] = {
 ---         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
----          0, 0, 0.8, 1, 255,
----          0.2, 0, 1, 1, 255},
+---          {0, 0, 0.8, 1, 255},
+---          {0.2, 0, 1, 1, 255}},
 ---     },
 ---     ["Page3"] = {
 ---         {"maps/externalmap/mapname/graphics/Parallax1.png", 1,
----          0, 0, 1, 1, 180},
----     }
+---          {0, 0, 0.8, 1, 255},
+---          {0.2, 0, 1, 1, 255},
+---          {0, 0, 0.8, 1, 255},
+---          {0.2, 0, 1, 1, 255}},
+---     },
+---     ["Page7"] = {
+---         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
+---          {0, 0, 0.8, 1, 255}},
+---     },
 --- };
 --- ```
 ---
@@ -114,8 +136,9 @@ Lib.Register("module/information/BriefingSystem_API");
 --- Briefing.PageParallax = {
 ---     ["Page1"] = {
 ---         Clear = true,
----         {"maps/externalmap/mapname/graphics/Parallax6.png",
----          60, 0, 0, 0.8, 1, 255, 0.2, 0, 1, 1, 255},
+---         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
+---          {0, 0, 0.8, 1, 255},
+---          {0.2, 0, 1, 1, 255}},
 ---     },
 --- };
 --- ```
@@ -174,6 +197,34 @@ function IsBriefingActive(_PlayerID)
 end
 API.IsBriefingActive = IsBriefingActive;
 
+--- Creates a point from a position.
+--- @param _Entity any      Target entity
+--- @param _ZOffset integer Z-Offset
+--- @return number X X-Koordinate
+--- @return number Y Y-Koordinate
+--- @return number Z Z-Koordinate
+function GetFramePosition(_Entity, _ZOffset)
+    local x,y,z = Logic.EntityGetPos(GetID(_Entity));
+    return x, y, z + (_ZOffset or 0);
+end
+
+--- Creates an vector from 2 positions.
+--- @param _Entity1 any      Target position entity
+--- @param _ZOffset1 integer Z-Offset of position
+--- @param _Entity2 any      Target lookat entity
+--- @param _ZOffset2 integer Z-Offset of lookat
+--- @return number X1        X-Coordinate Position
+--- @return number Y1        Y-Coordinate Position
+--- @return number Z1        Z-Coordinate Position
+--- @return number X2        X-Coordinate LookAt
+--- @return number Y2        Y-Coordinate LookAt
+--- @return number Z2        Z-Coordinate LookAt
+function GetFrameVector(_Entity1, _ZOffset1, _Entity2, _ZOffset2)
+    local x1,y1,z1 = Logic.EntityGetPos(GetID(_Entity1));
+    local x2,y2,z2 = Logic.EntityGetPos(GetID(_Entity2));
+    return x1, y1, z1 + (_ZOffset1 or 0), x2, y2, z2 + (_ZOffset2 or 0);
+end
+
 --- Prepares the briefing and returns the page functions.
 ---
 --- Must be called before pages are added.
@@ -201,7 +252,7 @@ function AddBriefingPages(_Briefing)
     end
 
     local ASP = function(...)
-        _Briefing.PageAnimations = _Briefing.PageAnimations or {};
+        _Briefing.PageAnimation = _Briefing.PageAnimation or {};
 
         local Name, Title,Text, Position;
         local DialogCam = false;

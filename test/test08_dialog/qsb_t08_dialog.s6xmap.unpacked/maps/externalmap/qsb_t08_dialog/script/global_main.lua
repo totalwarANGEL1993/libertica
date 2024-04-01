@@ -47,9 +47,9 @@ end
 
 -- |||| BRIEFING |||| --
 
--- > BriefingTest([[foo]], 1)
+-- > BriefingTest1([[foo]], 1)
 
-function BriefingTest(_Name, _PlayerID)
+function BriefingTest1(_Name, _PlayerID)
     local Briefing = {
         HideBorderPins = true,
         ShowSky = true,
@@ -61,36 +61,6 @@ function BriefingTest(_Name, _PlayerID)
     ASP("Page 2", "It works just as you are used to it.", false, "pos2");
     ASP("Page 3", "No fancy camera magic and everything in one line.", true, "pos4");
     ASP("Page 4", "Text is displayed until the player skips the page.", false, "pos4");
-
-    Briefing.Starting = function(_Data)
-    end
-    Briefing.Finished = function(_Data)
-    end
-    StartBriefing(Briefing, _Name, _PlayerID)
-end
-
--- > BriefingTest1([[foo]], 1)
-function BriefingTest1(_Name, _PlayerID)
-    local Briefing = {
-        EnableBorderPins = false,
-        EnableSky = true,
-        EnableFoW = false,
-    }
-    local AP, ASP = AddBriefingPages(Briefing);
-
-    ASP("SpecialNamedPage1", "Page 1", "This is a briefing. I have to say important things.");
-    ASP("SpecialNamedPage2", "Page 2", "WOW! That is very cool.");
-
-    Briefing.PageAnimations = {
-        ["SpecialNamedPage1"] = {
-            Clear = true,
-            {30, "npc1", -60, 2000, 35, "npc1", -30, 2000, 25}
-        },
-        ["SpecialNamedPage2"] = {
-            Clear = true,
-            {30, "hero", -45, 6000, 35, "hero", -45, 3000, 35}
-        },
-    }
 
     Briefing.Starting = function(_Data)
     end
@@ -111,10 +81,11 @@ function BriefingTest2(_Name, _PlayerID)
     ASP("SpecialNamedPage1", "Page 1", "This is a briefing. I have to say important things.");
     ASP("SpecialNamedPage2", "Page 2", "WOW! That is very cool.");
 
-    Briefing.PageAnimations = {
+    Briefing.PageAnimation = {
         ["SpecialNamedPage1"] = {
             Clear = true,
-            {30, {"Pos1", 1500}, {"npc1", 250}, {"Pos2", 1500}, {"npc1", 0}}
+            {30, {GetFrameVector("Pos1", 1500, "npc1", 250)},
+                 {GetFrameVector("Pos2", 1500, "npc1", 0)}}
         },
     }
 
@@ -127,34 +98,6 @@ end
 
 -- > BriefingTest3([[foo]], 1)
 function BriefingTest3(_Name, _PlayerID)
-    local Briefing = {
-        EnableBorderPins = false,
-        EnableSky = true,
-        EnableFoW = false,
-    }
-    local AP, ASP = AddBriefingPages(Briefing);
-
-    ASP("SpecialNamedPage1", "Page 1", "This is a briefing. I have to say important things.");
-    ASP("SpecialNamedPage2", "Page 2", "WOW! That is very cool.");
-
-    Briefing.PageAnimations = {
-        ["SpecialNamedPage1"] = {
-            Clear = true,
-            Repeat = true,
-            {30, "hero",   0, 4000, 35, "hero", 180, 4000, 35},
-            {30, "hero", 180, 4000, 35, "hero", 360, 4000, 35},
-        },
-    }
-
-    Briefing.Starting = function(_Data)
-    end
-    Briefing.Finished = function(_Data)
-    end
-    StartBriefing(Briefing, _Name, _PlayerID)
-end
-
--- > BriefingTest4([[foo]], 1)
-function BriefingTest4(_Name, _PlayerID)
     local Briefing = {
         EnableBorderPins = false,
         EnableSky = true,
@@ -184,8 +127,8 @@ function BriefingTest4(_Name, _PlayerID)
     StartBriefing(Briefing, _Name, _PlayerID)
 end
 
--- > BriefingTest5([[foo]], 1)
-function BriefingTest5(_Name, _PlayerID)
+-- > BriefingTest4([[foo]], 1)
+function BriefingTest4(_Name, _PlayerID)
     local Briefing = {
         EnableBorderPins = false,
         EnableSky = true,
@@ -217,7 +160,9 @@ function BriefingTest5(_Name, _PlayerID)
     Briefing.PageParallax = {
         ["FadingPage"] = {
             Foreground = true,
-            {"C:/IMG/Fader1.png", 3, 0.5, 0, 1, 1, 255, 0, 0, 0.5, 1, 255},
+            {"C:/IMG/Fader1.png", 3,
+             {0.5, 0, 1, 1, 255},
+             {0, 0, 0.5, 1, 255}},
         },
         ["DarkPage"] = {
             Clear = true
@@ -259,6 +204,43 @@ function CutsceneTest(_Name, _PlayerID)
     Cutscene.Finished = function()
     end
     StartCutscene(Cutscene, _Name, _PlayerID)
+end
+
+-- > CutsceneBriefingTest([[Foo]], 1)
+function CutsceneBriefingTest(_Name, _PlayerID)
+    local Briefing = {
+        EnableBorderPins = false,
+        EnableSky = true,
+        EnableFoW = false,
+    }
+    local AP, ASP = AddBriefingPages(Briefing);
+
+    Briefing.PageAnimation = {
+        ["Page1"] = {
+            {30, {GetFrameVector("pos1", 1750, "hero", 500)},
+                 {GetFrameVector("pos2", 1500, "hero", 500)},
+                 {GetFrameVector("pos3", 1250, "Pos1", 500)},
+                 {GetFrameVector("pos4", 1150, "Pos1", 500)}},
+        },
+    };
+
+    AP {
+        Name = "Page1",
+        Title = "Page 1",
+        Text = "This is page 1 of the pseudo cutscene.",
+    }
+
+    AP {
+        Name = "Page2",
+        Title = "Page 2",
+        Text = "This is page 2 of the pseudo cutscene.",
+    }
+
+    Briefing.Starting = function(_Data)
+    end
+    Briefing.Finished = function(_Data)
+    end
+    StartBriefing(Briefing, _Name, _PlayerID)
 end
 
 -- |||| DIALOG |||| --
