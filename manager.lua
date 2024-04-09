@@ -200,11 +200,17 @@ function LibWriter:ConcatBehaviors()
     fh:close();
     behaviors = template;
     for i= 1, #self.ComponentList do
-        index = string.find(self.ComponentList[i], "/[^/]*$");
-        fh = assert(io.open("lua/" ..self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb"));
-        content = fh:read("*all");
-        fh:close();
-        behaviors = behaviors .. content;
+        if self.ComponentList[i]:len() > 0 then
+            index = string.find(self.ComponentList[i], "/[^/]*$");
+            fh = io.open("lua/" ..self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb");
+            if fh ~= nil then
+                content = fh:read("*all");
+                fh:close();
+            else
+                content = "";
+            end
+            behaviors = behaviors .. content;
+        end
     end
     return behaviors;
 end
@@ -214,15 +220,19 @@ end
 function LibWriter:ReadFilesLoop()
     local Paths = {Result = {}};
     for i= #self.ComponentList, 1, -1 do
-        Paths[i] = {};
-        ---@diagnostic disable-next-line: param-type-mismatch
-        self:ReadFileAndDependencies(self.ComponentList[i], Paths[i]);
-        table.insert(Paths[i], self.ComponentList[i]:lower());
+        if self.ComponentList[i]:len() > 0 then
+            Paths[i] = {};
+            ---@diagnostic disable-next-line: param-type-mismatch
+            self:ReadFileAndDependencies(self.ComponentList[i], Paths[i]);
+            table.insert(Paths[i], self.ComponentList[i]:lower());
+        end
     end
     for i= 1, #Paths do
-        for j= 1, #Paths[i] do
-            if not self:InTable(Paths[i][j], Paths.Result) then
-                table.insert(Paths.Result, Paths[i][j]);
+        if Paths[i] then
+            for j= 1, #Paths[i] do
+                if not self:InTable(Paths[i][j], Paths.Result) then
+                    table.insert(Paths.Result, Paths[i][j]);
+                end
             end
         end
     end

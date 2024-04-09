@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir release 2> /dev/null
+rm -rf release/* 2> /dev/null
+
+lua manager.lua -b -c -o "exe/officialloadorder.txt"
+
+cp -r var/libertica release
+cp changelog.md release
