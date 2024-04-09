@@ -8,7 +8,7 @@ Lib = {
         },
 
         Version = "LIB 1.0.0",
-        Root = "liberty",
+        Root = "libertica",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = Network.IsNATReady ~= nil,
 

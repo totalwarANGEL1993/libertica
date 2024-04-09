@@ -7,10 +7,10 @@
 
 -- ========================================================================== --
 
-Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
+Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
 
 if CONST_IS_IN_DEV then
-    Lib.Loader.PushPath("E:/Repositories/liberty/var/");
+    Lib.Loader.PushPath("E:/Repositories/libertica/var/");
 end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");

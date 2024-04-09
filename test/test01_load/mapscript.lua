@@ -7,9 +7,9 @@
 
 -- ========================================================================== --
 
-Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/liberty/liberator.lua");
+Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
 
-Lib.Loader.PushPath("E:/Repositories/liberty/var/");
+Lib.Loader.PushPath("E:/Repositories/libertica/var/");
 
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");

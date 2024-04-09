@@ -1,1 +1,1 @@
-Script.Load("E:/Repositories/liberty/test/test01_load/mapscript.lua");
+Script.Load("E:/Repositories/libertica/test/test01_load/mapscript.lua");

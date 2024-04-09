@@ -38,7 +38,7 @@ function LibWriter:Run(...)
     local Action = self:ProcessArguments();
     if Action == 0 then
         print("Usage:");
-        print("-b [-c] [-s] [-o] [Files] - build library in var/liberty");
+        print("-b [-c] [-s] [-o] [Files] - build library in var/libertica");
         print("                            * -c compiles files to bytecode");
         print("                            * -s creates a single file version");
         print("                            * -o loadorder from following wile");
@@ -53,7 +53,7 @@ function LibWriter:Run(...)
             os.execute('mkdir "var"');
             self:CreateSingleFile();
         else
-            os.execute('mkdir "var/liberty"');
+            os.execute('mkdir "var/libertica"');
             self:CopyModules();
             self:CreateQsb();
         end
@@ -166,13 +166,13 @@ end
 
 --- Copies the module files with dependencies to the output folder.
 function LibWriter:CopyModules()
-    os.execute('cp "loader.lua" "var/liberty/liberator.lua');
-    self:CompileFile('var/liberty/liberator.lua', 'var/liberty/liberator.lua');
+    os.execute('cp "loader.lua" "var/libertica/librarian.lua');
+    self:CompileFile('var/libertica/librarian.lua', 'var/libertica/librarian.lua');
 
     local imports = self:ReadFilesLoop();
     for i= #imports, 1, -1 do
         local index = string.find(imports[i], "/[^/]*$");
-        local Path = 'var/liberty/'..imports[i]:sub(1, index-1);
+        local Path = 'var/libertica/'..imports[i]:sub(1, index-1);
         local File = imports[i]:sub(index+1):lower();
         if not self:IsDir(Path) then
             os.execute('mkdir "'..Path..'"');
@@ -186,10 +186,10 @@ end
 --- creates the QSB and writes it to output folder.
 function LibWriter:CreateQsb()
     local behaviors = self:ConcatBehaviors();
-    local fh = assert(io.open("var/liberty/qsb.lua", "wb"));
+    local fh = assert(io.open("var/libertica/qsb.lua", "wb"));
     fh:write(behaviors);
     fh:close();
-    self:CompileFile('var/liberty/qsb.lua', 'var/liberty/qsb.lua');
+    self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
 end
 
 --- Reads all behavior files from the components and returns them as lua string.

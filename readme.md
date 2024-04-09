@@ -23,9 +23,9 @@ https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Windows
 
 - Build library by the command `exe/build -b` or `"exe/build.bat" -b`
   (plus -c if you want bytecode)
-- Import generated `liberty` folder in map archive
+- Import generated `libertica` folder in map archive
 - import `qsb.lua` as `questsystembehavior.lua`
-- Load `liberator.lua` at the start of your scripts
+- Load `librarian.lua` at the start of your scripts
   (both global and local)
 - Use Require to load components AFTER that
 - Include `questsystembehavior.lua` as usual in Mission_FirstMapAction
