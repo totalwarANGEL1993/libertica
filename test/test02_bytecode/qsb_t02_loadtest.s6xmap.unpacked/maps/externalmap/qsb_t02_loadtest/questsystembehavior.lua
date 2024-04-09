@@ -1,0 +1,1 @@
+Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/qsb.lua");

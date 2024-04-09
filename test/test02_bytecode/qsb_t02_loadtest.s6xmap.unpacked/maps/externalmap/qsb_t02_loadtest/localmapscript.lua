@@ -1,0 +1,1 @@
+Script.Load("E:/Repositories/libertica/test/test02_bytecode/qsb_t02_loadtest.s6xmap.unpacked/maps/externalmap/qsb_t02_loadtest/script/local_main.lua");
