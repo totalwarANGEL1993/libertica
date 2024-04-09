@@ -656,7 +656,7 @@ function Lib.SettlementSurvival.Global:HasSuspendedInhabitants(_Entity)
     local BuildingID = GetID(_Entity)
     local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(BuildingID)};
     for i= 1, #AttachedSettlers do
-        if self:IsSettlerSuspended(_Entity) then
+        if self:IsSettlerSuspended(AttachedSettlers[i]) then
             return true;
         end
     end
@@ -745,6 +745,7 @@ function Lib.SettlementSurvival.Local:OnReportReceived(_ID, ...)
 end
 
 function Lib.SettlementSurvival.Local:OverwriteJumpToWorker()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingInfo.JumpToWorkerClicked = function()
         Sound.FXPlay2DSound( "ui\\menu_click");
         local PlayerID = GUI.GetPlayerID();
@@ -813,10 +814,10 @@ function Lib.SettlementSurvival.Local:IsSettlerSuspended(_Entity)
 end
 
 function Lib.SettlementSurvival.Local:HasSuspendedInhabitants(_Entity)
-    local BuildingID = GetID(_Entity)
+    local BuildingID = GetID(_Entity);
     local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(BuildingID)};
     for i= 1, #AttachedSettlers do
-        if self:IsSettlerSuspended(_Entity) then
+        if self:IsSettlerSuspended(AttachedSettlers[i]) then
             return true;
         end
     end
@@ -843,6 +844,7 @@ end
 
 function Lib.SettlementSurvival.Local:OverwriteAlarmButtons()
     GUI_BuildingButtons.StartStopFireAlarmClicked_Orig_SettlementSurvival = GUI_BuildingButtons.StartStopFireAlarmClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartStopFireAlarmClicked = function()
         GUI_BuildingButtons.StartStopFireAlarmClicked_Orig_SettlementSurvival();
         local EntityID = GUI.GetSelectedEntity()
@@ -854,6 +856,7 @@ function Lib.SettlementSurvival.Local:OverwriteAlarmButtons()
     end
 
     GUI_BuildingButtons.StartStopRepairAlarmClicked_Orig_SettlementSurvival = GUI_BuildingButtons.StartStopRepairAlarmClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartStopRepairAlarmClicked = function()
         GUI_BuildingButtons.StartStopRepairAlarmClicked_Orig_SettlementSurvival();
         local EntityID = GUI.GetSelectedEntity()
