@@ -1,23 +1,43 @@
 Lib.Register("comfort/CopyTable");
 
---- Clones a table with all non-meta contents into a new table
---- @param _Table1 table  Source table
---- @param _Table2? table Destination table
---- @return table Copy Copy of table
-function CopyTable(_Table1, _Table2)
-    _Table1 = _Table1 or {};
-    _Table2 = _Table2 or {};
-    for k, v in pairs(_Table1) do
-        if "table" == type(v) then
-            _Table2[k] = _Table2[k] or {};
-            for kk, vv in pairs(CopyTable(v, _Table2[k])) do
-                _Table2[k][kk] = _Table2[k][kk] or vv;
-            end
+--- Copies a table.
+--- @param _Source table Table to copy
+--- @param _Dest? table  (Optional) Destination table
+--- @return table Table Copy of table
+---
+function CopyTable(_Source, _Dest)
+    local Result = _Dest or {};
+    assert(type(_Source) == "table", "CopyTable: Source is nil!");
+    assert(type(Result) == "table");
+    -- Amend array part
+    local LastIndex = 0;
+    for i= 1, #_Source do
+        LastIndex = LastIndex + 1;
+        if type(_Source[i]) == "table" then
+            table.insert(Result, CopyTable(_Source[i]));
         else
-            _Table2[k] = v;
+            table.insert(Result, _Source[i]);
         end
     end
-    return _Table2;
+    -- Overwrite associative part
+    for k,v in pairs(_Source) do
+        if type(k) == "number" then
+            if k <= 0 or k > LastIndex then
+                if type(v) == "table" then
+                    Result[k] = Result[k] or CopyTable(v);
+                else
+                    Result[k] = Result[k] or v;
+                end
+            end
+        else
+            if type(v) == "table" then
+                Result[k] = Result[k] or CopyTable(v);
+            else
+                Result[k] = Result[k] or v;
+            end
+        end
+    end
+    return Result;
 end
 API.CopyTable = CopyTable;
 
