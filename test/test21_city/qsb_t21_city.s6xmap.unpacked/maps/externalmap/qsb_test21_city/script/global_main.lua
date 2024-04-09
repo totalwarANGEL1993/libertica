@@ -19,10 +19,21 @@ Lib.Require("module/city/Construction");
 Lib.Require("module/city/LifestockSystem");
 Lib.Require("module/city/SettlementSurvival");
 Lib.Require("module/entity/Selection");
+Lib.Require("module/quest/Quest");
 
 -- ========================================================================== --
 
+-- > TestQuestForCommands()
+function TestQuestForCommands()
+    SetupQuest {
+        Name        = "TestQuest1",
+        Suggestion  = "It just work's!",
+        Receiver    = 1,
 
+        Goal_NoChange(),
+        Trigger_NeverTriggered(),
+    }
+end
 
 -- ========================================================================== --
 

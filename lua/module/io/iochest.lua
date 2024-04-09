@@ -62,17 +62,17 @@ end
 function Lib.IOChest.Global:ProcessChatInput(_Text)
     local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
     for i= 1, #Commands, 1 do
-        if Commands[1] == "spawncow" then
-            if not IsExisting(Commands[2]) then
-                CreateRandomGoldChest(Commands[2]);
+        if Commands[i][1] == "spawncow" then
+            if not IsExisting(Commands[i][2]) then
+                CreateRandomGoldChest(Commands[i][2]);
             end
-        elseif Commands[1] == "spawnsheep" then
-            if not IsExisting(Commands[2]) then
-                CreateRandomResourceChest(Commands[2]);
+        elseif Commands[i][1] == "spawnsheep" then
+            if not IsExisting(Commands[i][2]) then
+                CreateRandomResourceChest(Commands[i][2]);
             end
-        elseif Commands[1] == "luxurychest" then
-            if not IsExisting(Commands[2]) then
-                CreateRandomLuxuryChest(Commands[2]);
+        elseif Commands[i][1] == "luxurychest" then
+            if not IsExisting(Commands[i][2]) then
+                CreateRandomLuxuryChest(Commands[i][2]);
             end
         end
     end

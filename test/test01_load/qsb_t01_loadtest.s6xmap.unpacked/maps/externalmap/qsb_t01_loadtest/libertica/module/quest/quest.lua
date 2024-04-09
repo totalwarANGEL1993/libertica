@@ -548,26 +548,26 @@ function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
     if _IsDebug then
         local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
         for i= 1, #Commands, 1 do
-            if Commands[1] == "fail"
-            or Commands[1] == "start"
-            or Commands[1] == "restart"
-            or Commands[1] == "stop"
-            or Commands[1] == "win" then
-                local FoundQuests = self:FindQuestNames(Commands[2], true);
-                error(#FoundQuests == 1, "Unable to find quest containing '" ..Commands[2].. "'");
-                if Commands[1] == "fail" then
+            if Commands[i][1] == "fail"
+            or Commands[i][1] == "start"
+            or Commands[i][1] == "restart"
+            or Commands[i][1] == "stop"
+            or Commands[i][1] == "win" then
+                local FoundQuests = self:FindQuestNames(Commands[i][2], true);
+                error(#FoundQuests == 1, "Unable to find quest containing '" ..Commands[i][2].. "'");
+                if Commands[i][1] == "fail" then
                     FailQuest(FoundQuests[1]);
                     log("fail quest '" ..FoundQuests[1].. "'");
-                elseif Commands[1] == "restart" then
+                elseif Commands[i][1] == "restart" then
                     RestartQuest(FoundQuests[1]);
                     log("restart quest '" ..FoundQuests[1].. "'");
-                elseif Commands[1] == "start" then
+                elseif Commands[i][1] == "start" then
                     StartQuest(FoundQuests[1]);
                     log("trigger quest '" ..FoundQuests[1].. "'");
-                elseif Commands[1] == "stop" then
+                elseif Commands[i][1] == "stop" then
                     StopQuest(FoundQuests[1]);
                     log("interrupt quest '" ..FoundQuests[1].. "'");
-                elseif Commands[1] == "win" then
+                elseif Commands[i][1] == "win" then
                     WinQuest(FoundQuests[1]);
                     log("win quest '" ..FoundQuests[1].. "'");
                 end

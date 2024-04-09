@@ -299,26 +299,26 @@ end
 function Lib.IO.Global:ProcessChatInput(_Text)
     local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
     for i= 1, #Commands, 1 do
-        if Commands[1] == "enableobject" then
-            local State = (Commands[3] and tonumber(Commands[3])) or nil;
-            local PlayerID = (Commands[4] and tonumber(Commands[4])) or nil;
-            error(IsExisting(Commands[2]), "object " ..Commands[2].. " does not exist!");
+        if Commands[i][1] == "enableobject" then
+            local State = (Commands[i][3] and tonumber(Commands[i][3])) or nil;
+            local PlayerID = (Commands[i][4] and tonumber(Commands[i][4])) or nil;
+            error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
             ---@diagnostic disable-next-line: param-type-mismatch
-            InteractiveObjectActivate(Commands[2], State, PlayerID);
-            log("activated object " ..Commands[2].. ".");
-        elseif Commands[1] == "disableobject" then
-            local PlayerID = (Commands[3] and tonumber(Commands[3])) or nil;
-            error(IsExisting(Commands[2]), "object " ..Commands[2].. " does not exist!");
-            InteractiveObjectDeactivate(Commands[2], PlayerID);
-            log("deactivated object " ..Commands[2].. ".");
-        elseif Commands[1] == "initobject" then
-            error(IsExisting(Commands[2]), "object " ..Commands[2].. " does not exist!");
+            InteractiveObjectActivate(Commands[i][2], State, PlayerID);
+            log("activated object " ..Commands[i][2].. ".");
+        elseif Commands[i][1] == "disableobject" then
+            local PlayerID = (Commands[i][3] and tonumber(Commands[i][3])) or nil;
+            error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
+            InteractiveObjectDeactivate(Commands[i][2], PlayerID);
+            log("deactivated object " ..Commands[i][2].. ".");
+        elseif Commands[i][1] == "initobject" then
+            error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
             API.SetupObject({
-                Name     = Commands[2],
+                Name     = Commands[i][2],
                 Waittime = 0,
                 State    = 0
             });
-            log("quick initalization of object " ..Commands[2].. ".");
+            log("quick initalization of object " ..Commands[i][2].. ".");
         end
     end
 end

@@ -19,6 +19,7 @@ Lib.Require("module/city/Construction");
 Lib.Require("module/city/LifestockSystem");
 Lib.Require("module/city/SettlementSurvival");
 Lib.Require("module/entity/Selection");
+Lib.Require("module/quest/Quest");
 
 -- ========================================================================== --
 
