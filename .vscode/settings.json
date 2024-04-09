@@ -254,8 +254,10 @@
         "g_Outlaws"
     ],
     "Lua.workspace.ignoreDir": [
+        "demo",
         "test",
-        "demo"
+        "release/libertica",
+        "var/libertica"
     ],
     "Lua.workspace.library": [
         "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Global",
