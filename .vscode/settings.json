@@ -256,6 +256,7 @@
     "Lua.workspace.ignoreDir": [
         "demo",
         "test",
+        "api",
         "release/libertica",
         "var/libertica"
     ],

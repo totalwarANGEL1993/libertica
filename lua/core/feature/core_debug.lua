@@ -1,8 +1,9 @@
 Lib.Core.Debug = {
-    CheckAtRun       = false;
-    TraceQuests      = false;
-    DevelopingCheats = false;
-    DevelopingShell  = false;
+    DisplayScriptErrors = false;
+    CheckAtRun          = false;
+    TraceQuests         = false;
+    DevelopingCheats    = false;
+    DevelopingShell     = false;
 }
 
 Lib.Require("comfort/IsLocalScript");

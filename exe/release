@@ -7,3 +7,4 @@ lua manager.lua -b -c -o "exe/officialloadorder.txt"
 
 cp -r var/libertica release
 cp changelog.md release
+cp -r api release && mv release/api release/libertica_api
