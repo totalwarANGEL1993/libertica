@@ -26,7 +26,7 @@ function error(_Condition, _Text, ...)
 end
 
 --- Initialisiert die Bibliothek.
-function Liberate()
+function PrepareLibrary()
 end
 
 --- Registriert ein Modul in der Modulliste.

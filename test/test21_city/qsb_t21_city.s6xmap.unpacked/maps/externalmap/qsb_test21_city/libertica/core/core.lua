@@ -364,7 +364,7 @@ end
 -- -------------------------------------------------------------------------- --
 
 --- Initializes the whole library.
-function Liberate()
+function PrepareLibrary()
     assert(not IsLocalScript(), "Must be called from global script!");
     Lib.Core.Global:Initialize();
     ExecuteLocal("Lib.Core.Local:Initialize()");

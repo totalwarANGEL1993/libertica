@@ -46,7 +46,7 @@ function Mission_FirstMapAction()
         Startup_StartGoods();
         Startup_Diplomacy();
     end
-    Liberate();
+    PrepareLibrary();
 end
 
 function Mission_InitPlayers()

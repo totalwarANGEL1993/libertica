@@ -1,18 +1,16 @@
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 -- ||||                          GLOBALES SKRIPT                         |||| --
 -- ||||                    --------------------------                    |||| --
--- ||||                            Testmap 21                            |||| --
+-- ||||                            Testmap 01                            |||| --
 -- ||||                           totalwarANGEL                          |||| --
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 
 -- ========================================================================== --
 
-CONST_IS_IN_DEV = true;
-local Path = "maps/externalmap/" ..Framework.GetCurrentMapName().. "/script/global_main.lua";
-if CONST_IS_IN_DEV then
-    Path = "E:/Repositories/libertica/test/test21_city/qsb_t21_city.s6xmap.unpacked/" ..Path;
-end
-Script.Load(Path);
+Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
+
+Lib.Require("core/Core");
+-- Include more
 
 function Mission_FirstMapAction()
     Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/questsystembehavior.lua");
@@ -34,5 +32,11 @@ function Mission_SetStartingMonth()
 end
 
 function Mission_InitMerchants()
+end
+
+-- ========================================================================== --
+
+function GameCallback_Lib_LoadingFinished()
+    ActivateDebugMode(true, true, true, true, false);
 end
 

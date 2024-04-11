@@ -26,7 +26,7 @@ function error(_Condition, _Text, ...)
 end
 
 --- Initializes the whole library.
-function Liberate()
+function PrepareLibrary()
 end
 
 --- Register a module in the module list.

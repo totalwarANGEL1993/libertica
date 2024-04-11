@@ -29,7 +29,7 @@ https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Windows
   (both global and local)
 - Use Require to load components AFTER that
 - Include `questsystembehavior.lua` as usual in Mission_FirstMapAction
-- call `Liberate()` in Mission_FirstMapAction
+- call `PrepareLibrary()` in Mission_FirstMapAction
 
 #### Single File
 
@@ -38,4 +38,4 @@ https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Windows
 - import `qsb.lua` as `questsystembehavior.lua`
 - Include `questsystembehavior.lua` as usual in Mission_FirstMapAction
 - Include also in Mission_LocalOnMapStart (local script)
-- call `Liberate()` in Mission_FirstMapAction
+- call `PrepareLibrary()` in Mission_FirstMapAction
