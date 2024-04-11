@@ -26,7 +26,6 @@ LibWriter = {
         "module/entity/Selection",
         "module/information/Requester",
     },
-    Behaviors = "",
     Compile = false,
     LoadOrderFromFile = false,
     SingleFile = false,
@@ -201,13 +200,17 @@ function LibWriter:ConcatBehaviors()
     behaviors = template;
     for i= 1, #self.ComponentList do
         if self.ComponentList[i]:len() > 0 then
-            index = string.find(self.ComponentList[i], "/[^/]*$");
-            fh = io.open("lua/" ..self.ComponentList[i]:sub(1, index-1) .. "/behavior.lua", "rb");
+            local File = "lua/" ..self.ComponentList[i]:lower() .. "_behavior.lua";
+            fh = io.open(File, "rb");
             if fh ~= nil then
                 content = fh:read("*all");
+                -- Debug
+                -- print("reading behavior file: " ..File, content:len().. " bytes")
                 fh:close();
             else
                 content = "";
+                -- Debug
+                -- print("reading behavior file: " ..File, content:len().. " bytes")
             end
             behaviors = behaviors .. content;
         end

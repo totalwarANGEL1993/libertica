@@ -61,6 +61,6 @@ module/city/SettlementSurvival
 module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem
-module/city/LifestockSystem
 module/entity/Selection
+module/city/LifestockSystem
 module/information/Requester
