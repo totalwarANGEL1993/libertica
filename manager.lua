@@ -26,6 +26,7 @@ LibWriter = {
         "module/entity/Selection",
         "module/information/Requester",
     },
+    FileReadLookup = {},
     Compile = false,
     LoadOrderFromFile = false,
     SingleFile = false,
@@ -160,7 +161,11 @@ function LibWriter:CreateSingleFile()
     fh = assert(io.open("var/qsb.lua", "wb"));
     fh:write(code);
     fh:close();
-    self:CompileFile('var/qsb.lua', 'var/qsb.lua');
+    -- Editor can not read binary
+    -- self:CompileFile('var/qsb.lua', 'var/qsb.lua');
+
+    os.execute('cp "lua/core/mapscript_sf.lua" "var/mapscript.lua');
+    os.execute('cp "lua/core/localmapscript_sf.lua" "var/localmapscript.lua');
 end
 
 --- Copies the module files with dependencies to the output folder.
@@ -188,7 +193,11 @@ function LibWriter:CreateQsb()
     local fh = assert(io.open("var/libertica/qsb.lua", "wb"));
     fh:write(behaviors);
     fh:close();
-    self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
+    -- Editor can not read binary
+    -- self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
+
+    os.execute('cp "lua/core/mapscript.lua" "var/libertica/mapscript.lua');
+    os.execute('cp "lua/core/localmapscript.lua" "var/libertica/localmapscript.lua');
 end
 
 --- Reads all behavior files from the components and returns them as lua string.
@@ -249,14 +258,17 @@ end
 --- @param _Paths table Dependency array
 function LibWriter:ReadFileAndDependencies(_Path, _Paths)
     local Paths = {};
-    for line in io.lines("lua/" .._Path:lower() .. ".lua") do
-        if line:find("Register") then
-            break;
+    if not self.FileReadLookup[_Path:lower()] then
+        for line in io.lines("lua/" .._Path:lower() .. ".lua") do
+            if line:find("Register") then
+                break;
+            end
+            local s,e = line:find("Lib%.Require%(\".*\"");
+            if s and s > 0 then
+                table.insert(Paths, 1, line:sub(s+13, e-1):lower());
+            end
         end
-        local s,e = line:find("Lib%.Require%(\".*\"");
-        if s and s > 0 then
-            table.insert(Paths, 1, line:sub(s+13, e-1):lower());
-        end
+        self.FileReadLookup[_Path:lower()] = true;
     end
     for i= 1, #Paths do
         self:ReadFileAndDependencies(Paths[i], _Paths);
