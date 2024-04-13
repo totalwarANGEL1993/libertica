@@ -1,16 +1,7 @@
 Lib.Register("module/promotion/Promotion_Requirements");
 
-Lib.Promotion = Lib.Promotion or {};
-Lib.Promotion.Requirements = {};
-
--- A workaround that clears all technologies.
-InitKnightTitleTables = function()
-    NeedsAndRightsByKnightTitle = {};
-    KnightTitleRequirements = {};
-end
-
 -- This is the real deal. Defines the requirements, needs and rights.
-Lib.Promotion.Requirements.InitKnightTitleTables = function()
+InitKnightTitleTablesOverwrite = function()
     KnightTitles = {}
     KnightTitles.Knight     = 0
     KnightTitles.Mayor      = 1
@@ -85,8 +76,8 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
             Technologies.R_SpecialEdition,                      -- Right: Special Edition
             Technologies.R_SpecialEdition_Pavilion,             -- Right: Pavilion (AeK SE)
             Technologies.R_SpecialEdition_StatueFamily,         -- Right: Statue of Family (AeK SE)
-            -- Technologies.R_SwordSmith,                          -- Right: Sword Smith
-            -- Technologies.R_Barracks,                            -- Right: Swordmen Barracks
+            -- Technologies.R_SwordSmith,                          
+            -- Technologies.R_Barracks,                            
         },
         StartKnightsPromotionCelebration                        -- Start promotion celebration
     }
@@ -128,8 +119,8 @@ Lib.Promotion.Requirements.InitKnightTitleTables = function()
             Technologies.R_Prosperity,                          -- Right: Prosperity
             Technologies.R_Taxes,                               -- Right: Adjust taxes
             Technologies.R_SpecialEdition_StatueSettler,        -- Right: Statue of Settlers (AeK SE)
-            Technologies.R_BowMaker,                            -- Right: Bow Maker
-            Technologies.R_BarracksArchers,                     -- Right: Archers Barracks
+            -- Technologies.R_BowMaker,                            
+            -- Technologies.R_BarracksArchers,                     
         },
         StartKnightsPromotionCelebration                        -- Start promotion celebration
     }

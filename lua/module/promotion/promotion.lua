@@ -8,7 +8,6 @@
 --- - Technologies.R_SwordSmith
 --- - Technologies.R_BarracksArchers
 --- - Technologies.R_BowMaker
---- - Technologies.R_SiegeEngineWorkshop
 ---
 --- To replace the technologies for swordmen and archers, 2 new technologies
 --- were introduced. They can not be used to forbid features but to show the
@@ -82,7 +81,7 @@ end
 function Lib.Promotion.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         Lib.Promotion.Helper.OverwritePromotionHelper();
-        InitKnightTitleTables = Lib.Promotion.Requirements.InitKnightTitleTables;
+        InitKnightTitleTables = InitKnightTitleTablesOverwrite;
         InitKnightTitleTables();
         for i= 1, 8 do
             ActivateNeedsAndRightsForPlayerByKnightTitle(i, 0);
@@ -184,7 +183,7 @@ end
 function Lib.Promotion.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         Lib.Promotion.Helper.OverwritePromotionHelper();
-        InitKnightTitleTables = Lib.Promotion.Requirements.InitKnightTitleTables;
+        InitKnightTitleTables = InitKnightTitleTablesOverwrite;
         InitKnightTitleTables();
         self.LoadscreenClosed = true;
     elseif _ID == Report.KnightTitleChanged then
@@ -668,6 +667,12 @@ end
 -- -------------------------------------------------------------------------- --
 -- Shared
 
+-- A workaround that clears all technologies.
+InitKnightTitleTables = function()
+    NeedsAndRightsByKnightTitle = {};
+    KnightTitleRequirements = {};
+end
+
 function Lib.Promotion.Shared:UpdateInvisibleTechnologies()
     if not IsLocalScript() then
         return;
@@ -695,7 +700,6 @@ function Lib.Promotion.Shared:UpdateInvisibleTechnologies()
         TechnologiesNotShownForKnightTitle[Technologies.R_BarracksArchers] = true;
         TechnologiesNotShownForKnightTitle[Technologies.R_BowMaker] = true;
         TechnologiesNotShownForKnightTitle[Technologies.R_SwordSmith] = true;
-        TechnologiesNotShownForKnightTitle[Technologies.R_SiegeEngineWorkshop] = true;
     end
 
     -- If io module is used this pseudo technology exists
@@ -703,9 +707,6 @@ function Lib.Promotion.Shared:UpdateInvisibleTechnologies()
         TechnologiesNotShownForKnightTitle[Technologies.R_CallGeologist] = true;
     end
 end
-
--- -------------------------------------------------------------------------- --
--- Shared
 
 function Lib.Promotion.Shared:CreateTechnologies()
     for i= 1, #self.TechnologyConfig do

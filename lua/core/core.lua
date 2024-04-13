@@ -93,10 +93,13 @@ function Lib.Core.Global:Initialize()
         Lib.Core.Bugfix:Initialize();
 
         -- Load user files
+        if Mission_LoadFiles then
+            GameCallback_Lib_GetExternFilesToLoad = Mission_LoadFiles;
+        end
         if GameCallback_Lib_GetExternFilesToLoad then
             local Files = GameCallback_Lib_GetExternFilesToLoad();
             for i= 1, #Files do
-                Script.Load(Files);
+                Script.Load(Files[i]);
             end
         end
 
@@ -227,10 +230,13 @@ function Lib.Core.Local:Initialize()
         Lib.Core.Bugfix:Initialize();
 
         -- Load user files
+        if Mission_LoadFiles then
+            GameCallback_Lib_GetExternFilesToLoad = Mission_LoadFiles;
+        end
         if GameCallback_Lib_GetExternFilesToLoad then
             local Files = GameCallback_Lib_GetExternFilesToLoad();
             for i= 1, #Files do
-                Script.Load(Files);
+                Script.Load(Files[i]);
             end
         end
 
