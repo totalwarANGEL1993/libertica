@@ -6,6 +6,7 @@
 --- In addition there is the possivility to let farm animals starve if they
 --- aren't fed.
 ---
+--- #### Adds pseudo technologies:
 --- * `Technologies.R_Cattle` - Allows to breed cows
 --- * `Technologies.R_Sheep`  - Allows to breed sheeps
 --- 

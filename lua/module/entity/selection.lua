@@ -6,6 +6,8 @@
 --- * Fire thieves
 --- * Obtain selection from global script
 --- * Fixes trebuchet selection
+---
+Lib.Selection = Lib.Selection or {};
 Lib.Selection.Name = "Selection";
 Lib.Selection.Global = {
     TrebuchetIDToCart = {},

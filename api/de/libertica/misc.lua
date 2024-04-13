@@ -1,0 +1,1 @@
+anyInteger = math.random(1, 2);

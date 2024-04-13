@@ -9,6 +9,7 @@
 --- @diagnostic disable: missing-return-value
 
 ParameterType = ParameterType or {};
+Report = Report or {};
 
 g_QuestBehaviorVersion = 1;
 g_QuestBehaviorTypes = {};

@@ -37,13 +37,13 @@ function Lib.Camera.Global:Initialize()
         --- - `PlayerID` - ID of Player
         Report.BorderScrollReset = CreateReport("Event_BorderScrollReset");
 
-        --- 
+        --- Extended zoom distance is deactivated for the player.
         --- 
         --- #### Parameter
         --- - `PlayerID` - ID of Player
         Report.ExtendedZoomDeactivated = CreateReport("Event_ExtendedZoomDeactivated");
 
-        --- 
+        --- Extended zoom distance is activated for the player.
         --- 
         --- #### Parameter
         --- - `PlayerID` - ID of Player
