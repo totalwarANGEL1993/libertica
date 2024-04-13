@@ -67,6 +67,15 @@ function Lib.Warehouse.Global:Initialize()
         --- * `BasePrice`     - Base price
         Report.WarehouseOfferClicked = CreateReport("Event_WarehouseOfferClicked");
 
+        --- The player bought an offer.
+        ---
+        --- #### Parameter
+        --- * `PlayerID`      - ID of player
+        --- * `ScriptName`    - Scriptname of warehouse
+        --- * `OfferGood`     - Good or entity type purchased
+        --- * `GoodAmount`    - Amount of goods
+        --- * `PaymentGood`   - Good of payment
+        --- * `PaymentAmount` - Amount of payment
         Report.WarehouseOfferBought = CreateReport("Event_WarehouseOfferBought");
 
         self:OverwriteGameCallbacks();
@@ -296,8 +305,8 @@ function Lib.Warehouse.Global:PerformTrade(_PlayerID, _ScriptName, _Inflation, _
     -- Uodate offer
     self:UpdateOnPurchase(_PlayerID, _ScriptName, _OfferIndex);
     -- Send reports
-    SendReport(Report.WarehouseOfferBought, _OfferGood, _GoodAmount, _PaymentGood, PaymentAmount);
-    SendReportToLocal(Report.WarehouseOfferBought, _OfferGood, _GoodAmount, _PaymentGood, PaymentAmount);
+    SendReport(Report.WarehouseOfferBought, _PlayerID, _ScriptName, _OfferGood, _GoodAmount, _PaymentGood, PaymentAmount);
+    SendReportToLocal(Report.WarehouseOfferBought, _PlayerID, _ScriptName, _OfferGood, _GoodAmount, _PaymentGood, PaymentAmount);
 end
 
 function Lib.Warehouse.Global:UpdateOnPurchase(_PlayerID, _ScriptName, _OfferIndex)
