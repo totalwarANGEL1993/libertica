@@ -1,5 +1,6 @@
 Lib.Register("module/entity/Selection_Text");
 
+Lib.Selection = Lib.Selection or {};
 Lib.Selection.Text = {
     Tooltips = {
         KnightButton = {

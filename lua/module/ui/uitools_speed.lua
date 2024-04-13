@@ -1,5 +1,6 @@
 Lib.Register("module/ui/UITools_Speed");
 
+Lib.UITools = Lib.UITools or {};
 Lib.UITools.Speed = {
     SpeedLimit = 1,
     Text = {

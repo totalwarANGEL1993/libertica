@@ -2,27 +2,24 @@
 ---
 --- Dialogs can be used to create conversations between characters using the
 --- animated heads in a feature stripped briefing.
-
-Lib.DialogSystem = {
-    Name = "DialogSystem",
-
-    Global = {
-        Dialog = {},
-        DialogQueue = {},
-        DialogCounter = 0,
-    },
-    Local = {
-        Dialog = {},
-    },
-
-    Text = {
-        Continue = {
-            de = "{cr}{cr}{azure}Weiter mit ESC",
-            en = "{cr}{cr}{azure}Continue with ESC",
-            fr = "{cr}{cr}{azure}Continuer avec ESC",
-        }
-    },
-}
+---
+Lib.DialogSystem = Lib.DialogSystem or {};
+Lib.DialogSystem.Name = "DialogSystem";
+Lib.DialogSystem.Global = {
+    Dialog = {},
+    DialogQueue = {},
+    DialogCounter = 0,
+};
+Lib.DialogSystem.Local = {
+    Dialog = {},
+};
+Lib.DialogSystem.Text = {
+    Continue = {
+        de = "{cr}{cr}{azure}Weiter mit ESC",
+        en = "{cr}{cr}{azure}Continue with ESC",
+        fr = "{cr}{cr}{azure}Continuer avec ESC",
+    }
+};
 
 CONST_DIALOG = {
     TIMER_PER_CHAR = 0.175,

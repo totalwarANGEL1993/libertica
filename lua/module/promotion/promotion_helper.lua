@@ -1,5 +1,6 @@
 Lib.Register("module/promotion/Promotion_Helper");
 
+Lib.Promotion = Lib.Promotion or {};
 Lib.Promotion.Helper = {};
 
 -- This is needed to overwrite the helper functions after the loadscreen has

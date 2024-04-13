@@ -11,17 +11,16 @@
 --- * `win <QuestName>`       - Ends a quest successfuly
 --- * `fail <QuestName>`      - Ends a quest in failure
 --- * `restart <QuestName>`   - Resets and triggers a quest
-Lib.Quest = {
-    Name = "Quest",
-
-    Global = {
-        ExternalTriggerConditions = {},
-        ExternalTimerConditions = {},
-        ExternalDecisionConditions = {},
-        SegmentsOfQuest = {},
-    },
-    Local = {},
-}
+---
+Lib.Quest = Lib.Quest or {};
+Lib.Quest.Name = "Quest";
+Lib.Quest.Global = {
+    ExternalTriggerConditions = {},
+    ExternalTimerConditions = {},
+    ExternalDecisionConditions = {},
+    SegmentsOfQuest = {},
+};
+Lib.Quest.Local = {};
 
 SegmentResult = {
     Success = 1,

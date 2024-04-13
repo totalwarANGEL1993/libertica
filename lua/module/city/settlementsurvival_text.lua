@@ -1,5 +1,6 @@
 Lib.Register("module/city/SettlementSurvival_Text");
 
+Lib.SettlementSurvival = Lib.SettlementSurvival or {};
 Lib.SettlementSurvival.Text = {
     Alarms = {
         AnimalDiedFromIllness = {

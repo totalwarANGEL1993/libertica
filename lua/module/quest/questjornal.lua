@@ -1,25 +1,22 @@
 --- Allows to add notes to a quest.
 --- 
-Lib.QuestJornal = {
-    Name = "QuestJornal",
-
-    Global = {
-        Journal = {ID = 0},
-        CustomInputAllowed = {},
-        InputShown = {},
-        TextColor  = "{tooltip}",
-    },
-    Local = {
-        NextButton = "/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/TutorialNextButton",
-        NextButtonIcon = {16, 10},
-    },
-
-    Text = {
-        Next  = {de = "Tagebuch anzeigen", en = "Show Journal", fr = "Afficher le journal"},
-        Title = {de = "Tagebuch",          en = "Journal",      fr = "Journal"},
-        Note  = {de = "Notiz",             en = "Note",         fr = "Note"},
-    },
-}
+Lib.QuestJornal = Lib.QuestJornal or {};
+Lib.QuestJornal.Name = "QuestJornal";
+Lib.QuestJornal.Global = {
+    Journal = {ID = 0},
+    CustomInputAllowed = {},
+    InputShown = {},
+    TextColor  = "{tooltip}",
+};
+Lib.QuestJornal.Local = {
+    NextButton = "/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/TutorialNextButton",
+    NextButtonIcon = {16, 10},
+};
+Lib.QuestJornal.Text = {
+    Next  = {de = "Tagebuch anzeigen", en = "Show Journal", fr = "Afficher le journal"},
+    Title = {de = "Tagebuch",          en = "Journal",      fr = "Journal"},
+    Note  = {de = "Notiz",             en = "Note",         fr = "Note"},
+};
 
 Lib.Require("core/core");
 Lib.Require("module/information/Requester");

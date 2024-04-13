@@ -6,21 +6,18 @@
 --- * Fire thieves
 --- * Obtain selection from global script
 --- * Fixes trebuchet selection
-Lib.Selection = {
-    Name = "Selection",
-
-    Global = {
-        TrebuchetIDToCart = {},
-        SelectedEntities = {},
-    },
-    Local  = {
-        SelectedEntities = {},
-        TrebuchetDisassemble = false,
-        TrebuchetErect = false,
-        ThiefRelease = false,
-        SiegeEngineRelease = true,
-        MilitaryRelease = true,
-    },
+Lib.Selection.Name = "Selection";
+Lib.Selection.Global = {
+    TrebuchetIDToCart = {},
+    SelectedEntities = {},
+};
+Lib.Selection.Local  = {
+    SelectedEntities = {},
+    TrebuchetDisassemble = false,
+    TrebuchetErect = false,
+    ThiefRelease = false,
+    SiegeEngineRelease = true,
+    MilitaryRelease = true,
 };
 
 Lib.Require("comfort/IsHistoryEdition");

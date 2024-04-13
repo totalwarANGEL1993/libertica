@@ -7,73 +7,71 @@
 ---   wall segment between.
 --- * Ballistas can not be placed right beside each other and always need a full
 ---   length wall segment between them (or multiple that are equally long).
-Lib.Construction = {
-    Name = "Construction",
-
-    Global = {
-        Construction = {
-            Restriction = {
-                Index = 0,
-                BuildingCustomRule = {},
-                BuildingTerritoryBlacklist = {},
-                BuildingAreaBlacklist = {},
-                BuildingTerritoryWhitelist = {},
-                BuildingAreaWhitelist = {},
-                RoadCustomRule = {},
-                RoadTerritoryBlacklist = {},
-                RoadAreaBlacklist = {},
-                RoadTerritoryWhitelist = {},
-                RoadAreaWhitelist = {},
-                WallCustomRule = {},
-                WallTerritoryBlacklist = {},
-                WallAreaBlacklist = {},
-                WallTerritoryWhitelist = {},
-                WallAreaWhitelist = {},
-            },
+Lib.Construction = Lib.Construction or {};
+Lib.Construction.Name = "Construction";
+Lib.Construction.Global = {
+    Construction = {
+        Restriction = {
+            Index = 0,
+            BuildingCustomRule = {},
+            BuildingTerritoryBlacklist = {},
+            BuildingAreaBlacklist = {},
+            BuildingTerritoryWhitelist = {},
+            BuildingAreaWhitelist = {},
+            RoadCustomRule = {},
+            RoadTerritoryBlacklist = {},
+            RoadAreaBlacklist = {},
+            RoadTerritoryWhitelist = {},
+            RoadAreaWhitelist = {},
+            WallCustomRule = {},
+            WallTerritoryBlacklist = {},
+            WallAreaBlacklist = {},
+            WallTerritoryWhitelist = {},
+            WallAreaWhitelist = {},
         },
-        Knockdown = {
-            Restriction = {
-                Index = 0,
-                BuildingCustomRule = {},
-                BuildingTerritoryBlacklist = {},
-                BuildingAreaBlacklist = {},
-                BuildingTerritoryWhitelist = {},
-                BuildingAreaWhitelist = {},
-            },
+    },
+    Knockdown = {
+        Restriction = {
+            Index = 0,
+            BuildingCustomRule = {},
+            BuildingTerritoryBlacklist = {},
+            BuildingAreaBlacklist = {},
+            BuildingTerritoryWhitelist = {},
+            BuildingAreaWhitelist = {},
         },
-    };
-    Local  = {
-        Construction = {
-            Restriction = {
-                BuildingCustomRule = {},
-                BuildingTerritoryBlacklist = {},
-                BuildingAreaBlacklist = {},
-                BuildingTerritoryWhitelist = {},
-                BuildingAreaWhitelist = {},
-                RoadCustomRule = {},
-                RoadTerritoryBlacklist = {},
-                RoadAreaBlacklist = {},
-                RoadTerritoryWhitelist = {},
-                RoadAreaWhitelist = {},
-                WallCustomRule = {},
-                WallTerritoryBlacklist = {},
-                WallAreaBlacklist = {},
-                WallTerritoryWhitelist = {},
-                WallAreaWhitelist = {},
-            },
+    },
+};
+Lib.Construction.Local  = {
+    Construction = {
+        Restriction = {
+            BuildingCustomRule = {},
+            BuildingTerritoryBlacklist = {},
+            BuildingAreaBlacklist = {},
+            BuildingTerritoryWhitelist = {},
+            BuildingAreaWhitelist = {},
+            RoadCustomRule = {},
+            RoadTerritoryBlacklist = {},
+            RoadAreaBlacklist = {},
+            RoadTerritoryWhitelist = {},
+            RoadAreaWhitelist = {},
+            WallCustomRule = {},
+            WallTerritoryBlacklist = {},
+            WallAreaBlacklist = {},
+            WallTerritoryWhitelist = {},
+            WallAreaWhitelist = {},
         },
-        Knockdown = {
-            Restriction = {
-                LastSelectedBuildingType = 0,
-                LastSelectedRoadType = 0,
-                BuildingCustomRule = {},
-                BuildingTerritoryBlacklist = {},
-                BuildingAreaBlacklist = {},
-                BuildingTerritoryWhitelist = {},
-                BuildingAreaWhitelist = {},
-            }
-        },
-    };
+    },
+    Knockdown = {
+        Restriction = {
+            LastSelectedBuildingType = 0,
+            LastSelectedRoadType = 0,
+            BuildingCustomRule = {},
+            BuildingTerritoryBlacklist = {},
+            BuildingAreaBlacklist = {},
+            BuildingTerritoryWhitelist = {},
+            BuildingAreaWhitelist = {},
+        }
+    },
 };
 
 Lib.Require("comfort/GetCategoriesOfType");

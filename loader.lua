@@ -1,8 +1,6 @@
 Lib = {
     Loader = {
         Paths = {
-            -- Search in map file
-            "maps/externalmap/" ..Framework.GetCurrentMapName().. "/",
             -- Search in script directory
             "script/",
         },
@@ -10,12 +8,19 @@ Lib = {
         Version = "LIB 1.0.0",
         Root = "libertica",
         IsLocalEnv = GUI ~= nil,
-        IsHistoryEdition = Network.IsNATReady ~= nil,
+        IsHistoryEdition = false,
 
         Sources = {},
         Loaded = {},
     },
 };
+-- Prevent the null reference bug
+if Framework and Network then
+    -- Search for files in map file
+    table.insert(Lib.Loader.Paths, 1, "maps/externalmap/" ..Framework.GetCurrentMapName().. "/");
+    -- Check for History Edition
+    Lib.Loader.IsHistoryEdition = Network.IsNATReady ~= nil;
+end
 
 API = {};
 QSB = {};

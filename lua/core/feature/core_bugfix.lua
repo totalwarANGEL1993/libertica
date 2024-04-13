@@ -1,5 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 
+Lib.Core = Lib.Core or {};
 Lib.Core.Bugfix = {};
 
 Lib.Require("comfort/IsLocalScript");
@@ -225,12 +226,14 @@ end
 -- -------------------------------------------------------------------------- --
 -- House menu
 
-Lib.Core.Bugfix.HouseMenuWidgetToCategory = {
-    ["B_Castle_ME"]     = EntityCategories.Headquarters,
-    ["B_Cathedral"]     = EntityCategories.Cathedrals,
-    ["B_Cathedral_Big"] = EntityCategories.Cathedrals,
-    ["B_Outpost_ME"]    = EntityCategories.Outpost,
-};
+if EntityCategories then
+    Lib.Core.Bugfix.HouseMenuWidgetToCategory = {
+        ["B_Castle_ME"]     = EntityCategories.Headquarters,
+        ["B_Cathedral"]     = EntityCategories.Cathedrals,
+        ["B_Cathedral_Big"] = EntityCategories.Cathedrals,
+        ["B_Outpost_ME"]    = EntityCategories.Outpost,
+    };
+end
 
 function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
     HouseMenuGetNextBuildingID = function(WidgetName)

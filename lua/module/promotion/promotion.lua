@@ -25,20 +25,19 @@
 --- This technology is to show the player they will be able to recruit archers.
 ---
 --- Unlocks: Technologies.R_BarracksArchers and Technologies.R_BowMaker
-Lib.Promotion = {
-    Name = "Promotion",
-
-    Global = {
-        TechnologiesToResearch = {},
-    };
-    Local = {};
-    Shared = {
-        TechnologyConfig = {
-            -- Tech name, Description, Icon, Extra Number
-            {"R_MilitarySword", "UI_ObjectNames/BuySwordfighters", {9, 7, 0}, 0},
-            {"R_MilitaryBow",   "UI_ObjectNames/BuyBowmen",        {9, 8, 0}, 0},
-        }
-    };
+---
+Lib.Promotion = Lib.Promotion or {};
+Lib.Promotion.Name = "Promotion";
+Lib.Promotion.Global = {
+    TechnologiesToResearch = {},
+};
+Lib.Promotion.Local = {};
+Lib.Promotion.Shared = {
+    TechnologyConfig = {
+        -- Tech name, Description, Icon, Extra Number
+        {"R_MilitarySword", "UI_ObjectNames/BuySwordfighters", {9, 7, 0}, 0},
+        {"R_MilitaryBow",   "UI_ObjectNames/BuyBowmen",        {9, 8, 0}, 0},
+    }
 };
 
 CONST_REQUIREMENT_TOOLTIP_TYPE = {};
@@ -213,7 +212,7 @@ end
 
 function Lib.Promotion.Local:OverwriteUpdateRequirements()
     GUI_Knight.UpdateRequirements = function()
-        local WidgetPos = Lib.Promotion.Local.RequirementWidgets;
+        local WidgetPos = Lib.Promotion.Config.RequirementWidgets;
         local RequirementsIndex = 1;
 
         local PlayerID = GUI.GetPlayerID();
@@ -552,7 +551,7 @@ function Lib.Promotion.Local:OverwriteTooltips()
     GUI_Tooltip.SetNameAndDescription = function(...)
         local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
 
-        for k,v in pairs(Lib.Promotion.Local.RequirementWidgets) do
+        for k,v in pairs(Lib.Promotion.Config.RequirementWidgets) do
             if v .. "/Icon" == XGUIEng.GetWidgetPathByID(CurrentWidgetID) then
                 local key = CONST_REQUIREMENT_TOOLTIP_TYPE[k];
                 local num = tonumber(string.sub(key, string.len(key)));
@@ -618,10 +617,10 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
             GoodName = "Goods." .. GoodTypeName;
         end
         Title = GoodName;
-        Text  = Lib.Promotion.Local.Description[_key].Text;
+        Text  = Lib.Promotion.Config.Description[_key].Text;
 
     elseif _key == "Products" then
-        local GoodCategoryNames = Lib.Promotion.Local.GoodCategoryNames;
+        local GoodCategoryNames = Lib.Promotion.Config.GoodCategoryNames;
         local Category = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
         local CategoryName = Localize(GoodCategoryNames[Category]);
 
@@ -629,7 +628,7 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
             CategoryName = "ERROR: Name missng!";
         end
         Title = CategoryName;
-        Text  = Lib.Promotion.Local.Description[_key].Text;
+        Text  = Lib.Promotion.Config.Description[_key].Text;
 
     elseif _key == "Entities" then
         local EntityType     = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
@@ -641,7 +640,7 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
         end
 
         Title = EntityName;
-        Text  = Lib.Promotion.Local.Description[_key].Text;
+        Text  = Lib.Promotion.Config.Description[_key].Text;
 
     elseif _key == "Custom" then
         local Custom = KnightTitleRequirements[KnightTitle+1].Custom[_i];
@@ -649,7 +648,7 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
         Text  = Custom[4];
 
     elseif _key == "Buff" then
-        local BuffTypeNames = Lib.Promotion.Local.BuffTypeNames;
+        local BuffTypeNames = Lib.Promotion.Config.BuffTypeNames;
         local BuffType = KnightTitleRequirements[KnightTitle+1][_key][_i];
         local BuffTitle = Localize(BuffTypeNames[BuffType]);
 
@@ -657,11 +656,11 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
             BuffTitle = "ERROR: Name missng!";
         end
         Title = BuffTitle;
-        Text  = Lib.Promotion.Local.Description[_key].Text;
+        Text  = Lib.Promotion.Config.Description[_key].Text;
 
     else
-        Title = Lib.Promotion.Local.Description[_key].Title;
-        Text  = Lib.Promotion.Local.Description[_key].Text;
+        Title = Lib.Promotion.Config.Description[_key].Title;
+        Text  = Lib.Promotion.Config.Description[_key].Text;
     end
     SetTooltipNormal(Localize(Title), Localize(Text), nil);
 end

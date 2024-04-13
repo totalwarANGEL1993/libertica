@@ -1,6 +1,7 @@
 --- @diagnostic disable: param-type-mismatch
 --- @diagnostic disable: return-type-mismatch
 
+Lib.Core = Lib.Core or {};
 Lib.Core.LuaExtension = {};
 
 Lib.Require("comfort/CopyTable");

@@ -60,7 +60,6 @@ function LibWriter:Run(...)
     elseif Action == 2 then
         print("Files loaded:");
         local Files = self:ReadFilesLoop();
-        table.sort(Files);
         for i= 1, #Files do
             print("> " ..Files[i]:lower());
         end
@@ -137,15 +136,6 @@ function LibWriter:CreateSingleFile()
 
     -- Read components
     local imports = self:ReadFilesLoop();
-    table.sort(imports, function(a,b)
-        if string.find(a, "_") and not string.find(b, "_") then
-            return false;
-        end
-        if string.find(b, "_") and not string.find(a, "_") then
-            return true;
-        end
-        return a < b;
-    end);
     for i= 1, #imports do
         fh = assert(io.open("lua/" ..imports[i].. ".lua", "rb"));
         content = fh:read("*all");
@@ -161,8 +151,7 @@ function LibWriter:CreateSingleFile()
     fh = assert(io.open("var/qsb.lua", "wb"));
     fh:write(code);
     fh:close();
-    -- Editor can not read binary
-    -- self:CompileFile('var/qsb.lua', 'var/qsb.lua');
+    self:CompileFile('var/qsb.lua', 'var/qsb.lua');
 
     os.execute('cp "lua/core/mapscript_sf.lua" "var/mapscript.lua');
     os.execute('cp "lua/core/localmapscript_sf.lua" "var/localmapscript.lua');
@@ -174,7 +163,7 @@ function LibWriter:CopyModules()
     self:CompileFile('var/libertica/librarian.lua', 'var/libertica/librarian.lua');
 
     local imports = self:ReadFilesLoop();
-    for i= #imports, 1, -1 do
+    for i= 1, #imports, 1 do
         local index = string.find(imports[i], "/[^/]*$");
         local Path = 'var/libertica/'..imports[i]:sub(1, index-1);
         local File = imports[i]:sub(index+1):lower();
@@ -193,8 +182,7 @@ function LibWriter:CreateQsb()
     local fh = assert(io.open("var/libertica/qsb.lua", "wb"));
     fh:write(behaviors);
     fh:close();
-    -- Editor can not read binary
-    -- self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
+    self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
 
     os.execute('cp "lua/core/mapscript.lua" "var/libertica/mapscript.lua');
     os.execute('cp "lua/core/localmapscript.lua" "var/libertica/localmapscript.lua');
@@ -231,7 +219,7 @@ end
 --- into the component
 function LibWriter:ReadFilesLoop()
     local Paths = {Result = {}};
-    for i= #self.ComponentList, 1, -1 do
+    for i= 1, #self.ComponentList, 1 do
         if self.ComponentList[i]:len() > 0 then
             Paths[i] = {};
             ---@diagnostic disable-next-line: param-type-mismatch

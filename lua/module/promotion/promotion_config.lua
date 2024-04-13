@@ -1,20 +1,21 @@
 Lib.Register("module/promotion/Promotion_Config");
 
+Lib.Promotion = Lib.Promotion or {};
 Lib.Promotion.Config = {};
 
 function Lib.Promotion.Config:InitAddonText()
     if Framework.GetGameExtraNo() ~= 0 then
-        Lib.Promotion.Local.BuffTypeNames[Buffs.Buff_Gems] = {
+        Lib.Promotion.Config.BuffTypeNames[Buffs.Buff_Gems] = {
             de = "Edelsteine beschaffen",
             en = "Obtain gems",
             fr = "Se procurer des Gemmes",
         }
-        Lib.Promotion.Local.BuffTypeNames[Buffs.Buff_Olibanum] = {
+        Lib.Promotion.Config.BuffTypeNames[Buffs.Buff_Olibanum] = {
             de = "Weihrauch beschaffen",
             en = "Obtain olibanum",
             fr = "Se procurer de l'encens",
         }
-        Lib.Promotion.Local.BuffTypeNames[Buffs.Buff_MusicalInstrument] = {
+        Lib.Promotion.Config.BuffTypeNames[Buffs.Buff_MusicalInstrument] = {
             de = "Muskinstrumente beschaffen",
             en = "Obtain instruments",
             fr = "Se procurer des instruments de musique",
@@ -118,7 +119,7 @@ function Lib.Promotion.Config:InitTexturePositionsAddon()
     end
 end
 
-Lib.Promotion.Local.RequirementWidgets = {
+Lib.Promotion.Config.RequirementWidgets = {
     [1] = "/InGame/Root/Normal/AlignBottomRight/KnightTitleMenu/Requirements/Settlers",
     [2] = "/InGame/Root/Normal/AlignBottomRight/KnightTitleMenu/Requirements/Goods",
     [3] = "/InGame/Root/Normal/AlignBottomRight/KnightTitleMenu/Requirements/RichBuildings",
@@ -127,42 +128,46 @@ Lib.Promotion.Local.RequirementWidgets = {
     [6] = "/InGame/Root/Normal/AlignBottomRight/KnightTitleMenu/Requirements/Cathedral",
 };
 
-Lib.Promotion.Local.GoodCategoryNames = {
-    [GoodCategories.GC_Ammunition]      = {de = "Munition",         en = "Ammunition",      fr = "Munition"},
-    [GoodCategories.GC_Animal]          = {de = "Nutztiere",        en = "Livestock",       fr = "Animaux d'élevage"},
-    [GoodCategories.GC_Clothes]         = {de = "Kleidung",         en = "Clothes",         fr = "Vêtements"},
-    [GoodCategories.GC_Document]        = {de = "Dokumente",        en = "Documents",       fr = "Documents"},
-    [GoodCategories.GC_Entertainment]   = {de = "Unterhaltung",     en = "Entertainment",   fr = "Divertissement"},
-    [GoodCategories.GC_Food]            = {de = "Nahrungsmittel",   en = "Food",            fr = "Nourriture"},
-    [GoodCategories.GC_Gold]            = {de = "Gold",             en = "Gold",            fr = "Or"},
-    [GoodCategories.GC_Hygiene]         = {de = "Hygieneartikel",   en = "Hygiene",         fr = "Hygiène"},
-    [GoodCategories.GC_Luxury]          = {de = "Dekoration",       en = "Decoration",      fr = "Décoration"},
-    [GoodCategories.GC_Medicine]        = {de = "Medizin",          en = "Medicine",        fr = "Médecine"},
-    [GoodCategories.GC_None]            = {de = "Nichts",           en = "None",            fr = "Rien"},
-    [GoodCategories.GC_RawFood]         = {de = "Nahrungsmittel",   en = "Food",            fr = "Nourriture"},
-    [GoodCategories.GC_RawMedicine]     = {de = "Medizin",          en = "Medicine",        fr = "Médecine"},
-    [GoodCategories.GC_Research]        = {de = "Forschung",        en = "Research",        fr = "Recherche"},
-    [GoodCategories.GC_Resource]        = {de = "Rohstoffe",        en = "Resource",        fr = "Ressources"},
-    [GoodCategories.GC_Tools]           = {de = "Werkzeug",         en = "Tools",           fr = "Outils"},
-    [GoodCategories.GC_Water]           = {de = "Wasser",           en = "Water",           fr = "Eau"},
-    [GoodCategories.GC_Weapon]          = {de = "Waffen",           en = "Weapon",          fr = "Armes"},
-};
+if GoodCategories then
+    Lib.Promotion.Config.GoodCategoryNames = {
+        [GoodCategories.GC_Ammunition]      = {de = "Munition",         en = "Ammunition",      fr = "Munition"},
+        [GoodCategories.GC_Animal]          = {de = "Nutztiere",        en = "Livestock",       fr = "Animaux d'élevage"},
+        [GoodCategories.GC_Clothes]         = {de = "Kleidung",         en = "Clothes",         fr = "Vêtements"},
+        [GoodCategories.GC_Document]        = {de = "Dokumente",        en = "Documents",       fr = "Documents"},
+        [GoodCategories.GC_Entertainment]   = {de = "Unterhaltung",     en = "Entertainment",   fr = "Divertissement"},
+        [GoodCategories.GC_Food]            = {de = "Nahrungsmittel",   en = "Food",            fr = "Nourriture"},
+        [GoodCategories.GC_Gold]            = {de = "Gold",             en = "Gold",            fr = "Or"},
+        [GoodCategories.GC_Hygiene]         = {de = "Hygieneartikel",   en = "Hygiene",         fr = "Hygiène"},
+        [GoodCategories.GC_Luxury]          = {de = "Dekoration",       en = "Decoration",      fr = "Décoration"},
+        [GoodCategories.GC_Medicine]        = {de = "Medizin",          en = "Medicine",        fr = "Médecine"},
+        [GoodCategories.GC_None]            = {de = "Nichts",           en = "None",            fr = "Rien"},
+        [GoodCategories.GC_RawFood]         = {de = "Nahrungsmittel",   en = "Food",            fr = "Nourriture"},
+        [GoodCategories.GC_RawMedicine]     = {de = "Medizin",          en = "Medicine",        fr = "Médecine"},
+        [GoodCategories.GC_Research]        = {de = "Forschung",        en = "Research",        fr = "Recherche"},
+        [GoodCategories.GC_Resource]        = {de = "Rohstoffe",        en = "Resource",        fr = "Ressources"},
+        [GoodCategories.GC_Tools]           = {de = "Werkzeug",         en = "Tools",           fr = "Outils"},
+        [GoodCategories.GC_Water]           = {de = "Wasser",           en = "Water",           fr = "Eau"},
+        [GoodCategories.GC_Weapon]          = {de = "Waffen",           en = "Weapon",          fr = "Armes"},
+    };
+end
 
-Lib.Promotion.Local.BuffTypeNames = {
-    [Buffs.Buff_ClothesDiversity]        = {de = "Vielfältige Kleidung",        en = "Clothes variety",         fr = "Diversité vestimentaire"},
-    [Buffs.Buff_Colour]                  = {de = "Farben beschaffen",           en = "Obtain color",            fr = "Se procurer des couleurs"},
-    [Buffs.Buff_Entertainers]            = {de = "Gaukler anheuern",            en = "Hire entertainer",        fr = "Engager des saltimbanques"},
-    [Buffs.Buff_EntertainmentDiversity]  = {de = "Vielfältige Unterhaltung",    en = "Entertainment variety",   fr = "Diversité des divertissements"},
-    [Buffs.Buff_ExtraPayment]            = {de = "Sonderzahlung",               en = "Extra payment",           fr = "Paiement supplémentaire"},
-    [Buffs.Buff_Festival]                = {de = "Fest veranstalten",           en = "Hold Festival",           fr = "Organiser une fête"},
-    [Buffs.Buff_FoodDiversity]           = {de = "Vielfältige Nahrung",         en = "Food variety",            fr = "Diversité alimentaire"},
-    [Buffs.Buff_HygieneDiversity]        = {de = "Vielfältige Hygiene",         en = "Hygiene variety",         fr = "Diversité hygiénique"},
-    [Buffs.Buff_NoTaxes]                 = {de = "Steuerbefreiung",             en = "No taxes",                fr = "Exonération fiscale"},
-    [Buffs.Buff_Sermon]                  = {de = "Pregigt abhalten",            en = "Hold sermon",             fr = "Tenir des prêches"},
-    [Buffs.Buff_Spice]                   = {de = "Salz beschaffen",             en = "Obtain salt",             fr = "Se procurer du sel"},
-};
+if Buffs then
+    Lib.Promotion.Config.BuffTypeNames = {
+        [Buffs.Buff_ClothesDiversity]        = {de = "Vielfältige Kleidung",        en = "Clothes variety",         fr = "Diversité vestimentaire"},
+        [Buffs.Buff_Colour]                  = {de = "Farben beschaffen",           en = "Obtain color",            fr = "Se procurer des couleurs"},
+        [Buffs.Buff_Entertainers]            = {de = "Gaukler anheuern",            en = "Hire entertainer",        fr = "Engager des saltimbanques"},
+        [Buffs.Buff_EntertainmentDiversity]  = {de = "Vielfältige Unterhaltung",    en = "Entertainment variety",   fr = "Diversité des divertissements"},
+        [Buffs.Buff_ExtraPayment]            = {de = "Sonderzahlung",               en = "Extra payment",           fr = "Paiement supplémentaire"},
+        [Buffs.Buff_Festival]                = {de = "Fest veranstalten",           en = "Hold Festival",           fr = "Organiser une fête"},
+        [Buffs.Buff_FoodDiversity]           = {de = "Vielfältige Nahrung",         en = "Food variety",            fr = "Diversité alimentaire"},
+        [Buffs.Buff_HygieneDiversity]        = {de = "Vielfältige Hygiene",         en = "Hygiene variety",         fr = "Diversité hygiénique"},
+        [Buffs.Buff_NoTaxes]                 = {de = "Steuerbefreiung",             en = "No taxes",                fr = "Exonération fiscale"},
+        [Buffs.Buff_Sermon]                  = {de = "Pregigt abhalten",            en = "Hold sermon",             fr = "Tenir des prêches"},
+        [Buffs.Buff_Spice]                   = {de = "Salz beschaffen",             en = "Obtain salt",             fr = "Se procurer du sel"},
+    };
+end
 
-Lib.Promotion.Local.Description = {
+Lib.Promotion.Config.Description = {
     Settlers = {
         Title = {
             de = "Benötigte Siedler",

@@ -2,35 +2,32 @@
 ---
 --- The apex for scripting dialogs and simple camera animations. A versatile
 --- tool to script the plot of the map.
-
-Lib.BriefingSystem = {
-    Name = "BriefingSystem",
-
-    Global = {
-        Briefing = {},
-        BriefingQueue = {},
-        BriefingCounter = 0,
-    };
-    Local = {
-        ParallaxWidgets = {
-            -- Can not set UV coordinates for this... :(
-            -- {"/EndScreen/EndScreen/BG", "/EndScreen/EndScreen"},
-            {"/EndScreen/EndScreen/BackGround", "/EndScreen/EndScreen"},
-            -- Can not set UV coordinates for this... :(
-            -- {"/InGame/MissionStatistic/BG", "/InGame/MissionStatistic"},
-            {"/InGame/Root/EndScreen/BlackBG", "/InGame/Root/EndScreen"},
-            {"/InGame/Root/EndScreen/BG", "/InGame/Root/EndScreen"},
-            {"/InGame/Root/BlackStartScreen/BG", "/InGame/Root/BlackStartScreen"},
-        },
-        Briefing = {},
-    };
-
-    Text = {
-        NextButton = {de = "Weiter",  en = "Forward",  fr = "Continuer"},
-        PrevButton = {de = "Zurück",  en = "Previous", fr = "Retour"},
-        EndButton  = {de = "Beenden", en = "Close",    fr = "Quitter"},
+---
+Lib.BriefingSystem = Lib.BriefingSystem or {};
+Lib.BriefingSystem.Name = "BriefingSystem";
+Lib.BriefingSystem.Global = {
+    Briefing = {},
+    BriefingQueue = {},
+    BriefingCounter = 0,
+};
+Lib.BriefingSystem.Local = {
+    ParallaxWidgets = {
+        -- Can not set UV coordinates for this... :(
+        -- {"/EndScreen/EndScreen/BG", "/EndScreen/EndScreen"},
+        {"/EndScreen/EndScreen/BackGround", "/EndScreen/EndScreen"},
+        -- Can not set UV coordinates for this... :(
+        -- {"/InGame/MissionStatistic/BG", "/InGame/MissionStatistic"},
+        {"/InGame/Root/EndScreen/BlackBG", "/InGame/Root/EndScreen"},
+        {"/InGame/Root/EndScreen/BG", "/InGame/Root/EndScreen"},
+        {"/InGame/Root/BlackStartScreen/BG", "/InGame/Root/BlackStartScreen"},
     },
-}
+    Briefing = {},
+};
+Lib.BriefingSystem.Text = {
+    NextButton = {de = "Weiter",  en = "Forward",  fr = "Continuer"},
+    PrevButton = {de = "Zurück",  en = "Previous", fr = "Retour"},
+    EndButton  = {de = "Beenden", en = "Close",    fr = "Quitter"},
+};
 
 CONST_BRIEFING = {
     TIMER_PER_CHAR = 0.175,

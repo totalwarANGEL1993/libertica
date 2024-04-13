@@ -17,12 +17,11 @@
 --- * Show/Hide Hero ability button
 --- * Show/Hide Select hero button
 --- * Show/Hide Select units button
-Lib.UITools = {
-    Name = "UITools",
-
-    Global = {},
-    Local = {},
-}
+---
+Lib.UITools = Lib.UITools or {};
+Lib.UITools.Name = "UITools";
+Lib.UITools.Global = {};
+Lib.UITools.Local = {};
 
 CONST_PLAYER_NAMES = {};
 

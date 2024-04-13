@@ -3,40 +3,38 @@
 --- Warehouses are modified tradeposts where the player can buy goods without
 --- an AI player involved. But goods can not be sold to the warehouse. Payment
 --- can be set to any type of resource.
-Lib.Warehouse = {
-    Name = "Warehouse",
-    CinematicEvents = {},
-
-    Global = {
-        OfferSequence = 0,
-        Warehouses = {Job = 0},
-        Inflation = {
-            Players = {},
-            Inc = 0.12,
-            Min = 0.50,
-            Max = 1.75,
-        },
+---
+Lib.Warehouse = Lib.Warehouse or {};
+Lib.Warehouse.Name = "Warehouse";
+Lib.Warehouse.CinematicEvents = {};
+Lib.Warehouse.Global = {
+    OfferSequence = 0,
+    Warehouses = {Job = 0},
+    Inflation = {
+        Players = {},
+        Inc = 0.12,
+        Min = 0.50,
+        Max = 1.75,
     },
-    Local = {
-        Warehouses = {},
-        Inflation = {
-            Players = {},
-            Inc = 0.12,
-            Min = 0.50,
-            Max = 1.75,
-        },
+};
+Lib.Warehouse.Local = {
+    Warehouses = {},
+    Inflation = {
+        Players = {},
+        Inc = 0.12,
+        Min = 0.50,
+        Max = 1.75,
     },
-
-    Text = {
-        OfferTitle = {
-            {de = "Keine Angebote", en = "No Offers",},
-            {de = "%d %s kaufen%s", en = "Purchase %d %s%s",},
-            {de = "%s anheuern", en = "Hire %s",},
-            {de = "%s anheuern%s", en = "Hire %s%s",},
-            {de = "%s kaufen%s", en = "Purchase %s%s",},
-        },
-    }
-}
+};
+Lib.Warehouse.Text = {
+    OfferTitle = {
+        {de = "Keine Angebote", en = "No Offers",},
+        {de = "%d %s kaufen%s", en = "Purchase %d %s%s",},
+        {de = "%s anheuern", en = "Hire %s",},
+        {de = "%s anheuern%s", en = "Hire %s%s",},
+        {de = "%s kaufen%s", en = "Purchase %s%s",},
+    },
+};
 
 Lib.Require("comfort/GetSiegeengineTypeByCartType");
 Lib.Require("comfort/IsMultiplayer");

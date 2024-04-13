@@ -1,41 +1,38 @@
 --- Provides dialog and text windows.
 ---
-Lib.Requester = {
-    Name = "Requester",
-
-    Global = {};
-    Local = {
-        Chat = {
-            Data = {},
-            History = {},
-            Visible = {},
-            Widgets = {}
-        },
-        Requester = {
-            ActionFunction = nil,
-            ActionRequester = nil,
-            Next = nil,
-            Queue = {},
-        },
-    };
-
-    Shared = {
-        Text = {
-            ChooseLanguage = {
-                Title = {
-                    de = "Wählt die Sprache",
-                    en = "Chose your Tongue",
-                    fr = "Sélectionnez la langue",
-                },
-                Text = {
-                    de = "Wählt aus der Liste die Sprache aus, in die Handlungstexte übersetzt werden sollen.",
-                    en = "Choose from the list below which language story texts shall be presented to you.",
-                    fr = "Sélectionne dans la liste la langue dans laquelle les textes narratifs doivent être traduits.",
-                }
-            }
-        };
+Lib.Requester = Lib.Requester or {};
+Lib.Requester.Name = "Requester";
+Lib.Requester.Global = {};
+Lib.Requester.Local = {
+    Chat = {
+        Data = {},
+        History = {},
+        Visible = {},
+        Widgets = {}
     },
-}
+    Requester = {
+        ActionFunction = nil,
+        ActionRequester = nil,
+        Next = nil,
+        Queue = {},
+    },
+};
+Lib.Requester.Shared = {
+    Text = {
+        ChooseLanguage = {
+            Title = {
+                de = "Wählt die Sprache",
+                en = "Chose your Tongue",
+                fr = "Sélectionnez la langue",
+            },
+            Text = {
+                de = "Wählt aus der Liste die Sprache aus, in die Handlungstexte übersetzt werden sollen.",
+                en = "Choose from the list below which language story texts shall be presented to you.",
+                fr = "Sélectionne dans la liste la langue dans laquelle les textes narratifs doivent être traduits.",
+            }
+        }
+    },
+};
 
 Lib.Require("core/core");
 Lib.Require("module/information/Requester_API");

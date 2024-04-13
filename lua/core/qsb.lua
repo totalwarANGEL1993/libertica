@@ -9,6 +9,7 @@
 --- @diagnostic disable: missing-return-value
 
 ParameterType = ParameterType or {};
+
 g_QuestBehaviorVersion = 1;
 g_QuestBehaviorTypes = {};
 
@@ -69,7 +70,7 @@ function RegisterBehavior(_Behavior)
     table.insert(g_QuestBehaviorTypes, _Behavior);
 end
 
-if GUI then
+if not MapEditor and GUI then
     return;
 end
 

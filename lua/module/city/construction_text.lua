@@ -1,5 +1,6 @@
 Lib.Register("module/city/Construction_Text");
 
+Lib.Construction = Lib.Construction or {};
 Lib.Construction.Text = {
     NoKnockdown = {
         de = "Das kann nicht abgerissen werden!",

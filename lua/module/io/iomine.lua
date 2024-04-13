@@ -1,12 +1,10 @@
 --- Allows to create constructable resource sources.
-Lib.IOMine = {
-    Name = "IOMine",
-
-    Global = {
-        Mines = {},
-    },
-    Local  = {},
+Lib.IOMine = Lib.IOMine or {};
+Lib.IOMine.Name = "IOMine";
+Lib.IOMine.Global = {
+    Mines = {},
 };
+Lib.IOMine.Local  = {};
 
 Lib.Require("core/Core");
 Lib.Require("module/io/IO");

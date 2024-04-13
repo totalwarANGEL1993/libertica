@@ -2,25 +2,22 @@
 ---
 --- Cutscenes are XML defined camera movemehts that can be played by the
 --- game engine. Cutscenes feature smooth camera animations.
-
-Lib.CutsceneSystem = {
-    Name = "CutsceneSystem",
-
-    Global = {
-        Cutscene = {},
-        CutsceneQueue = {},
-        CutsceneCounter = 0;
-    },
-    Local = {
-        Cutscene = {},
-    },
-
-    Text = {
-        FastForwardActivate   = {de = "Beschleunigen",      en = "Fast Forward", fr = "Accélérer"},
-        FastForwardDeactivate = {de = "Zurücksetzen",       en = "Normal Speed", fr = "Réinitialiser"},
-        FastFormardMessage    = {de = "SCHNELLER VORLAUF",  en = "FAST FORWARD", fr = "AVANCÉ RAPIDE"},
-    },
-}
+---
+Lib.CutsceneSystem = Lib.CutsceneSystem or {};
+Lib.CutsceneSystem.Name = "CutsceneSystem";
+Lib.CutsceneSystem.Global = {
+    Cutscene = {},
+    CutsceneQueue = {},
+    CutsceneCounter = 0;
+};
+Lib.CutsceneSystem.Local = {
+    Cutscene = {},
+};
+Lib.CutsceneSystem.Text = {
+    FastForwardActivate   = {de = "Beschleunigen",      en = "Fast Forward", fr = "Accélérer"},
+    FastForwardDeactivate = {de = "Zurücksetzen",       en = "Normal Speed", fr = "Réinitialiser"},
+    FastFormardMessage    = {de = "SCHNELLER VORLAUF",  en = "FAST FORWARD", fr = "AVANCÉ RAPIDE"},
+};
 
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIEffects");

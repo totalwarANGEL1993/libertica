@@ -7,13 +7,12 @@
 --- - Start/stop voice playback
 --- - Start/stop sound effecs
 --- - Change sound configuration
-Lib.Sound = {
-    Name = "Sound",
-
-    Global = {},
-    Local = {
-        SoundBackup = {},
-    },
+---
+Lib.Sound = Lib.Sound or {};
+Lib.Sound.Name = "Sound";
+Lib.Sound.Global = {};
+Lib.Sound.Local = {
+    SoundBackup = {},
 };
 
 CONST_FARCLIPPLANE = 45000;

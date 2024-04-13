@@ -1,15 +1,13 @@
 --- @diagnostic disable: duplicate-set-field
 
 --- 
-Lib.Camera = {
-    Name = "Camera",
-
-    Global = {};
-    Local  = {
-        BorderScrollDeactivated = false,
-        ExtendedZoomHotKeyID = 0,
-        ExtendedZoomAllowed = true,
-    };
+Lib.Camera = Lib.Camera or {};
+Lib.Camera.Name = "Camera";
+Lib.Camera.Global = {};
+Lib.Camera.Local  = {
+    BorderScrollDeactivated = false,
+    ExtendedZoomHotKeyID = 0,
+    ExtendedZoomAllowed = true,
 };
 
 CONST_FARCLIPPLANE = 45000;

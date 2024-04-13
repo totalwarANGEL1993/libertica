@@ -1,5 +1,6 @@
 Lib.Register("module/city/LifestockSystem_Text");
 
+Lib.LifestockSystem = Lib.LifestockSystem or {};
 Lib.LifestockSystem.Text = {
     CattleStarved = {
         de = "Eure Kühe sind verhungert!",

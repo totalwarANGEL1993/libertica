@@ -19,74 +19,72 @@
 ---
 --- Things that kills animals:
 --- * being sick (5% chance each period)
-Lib.SettlementSurvival = {
-    Name = "SettlementSurvival",
-
-    Global = {
-        AnimalPlague = {
-            AnimalsBecomeSick = false,
-            IsActive = false,
-            AffectAI = false,
-        },
-        Famine = {
-            IsActive = false,
-            AffectAI = false,
-        },
-        ColdWeather = {
-            IsActive = false,
-            AffectAI = false,
-        },
-        HotWeather = {
-            IsActive = false,
-            AffectAI = false,
-        },
-        Negligence = {
-            IsActive = false,
-            AffectAI = false,
-        },
-        Plague = {
-            IsActive = false,
-            AffectAI = false,
-        },
-        SuspendedSettlers = {},
+Lib.SettlementSurvival = Lib.SettlementSurvival or {};
+Lib.SettlementSurvival.Name = "SettlementSurvival";
+Lib.SettlementSurvival.Global = {
+    AnimalPlague = {
+        AnimalsBecomeSick = false,
+        IsActive = false,
+        AffectAI = false,
     },
-    Local  = {
-        SuspendedSettlers = {},
+    Famine = {
+        IsActive = false,
+        AffectAI = false,
     },
-    Shared = {
-        AnimalPlague = {
-            InfectionChance = 6,
-            InfectionTimer = 60,
-            DeathChance = 12,
-            DeathTimer = 30,
-        },
-        ColdWeather = {
-            ConsumptionFactor = 0.01,
-            ConsumptionTimer = 30,
-            Temperature = 5,
-            InfectionChance = 12,
-        },
-        HotWeather = {
-            IgnitionChance = 5,
-            IgnitionTimer = 30,
-            Temperature = 30,
-        },
-        Famine = {
-            DeathChance = 6,
-            DeathTimer = 30,
-        },
-        Negligence = {
-            InfectionChance = 6,
-            InfectionTimer = 90,
-        },
-        Plague = {
-            DeathChance = 12,
-            DeathTimer = 30,
-        },
-        SuspendedSettlers = {
-            MourningTime = 5*60,
-        },
-    }
+    ColdWeather = {
+        IsActive = false,
+        AffectAI = false,
+    },
+    HotWeather = {
+        IsActive = false,
+        AffectAI = false,
+    },
+    Negligence = {
+        IsActive = false,
+        AffectAI = false,
+    },
+    Plague = {
+        IsActive = false,
+        AffectAI = false,
+    },
+    SuspendedSettlers = {},
+};
+Lib.SettlementSurvival.Local  = {
+    SuspendedSettlers = {},
+};
+Lib.SettlementSurvival.Shared = {
+    AnimalPlague = {
+        InfectionChance = 6,
+        InfectionTimer = 60,
+        DeathChance = 12,
+        DeathTimer = 30,
+    },
+    ColdWeather = {
+        ConsumptionFactor = 0.01,
+        ConsumptionTimer = 30,
+        Temperature = 5,
+        InfectionChance = 12,
+    },
+    HotWeather = {
+        IgnitionChance = 5,
+        IgnitionTimer = 30,
+        Temperature = 30,
+    },
+    Famine = {
+        DeathChance = 6,
+        DeathTimer = 30,
+    },
+    Negligence = {
+        InfectionChance = 6,
+        InfectionTimer = 90,
+    },
+    Plague = {
+        DeathChance = 12,
+        DeathTimer = 30,
+    },
+    SuspendedSettlers = {
+        MourningTime = 5*60,
+    },
 };
 
 Lib.Require("comfort/global/SetHealth");

@@ -1,5 +1,6 @@
 Lib.Register("module/ui/UITools_Player");
 
+Lib.UITools = Lib.UITools or {};
 Lib.UITools.Player = {};
 
 function Lib.UITools.Player:SetPlayerPortraitByPrimaryKnight(_PlayerID)

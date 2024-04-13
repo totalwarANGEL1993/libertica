@@ -42,6 +42,9 @@ comfort/global/setposition
 comfort/local/test
 
 core/Core
+module/ui/UITools
+module/ui/UIEffects
+module/ui/UIBuilding
 module/city/Construction
 module/npc/NPC
 module/sound/Sound
@@ -54,9 +57,6 @@ module/quest/QuestJornal
 module/faker/Technology
 module/trade/Warehouse
 module/camera/Camera
-module/ui/UITools
-module/ui/UIEffects
-module/ui/UIBuilding
 module/city/SettlementSurvival
 module/information/BriefingSystem
 module/information/CutsceneSystem

@@ -1,13 +1,13 @@
 
-Lib.Core = Lib.Core or {
-    ModuleList = {},
-    Global = {
-        IsInstalled = false,
-    },
-    Local = {
-        IsInstalled = false;
-    }
-}
+Lib.Core = Lib.Core or {};
+
+Lib.Core.ModuleList = {};
+Lib.Core.Global = {
+    IsInstalled = false,
+};
+Lib.Core.Local = {
+    IsInstalled = false;
+};
 
 Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");

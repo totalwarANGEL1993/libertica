@@ -1,63 +1,61 @@
 --- Allows to place up to 6 additional buttons in building menus.
-Lib.UIBuilding = {
-    Name = "UIBuilding",
-    CinematicEvents = {},
-
-    Global = {},
-    Local = {
-        BuildingButtons = {
-            BindingCounter = 0,
-            Bindings = {},
-            Configuration = {
-                ["BuyAmmunitionCart"] = {
-                    TypeExclusion = "^B_.*StoreHouse",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["BuyBattallion"] = {
-                    TypeExclusion = "^B_[CB]a[sr][tr][la][ec]",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["PlaceField"] = {
-                    TypeExclusion = "^B_.*[BFH][aei][erv][kme]",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["StartFestival"] = {
-                    TypeExclusion = "^B_Marketplace",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["StartTheatrePlay"] = {
-                    TypeExclusion = "^B_Theatre",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["UpgradeTurret"] = {
-                    TypeExclusion = "^B_WallTurret",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["BuyBatteringRamCart"] = {
-                    TypeExclusion = "^B_SiegeEngineWorkshop",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["BuyCatapultCart"] = {
-                    TypeExclusion = "^B_SiegeEngineWorkshop",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
-                ["BuySiegeTowerCart"] = {
-                    TypeExclusion = "^B_SiegeEngineWorkshop",
-                    OriginalPosition = nil,
-                    Bind = nil,
-                },
+Lib.UIBuilding = Lib.UIBuilding or {};
+Lib.UIBuilding.Name = "UIBuilding";
+Lib.UIBuilding.CinematicEvents = {};
+Lib.UIBuilding.Global = {};
+Lib.UIBuilding.Local = {
+    BuildingButtons = {
+        BindingCounter = 0,
+        Bindings = {},
+        Configuration = {
+            ["BuyAmmunitionCart"] = {
+                TypeExclusion = "^B_.*StoreHouse",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["BuyBattallion"] = {
+                TypeExclusion = "^B_[CB]a[sr][tr][la][ec]",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["PlaceField"] = {
+                TypeExclusion = "^B_.*[BFH][aei][erv][kme]",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["StartFestival"] = {
+                TypeExclusion = "^B_Marketplace",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["StartTheatrePlay"] = {
+                TypeExclusion = "^B_Theatre",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["UpgradeTurret"] = {
+                TypeExclusion = "^B_WallTurret",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["BuyBatteringRamCart"] = {
+                TypeExclusion = "^B_SiegeEngineWorkshop",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["BuyCatapultCart"] = {
+                TypeExclusion = "^B_SiegeEngineWorkshop",
+                OriginalPosition = nil,
+                Bind = nil,
+            },
+            ["BuySiegeTowerCart"] = {
+                TypeExclusion = "^B_SiegeEngineWorkshop",
+                OriginalPosition = nil,
+                Bind = nil,
             },
         },
     },
-}
+};
 
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIBuilding_API");

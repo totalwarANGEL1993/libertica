@@ -1,23 +1,20 @@
-
-Lib.UIEffects = {
-    Name = "UIEffects",
-    CinematicEvents = {},
-
-    Global = {
-        CinematicEventID = 0,
-        CinematicEventStatus = {},
-        CinematicEventQueue = {},
-        TypewriterEventData = {},
-        TypewriterEventCounter = 0,
-    },
-    Local = {
-        CinematicEventStatus = {},
-        ChatOptionsWasShown = false,
-        MessageLogWasShown = false,
-        PauseScreenShown = false,
-        NormalModeHidden = false,
-    },
-}
+Lib.UIEffects = Lib.UIEffects or {};
+Lib.UIEffects.Name = "UIEffects";
+Lib.UIEffects.CinematicEvents = {};
+Lib.UIEffects.Global = {
+    CinematicEventID = 0,
+    CinematicEventStatus = {},
+    CinematicEventQueue = {},
+    TypewriterEventData = {},
+    TypewriterEventCounter = 0,
+};
+Lib.UIEffects.Local = {
+    CinematicEventStatus = {},
+    ChatOptionsWasShown = false,
+    MessageLogWasShown = false,
+    PauseScreenShown = false,
+    NormalModeHidden = false,
+};
 
 CinematicEventTypes = {};
 CinematicEventState = {

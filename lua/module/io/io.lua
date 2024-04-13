@@ -4,25 +4,24 @@
 --- * `enableobject <ScriptName>`  - A object is activated
 --- * `disableobject <ScriptName>` - A object is deactivated
 --- * `initobject <ScriptName>`    - The object is rudimentarily activated
-Lib.IO = {
-    Name = "IO",
-
-    Global = {
-        SlaveSequence = 0,
-    };
-    Local  = {
-        Data = {},
-    };
-    Shared = {
-        TechnologyConfig = {
-            -- Tech name, Description, Icon, Extra Number
-            {"R_CallGeologist", {de = "Geologen rufen", en = "Order geologist", fr = "Ordre géologue"}, {8, 1, 1}, 1},
-            {"R_RefillIronMine", {de = "Eisenmine auffüllen", en = "Refill mine", fr = "Recharger le mien"}, {8, 2, 1}, 1},
-            {"R_RefillStoneMine", {de = "Steinbruch auffüllen", en = "Refill quarry", fr = "Carrière de recharge"}, {8, 3, 1}, 1},
-            {"R_RefillCistern", {de = "Brunnen auffüllen", en = "Refill well", fr = "Bien remplir"}, {8, 4, 1}, 1},
-            {"R_Tradepost", {de = "Handelsposten bauen", en = "Build Tradepost", fr = "Route commerciale"}, {3, 1, 1}, 1},
-        }
-    };
+---
+Lib.IO = Lib.IO or {};
+Lib.IO.Name = "IO";
+Lib.IO.Global = {
+    SlaveSequence = 0,
+};
+Lib.IO.Local  = {
+    Data = {},
+};
+Lib.IO.Shared = {
+    TechnologyConfig = {
+        -- Tech name, Description, Icon, Extra Number
+        {"R_CallGeologist", {de = "Geologen rufen", en = "Order geologist", fr = "Ordre géologue"}, {8, 1, 1}, 1},
+        {"R_RefillIronMine", {de = "Eisenmine auffüllen", en = "Refill mine", fr = "Recharger le mien"}, {8, 2, 1}, 1},
+        {"R_RefillStoneMine", {de = "Steinbruch auffüllen", en = "Refill quarry", fr = "Carrière de recharge"}, {8, 3, 1}, 1},
+        {"R_RefillCistern", {de = "Brunnen auffüllen", en = "Refill well", fr = "Bien remplir"}, {8, 4, 1}, 1},
+        {"R_Tradepost", {de = "Handelsposten bauen", en = "Build Tradepost", fr = "Route commerciale"}, {3, 1, 1}, 1},
+    }
 };
 
 CONST_IO = {};

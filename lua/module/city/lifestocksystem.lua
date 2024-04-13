@@ -9,55 +9,47 @@
 --- * `Technologies.R_Cattle` - Allows to breed cows
 --- * `Technologies.R_Sheep`  - Allows to breed sheeps
 --- 
-Lib.LifestockSystem = {
-    Name = "LifestockSystem",
+Lib.LifestockSystem = Lib.LifestockSystem or {};
+Lib.LifestockSystem.Name = "LifestockSystem";
+Lib.LifestockSystem.Global = {
+    CattleBasePrice = 300,
+    CattleGrainCost = 10,
+    CattleGrainUpkeep = 1,
+    CattleFeedingTimer = 0,
+    CattleStarveChance = 35,
+    SheepBasePrice = 300,
+    SheepGrainCost = 10,
+    SheepGrainUpkeep = 1,
+    SheepFeedingTimer = 0,
+    SheepStarveChance = 35,
+};
+Lib.LifestockSystem.Local  = {
+    BuyLock = false,
+    CattleBasePrice = 300,
+    CattleGrainCost = 10,
+    CattleGrainUpkeep = 1,
+    CattleFeedingTimer = 0,
+    CattleStarveChance = 35,
+    SheepBasePrice = 300,
+    SheepGrainCost = 10,
+    SheepGrainUpkeep = 1,
+    SheepFeedingTimer = 0,
+    SheepStarveChance = 35,
 
-    Global = {
-        CattleBasePrice = 300,
-        CattleGrainCost = 10,
-        CattleGrainUpkeep = 1,
-        CattleFeedingTimer = 0,
-        CattleStarveChance = 35,
-        SheepBasePrice = 300,
-        SheepGrainCost = 10,
-        SheepGrainUpkeep = 1,
-        SheepFeedingTimer = 0,
-        SheepStarveChance = 35,
-
-        Text = {
-            CattleStarved = "",
-            SheepStarved = "",
-        }
-    },
-    Local  = {
-        BuyLock = false,
-        CattleBasePrice = 300,
-        CattleGrainCost = 10,
-        CattleGrainUpkeep = 1,
-        CattleFeedingTimer = 0,
-        CattleStarveChance = 35,
-        SheepBasePrice = 300,
-        SheepGrainCost = 10,
-        SheepGrainUpkeep = 1,
-        SheepFeedingTimer = 0,
-        SheepStarveChance = 35,
-
-        Text = {
-            CattleTitle = "",
-            CattleDescription = "",
-            CattleDisabled = "",
-            SheepTitle = "",
-            SheepDescription = "",
-            SheepDisabled = "",
-        }
-    },
-
-    Shared = {
-        TechnologyConfig = {
-            -- Tech name, Description, Icon, Extra Number
-            {"R_Cattle", {de = "Kühe züchten",   en = "Breeding Cows",   fr = "Vaches reproductrices"}, {3, 16, 0}, 0},
-            {"R_Sheep",  {de = "Schafe züchten", en = "Breeding Sheeps", fr = "Moutons reproducteurs"}, {4,  1, 0}, 0},
-        },
+    Text = {
+        CattleTitle = "",
+        CattleDescription = "",
+        CattleDisabled = "",
+        SheepTitle = "",
+        SheepDescription = "",
+        SheepDisabled = "",
+    }
+};
+Lib.LifestockSystem.Shared = {
+    TechnologyConfig = {
+        -- Tech name, Description, Icon, Extra Number
+        {"R_Cattle", {de = "Kühe züchten",   en = "Breeding Cows",   fr = "Vaches reproductrices"}, {3, 16, 0}, 0},
+        {"R_Sheep",  {de = "Schafe züchten", en = "Breeding Sheeps", fr = "Moutons reproducteurs"}, {4,  1, 0}, 0},
     },
 };
 

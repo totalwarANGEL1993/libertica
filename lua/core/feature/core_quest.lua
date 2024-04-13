@@ -1,3 +1,4 @@
+Lib.Core = Lib.Core or {};
 Lib.Core.Quest = {
     QuestCounter = 0,
     Text = {

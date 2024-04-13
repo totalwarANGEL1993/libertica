@@ -1,5 +1,6 @@
 Lib.Register("module/promotion/Promotion_Requirements");
 
+Lib.Promotion = Lib.Promotion or {};
 Lib.Promotion.Requirements = {};
 
 -- A workaround that clears all technologies.

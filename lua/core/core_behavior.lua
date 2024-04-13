@@ -230,13 +230,6 @@ B_Goal_Diplomacy = {
         { ParameterType.Custom,   en = "Relation", de = "Relation", fr = "Relation" },
         { ParameterType.Custom,   en = "Diplomacy state", de = "Diplomatische Beziehung", fr = "Relations diplomatiques" },
     },
-    DiploNameMap = {
-        [DiplomacyStates.Allied]             = {de = "Verbündeter",    en = "Allied",               fr = "Allié"},
-        [DiplomacyStates.TradeContact]       = {de = "Handelspartner", en = "Trade Contact",        fr = "Partenaire commercial"},
-        [DiplomacyStates.EstablishedContact] = {de = "Bekannt",        en = "Established Contact",  fr = "Contact établi"},
-        [DiplomacyStates.Undecided]          = {de = "Unbekannt",      en = "Undecided",            fr = "Inconnu"},
-        [DiplomacyStates.Enemy]              = {de = "Feind",          en = "Enemy",                fr = "Ennemi"},
-    },
     TextPattern = {
         de = "DIPLOMATIESTATUS ERREICHEN {cr}{cr}Status: %s{cr}Zur Partei: %s",
         en = "DIPLOMATIC STATE {cr}{cr}State: %s{cr}To player: %s",
@@ -248,11 +241,22 @@ function B_Goal_Diplomacy:GetGoalTable()
     return { Objective.Custom2, {self, self.CustomFunction}};
 end
 
+function B_Goal_Diplomacy:GetDiplomacyMapping()
+    return {
+        [DiplomacyStates.Allied]             = {de = "Verbündeter",    en = "Allied",               fr = "Allié"},
+        [DiplomacyStates.TradeContact]       = {de = "Handelspartner", en = "Trade Contact",        fr = "Partenaire commercial"},
+        [DiplomacyStates.EstablishedContact] = {de = "Bekannt",        en = "Established Contact",  fr = "Contact établi"},
+        [DiplomacyStates.Undecided]          = {de = "Unbekannt",      en = "Undecided",            fr = "Inconnu"},
+        [DiplomacyStates.Enemy]              = {de = "Feind",          en = "Enemy",                fr = "Ennemi"},
+    };
+end
+
 function B_Goal_Diplomacy:ChangeCaption(_Quest)
+    local DiplomacyMap = self:GetDiplomacyMapping();
     local PlayerName = GetPlayerName(self.PlayerID) or "";
     local Text = string.format(
         Localize(self.TextPattern),
-        Localize(self.DiploNameMap[self.DiplState]),
+        Localize(DiplomacyMap[self.DiplState]),
         PlayerName
     );
     Lib.Core.Quest:ChangeCustomQuestCaptionText(Text, _Quest);

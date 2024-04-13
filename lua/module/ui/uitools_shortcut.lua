@@ -1,5 +1,6 @@
 Lib.Register("module/ui/UITools_Shortcut");
 
+Lib.UITools = Lib.UITools or {};
 Lib.UITools.Shortcut = {
     HotkeyDescriptions = {},
 };

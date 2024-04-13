@@ -5,23 +5,20 @@
 --- NPCs are characters who are activated by the player with a hero hence
 --- talk to them. Much like interactive objects an action can be called
 --- and some other adjustments can be made.
-Lib.NPC = {
-    Name = "NPC",
-
-    Global = {
-        Interactions = {},
-        NPC = {},
-        UseMarker = true,
-    };
-    Local  = {};
-
-    Text = {
-        StartConversation = {
-            de = "Gespräch beginnen",
-            en = "Start conversation",
-            fr = "Commencer la conversation",
-        }
-    };
+Lib.NPC = Lib.NPC or {};
+Lib.NPC.Name = "NPC";
+Lib.NPC.Global = {
+    Interactions = {},
+    NPC = {},
+    UseMarker = true,
+};
+Lib.NPC.Local  = {};
+Lib.NPC.Text = {
+    StartConversation = {
+        de = "Gespräch beginnen",
+        en = "Start conversation",
+        fr = "Commencer la conversation",
+    }
 };
 
 CONST_LAST_NPC_INTERACTED = 0;

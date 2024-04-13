@@ -1,15 +1,13 @@
 --- Allows to create user defined technologies.
 ---
 --- Technologies should be defined directly on game start.
-Lib.Technology = {
-    Name = "Technology",
-
-    Global = {};
-    Local  = {};
-    Shared  = {
-        CustomTechnologySequence = 0,
-        CustomTechnologies = {},
-    };
+Lib.Technology = Lib.Technology or {};
+Lib.Technology.Name = "Technology";
+Lib.Technology.Global = {};
+Lib.Technology.Local  = {};
+Lib.Technology.Shared  = {
+    CustomTechnologySequence = 0,
+    CustomTechnologies = {},
 };
 
 CONST_TECHNOLOGY_TO_INDEX = {};
