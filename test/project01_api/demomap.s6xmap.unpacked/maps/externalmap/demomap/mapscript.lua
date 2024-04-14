@@ -7,3 +7,5 @@ Goal_NPC("foo", "bar");
 Reward_DEBUG(true, true, true, true, false);
 
 Goal_ActivateSeveralObjects("foo");
+
+local report = Report.BorderScrollLocked;
