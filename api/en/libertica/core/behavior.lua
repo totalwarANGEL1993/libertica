@@ -1,12 +1,12 @@
 --- Enables debug mode.
 ---
---- @param _DisplayScriptErrors boolean Check quests at runtime
+--- @param _Assertions boolean Enable assertions
 --- @param _CheckAtRun boolean Check quests at runtime
 --- @param _DevelopingCheats boolean Enable cheats
 --- @param _DevelopingShell boolean Enable input
 --- @param _TraceQuests boolean Enable quest tracking
 ---
-function Reward_DEBUG(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
+function Reward_DEBUG(_Assertions, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
 end
 
 ---

@@ -1,0 +1,14 @@
+{
+    "Lua.diagnostics.globals": [],
+    "Lua.workspace.ignoreDir": [
+        // Englische API ignorieren, um doppelte Texte zu vermeiden
+        "libertica_release/libertica_api/en",
+        // Nicht verwendete Ordner ebenfalls ignorieren
+        "libertica_release/libertica",
+        "libertica_release/single",
+    ],
+    "Lua.workspace.library": [
+        // Deutsche API hier als Bibliothek eintragen
+        "libertica_release/libertica_api/de"
+    ]
+}

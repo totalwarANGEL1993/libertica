@@ -1,12 +1,12 @@
 --- Aktiviert den Debug.
 ---
---- @param _DisplayScriptErrors boolean Prüfe Quests zur Laufzeit
+--- @param _Assertions boolean Assertions aktivieren
 --- @param _CheckAtRun boolean Prüfe Quests zur Laufzeit
 --- @param _DevelopingCheats boolean Aktiviert Cheats
 --- @param _DevelopingShell boolean Aktiviert Eingabe
 --- @param _TraceQuests boolean Aktiviert Questverfolgung
 ---
-function Reward_DEBUG(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
+function Reward_DEBUG(_Assertions, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
 end
 
 ---
