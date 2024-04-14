@@ -268,5 +268,24 @@
         "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/extra1/shr/Script/Local",
         "E:/SteamLibrary/steamapps/common/The Settlers - Rise of an Empire - History Edition/Data/extra1/shr/Script/Shared",
         "lua"
+    ],
+    "vscode-lua-minify.renameVariables": false,
+    "vscode-lua-minify.renameGlobals": false,
+    "vscode-lua-minify.solveMath": false,
+    "vscode-lua-minify.excludeGlobs": [
+        "*.json",
+        "*.md",
+        "loader.lua",
+        "loadersf.lua",
+        "manager.lua",
+
+        "api",
+        "bin",
+        "exe",
+        "lua",
+        "release",
+        "test",
+        "var",
+        "release/libertica_api",
     ]
 }

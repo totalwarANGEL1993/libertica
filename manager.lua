@@ -151,7 +151,8 @@ function LibWriter:CreateSingleFile()
     fh = assert(io.open("var/qsb.lua", "wb"));
     fh:write(code);
     fh:close();
-    self:CompileFile('var/qsb.lua', 'var/qsb.lua');
+    -- Editor can't read binary
+    -- self:CompileFile('var/qsb.lua', 'var/qsb.lua');
 
     os.execute('cp "lua/core/mapscript_sf.lua" "var/mapscript.lua');
     os.execute('cp "lua/core/localmapscript_sf.lua" "var/localmapscript.lua');
@@ -182,7 +183,8 @@ function LibWriter:CreateQsb()
     local fh = assert(io.open("var/libertica/qsb.lua", "wb"));
     fh:write(behaviors);
     fh:close();
-    self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
+    -- Editor can't read binary
+    -- self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
 
     os.execute('cp "lua/core/mapscript.lua" "var/libertica/mapscript.lua');
     os.execute('cp "lua/core/localmapscript.lua" "var/libertica/localmapscript.lua');
