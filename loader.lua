@@ -1,3 +1,9 @@
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
+-- ||||                                                                  |||| --
+-- |||| LOADER                                                           |||| --
+-- ||||                                                                  |||| --
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
+
 Lib = {
     Loader = {
         Paths = {
@@ -17,7 +23,8 @@ Lib = {
 -- Prevent the null reference bug
 if Framework and Network then
     -- Search for files in map file
-    table.insert(Lib.Loader.Paths, 1, "maps/externalmap/" ..Framework.GetCurrentMapName().. "/");
+    local Name = Framework.GetCurrentMapName();
+    table.insert(Lib.Loader.Paths, 1, "maps/externalmap/" ..Name.. "/");
     -- Check for History Edition
     Lib.Loader.IsHistoryEdition = Network.IsNATReady ~= nil;
 end
@@ -83,4 +90,10 @@ function Lib.Loader.LoadSourceFile(_Source, _Path)
     local Path = _Source .. Lib.Loader.Root .. "/" .._Path:lower();
     Script.Load(Path.. ".lua");
 end
+
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
+-- ||||                                                                  |||| --
+-- |||| MAIN                                                             |||| --
+-- ||||                                                                  |||| --
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 
