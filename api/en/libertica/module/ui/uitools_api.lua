@@ -204,3 +204,11 @@ function SetPlayerPortrait(_PlayerID, _Portrait)
 end
 API.SetPlayerPortrait = SetPlayerPortrait;
 
+
+--- A human player has placed a building.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID of player
+--- * `EntityID` - ID of eneity
+Report.BuildingPlaced = anyInteger;
+

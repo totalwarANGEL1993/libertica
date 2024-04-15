@@ -62,25 +62,23 @@ end
 API.FinishCinematicEvent = FinishCinematicEvent;
 
 ---
--- Gibt den Zustand des Kinoevent zurück.
---
--- @param _Identifier            Bezeichner oder ID
--- @param[type=number] _PlayerID ID des Spielers
--- @return[type=number] Zustand des Kinoevent
--- @within Anwenderfunktionen
---
+--- Returns the state of the cinema event.
+---
+--- @param _Identifier any Identifier or ID
+--- @param _PlayerID integer ID of player
+--- @return integer State Zustand des Kinoevent
+---
 function GetCinematicEvent(_Identifier, _PlayerID)
     return 0;
 end
 API.GetCinematicEvent = GetCinematicEvent;
 
 ---
--- Prüft ob gerade ein Kinoevent für den Spieler aktiv ist.
---
--- @param[type=number] _PlayerID ID des Spielers
--- @return[type=boolean] Kinoevent ist aktiv
--- @within Anwenderfunktionen
---
+--- Checks if a cinema event is active for the player.
+---
+--- @param _PlayerID integer ID of player
+--- @return boolean State Cinema event is active
+---
 function IsCinematicEventActive(_PlayerID)
     return false;
 end
@@ -126,4 +124,44 @@ function StartTypewriter(_Data)
     return "";
 end
 API.StartTypewriter = StartTypewriter;
+
+
+
+--- A cinematic event has started for the player.
+---
+--- #### Parameter
+--- * `EventID`  - ID of cinematic event
+--- * `PlayerID` - ID of receiving Player
+Report.CinematicActivated = anyInteger;
+
+--- A cinematic event has concluded for the player.
+--- 
+--- #### Parameter
+--- * `EventID`  - ID of cinematic event
+--- * `PlayerID` - ID of receiving Player
+Report.CinematicConcluded = anyInteger;
+
+--- The normal interface is shown for the player.
+---
+--- #### Parameter
+--- * `PlayerID` - ID of receiving Player
+Report.GameInterfaceShown = anyInteger;
+
+--- The normal interface is hidden from the player.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID of receiving Player
+Report.GameInterfaceHidden = anyInteger;
+
+--- The fullscreen image background is shown for the player.
+---
+--- #### Parameter
+--- * `PlayerID` - ID of receiving Player
+Report.ImageScreenShown = anyInteger;
+
+--- The fullscreen image background is hidden from the player.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID of receiving Player
+Report.ImageScreenHidden = anyInteger;
 

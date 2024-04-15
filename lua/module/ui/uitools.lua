@@ -39,7 +39,10 @@ Lib.Register("module/ui/UITools");
 -- Global initalizer method
 function Lib.UITools.Global:Initialize()
     if not self.IsInstalled then
+        -- public reports
         Report.BuildingPlaced = CreateReport("Event_BuildingPlaced");
+
+        -- internal reports
         Report.UpdateTexturePosition = CreateReport("Event_UpdateTexturePosition");
 
         -- Garbage collection
@@ -73,7 +76,10 @@ end
 -- Local initalizer method
 function Lib.UITools.Local:Initialize()
     if not self.IsInstalled then
+        -- public reports
         Report.BuildingPlaced = CreateReport("Event_BuildingPlaced");
+
+        -- internal reports
         Report.UpdateTexturePosition = CreateReport("Event_UpdateTexturePosition");
 
         Lib.UITools.Shortcut:OverrideRegisterHotkey();

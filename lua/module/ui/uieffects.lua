@@ -34,12 +34,44 @@ Lib.Register("module/ui/UIEffects");
 -- Global initalizer method
 function Lib.UIEffects.Global:Initialize()
     if not self.IsInstalled then
+        --- A cinematic event, received by a player, has started.
+        ---
+        --- #### Parameter
+        --- * `EventID`  - ID of cinematic event
+        --- * `PlayerID` - ID of receiving Player
         Report.CinematicActivated = CreateReport("Event_CinematicEventActivated");
+
+        --- A cinematic event, received by a player, has concluded.
+        --- 
+        --- #### Parameter
+        --- * `EventID`  - ID of cinematic event
+        --- * `PlayerID` - ID of receiving Player
         Report.CinematicConcluded = CreateReport("Event_CinematicEventConcluded");
+
+        --- The normal interface is shown for the player.
+        ---
+        --- #### Parameter
+        --- * `PlayerID` - ID of receiving Player
         Report.GameInterfaceShown = CreateReport("Event_GameInterfaceShown");
+
+        --- The normal interface is hidden from the player.
+        --- 
+        --- #### Parameter
+        --- * `PlayerID` - ID of receiving Player
         Report.GameInterfaceHidden = CreateReport("Event_GameInterfaceHidden");
+
+        --- The fullscreen image background is shown for the player.
+        ---
+        --- #### Parameter
+        --- * `PlayerID` - ID of receiving Player
         Report.ImageScreenShown = CreateReport("Event_ImageScreenShown");
+
+        --- The fullscreen image background is hidden from the player.
+        --- 
+        --- #### Parameter
+        --- * `PlayerID` - ID of receiving Player
         Report.ImageScreenHidden = CreateReport("Event_ImageScreenHidden");
+
         Report.TypewriterStarted = CreateReport("Event_TypewriterStarted");
         Report.TypewriterEnded = CreateReport("Event_TypewriterEnded");
 
@@ -329,11 +361,14 @@ end
 -- Local initalizer method
 function Lib.UIEffects.Local:Initialize()
     if not self.IsInstalled then
+        -- public reports
         Report.CinematicActivated = CreateReport("Event_CinematicEventActivated");
         Report.CinematicConcluded = CreateReport("Event_CinematicEventConcluded");
         Report.GameInterfaceShown = CreateReport("Event_GameInterfaceShown");
         Report.GameInterfaceHidden = CreateReport("Event_GameInterfaceHidden");
         Report.ImageScreenShown = CreateReport("Event_ImageScreenShown");
+
+        -- internal reports
         Report.ImageScreenHidden = CreateReport("Event_ImageScreenHidden");
         Report.TypewriterStarted = CreateReport("Event_TypewriterStarted");
         Report.TypewriterEnded = CreateReport("Event_TypewriterEnded");
