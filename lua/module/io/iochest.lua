@@ -1,9 +1,3 @@
---- Offers easy to use treasure chests
----
---- #### Debug commands
---- * `goldchest <ScriptName>`   - Creates a random gold chest
---- * `goodchest <ScriptName>`   - Creates a random resource chest
---- * `luxurychest <ScriptName>` - Creates a random luxury chest
 Lib.IOChest = Lib.IOChest or {};
 Lib.IOChest.Name = "IOChest";
 Lib.IOChest.Global = {};

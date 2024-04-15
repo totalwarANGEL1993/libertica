@@ -1,6 +1,3 @@
---- Der Spieler muss bis zu 4 interaktive Objekte benutzen.
----
---- @param ... string List of scriptnames
 function Goal_ActivateSeveralObjects(...)
     return B_Goal_ActivateSeveralObjects:new(...);
 end

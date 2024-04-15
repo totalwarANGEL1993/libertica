@@ -1,8 +1,5 @@
 Lib.Register("comfort/GetPosition");
 
---- Returns the coordinates of the entity on the world.
---- @param _Entity any ID or scriptname
---- @return table Position Table of coordinates
 function GetPosition(_Entity)
     if not _Entity then
         return {X= 0, Y= 0, Z= 0};

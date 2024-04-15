@@ -1,8 +1,3 @@
---- Calls a mapscript function assuming it beeing a dialog.
----
---- Every briefing needs a unique name!
---- @param _Name string     Name of briefing
---- @param _Dialog string Name of function containing the briefing
 function Reprisal_Dialog(_Name, _Dialog)
     return B_Reprisal_Dialog:new(_Name, _Dialog);
 end
@@ -54,11 +49,6 @@ end
 
 -- -------------------------------------------------------------------------- --
 
---- Calls a mapscript function assuming it beeing a dialog.
----
---- Every briefing needs a unique name!
---- @param _Name string     Name of briefing
---- @param _Dialog string Name of function containing the briefing
 function Reward_Dialog(_Name, _Dialog)
     return B_Reward_Dialog:new(_Name, _Dialog);
 end
@@ -80,10 +70,6 @@ end
 
 -- -------------------------------------------------------------------------- --
 
---- Checks if a dialog has concluded and then starts a quest.
---- @param _Name string      Name of briefing
---- @param _PlayerID integer Receiving player
---- @param _Waittime integer Time to wait after
 function Trigger_Dialog(_Name, _PlayerID, _Waittime)
     return B_Trigger_Dialog:new(_Name, _PlayerID, _Waittime);
 end

@@ -1,8 +1,5 @@
 Lib.Register("comfort/ToBoolean");
 
---- Converts the input to a boolean.
---- @param _Input any Input to convert
---- @return boolean Converted Converted input
 function ToBoolean(_Input)
     if type(_Input) == "boolean" then
         return _Input;

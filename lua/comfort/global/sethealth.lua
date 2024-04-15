@@ -1,8 +1,5 @@
 Lib.Register("comfort/global/SetHealth");
 
---- Sets the health of the entity relative to the max health.
---- @param _Entity any    ID or script name
---- @param _Health number Relative health 
 function SetHealth(_Entity, _Health)
     assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     assert(type(_Health) == "number" and _Health >= 0);

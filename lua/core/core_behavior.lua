@@ -1,10 +1,3 @@
---- Aktiviert den Debug.
----
---- @param _Assertions boolean Assertions aktivieren
---- @param _CheckAtRun boolean Prüfe Quests zur Laufzeit
---- @param _DevelopingCheats boolean Aktiviert Cheats
---- @param _DevelopingShell boolean Aktiviert Eingabe
---- @param _TraceQuests boolean Aktiviert Questverfolgung
 function Reward_DEBUG(_Assertions, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
     return B_Reward_DEBUG:new(_Assertions, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests);
 end
@@ -55,13 +48,6 @@ RegisterBehavior(B_Reward_DEBUG);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein Interaktives Objekt muss benutzt werden.
---
--- @param _ScriptName Skriptname des interaktiven Objektes
---
--- @within Goal
---
 function Goal_ActivateObject(...)
     return B_Goal_ActivateObject:new(...);
 end
@@ -96,21 +82,6 @@ RegisterBehavior(B_Goal_ActivateObject);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Einem Spieler müssen Rohstoffe oder Waren gesendet werden.
---
--- In der Regel wird zum Auftraggeber gesendet. Es ist aber möglich auch zu
--- einem anderen Zielspieler schicken zu lassen. Wird ein Wagen gefangen
--- genommen, dann muss erneut geschickt werden. Optional kann dem Spieler
--- auch erlaubt werden, den Karren zurückzuerobern.
---
--- @param _GoodType      Typ der Ware
--- @param _GoodAmount    Menga der Ware
--- @param _OtherTarget   Anderes Ziel als Auftraggeber
--- @param _IgnoreCapture Wagen kann zurückerobert werden
---
--- @within Goal
---
 function Goal_Deliver(...)
     return B_Goal_Deliver:new(...)
 end
@@ -199,21 +170,6 @@ RegisterBehavior(B_Goal_Deliver);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Es muss ein bestimmter Diplomatiestatus zu einer anderen Patei erreicht
--- werden. Der Status kann eine Verbesserung oder eine Verschlechterung zum
--- aktuellen Status sein.
---
--- Die Relation kann entweder auf kleiner oder gleich (<=), größer oder gleich
--- (>=), oder exakte Gleichheit (==) eingestellt werden. Exakte GLeichheit ist
--- wegen der Gefahr eines Soft Locks mit Vorsicht zu genießen.
---
--- @param _PlayerID Partei, die Entdeckt werden muss
--- @param _Relation Größer-Kleiner-Relation
--- @param _State    Diplomatiestatus
---
--- @within Goal
---
 function Goal_Diplomacy(...)
     return B_Goal_Diplomacy:new(...);
 end
@@ -305,16 +261,6 @@ RegisterBehavior(B_Goal_Diplomacy);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Das Heimatterritorium des Spielers muss entdeckt werden.
---
--- Das Heimatterritorium ist immer das, wo sich Burg oder Lagerhaus der
--- zu entdeckenden Partei befinden.
---
--- @param _PlayerID ID der zu entdeckenden Partei
---
--- @within Goal
---
 function Goal_DiscoverPlayer(...)
     return B_Goal_DiscoverPlayer:new(...);
 end
@@ -363,16 +309,6 @@ RegisterBehavior(B_Goal_DiscoverPlayer);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein Territorium muss erstmalig vom Auftragnehmer betreten werden.
---
--- Wenn ein Spieler zuvor mit seinen Einheiten auf dem Territorium war, ist
--- es bereits entdeckt und das Ziel sofort erfüllt.
---
--- @param _Territory Name oder ID des Territorium
---
--- @within Goal
---
 function Goal_DiscoverTerritory(...)
     return B_Goal_DiscoverTerritory:new(...);
 end
@@ -411,20 +347,6 @@ RegisterBehavior(B_Goal_DiscoverTerritory);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Eine andere Partei muss besiegt werden.
---
--- Die Partei gilt als besiegt, wenn ein Hauptgebäude (Burg, Kirche, Lager)
--- zerstört wurde.
--- 
--- <b>Achtung:</b> Bei Banditen ist dieses Behavior wenig sinnvoll, da sie
--- nicht durch zerstörung ihres Hauptzeltes vernichtet werden. Hier bietet
--- sich Goal_DestroyAllPlayerUnits an.
---
--- @param _PlayerID ID des Spielers
---
--- @within Goal
---
 function Goal_DestroyPlayer(...)
     return B_Goal_DestroyPlayer:new(...);
 end
@@ -475,18 +397,6 @@ RegisterBehavior(B_Goal_DestroyPlayer)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Es sollen Informationen aus der Burg gestohlen werden.
---
--- Der Spieler muss einen Dieb entsenden um Informationen aus der Burg zu
--- stehlen. 
---
--- <b>Achtung:</b> Das ist nur bei Feinden möglich!
---
--- @param _PlayerID ID der Partei
---
--- @within Goal
---
 function Goal_StealInformation(...)
     return B_Goal_StealInformation:new(...);
 end
@@ -531,16 +441,6 @@ RegisterBehavior(B_Goal_StealInformation);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Alle Einheiten des Spielers müssen zerstört werden.
---
--- <b>Achtung</b>: Bei normalen Parteien, welche ein Dorf oder eine Stadt
--- besitzen, ist Goal_DestroyPlayer besser geeignet!
---
--- @param _PlayerID ID des Spielers
---
--- @within Goal
---
 function Goal_DestroyAllPlayerUnits(...)
     return B_Goal_DestroyAllPlayerUnits:new(...);
 end
@@ -590,19 +490,6 @@ RegisterBehavior(B_Goal_DestroyAllPlayerUnits);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein benanntes Entity muss zerstört werden.
---
--- Ein Entity gilt als zerstört, wenn es nicht mehr existiert oder während
--- der Laufzeit des Quests seine Entity-ID oder den Besitzer verändert.
---
--- <b>Achtung</b>: Helden können nicht direkt zerstört werden. Bei ihnen
--- genügt es, wenn sie sich "in die Burg zurückziehen".
---
--- @param _ScriptName Skriptname des Ziels
---
--- @within Goal
---
 function Goal_DestroyScriptEntity(...)
     return B_Goal_DestroyScriptEntity:new(...);
 end
@@ -660,18 +547,6 @@ RegisterBehavior(B_Goal_DestroyScriptEntity);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Eine Menge an Entities eines Typs müssen zerstört werden.
---
--- <b>Achtung</b>: Wenn Raubtiere zerstört werden sollen, muss Spieler 0
--- als Besitzer angegeben werden.
---
--- @param _EntityType Typ des Entity
--- @param _Amount     Menge an Entities des Typs
--- @param _PlayerID   Besitzer des Entity
---
--- @within Goal
---
 function Goal_DestroyType(...)
     return B_Goal_DestroyType:new(...);
 end
@@ -748,19 +623,6 @@ RegisterBehavior(B_Goal_DestroyType);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Eine Entfernung zwischen zwei Entities muss erreicht werden.
---
--- Je nach angegebener Relation muss die Entfernung unter- oder überschritten
--- werden, um den Quest zu gewinnen.
---
--- @param _ScriptName1  Erstes Entity
--- @param _ScriptName2  Zweites Entity
--- @param _Relation     Relation
--- @param _Distance     Entfernung
---
--- @within Goal
---
 function Goal_EntityDistance(...)
     return B_Goal_EntityDistance:new(...);
 end
@@ -831,17 +693,6 @@ RegisterBehavior(B_Goal_EntityDistance);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Primary Knight des angegebenen Spielers muss sich dem Ziel nähern.
---
--- Die Distanz, die unterschritten werden muss, kann frei bestimmt werden.
--- Wird die Distanz 0 belassen, wird sie automatisch 2500.
---
--- @param _ScriptName Skriptname des Ziels
--- @param _Disctande  (optional) Entfernung zum Ziel
---
--- @within Goal
---
 function Goal_KnightDistance(...)
     return B_Goal_KnightDistance:new(...);
 end
@@ -879,22 +730,8 @@ end
 
 RegisterBehavior(B_Goal_KnightDistance);
 
----
--- Eine bestimmte Anzahl an Einheiten einer Kategorie muss sich auf dem
--- Territorium befinden.
---
--- Es kann entweder gefordert werden, weniger als die angegebene Menge auf
--- dem Territorium zu haben (z.B. "<"" 1 für 0) oder mindestens so
--- viele Entities (z.B. ">=" 5 für mindestens 5).
---
--- @param _Territory  TerritoryID oder TerritoryName
--- @param _PlayerID   PlayerID der Einheiten
--- @param _Category   Kategorie der Einheiten
--- @param _Relation   Mengenrelation (< oder >=)
--- @param _Amount     Menge an Einheiten
---
--- @within Goal
---
+-- -------------------------------------------------------------------------- --
+
 function Goal_UnitsOnTerritory(...)
     return B_Goal_UnitsOnTerritory:new(...);
 end
@@ -1013,34 +850,6 @@ RegisterBehavior(B_Goal_UnitsOnTerritory);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der angegebene Spieler muss einen Buff aktivieren.
---
--- <u>Buffs "Aufstieg eines Königreich"</u>
--- <li>Buff_Spice: Salz</li>
--- <li>Buff_Colour: Farben</li>
--- <li>Buff_Entertainers: Entertainer anheuern</li>
--- <li>Buff_FoodDiversity: Vielfältige Nahrung</li>
--- <li>Buff_ClothesDiversity: Vielfältige Kleidung</li>
--- <li>Buff_HygieneDiversity: Vielfältige Hygiene</li>
--- <li>Buff_EntertainmentDiversity: Vielfältige Unterhaltung</li>
--- <li>Buff_Sermon: Predigt halten</li>
--- <li>Buff_Festival: Fest veranstalten</li>
--- <li>Buff_ExtraPayment: Bonussold auszahlen</li>
--- <li>Buff_HighTaxes: Hohe Steuern verlangen</li>
--- <li>Buff_NoPayment: Sold streichen</li>
--- <li>Buff_NoTaxes: Keine Steuern verlangen</li>
--- <br/>
--- <u>Buffs "Reich des Ostens"</u>
--- <li>Buff_Gems: Edelsteine</li>
--- <li>Buff_MusicalInstrument: Musikinstrumente</li>
--- <li>Buff_Olibanum: Weihrauch</li>
---
--- @param _PlayerID Spieler, der den Buff aktivieren muss
--- @param _Buff     Buff, der aktiviert werden soll
---
--- @within Goal
---
 function Goal_ActivateBuff(...)
     return B_Goal_ActivateBuff:new(...);
 end
@@ -1163,15 +972,6 @@ RegisterBehavior(B_Goal_ActivateBuff);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Zwei Punkte auf der Spielwelt müssen mit einer Straße verbunden werden.
---
--- @param _Position1 Erster Endpunkt der Straße
--- @param _Position2 Zweiter Endpunkt der Straße
--- @param _OnlyRoads Keine Wege akzeptieren
---
--- @within Goal
---
 function Goal_BuildRoad(...)
     return B_Goal_BuildRoad:new(...)
 end
@@ -1226,27 +1026,6 @@ RegisterBehavior(B_Goal_BuildRoad);
 
 -- -------------------------------------------------------------------------- --
 
-
----
--- Eine Mauer muss gebaut werden um die Bewegung eines Spielers einzuschränken.
--- 
--- Einschränken bedeutet, dass sich der angegebene Spieler nicht von Punkt A
--- nach Punkt B bewegen kann, weil eine Mauer im Weg ist. Die Punkte sind
--- frei wählbar. In den meisten Fällen reicht es, Marktplätze anzugeben.
---
--- Beispiel: Spieler 3 ist der Feind von Spieler 1, aber Bekannt mit Spieler 2.
--- Wenn er sich nicht mehr zwischen den Marktplätzen von Spieler 1 und 2
--- bewegen kann, weil eine Mauer dazwischen ist, ist das Ziel erreicht.
---
--- <b>Achtung:</b> Bei Monsun kann dieses Ziel fälschlicher Weise als erfüllt
--- gewertet werden, wenn der Weg durch Wasser blockiert wird!
---
--- @param _PlayerID  PlayerID, die blockiert wird
--- @param _Position1 Erste Position
--- @param _Position2 Zweite Position
---
--- @within Goal
---
 function Goal_BuildWall(...)
     return B_Goal_BuildWall:new(...)
 end
@@ -1333,13 +1112,6 @@ RegisterBehavior(B_Goal_BuildWall);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein bestimmtes Territorium muss vom Auftragnehmer eingenommen werden.
---
--- @param _Territory Territorium-ID oder Territoriumname
---
--- @within Goal
---
 function Goal_Claim(...)
     return B_Goal_Claim:new(...)
 end
@@ -1377,14 +1149,6 @@ RegisterBehavior(B_Goal_Claim);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss eine Menge an Territorien besitzen.
--- Das Heimatterritorium des Spielers wird mitgezählt!
---
--- @param _Amount Anzahl Territorien
---
--- @within Goal
---
 function Goal_ClaimXTerritories(...)
     return B_Goal_ClaimXTerritories:new(...)
 end
@@ -1419,18 +1183,6 @@ RegisterBehavior(B_Goal_ClaimXTerritories);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss auf dem Territorium einen Entitytyp erstellen.
---
--- Dieses Behavior eignet sich für Aufgaben vom Schlag "Baue X Getreidefarmen
--- Auf Territorium >".
---
--- @param _Type      Typ des Entity
--- @param _Amount    Menge an Entities
--- @param _Territory Territorium
---
--- @within Goal
---
 function Goal_Create(...)
     return B_Goal_Create:new(...);
 end
@@ -1474,14 +1226,6 @@ RegisterBehavior(B_Goal_Create);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss eine Menge von Rohstoffen produzieren.
---
--- @param _Type   Typ des Rohstoffs
--- @param _Amount Menge an Rohstoffen
---
--- @within Goal
---
 function Goal_Produce(...)
     return B_Goal_Produce:new(...);
 end
@@ -1520,15 +1264,6 @@ RegisterBehavior(B_Goal_Produce);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Spieler muss eine bestimmte Menge einer Ware erreichen.
---
--- @param _Type     Typ der Ware
--- @param _Amount   Menge an Waren
--- @param _Relation Mengenrelation
---
--- @within Goal
---
 function Goal_GoodAmount(...)
     return B_Goal_GoodAmount:new(...);
 end
@@ -1584,23 +1319,6 @@ RegisterBehavior(B_Goal_GoodAmount);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Die Siedler des Spielers dürfen nicht aufgrund des Bedürfnisses streiken.
---
--- <u>Bedürfnisse</u>
--- <ul>
--- <li>Clothes: Kleidung</li>
--- <li>Entertainment: Unterhaltung</li>
--- <li>Nutrition: Nahrung</li>
--- <li>Hygiene: Hygiene</li>
--- <li>Medicine: Medizin</li>
--- </ul>
---
--- @param _PlayerID ID des Spielers
--- @param _Need     Bedürfnis
---
--- @within Goal
---
 function Goal_SatisfyNeed(...)
     return B_Goal_SatisfyNeed:new(...);
 end
@@ -1654,14 +1372,6 @@ RegisterBehavior(B_Goal_SatisfyNeed);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der angegebene Spieler muss eine Menge an Siedlern in der Stadt haben.
---
--- @param _Amount   Menge an Siedlern
--- @param _PlayerID ID des Spielers (Default: 1)
---
--- @within Goal
---
 function Goal_SettlersNumber(...)
     return B_Goal_SettlersNumber:new(...);
 end
@@ -1699,13 +1409,6 @@ RegisterBehavior(B_Goal_SettlersNumber);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss eine Menge von Ehefrauen in der Stadt haben.
---
--- @param _Amount Menge an Ehefrauen
---
--- @within Goal
---
 function Goal_Spouses(...)
     return B_Goal_Spouses:new(...);
 end
@@ -1740,24 +1443,6 @@ RegisterBehavior(B_Goal_Spouses);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein Spieler muss eine Menge an Soldaten haben.
---
--- <u>Relationen</u>
--- <ul>
--- <li>>= - Anzahl als Mindestmenge</li>
--- <li>< - Weniger als Anzahl</li>
--- </ul>
---
--- Dieses Behavior kann verwendet werden um die Menge an feindlichen
--- Soldaten zu zählen oder die Menge an Soldaten des Spielers.
---
--- @param _PlayerID ID des Spielers
--- @param _Relation Mengenrelation
--- @param _Amount   Menge an Soldaten
---
--- @within Goal
---
 function Goal_SoldierCount(...)
     return B_Goal_SoldierCount:new(...);
 end
@@ -1850,50 +1535,6 @@ RegisterBehavior(B_Goal_SoldierCount);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss wenigstens einen bestimmten Titel erreichen.
---
--- Folgende Titel können verwendet werden:
--- <table border="1">
--- <tr>
--- <td><b>Titel</b></td>
--- <td><b>Übersetzung</b></td>
--- </tr>
--- <tr>
--- <td>Knight</td>
--- <td>Ritter</td>
--- </tr>
--- <tr>
--- <td>Mayor</td>
--- <td>Landvogt</td>
--- </tr>
--- <tr>
--- <td>Baron</td>
--- <td>Baron</td>
--- </tr>
--- <tr>
--- <td>Earl</td>
--- <td>Graf</td>
--- </tr>
--- <tr>
--- <td>Marquees</td>
--- <td>Marktgraf</td>
--- </tr>
--- <tr>
--- <td>Duke</td>
--- <td>Herzog</td>
--- </tr>
--- </tr>
--- <tr>
--- <td>Archduke</td>
--- <td>Erzherzog</td>
--- </tr>
--- <table>
---
--- @param _Title Titel, der erreicht werden muss
---
--- @within Goal
---
 function Goal_KnightTitle(...)
     return B_Goal_KnightTitle:new(...);
 end
@@ -1932,20 +1573,6 @@ RegisterBehavior(B_Goal_KnightTitle);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der angegebene Spieler muss mindestens die Menge an Festen feiern.
---
--- Ein Fest wird gewertet, sobald die Metfässer auf dem Markt erscheinen. Diese
--- Metfässer erscheinen im normalen Spielverlauf nur durch ein Fest!
---
--- <b>Achtung</b>: Wenn ein Spieler aus einem anderen Grund Metfässer besitzt,
--- wird dieses Behavior nicht mehr richtig funktionieren!
---
--- @param _PlayerID ID des Spielers
--- @param _Amount   Menge an Festen
---
--- @within Goal
---
 function Goal_Festivals(...)
     return B_Goal_Festivals:new(...);
 end
@@ -2039,13 +1666,6 @@ RegisterBehavior(B_Goal_Festivals)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss eine Einheit gefangen nehmen.
---
--- @param _ScriptName Ziel
---
--- @within Goal
---
 function Goal_Capture(...)
     return B_Goal_Capture:new(...)
 end
@@ -2098,16 +1718,6 @@ RegisterBehavior(B_Goal_Capture);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss eine Menge von Einheiten eines Typs von einem
--- Spieler gefangen nehmen.
---
--- @param _Typ      Typ, der gefangen werden soll
--- @param _Amount   Menge an Einheiten
--- @param _PlayerID Besitzer der Einheiten
---
--- @within Goal
---
 function Goal_CaptureType(...)
     return B_Goal_CaptureType:new(...)
 end
@@ -2180,16 +1790,6 @@ RegisterBehavior(B_Goal_CaptureType);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss das angegebene Entity beschützen.
---
--- Wird ein Wagen zerstört oder in das Lagerhaus / die Burg eines Feindes
--- gebracht, schlägt das Ziel fehl.
---
--- @param _ScriptName Zu beschützendes Entity
---
--- @within Goal
---
 function Goal_Protect(...)
     return B_Goal_Protect:new(...)
 end
@@ -2256,15 +1856,6 @@ RegisterBehavior(B_Goal_Protect);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Auftragnehmer muss eine Mine mit einem Geologen wieder auffüllen.
---
--- <b>Achtung</b>: Dieses Behavior ist nur in "Reich des Ostens" verfügbar.
---
--- @param _ScriptName Skriptname der Mine
---
--- @within Goal
---
 function Goal_Refill(...)
     return B_Goal_Refill:new(...)
 end
@@ -2302,24 +1893,6 @@ end
 
 -- -------------------------------------------------------------------------- --
 
----
--- Eine bestimmte Menge an Rohstoffen in einer Mine muss erreicht werden.
---
--- Dieses Behavior eignet sich besonders für den Einsatz als versteckter
--- Quest um eine Reaktion auszulösen, wenn z.B. eine Mine leer ist.
---
--- <u>Relationen</u>
--- <ul>
--- <li>> - Mehr als Anzahl</li>
--- <li>< - Weniger als Anzahl</li>
--- </ul>
---
--- @param _ScriptName Skriptname der Mine
--- @param _Relation   Mengenrelation
--- @param _Amount     Menge an Rohstoffen
---
--- @within Goal
---
 function Goal_ResourceAmount(...)
     return B_Goal_ResourceAmount:new(...)
 end
@@ -2389,11 +1962,6 @@ RegisterBehavior(B_Goal_ResourceAmount);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Quest schlägt sofort fehl.
---
--- @within Goal
---
 function Goal_InstantFailure()
     return B_Goal_InstantFailure:new()
 end
@@ -2415,11 +1983,6 @@ RegisterBehavior(B_Goal_InstantFailure);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Quest wird sofort erfüllt.
---
--- @within Goal
---
 function Goal_InstantSuccess()
     return B_Goal_InstantSuccess:new()
 end
@@ -2441,14 +2004,6 @@ RegisterBehavior(B_Goal_InstantSuccess);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Zustand des Quests ändert sich niemals
---
--- Wenn ein Zeitlimit auf dem Quest liegt, wird dieses Behavior nicht
--- fehlschlagen sondern automatisch erfüllt.
---
--- @within Goal
---
 function Goal_NoChange()
     return B_Goal_NoChange:new()
 end
@@ -2470,24 +2025,6 @@ RegisterBehavior(B_Goal_NoChange);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Führt eine Funktion im Skript als Goal aus.
---
--- Die Funktion muss entweder true, false oder nichts zurückgeben.
--- <ul>
--- <li>true: Erfolgreich abgeschlossen</li>
--- <li>false: Fehlschlag</li>
--- <li>nichts: Zustand unbestimmt</li>
--- </ul>
---
--- Anstelle eines Strings kann beim Einsatz im Skript eine Funktionsreferenz
--- übergeben werden. In diesem Fall werden alle weiteren Parameter direkt an
--- die Funktion weitergereicht.
---
--- @param _FunctionName Name der Funktion
---
--- @within Goal
---
 function Goal_MapScriptFunction(...)
     return B_Goal_MapScriptFunction:new(...);
 end
@@ -2537,30 +2074,6 @@ RegisterBehavior(B_Goal_MapScriptFunction);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Eine benutzerdefinierte Variable muss einen bestimmten Wert haben.
---
--- Custom Variables können ausschließlich Zahlen enthalten. Bevor eine
--- Variable in einem Goal abgefragt werden kann, muss sie zuvor mit
--- Reprisal_CustomVariables oder Reward_CutsomVariables initialisiert
--- worden sein.
---
--- <p>Vergleichsoperatoren</p>
--- <ul>
--- <li>== - Werte müssen gleich sein</li>
--- <li>~= - Werte müssen ungleich sein</li>
--- <li>> - Variablenwert größer Vergleichswert</li>
--- <li>>= - Variablenwert größer oder gleich Vergleichswert</li>
--- <li>< - Variablenwert kleiner Vergleichswert</li>
--- <li><= - Variablenwert kleiner oder gleich Vergleichswert</li>
--- </ul>
---
--- @param _Name     Name der Variable
--- @param _Relation Vergleichsoperator
--- @param _Value    Wert oder andere Custom Variable mit wert.
---
--- @within Goal
---
 function Goal_CustomVariables(...)
     return B_Goal_CustomVariables:new(...);
 end
@@ -2651,26 +2164,6 @@ RegisterBehavior(B_Goal_CustomVariables)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Spieler kann durch regelmäßiges Begleichen eines Tributes bessere
--- Diplomatie zu einem Spieler erreichen.
---
--- Die Zeit zum Bezahlen des Tributes muss immer kleiner sein als die
--- Wiederholungsperiode.
---
--- <b>Hinweis</b>: Je mehr Zeit sich der Spieler lässt um den Tribut zu
--- begleichen, desto mehr wird sich der Start der nächsten Periode verzögern.
---
--- @param _GoldAmount Menge an Gold
--- @param _Periode    Zahlungsperiode in Sekunden
--- @param _Time       Zeitbegrenzung in Sekunden
--- @param _StartMsg   Vorschlagnachricht
--- @param _SuccessMsg Erfolgsnachricht
--- @param _FailureMsg Fehlschlagnachricht
--- @param _Restart    Nach nichtbezahlen neu starten
---
--- @within Goal
---
 function Goal_TributeDiplomacy(...)
     return B_Goal_TributeDiplomacy:new(...);
 end
@@ -2837,34 +2330,6 @@ RegisterBehavior(B_Goal_TributeDiplomacy);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erlaubt es dem Spieler ein Territorium zu "mieten".
---
--- Zerstört der Spieler den Außenposten, schlägt der Quest fehl und das
--- Territorium wird an den Vermieter übergeben. Wenn der Spieler die Pacht
--- nicht bezahlt, geht der Besitz an den Vermieter über.
---
--- Die Zeit zum Bezahlen des Tributes muss immer kleiner sein als die
--- Wiederholungsperiode.
---
--- <b>Hinweis</b>: Je mehr Zeit sich der Spieler lässt um den Tribut zu
--- begleichen, desto mehr wird sich der Start der nächsten Periode verzögern.
---
--- @param _Territory  Name des Territorium
--- @param _PlayerID   PlayerID des Zahlungsanforderer
--- @param _GoodType   Warentyp des Tribut
--- @param _Cost       Menge an Waren
--- @param _Periode    Zahlungsperiode in Sekunden
--- @param _Time       Zeitbegrenzung in Sekunden
--- @param _StartMsg   Vorschlagnachricht
--- @param _SuccessMsg Erfolgsnachricht
--- @param _FailMsg    Fehlschlagnachricht
--- @param _HowOften   Anzahl an Zahlungen (0 = endlos)
--- @param _OtherOwner Eroberung durch Dritte beendet Quest
--- @param _Abort      Nach nichtbezahlen abbrechen
---
--- @within Goal
---
 function Goal_TributeClaim(...)
     return B_Goal_TributeClaim:new(...);
 end
@@ -3129,13 +2594,6 @@ RegisterBehavior(B_Goal_TributeClaim);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Deaktiviert ein interaktives Objekt.
---
--- @param _ScriptName Skriptname des interaktiven Objektes
---
--- @within Reprisal
---
 function Reprisal_ObjectDeactivate(...)
     return B_Reprisal_InteractiveObjectDeactivate:new(...);
 end
@@ -3185,21 +2643,6 @@ RegisterBehavior(B_Reprisal_InteractiveObjectDeactivate);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Aktiviert ein interaktives Objekt.
---
--- Der Status bestimmt, wie das Objekt aktiviert wird.
--- <ul>
--- <li>0: Kann nur mit Helden aktiviert werden</li>
--- <li>1: Kann immer aktiviert werden</li>
--- <li>2: Kann niemals aktiviert werden</li>
--- </ul>
---
--- @param _ScriptName Skriptname des interaktiven Objektes
--- @param _State      Status des Objektes
---
--- @within Reprisal
---
 function Reprisal_ObjectActivate(...)
     return B_Reprisal_InteractiveObjectActivate:new(...);
 end
@@ -3260,12 +2703,6 @@ RegisterBehavior(B_Reprisal_InteractiveObjectActivate);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der diplomatische Status zwischen Sender und Empfänger verschlechtert sich
--- um eine Stufe.
---
--- @within Reprisal
---
 function Reprisal_DiplomacyDecrease()
     return B_Reprisal_SlightlyDiplomacyDecrease:new();
 end
@@ -3302,15 +2739,6 @@ RegisterBehavior(B_Reprisal_SlightlyDiplomacyDecrease);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Änder den Diplomatiestatus zwischen zwei Spielern.
---
--- @param _Party1   ID der ersten Partei
--- @param _Party2   ID der zweiten Partei
--- @param _State    Neuer Diplomatiestatus
---
--- @within Reprisal
---
 function Reprisal_Diplomacy(...)
     return B_Reprisal_Diplomacy:new(...);
 end
@@ -3365,16 +2793,6 @@ RegisterBehavior(B_Reprisal_Diplomacy);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein benanntes Entity wird entfernt.
---
--- <b>Hinweis</b>: Das Entity wird durch ein XD_ScriptEntity ersetzt. Es
--- behält Name, Besitzer und Ausrichtung.
---
--- @param _ScriptName Skriptname des Entity
---
--- @within Reprisal
---
 function Reprisal_DestroyEntity(...)
     return B_Reprisal_DestroyEntity:new(...);
 end
@@ -3417,13 +2835,6 @@ RegisterBehavior(B_Reprisal_DestroyEntity);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Zerstört einen über ein Behavior erzeugten Effekt.
---
--- @param _EffectName Name des Effekts
---
--- @within Reprisal
---
 function Reprisal_DestroyEffect(...)
     return B_Reprisal_DestroyEffect:new(...);
 end
@@ -3468,11 +2879,6 @@ RegisterBehavior(B_Reprisal_DestroyEffect);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Spieler verliert das Spiel.
---
--- @within Reprisal
---
 function Reprisal_Defeat()
     return B_Reprisal_Defeat:new()
 end
@@ -3494,13 +2900,6 @@ RegisterBehavior(B_Reprisal_Defeat);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Zeigt die Niederlagedekoration am Quest an.
---
--- Es handelt sich dabei um reine Optik! Der Spieler wird nicht verlieren.
---
--- @within Reprisal
---
 function Reprisal_FakeDefeat()
     return B_Reprisal_FakeDefeat:new();
 end
@@ -3522,18 +2921,6 @@ RegisterBehavior(B_Reprisal_FakeDefeat);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein Entity wird durch ein neues anderen Typs ersetzt.
---
--- Das neue Entity übernimmt Skriptname, Besitzer  und Ausrichtung des 
--- alten Entity.
---
--- @param _Entity Skriptname oder ID des Entity
--- @param _Type   Neuer Typ des Entity
--- @param _Owner  Besitzer des Entity
---
--- @within Reprisal
---
 function Reprisal_ReplaceEntity(...)
     return B_Reprisal_ReplaceEntity:new(...);
 end
@@ -3618,13 +3005,6 @@ RegisterBehavior(B_Reprisal_ReplaceEntity);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet einen Quest neu.
---
--- @param _QuestName Name des Quest
---
--- @within Reprisal
---
 function Reprisal_QuestRestart(...)
     return B_Reprisal_QuestRestart:new(...)
 end
@@ -3667,13 +3047,6 @@ RegisterBehavior(B_Reprisal_QuestRestart);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Lässt einen Quest fehlschlagen.
---
--- @param _QuestName Name des Quest
---
--- @within Reprisal
---
 function Reprisal_QuestFailure(...)
     return B_Reprisal_QuestFailure:new(...)
 end
@@ -3716,13 +3089,6 @@ RegisterBehavior(B_Reprisal_QuestFailure);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Wertet einen Quest als erfolgreich.
---
--- @param _QuestName Name des Quest
---
--- @within Reprisal
---
 function Reprisal_QuestSuccess(...)
     return B_Reprisal_QuestSuccess:new(...)
 end
@@ -3765,13 +3131,6 @@ RegisterBehavior(B_Reprisal_QuestSuccess);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Triggert einen Quest.
---
--- @param _QuestName Name des Quest
---
--- @within Reprisal
---
 function Reprisal_QuestActivate(...)
     return B_Reprisal_QuestActivate:new(...)
 end
@@ -3816,13 +3175,6 @@ RegisterBehavior(B_Reprisal_QuestActivate)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Unterbricht einen Quest.
---
--- @param _QuestName Name des Quest
---
--- @within Reprisal
---
 function Reprisal_QuestInterrupt(...)
     return B_Reprisal_QuestInterrupt:new(...)
 end
@@ -3872,14 +3224,6 @@ RegisterBehavior(B_Reprisal_QuestInterrupt);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Unterbricht einen Quest, selbst wenn dieser noch nicht ausgelöst wurde.
---
--- @param _QuestName   Name des Quest
--- @param _EndetQuests Bereits beendete unterbrechen
---
--- @within Reprisal
---
 function Reprisal_QuestForceInterrupt(...)
     return B_Reprisal_QuestForceInterrupt:new(...)
 end
@@ -3929,7 +3273,7 @@ function B_Reprisal_QuestForceInterrupt:CustomFunction(_Quest)
         local QuestID = GetQuestID(self.QuestName)
         local Quest = Quests[QuestID]
         if self.InterruptEnded or Quest.State ~= QuestState.Over then
-            Quest:Interrupt()
+            Quest:Interrupt();
         end
     end
 end
@@ -3946,29 +3290,6 @@ RegisterBehavior(B_Reprisal_QuestForceInterrupt);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ändert den Wert einer benutzerdefinierten Variable.
---
--- Benutzerdefinierte Variablen können ausschließlich Zahlen sein. Nutze
--- dieses Behavior bevor die Variable in einem Goal oder Trigger abgefragt
--- wird, um sie zu initialisieren!
---
--- <p>Operatoren</p>
--- <ul>
--- <li>= - Variablenwert wird auf den Wert gesetzt</li>
--- <li>- - Variablenwert mit Wert Subtrahieren</li>
--- <li>+ - Variablenwert mit Wert addieren</li>
--- <li>* - Variablenwert mit Wert multiplizieren</li>
--- <li>/ - Variablenwert mit Wert dividieren</li>
--- <li>^ - Variablenwert mit Wert potenzieren</li>
--- </ul>
---
--- @param _Name     Name der Variable
--- @param _Operator Rechen- oder Zuweisungsoperator
--- @param _Value    Wert oder andere Custom Variable
---
--- @within Reprisal
---
 function Reprisal_CustomVariables(...)
     return B_Reprisal_CustomVariables:new(...);
 end
@@ -4045,23 +3366,6 @@ RegisterBehavior(B_Reprisal_CustomVariables)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Führt eine Funktion im Skript als Reprisal aus.
---
--- Wird ein Funktionsname als String übergeben, wird die Funktion mit den
--- Daten des Behavors und des zugehörigen Quest aufgerufen (Standard).
---
--- Wird eine Funktionsreferenz angegeben, wird die Funktion zusammen mit allen
--- optionalen Parametern aufgerufen, als sei es ein gewöhnlicher Aufruf im
--- Skript.
--- <pre> Reprisal_MapScriptFunction(ReplaceEntity, "block", Entities.XD_ScriptEntity);
--- -- entspricht: ReplaceEntity("block", Entities.XD_ScriptEntity);</pre>
--- <b>Achtung:</b> Nicht über den Assistenten verfügbar!
---
--- @param _Function Name der Funktion oder Funktionsreferenz
---
--- @within Reprisal
---
 function Reprisal_MapScriptFunction(...)
     return B_Reprisal_MapScriptFunction:new(...);
 end
@@ -4112,15 +3416,6 @@ RegisterBehavior(B_Reprisal_MapScriptFunction);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erlaubt oder verbietet einem Spieler ein Recht.
---
--- @param _PlayerID   ID des Spielers
--- @param _Lock       Sperren/Entsperren
--- @param _Technology Name des Rechts
---
--- @within Reprisal
---
 function Reprisal_Technology(...)
     return B_Reprisal_Technology:new(...);
 end
@@ -4194,13 +3489,8 @@ end
 
 RegisterBehavior(B_Reprisal_Technology);
 
----
--- Deaktiviert ein interaktives Objekt
---
--- @param _ScriptName Skriptname des interaktiven Objektes
---
--- @within Reward
---
+-- -------------------------------------------------------------------------- --
+
 function Reward_ObjectDeactivate(...)
     return B_Reward_InteractiveObjectDeactivate:new(...);
 end
@@ -4220,21 +3510,6 @@ RegisterBehavior(B_Reward_InteractiveObjectDeactivate);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Aktiviert ein interaktives Objekt.
---
--- Der Status bestimmt, wie das objekt aktiviert wird.
--- <ul>
--- <li>0: Kann nur mit Helden aktiviert werden</li>
--- <li>1: Kann immer aktiviert werden</li>
--- <li>2: Kann niemals aktiviert werden</li>
--- </ul>
---
--- @param _ScriptName Skriptname des interaktiven Objektes
--- @param _State Status des Objektes
---
--- @within Reward
---
 function Reward_ObjectActivate(...)
     return B_Reward_InteractiveObjectActivate:new(...);
 end
@@ -4254,26 +3529,6 @@ RegisterBehavior(B_Reward_InteractiveObjectActivate);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Initialisiert ein interaktives Objekt.
---
--- Interaktive Objekte können Kosten und Belohnungen enthalten, müssen sie
--- jedoch nicht. Ist eine Wartezeit angegeben, kann das Objekt erst nach
--- Ablauf eines Cooldowns benutzt werden.
---
--- @param _ScriptName Skriptname des interaktiven Objektes
--- @param _Distance   Entfernung zur Aktivierung
--- @param _Time       Wartezeit bis zur Aktivierung
--- @param _RType1     Warentyp der Belohnung
--- @param _RAmount    Menge der Belohnung
--- @param _CType1     Typ der 1. Ware
--- @param _CAmount1   Menge der 1. Ware
--- @param _CType2     Typ der 2. Ware
--- @param _CAmount2   Menge der 2. Ware
--- @param _Status     Aktivierung (0: Held, 1: immer, 2: niemals)
---
--- @within Reward
---
 function Reward_ObjectInit(...)
     return B_Reward_ObjectInit:new(...);
 end
@@ -4460,15 +3715,6 @@ RegisterBehavior(B_Reward_ObjectInit);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Änder den Diplomatiestatus zwischen zwei Spielern.
---
--- @param _Party1   ID der ersten Partei
--- @param _Party2   ID der zweiten Partei
--- @param _State    Neuer Diplomatiestatus
---
--- @within Reward
---
 function Reward_Diplomacy(...)
     return B_Reward_Diplomacy:new(...);
 end
@@ -4488,12 +3734,6 @@ RegisterBehavior(B_Reward_Diplomacy);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Verbessert die diplomatischen Beziehungen zwischen Sender und Empfänger
--- um einen Grad.
---
--- @within Reward
---
 function Reward_DiplomacyIncrease()
     return B_Reward_SlightlyDiplomacyIncrease:new();
 end
@@ -4530,25 +3770,6 @@ RegisterBehavior(B_Reward_SlightlyDiplomacyIncrease);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erzeugt Handelsangebote im Lagerhaus des angegebenen Spielers.
---
--- Sollen Angebote gelöscht werden, muss "-" als Ware ausgewählt werden.
---
--- <b>Achtung:</b> Stadtlagerhäuser können keine Söldner anbieten!
---
--- @param _PlayerID Partei, die Anbietet
--- @param _Amount1  Menge des 1. Angebot
--- @param _Type1    Ware oder Typ des 1. Angebot
--- @param _Amount2  Menge des 2. Angebot
--- @param _Type2    Ware oder Typ des 2. Angebot
--- @param _Amount3  Menge des 3. Angebot
--- @param _Type3    Ware oder Typ des 3. Angebot
--- @param _Amount4  Menge des 4. Angebot
--- @param _Type4    Ware oder Typ des 4. Angebot
---
--- @within Reward
---
 function Reward_TradeOffers(...)
     return B_Reward_Merchant:new(...);
 end
@@ -4702,16 +3923,6 @@ RegisterBehavior(B_Reward_Merchant)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein benanntes Entity wird entfernt.
---
--- <b>Hinweis</b>: Das Entity wird durch ein XD_ScriptEntity ersetzt. Es
--- behält Name, Besitzer und Ausrichtung.
---
--- @param _ScriptName Skriptname des Entity
---
--- @within Reward
---
 function Reward_DestroyEntity(...)
     return B_Reward_DestroyEntity:new(...);
 end
@@ -4731,13 +3942,6 @@ RegisterBehavior(B_Reward_DestroyEntity);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Zerstört einen über ein Behavior erzeugten Effekt.
---
--- @param _EffectName Name des Effekts
---
--- @within Reward
---
 function Reward_DestroyEffect(...)
     return B_Reward_DestroyEffect:new(...);
 end
@@ -4757,23 +3961,6 @@ RegisterBehavior(B_Reward_DestroyEffect);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ersetzt ein Entity mit einem Batallion.
---
--- Ist die Position ein Gebäude, werden die Battalione am Eingang erzeugt und
--- Das Entity wird nicht ersetzt.
---
--- Das erzeugte Battalion kann vor der KI des Besitzers versteckt werden.
---
--- @param _Position    Skriptname des Entity
--- @param _PlayerID    PlayerID des Battalion
--- @param _UnitType    Einheitentyp der Soldaten
--- @param _Orientation Ausrichtung in °
--- @param _Soldiers    Anzahl an Soldaten
--- @param _HideFromAI  Vor KI verstecken
---
--- @within Reward
---
 function Reward_CreateBattalion(...)
     return B_Reward_CreateBattalion:new(...);
 end
@@ -4873,21 +4060,6 @@ RegisterBehavior(B_Reward_CreateBattalion);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erzeugt eine Menga von Battalionen an der Position.
---
--- Die erzeugten Battalione können vor der KI ihres Besitzers versteckt werden.
---
--- @param _Amount      Anzahl erzeugter Battalione
--- @param _Position    Skriptname des Entity
--- @param _PlayerID    PlayerID des Battalion
--- @param _UnitType    Einheitentyp der Soldaten
--- @param _Orientation Ausrichtung in °
--- @param _Soldiers    Anzahl an Soldaten
--- @param _HideFromAI  Vor KI verstecken
---
--- @within Reward
---
 function Reward_CreateSeveralBattalions(...)
     return B_Reward_CreateSeveralBattalions:new(...);
 end
@@ -4996,23 +4168,6 @@ RegisterBehavior(B_Reward_CreateSeveralBattalions);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erzeugt einen Effekt an der angegebenen Position.
---
--- Der Effekt kann über seinen Namen jeder Zeit gelöscht werden.
---
--- <b>Achtung</b>: Feuereffekte sind bekannt dafür Abstürzue zu verursachen.
--- Vermeide sie entweder ganz oder unterbinde das Speichern, solange ein
--- solcher Effekt aktiv ist!
---
--- @param _EffectName  Einzigartiger Effektname
--- @param _TypeName    Typ des Effekt
--- @param _PlayerID    PlayerID des Effekt
--- @param _Location    Position des Effekt
--- @param _Orientation Ausrichtung in °
---
--- @within Reward
---
 function Reward_CreateEffect(...)
     return B_Reward_CreateEffect:new(...);
 end
@@ -5100,22 +4255,6 @@ RegisterBehavior(B_Reward_CreateEffect);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ersetzt ein Entity mit dem Skriptnamen durch ein neues Entity.
---
--- Ist die Position ein Gebäude, werden die Entities am Eingang erzeugt und
--- die Position wird nicht ersetzt.
---
--- Das erzeugte Entity kann vor der KI des Besitzers versteckt werden.
---
--- @param _ScriptName  Skriptname des Entity
--- @param _PlayerID    PlayerID des Effekt
--- @param _TypeName    Typname des Entity
--- @param _Orientation Ausrichtung in °
--- @param _HideFromAI  Vor KI verstecken
---
--- @within Reward
---
 function Reward_CreateEntity(...)
     return B_Reward_CreateEntity:new(...);
 end
@@ -5235,20 +4374,6 @@ RegisterBehavior(B_Reward_CreateSettler);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erzeugt mehrere Entities an der angegebenen Position.
---
--- Die erzeugten Entities können vor der KI ihres Besitzers versteckt werden.
---
--- @param _Amount      Anzahl an Entities
--- @param _ScriptName  Skriptname des Entity
--- @param _PlayerID    PlayerID des Effekt
--- @param _TypeName    Einzigartiger Effektname
--- @param _Orientation Ausrichtung in °
--- @param _HideFromAI  Vor KI verstecken
---
--- @within Reward
---
 function Reward_CreateSeveralEntities(...)
     return B_Reward_CreateSeveralEntities:new(...);
 end
@@ -5363,15 +4488,6 @@ RegisterBehavior(B_Reward_CreateSeveralEntities);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Bewegt einen Siedler, einen Helden oder ein Battalion zum angegebenen 
--- Zielort.
---
--- @param _Settler     Einheit, die bewegt wird
--- @param _Destination Bewegungsziel
---
--- @within Reward
---
 function Reward_MoveSettler(...)
     return B_Reward_MoveSettler:new(...);
 end
@@ -5428,11 +4544,6 @@ RegisterBehavior(B_Reward_MoveSettler);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Spieler gewinnt das Spiel.
---
--- @within Reward
---
 function Reward_Victory()
     return B_Reward_Victory:new()
 end
@@ -5454,12 +4565,6 @@ RegisterBehavior(B_Reward_Victory);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Der Spieler verliert das Spiel.
---
---
--- @within Reward
---
 function Reward_Defeat()
     return B_Reward_Defeat:new()
 end
@@ -5487,13 +4592,6 @@ RegisterBehavior(B_Reward_Defeat);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Zeigt die Siegdekoration an dem Quest an.
---
--- Dies ist reine Optik! Der Spieler wird dadurch nicht das Spiel gewinnen.
---
--- @within Reward
---
 function Reward_FakeVictory()
     return B_Reward_FakeVictory:new();
 end
@@ -5515,29 +4613,6 @@ RegisterBehavior(B_Reward_FakeVictory);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erzeugt eine Armee, die das angegebene Territorium angreift.
---
--- Die Armee wird versuchen Gebäude auf dem Territrium zu zerstören.
--- <ul>
--- <li>Außenposten: Die Armee versucht den Außenposten zu zerstören</li>
--- <li>Stadt: Die Armee versucht das Lagerhaus zu zerstören</li>
--- </ul>
---
--- @param _PlayerID   PlayerID der Angreifer
--- @param _SpawnPoint Skriptname des Entstehungspunkt
--- @param _Territory  Zielterritorium
--- @param _Sword      Anzahl Schwertkämpfer (Battalion)
--- @param _Bow        Anzahl Bogenschützen (Battalion)
--- @param _Cata       Anzahl Katapulte
--- @param _Towers     Anzahl Belagerungstürme
--- @param _Rams       Anzahl Rammen
--- @param _Ammo       Anzahl Munitionswagen
--- @param _Type       Typ der Soldaten
--- @param _Reuse      Freie Truppen wiederverwenden
---
--- @within Reward
---
 function Reward_AI_SpawnAndAttackTerritory(...)
     return B_Reward_AI_SpawnAndAttackTerritory:new(...);
 end
@@ -5683,24 +4758,6 @@ RegisterBehavior(B_Reward_AI_SpawnAndAttackTerritory);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erzeugt eine Armee, die sich zum Zielpunkt bewegt und das Gebiet angreift.
---
--- Dabei werden die Soldaten alle erreichbaren Gebäude in Brand stecken. Ist
--- Das Zielgebiet eingemauert, können die Soldaten nicht angreifen und werden
--- sich zurückziehen.
---
--- @param _PlayerID   PlayerID des Angreifers
--- @param _SpawnPoint Skriptname des Entstehungspunktes
--- @param _Target     Skriptname des Ziels
--- @param _Radius     Aktionsradius um das Ziel
--- @param _Sword      Anzahl Schwertkämpfer (Battalione)
--- @param _Bow        Anzahl Bogenschützen (Battalione)
--- @param _Soldier    Typ der Soldaten
--- @param _Reuse      Freie Truppen wiederverwenden
---
--- @within Reward
---
 function Reward_AI_SpawnAndAttackArea(...)
     return B_Reward_AI_SpawnAndAttackArea:new(...);
 end
@@ -5822,22 +4879,6 @@ RegisterBehavior(B_Reward_AI_SpawnAndAttackArea);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erstellt eine Armee, die das Zielgebiet verteidigt.
---
--- @param _PlayerID     PlayerID des Angreifers
--- @param _SpawnPoint   Skriptname des Entstehungspunktes
--- @param _Target       Skriptname des Ziels
--- @param _Radius       Bewachtes Gebiet
--- @param _Time         Dauer der Bewachung (-1 für unendlich)
--- @param _Sword        Anzahl Schwertkämpfer (Battalione)
--- @param _Bow          Anzahl Bogenschützen (Battalione)
--- @param _CaptureCarts Soldaten greifen Karren an
--- @param _Type         Typ der Soldaten
--- @param _Reuse        Freie Truppen wiederverwenden
---
--- @within Reward
---
 function Reward_AI_SpawnAndProtectArea(...)
     return B_Reward_AI_SpawnAndProtectArea:new(...);
 end
@@ -5980,31 +5021,6 @@ RegisterBehavior(B_Reward_AI_SpawnAndProtectArea);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ändert die Konfiguration eines KI-Spielers.
---
--- Optionen:
--- <ul>
--- <li>Courage/FEAR: Angstfaktor (0 bis ?)</li>
--- <li>Reconstruction/BARB: Wiederaufbau von Gebäuden (0 oder 1)</li>
--- <li>Build Order/BPMX: Buildorder ausführen (Nummer der Build Order)</li>
--- <li>Conquer Outposts/FCOP: Außenposten einnehmen (0 oder 1)</li>
--- <li>Mount Outposts/FMOP: Eigene Außenposten bemannen (0 oder 1)</li>
--- <li>max. Bowmen/FMBM: Maximale Anzahl an Bogenschützen (min. 1)</li>
--- <li>max. Swordmen/FMSM: Maximale Anzahl an Schwerkkämpfer (min. 1) </li>
--- <li>max. Rams/FMRA: Maximale Anzahl an Rammen (min. 1)</li>
--- <li>max. Catapults/FMCA: Maximale Anzahl an Katapulten (min. 1)</li>
--- <li>max. Ammunition Carts/FMAC: Maximale Anzahl an Minitionswagen (min. 1)</li>
--- <li>max. Siege Towers/FMST: Maximale Anzahl an Belagerungstürmen (min. 1)</li>
--- <li>max. Wall Catapults/FMBA: Maximale Anzahl an Mauerkatapulten (min. 1)</li>
--- </ul>
---
--- @param _PlayerID PlayerID des KI
--- @param _Fact     Konfigurationseintrag
--- @param _Value    Neuer Wert
---
--- @within Reward
---
 function Reward_AI_SetNumericalFact(...)
     return B_Reward_AI_SetNumericalFact:new(...);
 end
@@ -6121,14 +5137,6 @@ RegisterBehavior(B_Reward_AI_SetNumericalFact);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Stellt den Aggressivitätswert des KI-Spielers nachträglich ein.
---
--- @param _PlayerID         PlayerID des KI-Spielers
--- @param _Aggressiveness   Aggressivitätswert (1 bis 3)
---
--- @within Reward
---
 function Reward_AI_Aggressiveness(...)
     return B_Reward_AI_Aggressiveness:new(...);
 end
@@ -6163,6 +5171,7 @@ function B_Reward_AI_Aggressiveness:CustomFunction()
     local player = (PlayerAIs[self.AIPlayer]
         or AIPlayerTable[self.AIPlayer]
         or AIPlayer:new(self.AIPlayer, AIPlayerProfile_City));
+    assert(player ~= nil);
     PlayerAIs[self.AIPlayer] = player;
     if self.Aggressiveness >= 2 then
         player.ProfileLoop = AIProfile_Skirmish;
@@ -6189,17 +5198,6 @@ RegisterBehavior(B_Reward_AI_Aggressiveness)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Stellt den Feind des Skirmish-KI ein.
---
--- Der Skirmish-KI (maximale Aggressivität) kann nur einen Spieler als Feind
--- behandeln. Für gewöhnlich ist dies der menschliche Spieler.
---
--- @param _PlayerID      PlayerID des KI
--- @param _EnemyPlayerID PlayerID des Feindes
---
--- @within Reward
---
 function Reward_AI_SetEnemy(...)
     return B_Reward_AI_SetEnemy:new(...);
 end
@@ -6248,18 +5246,6 @@ RegisterBehavior(B_Reward_AI_SetEnemy)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ein Entity wird durch ein neues anderen Typs ersetzt.
---
--- Das neue Entity übernimmt Skriptname, Besitzer und Ausrichtung des
--- alten Entity.
---
--- @param _Entity Skriptname oder ID des Entity
--- @param _Type   Neuer Typ des Entity
--- @param _Owner  Besitzer des Entity
---
--- @within Reward
---
 function Reward_ReplaceEntity(...)
     return B_Reward_ReplaceEntity:new(...);
 end
@@ -6279,17 +5265,6 @@ RegisterBehavior(B_Reward_ReplaceEntity);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Setzt die Menge von Rohstoffen in einer Mine.
---
--- <b>Achtung:</b> Im Reich des Ostens darf die Mine nicht eingestürzt sein!
--- Außerdem bringt dieses Behavior die Nachfüllmechanik durcheinander.
---
--- @param _ScriptName Skriptname der Mine
--- @param _Amount     Menge an Rohstoffen
---
--- @within Reward
---
 function Reward_SetResourceAmount(...)
     return B_Reward_SetResourceAmount:new(...);
 end
@@ -6347,15 +5322,6 @@ RegisterBehavior(B_Reward_SetResourceAmount);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Fügt dem Lagerhaus des Auftragnehmers eine Menge an Rohstoffen hinzu. Die
--- Rohstoffe werden direkt ins Lagerhaus bzw. die Schatzkammer gelegt.
---
--- @param _Type   Rohstofftyp
--- @param _Amount Menge an Rohstoffen
---
--- @within Reward
---
 function Reward_Resources(...)
     return B_Reward_Resources:new(...);
 end
@@ -6390,24 +5356,6 @@ RegisterBehavior(B_Reward_Resources);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Entsendet einen Karren zum angegebenen Spieler.
---
--- Wenn der Spawnpoint ein Gebäude ist, wird der Wagen am Eingang erstellt.
--- Andernfalls kann der Spawnpoint gelöscht werden und der Wagen übernimmt
--- dann den Skriptnamen.
---
--- @param _ScriptName    Skriptname des Spawnpoint
--- @param _Owner         Empfänger der Lieferung
--- @param _Type          Typ des Wagens
--- @param _Good          Typ der Ware
--- @param _Amount        Menge an Waren
--- @param _OtherPlayer   Anderer Empfänger als Auftraggeber
--- @param _NoReservation Platzreservation auf dem Markt ignorieren (Sinnvoll?)
--- @param _Replace       Spawnpoint ersetzen
---
--- @within Reward
---
 function Reward_SendCart(...)
     return B_Reward_SendCart:new(...);
 end
@@ -6525,17 +5473,6 @@ RegisterBehavior(B_Reward_SendCart);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Gibt dem Auftragnehmer eine Menge an Einheiten.
---
--- Die Einheiten erscheinen an der Burg. Hat der Spieler keine Burg, dann
--- erscheinen sie vorm Lagerhaus.
---
--- @param _Type   Typ der Einheit
--- @param _Amount Menge an Einheiten
---
--- @within Reward
---
 function Reward_Units(...)
     return B_Reward_Units:new(...)
 end
@@ -6569,13 +5506,6 @@ RegisterBehavior(B_Reward_Units);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet einen Quest neu.
---
--- @param _QuestName Name des Quest
---
--- @within Reward
---
 function Reward_QuestRestart(...)
     return B_Reward_QuestRestart:new(...)
 end
@@ -6595,13 +5525,6 @@ RegisterBehavior(B_Reward_QuestRestart);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Lässt einen Quest fehlschlagen.
---
--- @param _QuestName Name des Quest
---
--- @within Reward
---
 function Reward_QuestFailure(...)
     return B_Reward_QuestFailure:new(...)
 end
@@ -6621,13 +5544,6 @@ RegisterBehavior(B_Reward_QuestFailure);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Wertet einen Quest als erfolgreich.
---
--- @param _QuestName Name des Quest
---
--- @within Reward
---
 function Reward_QuestSuccess(...)
     return B_Reward_QuestSuccess:new(...)
 end
@@ -6647,13 +5563,6 @@ RegisterBehavior(B_Reward_QuestSuccess);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Triggert einen Quest.
---
--- @param _QuestName Name des Quest
---
--- @within Reward
---
 function Reward_QuestActivate(...)
     return B_Reward_QuestActivate:new(...)
 end
@@ -6673,13 +5582,6 @@ RegisterBehavior(B_Reward_QuestActivate)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Unterbricht einen Quest.
---
--- @param _QuestName Name des Quest
---
--- @within Reward
---
 function Reward_QuestInterrupt(...)
     return B_Reward_QuestInterrupt:new(...)
 end
@@ -6699,14 +5601,6 @@ RegisterBehavior(B_Reward_QuestInterrupt);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Unterbricht einen Quest, selbst wenn dieser noch nicht ausgelöst wurde.
---
--- @param _QuestName   Name des Quest
--- @param _EndetQuests Bereits beendete unterbrechen
---
--- @within Reward
---
 function Reward_QuestForceInterrupt(...)
     return B_Reward_QuestForceInterrupt:new(...)
 end
@@ -6726,29 +5620,6 @@ RegisterBehavior(B_Reward_QuestForceInterrupt);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Ändert den Wert einer benutzerdefinierten Variable.
---
--- Benutzerdefinierte Variablen können ausschließlich Zahlen sein. Nutze
--- dieses Behavior bevor die Variable in einem Goal oder Trigger abgefragt
--- wird, um sie zu initialisieren!
---
--- <p>Operatoren</p>
--- <ul>
--- <li>= - Variablenwert wird auf den Wert gesetzt</li>
--- <li>- - Variablenwert mit Wert Subtrahieren</li>
--- <li>+ - Variablenwert mit Wert addieren</li>
--- <li>* - Variablenwert mit Wert multiplizieren</li>
--- <li>/ - Variablenwert mit Wert dividieren</li>
--- <li>^ - Variablenwert mit Wert potenzieren</li>
--- </ul>
---
--- @param _Name     Name der Variable
--- @param _Operator Rechen- oder Zuweisungsoperator
--- @param _Value    Wert oder andere Custom Variable
---
--- @within Reward
---
 function Reward_CustomVariables(...)
     return B_Reward_CustomVariables:new(...);
 end
@@ -6768,23 +5639,6 @@ RegisterBehavior(B_Reward_CustomVariables)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Führt eine Funktion im Skript als Reward aus.
---
--- Wird ein Funktionsname als String übergeben, wird die Funktion mit den
--- Daten des Behavors und des zugehörigen Quest aufgerufen (Standard).
---
--- Wird eine Funktionsreferenz angegeben, wird die Funktion zusammen mit allen
--- optionalen Parametern aufgerufen, als sei es ein gewöhnlicher Aufruf im
--- Skript.
--- <pre>Reward_MapScriptFunction(ReplaceEntity, "block", Entities.XD_ScriptEntity);
--- -- entspricht: ReplaceEntity("block", Entities.XD_ScriptEntity);</pre>
--- <b>Achtung:</b> Nicht über den Assistenten verfügbar!
---
--- @param _FunctionName Name der Funktion oder Funktionsreferenz
---
--- @within Reward
---
 function Reward_MapScriptFunction(...)
     return B_Reward_MapScriptFunction:new(...);
 end
@@ -6804,15 +5658,6 @@ RegisterBehavior(B_Reward_MapScriptFunction);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Erlaubt oder verbietet einem Spieler ein Recht.
---
--- @param _PlayerID   ID des Spielers
--- @param _Lock       Sperren/Entsperren
--- @param _Technology Name des Rechts
---
--- @within Reward
---
 function Reward_Technology(...)
     return B_Reward_Technology:new(...);
 end
@@ -6832,16 +5677,6 @@ RegisterBehavior(B_Reward_Technology);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Gibt dem Auftragnehmer eine Anzahl an Prestigepunkten.
---
--- Prestige hat i.d.R. keine Funktion und wird nur als Zusatzpunkte in der
--- Statistik angezeigt.
---
--- @param _Amount Menge an Prestige
---
--- @within Reward
---
 function Reward_PrestigePoints(...)
     return B_Reward_PrestigePoints:mew(...);
 end
@@ -6872,14 +5707,6 @@ RegisterBehavior(B_Reward_PrestigePoints);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Besetzt einen Außenposten mit Soldaten.
---
--- @param _ScriptName Skriptname des Außenposten
--- @param _Type       Soldatentyp
---
--- @within Reward
---
 function Reward_AI_MountOutpost(...)
     return B_Reward_AI_MountOutpost:new(...);
 end
@@ -6944,13 +5771,6 @@ RegisterBehavior(B_Reward_AI_MountOutpost)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet einen Quest neu und lößt ihn sofort aus.
---
--- @param _QuestName Name des Quest
---
--- @within Reward
---
 function Reward_QuestRestartForceActive(...)
     return B_Reward_QuestRestartForceActive:new(...);
 end
@@ -6997,18 +5817,6 @@ RegisterBehavior(B_Reward_QuestRestartForceActive)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Baut das angegebene Gabäude um eine Stufe aus. Das Gebäude wird durch einen
--- Arbeiter um eine Stufe erweitert. Der Arbeiter muss zuerst aus dem Lagerhaus
--- kommen und sich zum Gebäude bewegen.
---
--- <b>Achtung:</b> Ein Gebäude muss erst fertig ausgebaut sein, bevor ein
--- weiterer Ausbau begonnen werden kann!
---
--- @param _ScriptName Skriptname des Gebäudes
---
--- @within Reward
---
 function Reward_UpgradeBuilding(...)
     return B_Reward_UpgradeBuilding:new(...);
 end
@@ -7062,17 +5870,6 @@ RegisterBehavior(B_Reward_UpgradeBuilding)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Setzt das Upgrade Level des angegebenen Gebäudes.
---
--- Ein Geböude erhält sofort eine neue Stufe, ohne dass ein Arbeiter kommen
--- und es ausbauen muss. Für eine Werkstatt wird ein neuer Arbeiter gespawnt.
---
--- @param _ScriptName Skriptname des Gebäudes
--- @param _Level Upgrade Level
---
--- @within Reward
---
 function Reward_SetBuildingUpgradeLevel(...)
     return B_Reward_SetBuildingUpgradeLevel:new(...);
 end
@@ -7137,15 +5934,6 @@ RegisterBehavior(B_Reward_SetBuildingUpgradeLevel);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Starte den Quest, wenn ein anderer Spieler entdeckt wurde.
---
--- Ein Spieler ist dann entdeckt, wenn sein Heimatterritorium aufgedeckt wird.
---
--- @param _PlayerID Zu entdeckender Spieler
---
--- @within Trigger
---
 function Trigger_PlayerDiscovered(...)
     return B_Trigger_PlayerDiscovered:new(...);
 end
@@ -7176,15 +5964,6 @@ RegisterBehavior(B_Trigger_PlayerDiscovered);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Starte den Quest, wenn zwischen dem Empfänger und der angegebenen Partei
--- der geforderte Diplomatiestatus herrscht.
---
--- @param _PlayerID ID der Partei
--- @param _State    Diplomatie-Status
---
--- @within Trigger
---
 function Trigger_OnDiplomacy(...)
     return B_Trigger_OnDiplomacy:new(...);
 end
@@ -7218,15 +5997,6 @@ RegisterBehavior(B_Trigger_OnDiplomacy);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Starte den Quest, sobald ein Bedürfnis nicht erfüllt wird.
---
--- @param _PlayerID ID des Spielers
--- @param _Need     Bedürfnis
--- @param _Amount   Menge an skreikenden Siedlern
---
--- @within Trigger
---
 function Trigger_OnNeedUnsatisfied(...)
     return B_Trigger_OnNeedUnsatisfied:new(...);
 end
@@ -7281,13 +6051,6 @@ RegisterBehavior(B_Trigger_OnNeedUnsatisfied);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, wenn die angegebene Mine erschöpft ist.
---
--- @param _ScriptName Skriptname der Mine
---
--- @within Trigger
---
 function Trigger_OnResourceDepleted(...)
     return B_Trigger_OnResourceDepleted:new(...);
 end
@@ -7323,16 +6086,6 @@ RegisterBehavior(B_Trigger_OnResourceDepleted);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald der angegebene Spieler eine Menge an Rohstoffen
--- im Lagerhaus hat.
---
--- @param  _PlayerID ID des Spielers
--- @param  _Type     Typ des Rohstoffes
--- @param _Amount    Menge an Rohstoffen
---
--- @within Trigger
---
 function Trigger_OnAmountOfGoods(...)
     return B_Trigger_OnAmountOfGoods:new(...);
 end
@@ -7396,14 +6149,6 @@ RegisterBehavior(B_Trigger_OnAmountOfGoods);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald ein anderer aktiv ist.
---
--- @param _QuestName Name des Quest
--- @param _Time      Wartezeit
--- return Table mit Behavior
--- @within Trigger
---
 function Trigger_OnQuestActive(...)
     return B_Trigger_OnQuestActiveWait:new(...);
 end
@@ -7503,14 +6248,6 @@ RegisterBehavior(B_Trigger_OnQuestActive);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet einen Quest, sobald ein anderer fehlschlägt.
---
--- @param _QuestName Name des Quest
--- @param _Time      Wartezeit
--- return Table mit Behavior
--- @within Trigger
---
 function Trigger_OnQuestFailure(...)
     return B_Trigger_OnQuestFailureWait:new(...);
 end
@@ -7602,13 +6339,6 @@ RegisterBehavior(B_Trigger_OnQuestFailure);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet einen Quest, wenn ein anderer noch nicht ausgelöst wurde.
---
--- @param _QuestName Name des Quest
--- return Table mit Behavior
--- @within Trigger
---
 function Trigger_OnQuestNotTriggered(...)
     return B_Trigger_OnQuestNotTriggered:new(...);
 end
@@ -7657,14 +6387,6 @@ RegisterBehavior(B_Trigger_OnQuestNotTriggered);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald ein anderer unterbrochen wurde.
---
--- @param _QuestName Name des Quest
--- @param _Time      Wartezeit
--- return Table mit Behavior
--- @within Trigger
---
 function Trigger_OnQuestInterrupted(...)
     return B_Trigger_OnQuestInterruptedWait:new(...);
 end
@@ -7756,17 +6478,6 @@ RegisterBehavior(B_Trigger_OnQuestInterrupted);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald ein anderer bendet wurde.
---
--- Dabei ist das Resultat egal. Der Quest kann entweder erfolgreich beendet
--- wurden oder fehlgeschlagen sein.
---
--- @param _QuestName Name des Quest
--- @param _Time      Wartezeit
--- return Table mit Behavior
--- @within Trigger
---
 function Trigger_OnQuestOver(...)
     return B_Trigger_OnQuestOverWait:new(...);
 end
@@ -7858,14 +6569,6 @@ RegisterBehavior(B_Trigger_OnQuestOver);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald ein anderer Quest erfolgreich abgeschlossen wurde.
---
--- @param _QuestName Name des Quest
--- @param _Time      Wartezeit
--- return Table mit Behavior
--- @within Trigger
---
 function Trigger_OnQuestSuccess(...)
     return B_Trigger_OnQuestSuccessWait:new(...);
 end
@@ -7957,21 +6660,6 @@ RegisterBehavior(B_Trigger_OnQuestSuccess);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, wenn eine benutzerdefinierte Variable einen bestimmten
--- Wert angenommen hat.
---
--- Benutzerdefinierte Variablen müssen Zahlen sein. Bevor eine
--- Variable in einem Goal abgefragt werden kann, muss sie zuvor mit
--- Reprisal_CustomVariables oder Reward_CutsomVariables initialisiert
--- worden sein.
---
--- @param _Name     Name der Variable
--- @param _Relation Vergleichsoperator
--- @param _Value    Wert oder Custom Variable
---
--- @within Trigger
---
 function Trigger_CustomVariables(...)
     return B_Trigger_CustomVariables:new(...);
 end
@@ -8053,11 +6741,6 @@ RegisterBehavior(B_Trigger_CustomVariables)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest sofort.
---
--- @within Trigger
---
 function Trigger_AlwaysActive()
     return B_Trigger_AlwaysActive:new()
 end
@@ -8079,13 +6762,6 @@ RegisterBehavior(B_Trigger_AlwaysActive);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest im angegebenen Monat.
---
--- @param _Month Monat
---
--- @within Trigger
---
 function Trigger_OnMonth(...)
     return B_Trigger_OnMonth:new(...);
 end
@@ -8140,13 +6816,6 @@ RegisterBehavior(B_Trigger_OnMonth);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest sobald der Monsunregen einsetzt.
---
--- <b>Achtung:</b> Dieses Behavior ist nur für Reich des Ostens verfügbar.
---
--- @within Trigger
---
 function Trigger_OnMonsoon()
     return B_Trigger_OnMonsoon:new();
 end
@@ -8175,15 +6844,6 @@ RegisterBehavior(B_Trigger_OnMonsoon);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest sobald der Timer abgelaufen ist.
---
--- Der Timer zählt immer vom Start der Map an.
---
--- @param _Time Zeit bis zum Start
---
--- @within Trigger
---
 function Trigger_Time(...)
     return B_Trigger_Time:new(...);
 end
@@ -8214,11 +6874,6 @@ RegisterBehavior(B_Trigger_Time);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest sobald das Wasser gefriert.
---
--- @within Trigger
---
 function Trigger_OnWaterFreezes()
     return B_Trigger_OnWaterFreezes:new();
 end
@@ -8246,14 +6901,6 @@ RegisterBehavior(B_Trigger_OnWaterFreezes);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest niemals.
---
--- Quests, für die dieser Trigger gesetzt ist, müssen durch einen anderen
--- Quest über Reward_QuestActive oder Reprisal_QuestActive gestartet werden.
---
--- @within Trigger
---
 function Trigger_NeverTriggered()
     return B_Trigger_NeverTriggered:new();
 end
@@ -8277,14 +6924,6 @@ RegisterBehavior(B_Trigger_NeverTriggered)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald wenigstens einer von zwei Quests fehlschlägt.
---
--- @param _QuestName1 Name des ersten Quest
--- @param _QuestName2 Name des zweiten Quest
---
--- @within Trigger
---
 function Trigger_OnAtLeastOneQuestFailure(...)
     return B_Trigger_OnAtLeastOneQuestFailure:new(...);
 end
@@ -8344,14 +6983,6 @@ RegisterBehavior(B_Trigger_OnAtLeastOneQuestFailure);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald wenigstens einer von zwei Quests erfolgreich ist.
---
--- @param _QuestName1 Name des ersten Quest
--- @param _QuestName2 Name des zweiten Quest
---
--- @within Trigger
---
 function Trigger_OnAtLeastOneQuestSuccess(...)
     return B_Trigger_OnAtLeastOneQuestSuccess:new(...);
 end
@@ -8411,19 +7042,6 @@ RegisterBehavior(B_Trigger_OnAtLeastOneQuestSuccess);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald mindestens X von Y Quests erfolgreich sind.
---
--- @param _MinAmount   Mindestens zu erfüllen (max. 5)
--- @param _QuestAmount Anzahl geprüfter Quests (max. 5 und >= _MinAmount)
--- @param _Quest1      Name des 1. Quest
--- @param _Quest2      Name des 2. Quest
--- @param _Quest3      Name des 3. Quest
--- @param _Quest4      Name des 4. Quest
--- @param _Quest5      Name des 5. Quest
---
--- @within Trigger
---
 function Trigger_OnAtLeastXOfYQuestsSuccess(...)
     return B_Trigger_OnAtLeastXOfYQuestsSuccess:new(...);
 end
@@ -8517,18 +7135,6 @@ RegisterBehavior(B_Trigger_OnAtLeastXOfYQuestsSuccess)
 
 -- -------------------------------------------------------------------------- --
 
----
--- Führt eine Funktion im Skript als Trigger aus.
---
--- Die Funktion muss entweder true or false zurückgeben.
---
--- Nur Skipt: Wird statt einem Funktionsnamen (String) eine Funktionsreferenz
--- übergeben, werden alle weiteren Parameter an die Funktion weitergereicht.
---
--- @param _FunctionName Name der Funktion
---
--- @within Trigger
---
 function Trigger_MapScriptFunction(...)
     return B_Trigger_MapScriptFunction:new(...);
 end
@@ -8578,16 +7184,6 @@ RegisterBehavior(B_Trigger_MapScriptFunction);
 
 -- -------------------------------------------------------------------------- --
 
----
--- Startet den Quest, sobald ein Effekt zerstört wird oder verschwindet.
---
--- <b>Achtung</b>: Das Behavior kann nur auf Effekte angewand werden, die
--- über Effekt-Behavior erzeugt wurden.
---
--- @param _EffectName Name des Effekt
---
--- @within Trigger
---
 function Trigger_OnEffectDestroyed(...)
     return B_Trigger_OnEffectDestroyed:new(...);
 end

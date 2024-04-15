@@ -1,8 +1,5 @@
 Lib.Register("comfort/DumpTable");
 
---- Dump a table to the logfile.
---- @param _Table table Table to dump
---- @param _Name? string Name in dump
 function DumpTable(_Table, _Name)
     local Start = "{";
     if _Name then

@@ -1,9 +1,6 @@
 Lib.Require("comfort/GetPosition");
 Lib.Register("comfort/GetGeometricFocus");
 
---- Returns the average position of all passed positions combined.
---- @param ... any List of positions
---- @return table Center Center position
 function GetGeometricFocus(...)
     local arg = {...}
     local PositionData = {X= 0, Y= 0, Z= 0};

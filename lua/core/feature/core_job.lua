@@ -79,11 +79,6 @@ end
 
 -- -------------------------------------------------------------------------- --
 
---- Requests a job of the passed event type.
---- @param _EventType integer Type of job
---- @param _Function any Function reference or name
---- @param ... unknown Parameter
---- @return integer ID ID of job
 function RequestJobByEventType(_EventType, _Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
@@ -91,10 +86,6 @@ function RequestJobByEventType(_EventType, _Function, ...)
 end
 API.StartJobByEventType = RequestJobByEventType;
 
---- Requests a job that triggers each second.
---- @param _Function any Function reference or name
---- @param ... unknown Parameter
---- @return integer ID ID of job
 function RequestJob(_Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
@@ -104,10 +95,6 @@ API.StartJob = RequestJob;
 StartSimpleJob = RequestJob;
 StartSimpleJobEx = RequestJob;
 
---- Requests a job that triggers each turn.
---- @param _Function any Function reference or name
---- @param ... unknown Parameter
---- @return integer ID ID of job
 function RequestHiResJob(_Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
@@ -117,11 +104,6 @@ API.StartHiResJob = RequestHiResJob;
 StartSimpleHiResJob = RequestHiResJob;
 StartSimpleHiResJobEx = RequestHiResJob;
 
---- Requests a delayed action delayed by seconds.
---- @param _Waittime integer Seconds
---- @param _Function any Function reference or name
---- @param ... unknown Parameter
---- @return integer ID ID of job
 function RequestDelay(_Waittime, _Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
@@ -140,11 +122,6 @@ function RequestDelay(_Waittime, _Function, ...)
 end
 API.StartDelay = RequestDelay;
 
---- Requests a delayed action delayed by turns
---- @param _Waittime integer Turns
---- @param _Function any Function reference or name
---- @param ... unknown Parameter
---- @return integer ID ID of job
 function RequestHiResDelay(_Waittime, _Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
@@ -163,11 +140,6 @@ function RequestHiResDelay(_Waittime, _Function, ...)
 end
 API.StartHiResDelay = RequestHiResDelay;
 
---- Requests a delayed action delayed by realtime seconds.
---- @param _Waittime integer Seconds
---- @param _Function any Function reference or name
---- @param ... unknown Parameter
---- @return integer ID ID of job
 function RequestRealTimeDelay(_Waittime, _Function, ...)
     local Function = _G[_Function] or _Function;
     assert(type(Function) == "function", "Function does not exist!");
@@ -186,8 +158,6 @@ function RequestRealTimeDelay(_Waittime, _Function, ...)
 end
 API.StartRealTimeDelay = RequestRealTimeDelay;
 
---- Ends a job. The job can not be reactivated.
---- @param _JobID integer ID of job
 function StopJob(_JobID)
     if Lib.Core.Job.EventJobs[_JobID] then
         Trigger.UnrequestTrigger(Lib.Core.Job.EventJobs[_JobID][1]);
@@ -198,9 +168,6 @@ function StopJob(_JobID)
 end
 API.EndJob = StopJob;
 
---- Returns if the job is running.
---- @param _JobID integer ID of job
---- @return boolean Running Job is runnung
 function IsJobRunning(_JobID)
     if Lib.Core.Job.EventJobs[_JobID] then
         return Lib.Core.Job.EventJobs[_JobID][2] == true;
@@ -209,8 +176,6 @@ function IsJobRunning(_JobID)
 end
 API.JobIsRunning = IsJobRunning;
 
---- Resumes a paused job.
---- @param _JobID integer ID of job
 function ResumeJob(_JobID)
     if Lib.Core.Job.EventJobs[_JobID] then
         if Lib.Core.Job.EventJobs[_JobID][2] ~= true then
@@ -222,8 +187,6 @@ function ResumeJob(_JobID)
 end
 API.ResumeJob = ResumeJob;
 
---- Pauses a runnung job.
---- @param _JobID integer ID of job
 function YieldJob(_JobID)
     if Lib.Core.Job.EventJobs[_JobID] then
         if Lib.Core.Job.EventJobs[_JobID][2] == true then
@@ -235,8 +198,6 @@ function YieldJob(_JobID)
 end
 API.YieldJob = YieldJob;
 
---- Returns the real time seconds passed since game start.
---- @return integer Seconds Amount of seconds
 function GetSecondsRealTime()
     return Lib.Core.Job.SecondsSinceGameStart;
 end

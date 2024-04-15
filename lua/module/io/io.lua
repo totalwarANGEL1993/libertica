@@ -1,10 +1,3 @@
---- Improves on interactive objects.
----
---- #### Debug commands
---- * `enableobject <ScriptName>`  - A object is activated
---- * `disableobject <ScriptName>` - A object is deactivated
---- * `initobject <ScriptName>`    - The object is rudimentarily activated
----
 Lib.IO = Lib.IO or {};
 Lib.IO.Name = "IO";
 Lib.IO.Global = {

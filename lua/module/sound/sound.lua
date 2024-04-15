@@ -1,13 +1,5 @@
 --- @diagnostic disable: duplicate-set-field
 
---- This module enables to controll the sound.
----
---- #### Features
---- - Start/stop music playlists
---- - Start/stop voice playback
---- - Start/stop sound effecs
---- - Change sound configuration
----
 Lib.Sound = Lib.Sound or {};
 Lib.Sound.Name = "Sound";
 Lib.Sound.Global = {};

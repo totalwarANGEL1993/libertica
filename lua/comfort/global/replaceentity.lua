@@ -1,10 +1,5 @@
 Lib.Register("comfort/global/ReplaceEntity");
 
---- Replaces an entity with another with the given type.
---- @param _Entity any        ID or name of entity
---- @param _Type integer      Type of entity
---- @param _NewOwner? integer PlayerID of owner
---- @return integer ID New ID of entity
 function ReplaceEntity(_Entity, _Type, _NewOwner)
     assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     local ID1 = GetID(_Entity);

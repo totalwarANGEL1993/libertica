@@ -1,23 +1,3 @@
---- Offers tools for different modifications of the 2D interface.
----
---- The following player related can be changed:
---- * Player color
---- * Player name
---- * Player portrait
---- * Territory name
----
---- The following menu related can be changed:
---- * Show/Hide minimap
---- * Show/Hide toggle minimap
---- * Show/Hide Diplomacy menu
---- * Show/Hide Production menu
---- * Show/Hide Weather menu
---- * Show/Hide Construction menu
---- * Show/Hide Claim territory button
---- * Show/Hide Hero ability button
---- * Show/Hide Select hero button
---- * Show/Hide Select units button
----
 Lib.UITools = Lib.UITools or {};
 Lib.UITools.Name = "UITools";
 Lib.UITools.Global = {};

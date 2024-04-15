@@ -1,8 +1,5 @@
 Lib.Register("comfort/GetSoldiersOfGroup");
 
---- Returns all soldiers of the group.
---- @param _Leader any ID or script name
---- @return table Soldiers List of soldier IDs
 function GetSoldiersOfGroup(_Leader)
     local SoldierList = {};
     local EntityID = GetID(_Leader);

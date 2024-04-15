@@ -1,15 +1,3 @@
---- Allows to breed lifestock.
----
---- Breeding cows and sheeps is bound to technologies. Those technologies can
---- also be added to the promotion system.
----
---- In addition there is the possivility to let farm animals starve if they
---- aren't fed.
----
---- #### Adds pseudo technologies:
---- * `Technologies.R_Cattle` - Allows to breed cows
---- * `Technologies.R_Sheep`  - Allows to breed sheeps
---- 
 Lib.LifestockSystem = Lib.LifestockSystem or {};
 Lib.LifestockSystem.Name = "LifestockSystem";
 Lib.LifestockSystem.Global = {
@@ -151,10 +139,6 @@ function Lib.LifestockSystem.Global:OnReportReceived(_ID, ...)
     end
 end
 
---- Spawns an animal at the pasture and removes costs.
---- @param _Index string       "Cattle" or "Sheep"
---- @param _PlayerID integer   ID of player
---- @param _BuildingID integer ID of pasture
 function Lib.LifestockSystem.Global:BuyAnimal(_Index, _PlayerID, _BuildingID)
     local AnimalType = (_Index == "Cattle" and Entities.A_X_Cow01) or Entities.A_X_Sheep01;
     local GrainCost = self[_Index.. "GrainCost"];
@@ -168,7 +152,6 @@ function Lib.LifestockSystem.Global:BuyAnimal(_Index, _PlayerID, _BuildingID)
     SendReportToLocal(Report[_Index.. "Bought"], _PlayerID, EntityID, _BuildingID);
 end
 
---- Controls the hunger and the starvation of animals of human players.
 function Lib.LifestockSystem.Global:ControlFeeding()
     for PlayerID = 1, 8 do
         if Logic.PlayerGetIsHumanFlag(PlayerID) then
@@ -241,7 +224,6 @@ function Lib.LifestockSystem.Global:ControlFeeding()
     end
 end
 
---- Controls the automatic decay of starved animals.
 function Lib.LifestockSystem.Global:ControlDecay()
     if Logic.GetTime() % 10 == 0 then
         -- Cattle

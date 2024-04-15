@@ -1,9 +1,3 @@
---- Allows to create warehouses.
----
---- Warehouses are modified tradeposts where the player can buy goods without
---- an AI player involved. But goods can not be sold to the warehouse. Payment
---- can be set to any type of resource.
----
 Lib.Warehouse = Lib.Warehouse or {};
 Lib.Warehouse.Name = "Warehouse";
 Lib.Warehouse.CinematicEvents = {};
@@ -219,8 +213,6 @@ function Lib.Warehouse.Global:ActivateOffer(_Name, _ID, _Active)
     end
 end
 
---- @return table
---- @return integer
 function Lib.Warehouse.Global:GetOfferByID(_Name, _ID)
     local Offer, OfferIndex
     local Index = self:GetIndex(_Name);

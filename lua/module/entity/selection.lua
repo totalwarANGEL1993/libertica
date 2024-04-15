@@ -1,12 +1,3 @@
---- Adds features for entity selection.
----
---- Features:
---- * Fire soldiers
---- * Fire war machines
---- * Fire thieves
---- * Obtain selection from global script
---- * Fixes trebuchet selection
----
 Lib.Selection = Lib.Selection or {};
 Lib.Selection.Name = "Selection";
 Lib.Selection.Global = {

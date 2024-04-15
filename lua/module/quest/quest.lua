@@ -1,17 +1,5 @@
 ---@diagnostic disable: missing-return-value
 
---- Offers a more comfortable way to create quests.
----
---- Quests can be created as single quests or as nested quests. A nested quest
---- is a simplified notation for quests that are dependend on oneanother.
----
---- #### Debug commands
---- * `stop <QuestName>`      - Interrupts a quest
---- * `start <QuestName>`     - Triggers a quest
---- * `win <QuestName>`       - Ends a quest successfuly
---- * `fail <QuestName>`      - Ends a quest in failure
---- * `restart <QuestName>`   - Resets and triggers a quest
----
 Lib.Quest = Lib.Quest or {};
 Lib.Quest.Name = "Quest";
 Lib.Quest.Global = {
@@ -159,10 +147,6 @@ function Lib.Quest.Global:AbortAllQuestSegments(_QuestName)
     end
 end
 
----Creates a simple quest.
----@param _Data table Quest data
----@return string Name Name of quest
----@return number Amount Quest amount
 function Lib.Quest.Global:CreateSimpleQuest(_Data)
     if not _Data.Name then
         AutomaticQuestNameCounter = (AutomaticQuestNameCounter or 0) +1;

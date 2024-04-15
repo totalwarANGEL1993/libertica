@@ -1,7 +1,3 @@
---- Allows to create user defined technologies.
----
---- Technologies should be defined directly on game start.
----
 Lib.Technology = Lib.Technology or {};
 Lib.Technology.Name = "Technology";
 Lib.Technology.Global = {};

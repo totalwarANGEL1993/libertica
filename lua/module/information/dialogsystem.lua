@@ -1,8 +1,3 @@
---- Allows to define dialogs
----
---- Dialogs can be used to create conversations between characters using the
---- animated heads in a feature stripped briefing.
----
 Lib.DialogSystem = Lib.DialogSystem or {};
 Lib.DialogSystem.Name = "DialogSystem";
 Lib.DialogSystem.Global = {

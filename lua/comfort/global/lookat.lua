@@ -1,9 +1,6 @@
 Lib.Require("comfort/IsValidPosition");
 Lib.Register("comfort/global/LookAt");
 
---- Makes an entity look at a target.
---- @param _Entity any Entity to move
---- @param _Target any Position to move to
 function LookAt(_Entity, _Target)
     local ID1 = GetID(_Entity);
     assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");

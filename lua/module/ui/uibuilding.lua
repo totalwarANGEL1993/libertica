@@ -1,4 +1,3 @@
---- Allows to place up to 6 additional buttons in building menus.
 Lib.UIBuilding = Lib.UIBuilding or {};
 Lib.UIBuilding.Name = "UIBuilding";
 Lib.UIBuilding.CinematicEvents = {};

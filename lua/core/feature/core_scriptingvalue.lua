@@ -208,10 +208,6 @@ function IsEntityInaccessible(_Entity)
     return IsEntityInvisible(_Entity) or GetInteger(_Entity, CONST_SCRIPTING_VALUES.Visible) == 799232;
 end
 
---- Returns the value of the index as integer.
---- @param _Entity any ID or script name
---- @param _SV integer Index of scripting value
---- @return integer Value Value at index
 function GetInteger(_Entity, _SV)
     assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
@@ -219,10 +215,6 @@ function GetInteger(_Entity, _SV)
 end
 API.GetInteger = GetInteger;
 
---- Returns the value of the index as double.
---- @param _Entity any ID or script name
---- @param _SV integer Index of scripting value
---- @return number Value Value at index
 function GetFloat(_Entity, _SV)
     assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
@@ -231,10 +223,6 @@ function GetFloat(_Entity, _SV)
 end
 API.GetFloat = GetFloat;
 
---- Sets an integer value at the index.
---- @param _Entity any ID or script name
---- @param _SV integer Index of scripting value
---- @param _Value integer Value to set
 function SetInteger(_Entity, _SV, _Value)
     assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
@@ -242,10 +230,6 @@ function SetInteger(_Entity, _SV, _Value)
 end
 API.SetInteger = SetInteger;
 
---- Sets a double value at the index.
---- @param _Entity any ID or script name
---- @param _SV integer Index of scripting value
---- @param _Value number Value to set
 function SetFloat(_Entity, _SV, _Value)
     assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
@@ -253,17 +237,11 @@ function SetFloat(_Entity, _SV, _Value)
 end
 API.SetFloat = SetFloat;
 
---- Converts the double value into integer representation.
---- @param _Value number Integer value
---- @return number Value Double value
 function ConvertIntegerToFloat(_Value)
     return Lib.Core.ScriptingValue:IntegerToFloat(_Value);
 end
 API.ConvertIntegerToFloat = ConvertIntegerToFloat;
 
---- Converts the integer value into double representation.
---- @param _Value number Double value
---- @return integer Value Integer value
 function ConvertFloatToInteger(_Value)
     return Lib.Core.ScriptingValue:FloatToInteger(_Value);
 end

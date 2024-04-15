@@ -11,8 +11,6 @@ Lib.Register("core/feature/Core_Save");
 
 -- -------------------------------------------------------------------------- --
 
---- Deactivates the autosave of the History Edition.
---- @param _Flag boolean Auto save is disabled
 function DisableAutoSave(_Flag)
     if not IsLocalScript() then
         Lib.Core.Save.HistoryEditionQuickSave = _Flag == true;
@@ -21,15 +19,11 @@ function DisableAutoSave(_Flag)
 end
 API.DisableAutoSave = DisableAutoSave;
 
---- Deactivates saving the game.
---- @param _Flag boolean Saving is disabled
 function DisableSaving(_Flag)
     Lib.Core.Save:DisableSaving(_Flag);
 end
 API.DisableSaving = DisableSaving;
 
---- Deactivates loading of savegames.
---- @param _Flag boolean Loading is disabled
 function DisableLoading(_Flag)
     Lib.Core.Save:DisableLoading(_Flag);
 end

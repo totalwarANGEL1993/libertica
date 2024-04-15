@@ -128,9 +128,6 @@ end
 
 -- -------------------------------------------------------------------------- --
 
---- Open the chat console.
---- @param _PlayerID number    ID of player
---- @param _AllowDebug boolean Debug codes allowed
 function ShowTextInput(_PlayerID, _AllowDebug)
     Lib.Core.Chat:ShowTextInput(_PlayerID, _AllowDebug);
 end

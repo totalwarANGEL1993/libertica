@@ -1,5 +1,3 @@
---- Allows to add notes to a quest.
---- 
 Lib.QuestJornal = Lib.QuestJornal or {};
 Lib.QuestJornal.Name = "QuestJornal";
 Lib.QuestJornal.Global = {

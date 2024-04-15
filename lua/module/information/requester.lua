@@ -1,5 +1,3 @@
---- Provides dialog and text windows.
----
 Lib.Requester = Lib.Requester or {};
 Lib.Requester.Name = "Requester";
 Lib.Requester.Global = {};
@@ -105,7 +103,7 @@ function Lib.Requester.Local:OnReportReceived(_ID, ...)
     end
 end
 
-------------
+-- ---------
 -- Requester
 
 function Lib.Requester.Local:DialogAltF4Hotkey()
@@ -345,7 +343,7 @@ function Lib.Requester.Local:DialogOverwriteOriginal()
     end
 end
 
------------
+-- --------
 -- Chat Log
 
 function Lib.Requester.Local:ShowTextWindow(_Data)

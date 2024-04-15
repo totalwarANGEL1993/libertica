@@ -1,8 +1,5 @@
 Lib.Register("comfort/SerializeTable");
 
---- Returns the table serialized as string.
---- @param _Table table Input table
---- @return string Serialized Serialized table
 function SerializeTable(_Table)
     local String = "{";
     for k, v in pairs(_Table) do

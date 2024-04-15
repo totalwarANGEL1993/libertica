@@ -1,19 +1,6 @@
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/city/LifestockSystem_API");
 
---- Changes the parameters for raising cows.
----
---- If the feeding timer is set to 0 animals don't need to be fed at all. All
---- fields left out in the table will be reset to the default.
----
---- #### Fields
---- * `BasePrice`    - Base price at regular merchants (Default: 300)
---- * `GrainCost`    - Costs to buy a single animal (Default: 10)
---- * `GrainUpkeep`  - Costs to upkeep the animals (Default: 1)
---- * `FeedingTimer` - Frequency the upkeep is checked (Default: 0)
---- * `StarveChance` - Chance a animal starves if hungry (Default: 35)
----
---- @param _Data table Breeding configuration
 function SetCattleBreedingParameters(_Data)
     assert(not IsLocalScript(), "Can not be used in local script!");
     assert(type(_Data) == "table", "Malformed data passed!");
@@ -39,19 +26,6 @@ function SetCattleBreedingParameters(_Data)
 end
 API.SetCattleBreedingParameters = SetCattleBreedingParameters;
 
---- Changes the parameters for raising sheeps.
----
---- If the feeding timer is set to 0 animals don't need to be fed at all. All
---- fields left out in the table will be reset to the default.
----
---- #### Fields
---- * `BasePrice`    - Base price at regular merchants (Default: 300)
---- * `GrainCost`    - Costs to buy a single animal (Default: 10)
---- * `GrainUpkeep`  - Costs to upkeep the animals (Default: 1)
---- * `FeedingTimer` - Frequency the upkeep is checked (Default: 0)
---- * `StarveChance` - Chance a animal starves if hungry (Default: 35)
----
---- @param _Data table Breeding configuration
 function SetSheepBreedingParameters(_Data)
     assert(not IsLocalScript(), "Can not be used in local script!");
     assert(type(_Data) == "table", "Malformed data passed!");
@@ -77,10 +51,6 @@ function SetSheepBreedingParameters(_Data)
 end
 API.SetSheepBreedingParameters = SetSheepBreedingParameters;
 
---- Sets the required title to breed cows.
----
---- Per default breeding cows is allowed from the start.
---- @param _Title integer Required title
 function RequireTitleToBreedCattle(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[
@@ -95,10 +65,6 @@ function RequireTitleToBreedCattle(_Title)
 end
 API.RequireTitleToBreedCattle = RequireTitleToBreedCattle;
 
---- Sets the required title to breed sheeps.
----
---- Per default breeding sheeps is allowed from the start.
---- @param _Title integer Required title
 function RequireTitleToBreedSheep(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[

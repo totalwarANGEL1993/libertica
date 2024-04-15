@@ -1,13 +1,3 @@
---- Allows to restrict construction and knockdown of buildings.
----
---- #### Special rules
---- The following rules are always active and can not be deactivated:
----
---- * Gates can not be placed right beside each other. They need at least one
----   wall segment between.
---- * Ballistas can not be placed right beside each other and always need a full
----   length wall segment between them (or multiple that are equally long).
----
 Lib.Construction = Lib.Construction or {};
 Lib.Construction.Name = "Construction";
 Lib.Construction.Global = {

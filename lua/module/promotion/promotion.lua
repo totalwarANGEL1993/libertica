@@ -1,30 +1,6 @@
 --- @diagnostic disable: cast-local-type
 --- @diagnostic disable: missing-return-value
 
---- Allows to change the promotion requirements.
---- 
---- Some technologies are now hidden in the next title rights list:
---- - Technologies.R_Barracks
---- - Technologies.R_SwordSmith
---- - Technologies.R_BarracksArchers
---- - Technologies.R_BowMaker
----
---- To replace the technologies for swordmen and archers, 2 new technologies
---- were introduced. They can not be used to forbid features but to show the
---- player that they can recruit those units with the next rank. So the old
---- technologies do not need to be added to the rights. If the technologies
---- are forbidden they will not be unlocked.
----
---- ##### Technologies.R_MilitarySword
---- This technology is to show the player they will be able to recruit swordmen.
----
---- Unlocks: Technologies.R_Barracks and Technologies.R_SwordSmith
----
---- ##### Technologies.R_MilitaryBow
---- This technology is to show the player they will be able to recruit archers.
----
---- Unlocks: Technologies.R_BarracksArchers and Technologies.R_BowMaker
----
 Lib.Promotion = Lib.Promotion or {};
 Lib.Promotion.Name = "Promotion";
 Lib.Promotion.Global = {
@@ -124,7 +100,6 @@ function Lib.Promotion.Global:OverwriteConsumedGoods()
     end
 end
 
---- Init technologies that are researched transitively.
 function Lib.Promotion.Global:InitRelatedTechnologies()
     self.TechnologiesToResearch[Technologies.R_MilitaryBow] = {
         Technologies.R_BarracksArchers,

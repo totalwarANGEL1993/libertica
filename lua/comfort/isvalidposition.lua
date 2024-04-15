@@ -1,8 +1,5 @@
 Lib.Register("comfort/IsValidPosition");
 
---- Returns if a position does exist on the map.
---- @param _Pos table Position
---- @return boolean IsValid Position is valid
 function IsValidPosition(_Pos)
     if type(_Pos) == "table" then
         if (_Pos.X ~= nil and type(_Pos.X) == "number") and (_Pos.Y ~= nil and type(_Pos.Y) == "number") then

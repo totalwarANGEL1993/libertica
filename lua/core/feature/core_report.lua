@@ -181,28 +181,17 @@ end
 
 -- -------------------------------------------------------------------------- --
 
---- Creates a new report type.
---- @param _Name string Name of report
---- @return integer
 function CreateReport(_Name)
     return Lib.Core.Report:CreateReport(_Name);
 end
 API.CreateScriptEvent = CreateReport;
 
---- Sends a report with optional parameter.
---- @param _ID integer Report ID
---- @param ... unknown Parameters
 function SendReport(_ID, ...)
     local arg = {...};
     Lib.Core.Report:SendReport(_ID, unpack(arg));
 end
 API.SendScriptEvent = SendReport;
 
---- Sends a report with optional parameter to the global script.
----
---- This will always be a broadcast!
---- @param _ID integer Report ID
---- @param ... unknown Parameters
 function SendReportToGlobal(_ID, ...)
     assert(IsLocalScript(), "Was called from global script.");
     local arg = {...};
@@ -210,9 +199,6 @@ function SendReportToGlobal(_ID, ...)
 end
 API.SendScriptEventToGlobal = SendReportToGlobal;
 
---- Sends a report with optional parameter to the local script.
---- @param _ID integer Report ID
---- @param ... unknown Parameters
 function SendReportToLocal(_ID, ...)
     assert(not IsLocalScript(), "Was called from local script.");
     local arg = {...};
@@ -237,18 +223,11 @@ function SendReportToLocal(_ID, ...)
 end
 API.SendScriptEventToLocal = SendReportToLocal;
 
---- Creates a report listener for the report type.
---- @param _EventID integer ID of report
---- @param _Function function Listener function
---- @return unknown
 function CreateReportReceiver(_EventID, _Function)
     return Lib.Core.Report:CreateReportReceiver(_EventID, _Function);
 end
 API.CreateScriptEventReceiver = CreateReportReceiver;
 
---- Deletes a report listener for the report type.
---- @param _EventID integer ID of report
---- @param _ID integer ID of listener
 function RemoveReportReceiver(_EventID, _ID)
     Lib.Core.Report:RemoveReportReceiver(_EventID, _ID);
 end

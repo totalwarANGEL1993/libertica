@@ -1,8 +1,3 @@
---- Allows to define briefings
----
---- The apex for scripting dialogs and simple camera animations. A versatile
---- tool to script the plot of the map.
----
 Lib.BriefingSystem = Lib.BriefingSystem or {};
 Lib.BriefingSystem.Name = "BriefingSystem";
 Lib.BriefingSystem.Global = {

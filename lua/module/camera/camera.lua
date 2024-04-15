@@ -1,6 +1,5 @@
 --- @diagnostic disable: duplicate-set-field
 
---- 
 Lib.Camera = Lib.Camera or {};
 Lib.Camera.Name = "Camera";
 Lib.Camera.Global = {};

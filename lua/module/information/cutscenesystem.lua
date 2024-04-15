@@ -1,8 +1,3 @@
---- Allows to define cutscenes
----
---- Cutscenes are XML defined camera movemehts that can be played by the
---- game engine. Cutscenes feature smooth camera animations.
----
 Lib.CutsceneSystem = Lib.CutsceneSystem or {};
 Lib.CutsceneSystem.Name = "CutsceneSystem";
 Lib.CutsceneSystem.Global = {

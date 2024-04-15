@@ -1,4 +1,3 @@
---- Allows to create constructable resource sources.
 Lib.IOMine = Lib.IOMine or {};
 Lib.IOMine.Name = "IOMine";
 Lib.IOMine.Global = {

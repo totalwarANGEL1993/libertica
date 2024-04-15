@@ -1,7 +1,5 @@
 Lib.Register("comfort/GetActivePlayers");
 
---- Returns all active players.
---- @return table PlayerList List of active players
 function GetActivePlayers()
     local PlayerList = {};
     for i= 1, 8 do

@@ -1,24 +1,3 @@
---- Implements settlement survival aspects in the game.
----
---- Settlers (and farm animals) can now become sick from different causes and
---- might die permamently. If a settler dies, they will still be attached to
---- the building so that no other settler can replace them. After some time a
---- new settler will arrive.
----
---- Things that ignite buildings:
---- * Hot temperature
----
---- Things that makes settlers sick:
---- * Having not enough hygiene
---- * Having not enough entertainment
---- * Having not enough firewood
----
---- Things that kills settlers:
---- * being sick (5% chance each period)
---- * being hungry (5% chance each period)
----
---- Things that kills animals:
---- * being sick (5% chance each period)
 Lib.SettlementSurvival = Lib.SettlementSurvival or {};
 Lib.SettlementSurvival.Name = "SettlementSurvival";
 Lib.SettlementSurvival.Global = {

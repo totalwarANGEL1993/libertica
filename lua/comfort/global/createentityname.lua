@@ -2,9 +2,6 @@ Lib.Register("comfort/global/CreateEntityName");
 
 CreateEntityName_Sequence_ID = 0;
 
---- Creates a scriptname for the entity.
---- @param _EntityID any ID of entity or scriptname
---- @return string Scriptname Generated scriptname
 function CreateEntityName(_EntityID)
     assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     if type(_EntityID) == "string" then

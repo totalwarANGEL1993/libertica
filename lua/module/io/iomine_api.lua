@@ -1,20 +1,6 @@
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/io/IOMine_API");
 
---- Creates a buried iron mine.
----
---- #### Parameter
---- * `Scriptname`            - Scriptname of position
---- * `Title`                 - (Optional) Tooltip title
---- * `Text`                  - (Optional) Tooltip text
---- * `Costs`                 - (Optional) Construction costs
---- * `ResourceAmount`        - (Optional) Amount of resources
---- * `RefillAmount`          - (Optional) Refill amount
---- * `ConstructionCondition` - (Optional) Condition function
---- * `ConditionInfo`         - (Optional) Info condition not fulfilled
---- * `ConstructionAction`    - (Optional) Action after construction
----
---- @param _Data table Mine configuration
 function CreateIOIronMine(_Data)
     local Costs = {Goods.G_Gold, 500, Goods.G_Wood, 20};
     CheckIOMineParameter(_Data);
@@ -33,20 +19,6 @@ function CreateIOIronMine(_Data)
 end
 API.CreateIOIronMine = CreateIOIronMine;
 
---- Creates a buried stone mine.
----
---- #### Parameter
---- * `Scriptname`            - Scriptname of position
---- * `Title`                 - (Optional) Tooltip title
---- * `Text`                  - (Optional) Tooltip text
---- * `Costs`                 - (Optional) Construction costs
---- * `ResourceAmount`        - (Optional) Amount of resources
---- * `RefillAmount`          - (Optional) Refill amount
---- * `ConstructionCondition` - (Optional) Condition function
---- * `ConditionInfo`         - (Optional) Info condition not fulfilled
---- * `ConstructionAction`    - (Optional) Action after construction
----
---- @param _Data table Mine configuration
 function CreateIOStoneMine(_Data)
     local Costs = {Goods.G_Gold, 500, Goods.G_Wood, 20};
     CheckIOMineParameter(_Data);
