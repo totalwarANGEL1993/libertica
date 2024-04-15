@@ -90,13 +90,13 @@ function Lib.Technology.Shared:AddCustomTechnology(_Key, _Name, _Icon)
     CONST_TECHNOLOGY_TO_INDEX[_Key] = #self.CustomTechnologies;
 
     if IsLocalScript() then
-        g_TexturePositions.Technologies[Technologies[_Key]] = _Icon;
         AddStringText("UI_ObjectNames/" .._Key, _Name);
     else
         for i= 1, 8 do
             Logic.TechnologySetState(i, Technologies[_Key], 0);
         end
     end
+    g_TexturePositions.Technologies[Technologies[_Key]] = _Icon;
 end
 
 function Lib.Technology.Shared:IsCustomTechnology(_Technology)
@@ -107,32 +107,14 @@ function Lib.Technology.Shared:OverwriteLogic()
     -- Get state of technology
     Lib.Technology.Shared.Orig_Logic_TechnologyGetState = Logic.TechnologyGetState;
     Logic.TechnologyGetState = function(_PlayerID, _Technology)
-        if _Technology and Lib.Technology.Shared:IsCustomTechnology(_Technology) then
-            local Index = CONST_TECHNOLOGY_TO_INDEX[_Technology];
-            if self.CustomTechnologies[Index] then
-                return self.CustomTechnologies[Index][4][_PlayerID] or TechnologyStates.Locked;
-            end
-        end
-        return Lib.Technology.Shared.Orig_Logic_TechnologyGetState(_PlayerID, _Technology);
+        return Lib.Technology.Shared:GetTechnologyState(_PlayerID, _Technology);
     end
 
     -- Change state of technology
     if not IsLocalScript() then
         Lib.Technology.Shared.Orig_Logic_TechnologySetState = Logic.TechnologySetState;
         Logic.TechnologySetState = function(_PlayerID, _Technology, _State)
-            if _Technology and Lib.Technology.Shared:IsCustomTechnology(_Technology) then
-                local Index = CONST_TECHNOLOGY_TO_INDEX[_Technology];
-                if self.CustomTechnologies[Index] then
-                    self.CustomTechnologies[Index][4][_PlayerID] = _State;
-                    RequestHiResDelay(
-                        1, ExecuteLocal,
-                        [[Lib.Technology.Shared.CustomTechnologies[%d][4][%d] = %d]],
-                        Index, _PlayerID, _State
-                    );
-                    return;
-                end
-            end
-            Lib.Technology.Shared.Orig_Logic_TechnologySetState(_PlayerID, _Technology, _State);
+            Lib.Technology.Shared:SetTechnologyState(_PlayerID, _Technology, _State);
         end
     end
 end
@@ -154,9 +136,9 @@ function Lib.Technology.Shared:InitNewTechnologies()
         CONST_TECHNOLOGY_TO_INDEX[Technologies[Data[1]]] = i;
         CONST_TECHNOLOGY_TO_INDEX[Data[1]] = i;
         if IsLocalScript() then
-            g_TexturePositions.Technologies[Technologies[Data[1]]] = Data[3];
             AddStringText("UI_ObjectNames/" ..Data[1], Data[4]);
         end
+        g_TexturePositions.Technologies[Technologies[Data[1]]] = Data[3];
     end
 end
 
@@ -167,6 +149,32 @@ function Lib.Technology.Shared:RestoreNewTechnologies()
         CONST_TECHNOLOGY_TO_INDEX[Technologies[Data[1]]] = i;
         CONST_TECHNOLOGY_TO_INDEX[Data[1]] = i;
     end
+end
+
+function Lib.Technology.Shared:GetTechnologyState(_PlayerID, _Technology)
+    if _Technology and self:IsCustomTechnology(_Technology) then
+        local Index = CONST_TECHNOLOGY_TO_INDEX[_Technology];
+        if self.CustomTechnologies[Index] then
+            return self.CustomTechnologies[Index][4][_PlayerID] or TechnologyStates.Locked;
+        end
+    end
+    return self.Orig_Logic_TechnologyGetState(_PlayerID, _Technology);
+end
+
+function Lib.Technology.Shared:SetTechnologyState(_PlayerID, _Technology, _State)
+    if _Technology and self:IsCustomTechnology(_Technology) then
+        local Index = CONST_TECHNOLOGY_TO_INDEX[_Technology];
+        if self.CustomTechnologies[Index] then
+            self.CustomTechnologies[Index][4][_PlayerID] = _State;
+            RequestHiResDelay(
+                1, ExecuteLocal,
+                [[Lib.Technology.Shared.CustomTechnologies[%d][4][%d] = %d]],
+                Index, _PlayerID, _State
+            );
+            return;
+        end
+    end
+    self.Orig_Logic_TechnologySetState(_PlayerID, _Technology, _State);
 end
 
 -- -------------------------------------------------------------------------- --
