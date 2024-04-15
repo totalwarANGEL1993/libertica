@@ -8,6 +8,7 @@ Lib.Core.ScriptingValue = {
             Player      = -71,
             Size        = -45,
             Visible     = -50,
+            Selectable  = -50,
             NPC         = 6,
         },
         HistoryEdition = {
@@ -16,6 +17,7 @@ Lib.Core.ScriptingValue = {
             Player      = -68,
             Size        = -42,
             Visible     = -47,
+            Selectable  = -47,
             NPC         = 6,
         }
     }
@@ -152,13 +154,67 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function GetEntityDestination(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    local X = GetFloat(_Entity, CONST_SCRIPTING_VALUES.Destination.X);
+    local Y = GetFloat(_Entity, CONST_SCRIPTING_VALUES.Destination.Y);
+    return {X = X, Y = Y, Z = 0};
+end
+
+function GetEntityHealth(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    return GetInteger(_Entity, CONST_SCRIPTING_VALUES.Health);
+end
+
+function SetEntityHealth(_Entity, _Health)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    SetInteger(_Entity, CONST_SCRIPTING_VALUES.Health, _Health);
+end
+
+function GetEntityNpc(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    return GetInteger(_Entity, CONST_SCRIPTING_VALUES.NPC) > 0;
+end
+
+function GetEntityPlayer(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    return GetInteger(_Entity, CONST_SCRIPTING_VALUES.Player);
+end
+
+function SetEntityPlayer(_Entity, _Player)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    SetInteger(_Entity, CONST_SCRIPTING_VALUES.Player, _Player);
+end
+
+function GetEntityScaling(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    return GetFloat(_Entity, CONST_SCRIPTING_VALUES.Size);
+end
+
+function GetEntityScaling(_Entity, _Scaling)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    SetFloat(_Entity, CONST_SCRIPTING_VALUES.Size, _Scaling);
+end
+
+function IsEntityInvisible(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    -- 801280 would be visible
+    return GetInteger(_Entity, CONST_SCRIPTING_VALUES.Visible) == 793088;
+end
+
+function IsEntityInaccessible(_Entity)
+    assert(IsExisting(_Entity), "Entity does not exist.");
+    -- 801280 would be selectable
+    return IsEntityInvisible(_Entity) or GetInteger(_Entity, CONST_SCRIPTING_VALUES.Visible) == 799232;
+end
+
 --- Returns the value of the index as integer.
 --- @param _Entity any ID or script name
 --- @param _SV integer Index of scripting value
 --- @return integer Value Value at index
 function GetInteger(_Entity, _SV)
+    assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
-    assert(IsExisting(ID), "Entity does not exist.");
     return Logic.GetEntityScriptingValue(ID, _SV);
 end
 API.GetInteger = GetInteger;
@@ -168,8 +224,8 @@ API.GetInteger = GetInteger;
 --- @param _SV integer Index of scripting value
 --- @return number Value Value at index
 function GetFloat(_Entity, _SV)
+    assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
-    assert(IsExisting(ID), "Entity does not exist.");
     local Value = Logic.GetEntityScriptingValue(ID, _SV);
     return ConvertIntegerToFloat(Value);
 end
@@ -180,8 +236,8 @@ API.GetFloat = GetFloat;
 --- @param _SV integer Index of scripting value
 --- @param _Value integer Value to set
 function SetInteger(_Entity, _SV, _Value)
+    assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
-    assert(IsExisting(ID), "Entity does not exist.");
     Logic.SetEntityScriptingValue(ID, _SV, _Value);
 end
 API.SetInteger = SetInteger;
@@ -191,8 +247,8 @@ API.SetInteger = SetInteger;
 --- @param _SV integer Index of scripting value
 --- @param _Value number Value to set
 function SetFloat(_Entity, _SV, _Value)
+    assert(IsExisting(_Entity), "Entity does not exist.");
     local ID = GetID(_Entity);
-    assert(IsExisting(ID), "Entity does not exist.");
     Logic.SetEntityScriptingValue(ID, _SV, ConvertFloatToInteger(_Value));
 end
 API.SetFloat = SetFloat;
