@@ -38,11 +38,11 @@ end
 
 function B_Reprisal_Briefing:Debug(_Quest)
     if self.BriefingName == nil or self.BriefingName == "" then
-        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     if not type(_G[self.Function]) == "function" then
-        error(_Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        error(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
         return true;
     end
     return false;
@@ -133,15 +133,15 @@ end
 
 function B_Trigger_Briefing:Debug(_Quest)
     if self.WaitTime < 0 then
-        error(string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        error(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.PlayerID < 1 or self.PlayerID > 8 then
-        error(string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        error(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.BriefingName == nil or self.BriefingName == "" then
-        error(string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     return false;
