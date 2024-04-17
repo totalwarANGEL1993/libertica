@@ -21,6 +21,11 @@
 --- Dinge, die Tiere töten:
 --- * Krankheit (5%ige Chance pro Periode)
 ---
+--- #### Reports
+--- * `Report.AnimalDiedFromIllness` - Ein Tier ist an einer Krankheit gestorben.
+--- * `Report.SettlerDiedFromStarvation` - Ein Siedler ist verhungert.
+--- * `Report.SettlerDiedFromIllness` - Ein Siedler ist an einer Krankheit gestorben.
+---
 Lib.SettlementSurvival = Lib.SettlementSurvival or {};
 
 --- Aktiviert oder deaktiviert das Sterben von Tieren an Krankheiten.
@@ -199,7 +204,7 @@ API.PlagueSetDeathChance = PlagueSetDeathChance;
 --- `EntityID` - ID des Tieres
 Report.AnimalDiedFromIllness = anyInteger;
 
---- Ein Siedler ist an Verhungern gestorben.
+--- Ein Siedler ist verhungert.
 ---
 --- #### Parameter
 --- `EntityID` - ID des Siedlers

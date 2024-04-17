@@ -21,6 +21,11 @@
 --- Things that kills animals:
 --- * being sick (5% chance each period)
 ---
+--- #### Reports
+--- * `Report.AnimalDiedFromIllness` - A animal has died from illness.
+--- * `Report.SettlerDiedFromStarvation` - A settler died from starvation.
+--- * `Report.SettlerDiedFromIllness` - A settler has died from illness.
+---
 Lib.SettlementSurvival = Lib.SettlementSurvival or {};
 
 --- Enables or disables animals dying from disease.

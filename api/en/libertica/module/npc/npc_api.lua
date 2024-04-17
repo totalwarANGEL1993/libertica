@@ -3,6 +3,10 @@
 --- NPCs are characters who are activated by the player with a hero hence
 --- talk to them. Much like interactive objects an action can be called
 --- and some other adjustments can be made.
+---
+--- #### Reports
+--- * `Report.NpcInteraction` - Someone talks to an NPC.
+---
 Lib.NPC = Lib.NPC or {};
 
 
@@ -125,7 +129,7 @@ API.NpcTalkedTo = NpcTalkedTo;
 
 
 
---- Someone talks to an NPC
+--- Someone talks to an NPC.
 ---
 --- #### Parameters
 --- * `NpcEntityID`  - ID of npc

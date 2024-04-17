@@ -18,6 +18,9 @@
 --- * Anzeigen/Verstecken des Helden auswählen-Buttons
 --- * Anzeigen/Verstecken des Einheiten auswählen-Buttons
 ---
+--- #### Reports
+--- `Report.BuildingPlaced` - Ein menschlicher Spieler hat ein Gebäude platziert.
+---
 Lib.UITools = Lib.UITools or {};
 
 

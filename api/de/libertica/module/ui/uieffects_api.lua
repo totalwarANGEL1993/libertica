@@ -1,3 +1,16 @@
+--- Fügt verschiedene Effekte für das Interface hinzu.
+---
+--- #### Reports
+--- `Report.CinematicActivated` - Ein Kinoevent, empfangen von einem bestimmten Spieler, startet.
+--- `Report.GameInterfaceShown` - Ein Kinoevent, empfangen von einem bestimmten Spieler, endet.
+--- `Report.GameInterfaceHidden` - Die normale Oberfläche wird dem Spieler angezeigt.
+--- `Report.ImageScreenShown` - Der Vollbildhintergrund wird dem Spieler angezeigt.
+--- `Report.ImageScreenHidden` - Der Vollbildhintergrund wird vor dem Spieler versteckt.
+---
+Lib.UIEffects = Lib.UIEffects or {};
+
+
+
 --- Ermöglicht das Anzeigen eines schwarzen Hintergrunds hinter der Benutzeroberfläche und über der Spielwelt.
 --- @param _PlayerID integer ID des Spielers
 function ActivateColoredScreen(_PlayerID, _Red, _Green, _Blue, _Alpha)

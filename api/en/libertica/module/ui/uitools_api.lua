@@ -18,6 +18,9 @@
 --- * Show/Hide Select hero button
 --- * Show/Hide Select units button
 ---
+--- #### Reports
+--- `Report.BuildingPlaced` - A human player has placed a building.
+---
 Lib.UITools = Lib.UITools or {};
 
 

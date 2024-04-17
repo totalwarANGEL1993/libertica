@@ -1,6 +1,12 @@
 --- Ermöglicht es, Siedler wie interaktive Objekte zu verwenden.
 ---
---- NPCs sind Charaktere, die vom Spieler mit einem Helden aktiviert werden und daher mit ihnen sprechen. Ganz wie interaktive Objekte kann eine Aktion aufgerufen werden und einige andere Anpassungen können vorgenommen werden.
+--- NPCs sind Charaktere, die vom Spieler mit einem Helden aktiviert werden und 
+--- daher mit ihnen sprechen. Ganz wie interaktive Objekte kann eine Aktion 
+--- aufgerufen werden und einige andere Anpassungen können vorgenommen werden.
+---
+--- #### Reports
+--- * `Report.NpcInteraction` - Jemand spricht mit einem NPC.
+---
 Lib.NPC = Lib.NPC or {};
 
 
@@ -123,7 +129,7 @@ API.NpcTalkedTo = NpcTalkedTo;
 
 
 
---- Jemand spricht mit einem NPC
+--- Jemand spricht mit einem NPC.
 ---
 --- #### Parameter
 --- * `NpcEntityID`  - ID des NPCs

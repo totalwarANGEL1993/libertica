@@ -1,3 +1,12 @@
+--- Adds different effects for the user interface.
+---
+--- #### Reports
+--- `Report.CinematicActivated` - A cinematic event has concluded for the player.
+--- `Report.GameInterfaceShown` - The normal interface is shown for the player.
+--- `Report.GameInterfaceHidden` - The normal interface is hidden from the player.
+--- `Report.ImageScreenShown` - The fullscreen image background is shown for the player.
+--- `Report.ImageScreenHidden` - The fullscreen image background is hidden from the player.
+---
 Lib.UIEffects = Lib.UIEffects or {};
 
 
