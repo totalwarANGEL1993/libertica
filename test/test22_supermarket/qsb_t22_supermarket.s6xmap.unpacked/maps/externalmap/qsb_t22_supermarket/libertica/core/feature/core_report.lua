@@ -103,14 +103,14 @@ function Lib.Core.Report:SendScriptCommand(_ID, ...)
     local NamePlayerID = PlayerID +4;
     local PlayerName = Logic.GetPlayerName(NamePlayerID);
     local Parameters = self:EncodeScriptCommandParameters(...);
-    GUI.SetPlayerName(NamePlayerID, Parameters);
     if IsHistoryEdition() and IsMultiplayer() then
+        GUI.SetPlayerName(NamePlayerID, Parameters);
         GUI.SetSoldierPaymentLevel(_ID);
+        GUI.SetPlayerName(NamePlayerID, PlayerName);
+        GUI.SetSoldierPaymentLevel(PlayerSoldierPaymentLevel[PlayerID]);
     else
         ExecuteGlobal([[Lib.Core.Report:ProcessScriptCommand(%d, %d)]], PlayerID, _ID);
     end
-    GUI.SetPlayerName(NamePlayerID, PlayerName);
-    GUI.SetSoldierPaymentLevel(PlayerSoldierPaymentLevel[PlayerID]);
 end
 
 function Lib.Core.Report:EncodeScriptCommandParameters(...)
@@ -201,6 +201,7 @@ API.SendScriptEventToGlobal = SendReportToGlobal;
 
 function SendReportToLocal(_ID, ...)
     assert(not IsLocalScript(), "Was called from local script.");
+    assert(_ID ~= nil);
     local arg = {...};
     if #arg > 0 then
         local Parameter = "";

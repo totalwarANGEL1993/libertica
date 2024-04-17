@@ -212,6 +212,7 @@ function Lib.Selection.Local:OverrideSelection()
 end
 
 function Lib.Selection.Local:OverwriteMilitaryCommands()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.StandGroundClicked = function()
         Sound.FXPlay2DSound( "ui\\menu_click");
         local SelectedEntities = {GUI.GetSelectedEntities()};
@@ -226,6 +227,7 @@ function Lib.Selection.Local:OverwriteMilitaryCommands()
         end
     end
 
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.StandGroundUpdate = function()
         local WidgetAttack = "/InGame/Root/Normal/AlignBottomRight/DialogButtons/Military/Attack";
         local SelectedEntities = {GUI.GetSelectedEntities()};
@@ -249,6 +251,7 @@ end
 
 function Lib.Selection.Local:OverwriteMilitaryErect()
     GUI_Military.ErectClicked_Orig_Selection = GUI_Military.ErectClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.ErectClicked = function()
         GUI_Military.ErectClicked_Orig_Selection();
         local SelectedEntities = {GUI.GetSelectedEntities()};
@@ -262,6 +265,7 @@ function Lib.Selection.Local:OverwriteMilitaryErect()
     end
 
     GUI_Military.ErectUpdate_Orig_Selection = GUI_Military.ErectUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.ErectUpdate = function()
         local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
         local SiegeCartID = GUI.GetSelectedEntity();
@@ -276,6 +280,7 @@ function Lib.Selection.Local:OverwriteMilitaryErect()
     end
 
     GUI_Military.ErectMouseOver_Orig_Selection = GUI_Military.ErectMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.ErectMouseOver = function()
         local SiegeCartID = GUI.GetSelectedEntity();
         local TooltipTextKey;
@@ -291,6 +296,7 @@ end
 
 function Lib.Selection.Local:OverwriteMilitaryDisamble()
     GUI_Military.DisassembleClicked_Orig_Selection = GUI_Military.DisassembleClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DisassembleClicked = function()
         GUI_Military.DisassembleClicked_Orig_Selection();
         local SelectedEntities = {GUI.GetSelectedEntities()};
@@ -304,6 +310,7 @@ function Lib.Selection.Local:OverwriteMilitaryDisamble()
     end
 
     GUI_Military.DisassembleMouseOver_Orig_Selection = GUI_Military.DisassembleMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DisassembleMouseOver = function()
         local SiegeEngineID = GUI.GetSelectedEntity()
         local TooltipDisabledTextKey
@@ -319,6 +326,7 @@ function Lib.Selection.Local:OverwriteMilitaryDisamble()
     end
 
     GUI_Military.DisassembleUpdate_Orig_Selection = GUI_Military.DisassembleUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DisassembleUpdate = function()
         local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
         local SiegeEngineID = GUI.GetSelectedEntity();
@@ -369,6 +377,7 @@ end
 
 function Lib.Selection.Local:OverwriteMultiselectIcon()
     GUI_MultiSelection.IconUpdate_Orig_Selection = GUI_MultiSelection.IconUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_MultiSelection.IconUpdate = function()
         local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
         local CurrentMotherID = XGUIEng.GetWidgetsMotherID(CurrentWidgetID);
@@ -402,6 +411,7 @@ function Lib.Selection.Local:OverwriteMultiselectIcon()
     end
 
     GUI_MultiSelection.IconMouseOver_Orig_Selection = GUI_MultiSelection.IconMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_MultiSelection.IconMouseOver = function()
         local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
         local CurrentMotherID = XGUIEng.GetWidgetsMotherID(CurrentWidgetID);
@@ -429,6 +439,7 @@ end
 
 function Lib.Selection.Local:OverwriteMilitaryDismount()
     GUI_Military.DismountClicked_Orig_Selection = GUI_Military.DismountClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DismountClicked = function()
         local Selected = GUI.GetSelectedEntity();
         local Type = Logic.GetEntityType(Selected);
@@ -466,6 +477,7 @@ function Lib.Selection.Local:OverwriteMilitaryDismount()
     end
 
     GUI_Military.DismountUpdate_Orig_Selection = GUI_Military.DismountUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DismountUpdate = function()
         local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
         local Selected = GUI.GetSelectedEntity();
@@ -512,6 +524,7 @@ end
 
 function Lib.Selection.Local:OverwriteThiefDeliver()
     GUI_Thief.ThiefDeliverClicked_Orig_Selection = GUI_Thief.ThiefDeliverClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Thief.ThiefDeliverClicked = function()
         if not Lib.Selection.Local.ThiefRelease then
             GUI_Thief.ThiefDeliverClicked_Orig_Selection();
@@ -527,6 +540,7 @@ function Lib.Selection.Local:OverwriteThiefDeliver()
     end
 
     GUI_Thief.ThiefDeliverMouseOver_Orig_Selection = GUI_Thief.ThiefDeliverMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Thief.ThiefDeliverMouseOver = function()
         if not Lib.Selection.Local.ThiefRelease then
             GUI_Thief.ThiefDeliverMouseOver_Orig_Selection();
@@ -540,6 +554,7 @@ function Lib.Selection.Local:OverwriteThiefDeliver()
     end
 
     GUI_Thief.ThiefDeliverUpdate_Orig_Selection = GUI_Thief.ThiefDeliverUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Thief.ThiefDeliverUpdate = function()
         if not Lib.Selection.Local.ThiefRelease then
             GUI_Thief.ThiefDeliverUpdate_Orig_Selection();
@@ -557,6 +572,7 @@ function Lib.Selection.Local:OverwriteThiefDeliver()
 end
 
 function Lib.Selection.Local:OverwriteSelectKnight()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Knight.JumpToButtonClicked = function()
         local PlayerID = GUI.GetPlayerID();
         local KnightID = Logic.GetKnightID(PlayerID);
@@ -564,7 +580,7 @@ function Lib.Selection.Local:OverwriteSelectKnight()
             g_MultiSelection.EntityList = {};
             g_MultiSelection.Highlighted = {};
             GUI.ClearSelection();
-            if XGUIEng.IsModifierPressed(Keys.ModifierControl) then
+            if XGUIEng.IsModifierPressed(Keys.ModifierShift) then
                 local knights = {}
                 Logic.GetKnights(PlayerID, knights);
                 for i=1,#knights do
@@ -588,12 +604,29 @@ function Lib.Selection.Local:OverwriteSelectKnight()
 end
 
 function Lib.Selection.Local:OverwriteSelectAllUnits()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_MultiSelection.SelectAllPlayerUnitsClicked = function()
-        if XGUIEng.IsModifierPressed(Keys.ModifierShift) then
-            Lib.Selection.Local:ExtendedLeaderSortOrder();
-        else
-            Lib.Selection.Local:NormalLeaderSortOrder();
+        local ModifierAlt = XGUIEng.IsModifierPressed(Keys.ModifierAlt);
+        local ModifierControl = XGUIEng.IsModifierPressed(Keys.ModifierControl);
+        local ModifierShift = XGUIEng.IsModifierPressed(Keys.ModifierShift);
+
+        -- Select all units
+        if not ModifierAlt and not ModifierControl and not ModifierShift then
+            Lib.Selection.Local:SortOrderFullSelection();
         end
+        -- Select only thieves
+        if ModifierAlt and not ModifierControl and not ModifierShift then
+            Lib.Selection.Local:SortOrderSiegeEnginesOnly();
+        end
+        -- Select only military and knight
+        if not ModifierAlt and ModifierControl and not ModifierShift then
+            Lib.Selection.Local:SortOrderThievesOnly();
+        end
+        -- Select only siege engines
+        if not ModifierAlt and not ModifierControl and ModifierShift then
+            Lib.Selection.Local:SortOrderMilitaryUnitsOnly();
+        end
+
         Sound.FXPlay2DSound("ui\\menu_click");
         GUI.ClearSelection();
         local PlayerID = GUI.GetPlayerID()
@@ -603,61 +636,22 @@ function Lib.Selection.Local:OverwriteSelectAllUnits()
                 GUI.SelectEntity(EntitiesOfThisType[j])
             end
         end
-        local Knights = {}
-        Logic.GetKnights(PlayerID, Knights)
-        for k = 1, #Knights do
-            GUI.SelectEntity(Knights[k])
+
+        -- Add knight only to full selection or military selection
+        if (not ModifierAlt and not ModifierControl and not ModifierShift)
+        or (not ModifierAlt and not ModifierControl and ModifierShift) then
+            local Knights = {}
+            Logic.GetKnights(PlayerID, Knights)
+            for k = 1, #Knights do
+                GUI.SelectEntity(Knights[k])
+            end
         end
+
         GUI_MultiSelection.CreateMultiSelection(g_SelectionChangedSource.User);
     end
 end
 
-function Lib.Selection.Local:NormalLeaderSortOrder()
-    g_MultiSelection = {};
-    g_MultiSelection.EntityList = {};
-    g_MultiSelection.Highlighted = {};
-
-    LeaderSortOrder     = {};
-    LeaderSortOrder[1]  = Entities.U_MilitarySword;
-    LeaderSortOrder[2]  = Entities.U_MilitaryBow;
-    LeaderSortOrder[3]  = Entities.U_MilitarySword_RedPrince;
-    LeaderSortOrder[4]  = Entities.U_MilitaryBow_RedPrince;
-    LeaderSortOrder[5]  = Entities.U_MilitaryBandit_Melee_ME;
-    LeaderSortOrder[6]  = Entities.U_MilitaryBandit_Melee_NA;
-    LeaderSortOrder[7]  = Entities.U_MilitaryBandit_Melee_NE;
-    LeaderSortOrder[8]  = Entities.U_MilitaryBandit_Melee_SE;
-    LeaderSortOrder[9]  = Entities.U_MilitaryBandit_Ranged_ME;
-    LeaderSortOrder[10] = Entities.U_MilitaryBandit_Ranged_NA;
-    LeaderSortOrder[11] = Entities.U_MilitaryBandit_Ranged_NE;
-    LeaderSortOrder[12] = Entities.U_MilitaryBandit_Ranged_SE;
-    LeaderSortOrder[13] = Entities.U_MilitaryCatapult;
-    LeaderSortOrder[14] = Entities.U_MilitarySiegeTower;
-    LeaderSortOrder[15] = Entities.U_MilitaryBatteringRam;
-    LeaderSortOrder[16] = Entities.U_CatapultCart;
-    LeaderSortOrder[17] = Entities.U_SiegeTowerCart;
-    LeaderSortOrder[18] = Entities.U_BatteringRamCart;
-
-    -- Asien wird nur in der Erweiterung gebraucht.
-    if g_GameExtraNo >= 1 then
-        table.insert(LeaderSortOrder,  4, Entities.U_MilitarySword_Khana);
-        table.insert(LeaderSortOrder,  6, Entities.U_MilitaryBow_Khana);
-        table.insert(LeaderSortOrder,  7, Entities.U_MilitaryBandit_Melee_AS);
-        table.insert(LeaderSortOrder, 12, Entities.U_MilitaryBandit_Ranged_AS);
-    end
-
-    -- Community Patch
-    if Entities.U_MilitaryCavalry then
-        table.insert(LeaderSortOrder,  2, Entities.U_MilitaryCavalry);
-    end
-    if Entities.U_MilitaryPoleArm then
-        table.insert(LeaderSortOrder,  2, Entities.U_MilitaryPoleArm);
-    end
-    if Entities.U_MilitaryCannon then
-        table.insert(LeaderSortOrder,  17, Entities.U_MilitaryCannon);
-    end
-end
-
-function Lib.Selection.Local:ExtendedLeaderSortOrder()
+function Lib.Selection.Local:SortOrderFullSelection()
     g_MultiSelection = {};
     g_MultiSelection.EntityList = {};
     g_MultiSelection.Highlighted = {};
@@ -685,7 +679,6 @@ function Lib.Selection.Local:ExtendedLeaderSortOrder()
     LeaderSortOrder[20] = Entities.U_AmmunitionCart;
     LeaderSortOrder[21] = Entities.U_Thief;
 
-    -- Asien wird nur in der Erweiterung gebraucht.
     if g_GameExtraNo >= 1 then
         table.insert(LeaderSortOrder,  4, Entities.U_MilitarySword_Khana);
         table.insert(LeaderSortOrder,  6, Entities.U_MilitaryBow_Khana);
@@ -694,15 +687,85 @@ function Lib.Selection.Local:ExtendedLeaderSortOrder()
     end
 
     -- Community Patch
-    if Entities.U_MilitaryCavalry then
-        table.insert(LeaderSortOrder,  2, Entities.U_MilitaryCavalry);
-    end
     if Entities.U_MilitaryPoleArm then
-        table.insert(LeaderSortOrder,  2, Entities.U_MilitaryPoleArm);
+        table.insert(LeaderSortOrder,  1, Entities.U_MilitaryPoleArm);
+    end
+    if Entities.U_MilitaryCavalry then
+        table.insert(LeaderSortOrder,  1, Entities.U_MilitaryCavalry);
     end
     if Entities.U_MilitaryCannon then
         table.insert(LeaderSortOrder,  17, Entities.U_MilitaryCannon);
     end
+
+end
+
+function Lib.Selection.Local:SortOrderMilitaryUnitsOnly()
+    g_MultiSelection = {};
+    g_MultiSelection.EntityList = {};
+    g_MultiSelection.Highlighted = {};
+    g_MultiSelection = {};
+    g_MultiSelection.EntityList = {};
+    g_MultiSelection.Highlighted = {};
+
+    LeaderSortOrder     = {};
+    LeaderSortOrder[1]  = Entities.U_MilitarySword;
+    LeaderSortOrder[2]  = Entities.U_MilitaryBow;
+    LeaderSortOrder[3]  = Entities.U_MilitarySword_RedPrince;
+    LeaderSortOrder[4]  = Entities.U_MilitaryBow_RedPrince;
+    LeaderSortOrder[5]  = Entities.U_MilitaryBandit_Melee_ME;
+    LeaderSortOrder[6]  = Entities.U_MilitaryBandit_Melee_NA;
+    LeaderSortOrder[7]  = Entities.U_MilitaryBandit_Melee_NE;
+    LeaderSortOrder[8]  = Entities.U_MilitaryBandit_Melee_SE;
+    LeaderSortOrder[9]  = Entities.U_MilitaryBandit_Ranged_ME;
+    LeaderSortOrder[10] = Entities.U_MilitaryBandit_Ranged_NA;
+    LeaderSortOrder[11] = Entities.U_MilitaryBandit_Ranged_NE;
+    LeaderSortOrder[12] = Entities.U_MilitaryBandit_Ranged_SE;
+
+    if g_GameExtraNo >= 1 then
+        table.insert(LeaderSortOrder,  4, Entities.U_MilitarySword_Khana);
+        table.insert(LeaderSortOrder,  6, Entities.U_MilitaryBow_Khana);
+        table.insert(LeaderSortOrder,  7, Entities.U_MilitaryBandit_Melee_AS);
+        table.insert(LeaderSortOrder, 12, Entities.U_MilitaryBandit_Ranged_AS);
+    end
+
+    -- Community Patch
+    if Entities.U_MilitaryPoleArm then
+        table.insert(LeaderSortOrder,  1, Entities.U_MilitaryPoleArm);
+    end
+    if Entities.U_MilitaryCavalry then
+        table.insert(LeaderSortOrder,  1, Entities.U_MilitaryCavalry);
+    end
+
+end
+
+function Lib.Selection.Local:SortOrderSiegeEnginesOnly()
+    g_MultiSelection = {};
+    g_MultiSelection.EntityList = {};
+    g_MultiSelection.Highlighted = {};
+
+    LeaderSortOrder     = {};
+    LeaderSortOrder[1] = Entities.U_MilitaryCatapult;
+    LeaderSortOrder[2] = Entities.U_Trebuchet;
+    LeaderSortOrder[3] = Entities.U_MilitarySiegeTower;
+    LeaderSortOrder[4] = Entities.U_MilitaryBatteringRam;
+    LeaderSortOrder[5] = Entities.U_CatapultCart;
+    LeaderSortOrder[6] = Entities.U_SiegeTowerCart;
+    LeaderSortOrder[7] = Entities.U_BatteringRamCart;
+    LeaderSortOrder[8] = Entities.U_AmmunitionCart;
+
+    -- Community Patch
+    if Entities.U_MilitaryCannon then
+        table.insert(LeaderSortOrder,  1, Entities.U_MilitaryCannon);
+    end
+end
+
+function Lib.Selection.Local:SortOrderThievesOnly()
+    g_MultiSelection = {};
+    g_MultiSelection.EntityList = {};
+    g_MultiSelection.Highlighted = {};
+
+    LeaderSortOrder     = {};
+    LeaderSortOrder[1] = Entities.U_Thief;
 end
 
 function Lib.Selection.Local:OverwriteNamesAndDescription()

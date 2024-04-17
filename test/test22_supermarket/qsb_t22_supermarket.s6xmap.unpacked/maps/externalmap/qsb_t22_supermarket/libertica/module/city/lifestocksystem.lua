@@ -11,6 +11,11 @@ Lib.LifestockSystem.Global = {
     SheepGrainUpkeep = 1,
     SheepFeedingTimer = 0,
     SheepStarveChance = 35,
+
+    Text = {
+        CattleStaved = "",
+        SheepStarved = "",
+    }
 };
 Lib.LifestockSystem.Local  = {
     BuyLock = false,

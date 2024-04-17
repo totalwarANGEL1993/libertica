@@ -1,1 +1,0 @@
-Script.Load("E:/Repositories/libertica/var/libertica/qsb.lua");

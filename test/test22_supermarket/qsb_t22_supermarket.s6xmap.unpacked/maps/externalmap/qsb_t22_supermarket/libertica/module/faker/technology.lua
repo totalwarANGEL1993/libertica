@@ -87,12 +87,12 @@ function Lib.Technology.Shared:AddCustomTechnology(_Key, _Name, _Icon)
 
     if IsLocalScript() then
         AddStringText("UI_ObjectNames/" .._Key, _Name);
+        g_TexturePositions.Technologies[Technologies[_Key]] = _Icon;
     else
         for i= 1, 8 do
             Logic.TechnologySetState(i, Technologies[_Key], 0);
         end
     end
-    g_TexturePositions.Technologies[Technologies[_Key]] = _Icon;
 end
 
 function Lib.Technology.Shared:IsCustomTechnology(_Technology)
@@ -133,8 +133,8 @@ function Lib.Technology.Shared:InitNewTechnologies()
         CONST_TECHNOLOGY_TO_INDEX[Data[1]] = i;
         if IsLocalScript() then
             AddStringText("UI_ObjectNames/" ..Data[1], Data[4]);
+            g_TexturePositions.Technologies[Technologies[Data[1]]] = Data[3];
         end
-        g_TexturePositions.Technologies[Technologies[Data[1]]] = Data[3];
     end
 end
 
