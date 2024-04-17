@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+ <QuestList>
+  <Quest>
+   <QuestName>001</QuestName>
+   <QuestParameter>
+    <QuestHidden>true</QuestHidden>
+    <QuestGiver>1</QuestGiver>
+    <QuestReceiver>1</QuestReceiver>
+    <QuestTime>0</QuestTime>
+    <Description></Description>
+    <StartMessage></StartMessage>
+    <FailureMessage>Invisible Quest</FailureMessage>
+    <SuccessMessage></SuccessMessage>
+    <BehaviorCollection>
+     <Behavior>
+      <BehaviorName>Goal_InstantSuccess</BehaviorName>
+      <Parameters>      </Parameters>
+     </Behavior>
+     <Behavior>
+      <BehaviorName>Trigger_Time</BehaviorName>
+      <Parameters>
+       <Parameter>5</Parameter>
+      </Parameters>
+     </Behavior>
+    </BehaviorCollection>
+   </QuestParameter>
+  </Quest>
+ </QuestList>
+</root>
