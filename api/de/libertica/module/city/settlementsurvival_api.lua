@@ -1,9 +1,10 @@
 --- Implementiert Überlebensaspekte von Siedlungen im Spiel.
 ---
 --- Siedler (und Nutztiere) können nun an verschiedenen Ursachen erkranken und
---- möglicherweise dauerhaft sterben. Wenn ein Siedler stirbt, bleibt er weiterhin mit dem
---- Gebäude verbunden, sodass kein anderer Siedler ihn ersetzen kann. Nach einiger Zeit wird ein
---- neuer Siedler eintreffen.
+--- möglicherweise sterben. Wenn ein Siedler stirbt, bleibt er weiterhin mit dem
+--- Gebäude verbunden, sodass kein anderer Siedler ihn ersetzen kann. Nach
+--- einiger Zeit wird ein neuer Siedler eintreffen. Außerdem ist das Bedürfnis
+--- nach Kleidung auch für Sammler aktiv.
 ---
 --- Dinge, die Gebäude entzünden:
 --- * Hohe Temperatur

@@ -128,6 +128,8 @@ function Lib.SettlementSurvival.Global:Initialize()
             end
         );
 
+        self:OverwriteNeeds();
+
         -- Garbage collection
         Lib.SettlementSurvival.Local = nil;
     end
@@ -671,6 +673,49 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.SettlementSurvival.Global:OverwriteNeeds()
+    ActivateNeedsForBuilding = function(_PlayerID, _EntityID)
+        for Need, _ in pairs (PlayerActiveNeeds[_PlayerID]) do
+            if Logic.IsEntityInCategory(_EntityID, EntityCategories.OuterRimBuilding) == 1 then
+                if Need == Needs.Nutrition
+                or Need == Needs.Clothes
+                or Need == Needs.Medicine then
+                    Logic.SetNeedActive(_EntityID, Need, true);
+                end
+            end
+            if Logic.IsEntityInCategory(_EntityID, EntityCategories.CityBuilding) == 1 then
+                Logic.SetNeedActive(_EntityID, Need, true);
+            end
+        end
+        Logic.ExecuteInLuaLocalState("GUI_BuildingInfo.UpdateActiveNeedsGUI()");
+    end
+
+    ActivateNeedForPlayer = function(_PlayerID, _NeedTable)
+        if _NeedTable == nil then
+            return;
+        end
+        for k =1, #_NeedTable do
+            local Need = _NeedTable[k];
+            PlayerActiveNeeds[_PlayerID][Need] = true;
+            local Buildings = {Logic.GetPlayerEntitiesInCategory(_PlayerID,EntityCategories.CityBuilding)};
+            if Need == Needs.Nutrition
+            or Need == Needs.Clothes
+            or Need == Needs.Medicine then
+                local OuterRimBuildings = {Logic.GetPlayerEntitiesInCategory(_PlayerID,EntityCategories.OuterRimBuilding)};
+                for j=1, #OuterRimBuildings do
+                    local BuildingID = OuterRimBuildings[j];
+                    table.insert(Buildings, BuildingID);
+                end
+            end
+            for i=1, #Buildings do
+                local BuildingID = Buildings[i];
+                Logic.SetNeedActive(BuildingID, Need, true);
+            end
+            Logic.ExecuteInLuaLocalState("GUI_BuildingInfo.UpdateActiveNeedsGUI()");
+        end
+    end
+end
+
 function Lib.SettlementSurvival.Global:Print(_PlayerID, _Text)
     local Text = ConvertPlaceholders(Localize(_Text));
     ExecuteLocal([[
@@ -695,6 +740,7 @@ function Lib.SettlementSurvival.Local:Initialize()
         Report.SettlerDiedFromStarvation = CreateReport("Event_SettlerDiedFromStarvation");
         Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
 
+        self:OverrideSelectionChanged();
         self:OverwriteAlarmButtons();
         self:OverwriteGameCallbacks();
         self:OverwriteJumpToWorker();
@@ -857,6 +903,21 @@ function Lib.SettlementSurvival.Local:OverwriteUpgradeButton()
             return;
         end
         GUI_BuildingButtons.UpgradeClicked_Orig_SettlementSurvival();
+    end
+end
+
+function Lib.SettlementSurvival.Local:OverrideSelectionChanged()
+    self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
+    GameCallback_GUI_SelectionChanged = function(_Source)
+        Lib.SettlementSurvival.Local.Orig_GameCallback_GUI_SelectionChanged(_Source);
+        Lib.SettlementSurvival.Local:OnBuildingSelected();
+    end
+end
+
+function Lib.SettlementSurvival.Local:OnBuildingSelected()
+    local EntityID = GUI.GetSelectedEntity();
+    if Logic.IsEntityInCategory(EntityID, EntityCategories.OuterRimBuilding) == 1 then
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 1);
     end
 end
 

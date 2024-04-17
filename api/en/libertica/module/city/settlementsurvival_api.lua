@@ -3,7 +3,8 @@
 --- Settlers (and farm animals) can now become sick from different causes and
 --- might die permamently. If a settler dies, they will still be attached to
 --- the building so that no other settler can replace them. After some time a
---- new settler will arrive.
+--- new settler will arrive. In addition the need for clothing is also active
+--- for gatherers.
 ---
 --- Things that ignite buildings:
 --- * Hot temperature
