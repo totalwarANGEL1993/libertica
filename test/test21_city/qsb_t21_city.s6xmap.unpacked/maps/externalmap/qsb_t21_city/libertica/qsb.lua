@@ -754,7 +754,7 @@ end
 
 function B_Goal_EntityDistance:Debug(_Quest)
     if not IsExisting(self.Entity1) or not IsExisting(self.Entity2) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": At least 1 of the entities for distance check don't exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": At least 1 of the entities for distance check don't exist!");
         return true;
     end
     return false;
@@ -902,16 +902,16 @@ end
 function B_Goal_UnitsOnTerritory:Debug(_Quest)
     local territories = {Logic.GetTerritories()}
     if tonumber(self.TerritoryID) == nil or self.TerritoryID < 0 or not table.contains(territories, self.TerritoryID) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid territoryID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid territoryID!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 0 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
         return true;
     elseif not EntityCategories[self.Category] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid entity category!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid entity category!");
         return true;
     elseif tonumber(self.NumberOfUnits) == nil or self.NumberOfUnits < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": amount is negative or nil!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": amount is negative or nil!");
         return true;
     end
     return false;
@@ -1030,10 +1030,10 @@ end
 
 function B_Goal_ActivateBuff:Debug(_Quest)
     if not self.Buff then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": buff '" ..self.BuffName.. "' does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": buff '" ..self.BuffName.. "' does not exist!");
         return true;
     elseif not tonumber(self.PlayerID) or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
         return true;
     end
     return false;
@@ -1087,7 +1087,7 @@ end
 
 function B_Goal_BuildRoad:Debug(_Quest)
     if not IsExisting(self.Entity1) or not IsExisting(self.Entity2) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": first or second entity does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": first or second entity does not exist!");
         return true;
     end
     return false;
@@ -1165,10 +1165,10 @@ end
 
 function B_Goal_BuildWall:Debug(_Quest)
     if not IsExisting(self.EntityName1) or not IsExisting(self.EntityName2) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": first or second entity does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": first or second entity does not exist!");
         return true;
     elseif not tonumber(self.PlayerID) or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
         return true;
     end
 
@@ -1593,10 +1593,10 @@ end
 
 function B_Goal_SoldierCount:Debug(_Quest)
     if tonumber(self.NumberOfUnits) == nil or self.NumberOfUnits < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be below 0!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be below 0!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
         return true;
     end
     return false;
@@ -1712,13 +1712,13 @@ end
 
 function B_Goal_Festivals:Debug(_Quest)
     if Logic.GetStoreHouse( self.PlayerID ) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.PlayerID .. " is dead :-(")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.PlayerID .. " is dead :-(")
         return true
     elseif GetPlayerCategoryType(self.PlayerID) ~= PlayerCategories.City then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ":  Player "..  self.PlayerID .. " is no city")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ":  Player "..  self.PlayerID .. " is no city")
         return true
     elseif self.NeededFestivals < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Festivals is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Festivals is negative")
         return true
     end
     return false
@@ -2020,10 +2020,10 @@ end
 
 function B_Goal_ResourceAmount:Debug(_Quest)
     if not IsExisting(self.ScriptName) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": entity '" ..self.ScriptName.. "' does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": entity '" ..self.ScriptName.. "' does not exist!");
         return true;
     elseif tonumber(self.Amount) == nil or self.Amount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": error at amount! (nil or below 0)");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": error at amount! (nil or below 0)");
         return true;
     end
     return false;
@@ -2131,11 +2131,11 @@ end
 
 function B_Goal_MapScriptFunction:Debug(_Quest)
     if not self.FuncName then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": function reference is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": function reference is invalid!");
         return true;
     end
     if type(self.FuncName) ~= "function" and not _G[self.FuncName] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": function does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": function does not exist!");
         return true;
     end
     return false;
@@ -2225,7 +2225,7 @@ function B_Goal_CustomVariables:Debug(_Quest)
         warn(false, _Quest.Identifier.. ": " ..self.Name..": variable '"..self.VariableName.."' do not exist!");
     end
     if not table.contains(relations, self.Relation) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.Relation.."' is an invalid relation!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.Relation.."' is an invalid relation!");
         return true;
     end
     return false;
@@ -2368,11 +2368,11 @@ end
 
 function B_Goal_TributeDiplomacy:Debug(_Quest)
     if self.Amount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Amount is negative!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Amount is negative!");
         return true;
     end
     if self.PeriodLength < self.TributTime then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": TributTime too long!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": TributTime too long!");
         return true;
     end
 end
@@ -2611,23 +2611,23 @@ end
 
 function B_Goal_TributeClaim:Debug(_Quest)
     if self.TerritoryID == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Unknown Territory");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Unknown Territory");
         return true;
     end
     if not self.Quest and Logic.GetStoreHouse(self.PlayerID) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.PlayerID .. " is dead. :-(");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.PlayerID .. " is dead. :-(");
         return true;
     end
     if self.Amount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Amount is negative");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Amount is negative");
         return true;
     end
     if self.PeriodLength < self.TributTime or self.PeriodLength < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Period Length is wrong");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Period Length is wrong");
         return true;
     end
     if self.HowOften < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": HowOften is negative");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": HowOften is negative");
         return true;
     end
 end
@@ -2704,7 +2704,7 @@ function B_Reprisal_InteractiveObjectDeactivate:Debug(_Quest)
     end
     local eID = GetID(self.ScriptName);
     if CONST_INITIALIZED_OBJECTS[eID] and CONST_INITIALIZED_OBJECTS[eID] == _Quest.Identifier then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": you can not deactivate in the same quest the object is initalized!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": you can not deactivate in the same quest the object is initalized!");
         return true;
     end
     return false;
@@ -2764,7 +2764,7 @@ function B_Reprisal_InteractiveObjectActivate:Debug(_Quest)
     end
     local eID = GetID(self.ScriptName);
     if CONST_INITIALIZED_OBJECTS[eID] and CONST_INITIALIZED_OBJECTS[eID] == _Quest.Identifier then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": you can not activate in the same quest the object is initalized!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": you can not activate in the same quest the object is initalized!");
         return true;
     end
     return false;
@@ -2848,13 +2848,13 @@ end
 
 function B_Reprisal_Diplomacy:Debug(_Quest)
     if not tonumber(self.PlayerID1) or self.PlayerID1 < 1 or self.PlayerID1 > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": PlayerID 1 is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": PlayerID 1 is invalid!");
         return true;
     elseif not tonumber(self.PlayerID2) or self.PlayerID2 < 1 or self.PlayerID2 > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": PlayerID 2 is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": PlayerID 2 is invalid!");
         return true;
     elseif not tonumber(self.Relation) or self.Relation < -2 or self.Relation > 2 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": '"..self.Relation.."' is a invalid diplomacy state!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": '"..self.Relation.."' is a invalid diplomacy state!");
         return true;
     end
     return false;
@@ -2941,7 +2941,7 @@ end
 
 function B_Reprisal_DestroyEffect:Debug(_Quest)
     if not CONST_EFFECT_NAME_TO_ID[self.EffectName] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Effect " .. self.EffectName .. " never created")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Effect " .. self.EffectName .. " never created")
     end
     return false;
 end
@@ -3058,10 +3058,10 @@ end
 
 function B_Reprisal_ReplaceEntity:Debug(_Quest)
     if not Entities[self.NewType] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid entity type!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid entity type!");
         return true;
     elseif self.PlayerID ~= nil and (self.PlayerID < 1 or self.PlayerID > 8) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
         return true;
     end
 
@@ -3108,7 +3108,7 @@ end
 
 function B_Reprisal_QuestRestart:Debug(_Quest)
     if not Quests[GetQuestID(self.QuestName)] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
         return true;
     end
     return false;
@@ -3150,7 +3150,7 @@ end
 
 function B_Reprisal_QuestFailure:Debug(_Quest)
     if not Quests[GetQuestID(self.QuestName)] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid quest!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid quest!");
         return true;
     end
     return false;
@@ -3192,7 +3192,7 @@ end
 
 function B_Reprisal_QuestSuccess:Debug(_Quest)
     if not Quests[GetQuestID(self.QuestName)] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
         return true;
     end
     return false;
@@ -3236,7 +3236,7 @@ end
 
 function B_Reprisal_QuestActivate:Debug(_Quest)
     if not IsValidQuest(self.QuestName) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Quest: "..  self.QuestName .. " does not exist");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Quest: "..  self.QuestName .. " does not exist");
         return true;
     end
     return false;
@@ -3285,7 +3285,7 @@ end
 
 function B_Reprisal_QuestInterrupt:Debug(_Quest)
     if not Quests[GetQuestID(self.QuestName)] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
         return true;
     end
     return false;
@@ -3351,7 +3351,7 @@ end
 
 function B_Reprisal_QuestForceInterrupt:Debug(_Quest)
     if not Quests[GetQuestID(self.QuestName)] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": quest "..  self.QuestName .. " does not exist!");
         return true;
     end
     return false;
@@ -3424,10 +3424,10 @@ end
 function B_Reprisal_CustomVariables:Debug(_Quest)
     local operators = {"=", "+", "-", "*", "/", "^"};
     if not table.contains(operators, self.Operator) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid operator!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid operator!");
         return true;
     elseif self.VariableName == "" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": missing name for variable!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": missing name for variable!");
         return true;
     end
     return false;
@@ -3473,11 +3473,11 @@ end
 
 function B_Reprisal_MapScriptFunction:Debug(_Quest)
     if not self.FuncName then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": function reference is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": function reference is invalid!");
         return true;
     end
     if type(self.FuncName) ~= "function" and not _G[self.FuncName] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": function does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": function does not exist!");
         return true;
     end
     return false;
@@ -3549,10 +3549,10 @@ end
 
 function B_Reprisal_Technology:Debug(_Quest)
     if not Technologies[self.Technology] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid technology type!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid technology type!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": got an invalid playerID!");
         return true;
     end
     return false;
@@ -3742,40 +3742,40 @@ end
 
 function B_Reward_ObjectInit:Debug(_Quest)
     if Logic.IsInteractiveObject(GetID(self.ScriptName)) == false then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.ScriptName.."' is not a interactive object!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.ScriptName.."' is not a interactive object!");
         return true;
     end
     if self.UsingState ~= 1 and self.Distance < 50 then
         warn(false, _Quest.Identifier.. ": " ..self.Name..": distance is maybe too short!");
     end
     if self.Waittime < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": waittime must be equal or greater than 0!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": waittime must be equal or greater than 0!");
         return true;
     end
     if self.RewardType and self.RewardType ~= "-" then
         if not Goods[self.RewardType] then
-            error(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.RewardType.."' is invalid good type!");
+            debug(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.RewardType.."' is invalid good type!");
             return true;
         elseif self.RewardAmount < 1 then
-            error(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be 0 or negative!");
+            debug(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be 0 or negative!");
             return true;
         end
     end
     if self.FirstCostType and self.FirstCostType ~= "-" then
         if not Goods[self.FirstCostType] then
-            error(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.FirstCostType.."' is invalid good type!");
+            debug(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.FirstCostType.."' is invalid good type!");
             return true;
         elseif self.FirstCostAmount < 1 then
-            error(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be 0 or negative!");
+            debug(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be 0 or negative!");
             return true;
         end
     end
     if self.SecondCostType and self.SecondCostType ~= "-" then
         if not Goods[self.SecondCostType] then
-            error(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.SecondCostType.."' is invalid good type!");
+            debug(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.SecondCostType.."' is invalid good type!");
             return true;
         elseif self.SecondCostAmount < 1 then
-            error(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be 0 or negative!");
+            debug(false, _Quest.Identifier.. ": " ..self.Name..": amount can not be 0 or negative!");
             return true;
         end
     end
@@ -3838,6 +3838,166 @@ function B_Reward_SlightlyDiplomacyIncrease:AddParameter(_Index, _Parameter)
 end
 
 RegisterBehavior(B_Reward_SlightlyDiplomacyIncrease);
+
+-- -------------------------------------------------------------------------- --
+
+function Reward_TradePost(...)
+    return B_Reward_TradePost:new(...);
+end
+
+B_Reward_TradePost= {
+    Name = "B_Reward_TradePost",
+    Description = {
+        en = "Sets options for a Tradepost and deactivates it.",
+        de = "Stellt einen Handelsposten ein und deaktiviert ihn.",
+        fr = "",
+    },
+    Parameter = {
+        {ParameterType.ScriptName, en = "ScriptName", de = "ScriptName" },
+        {ParameterType.PlayerID, en = "PlayerID", de = "PlayerID" },
+        {ParameterType.Custom, en = "Type of good to pay 1", de = "Resourcentyp Bezahlung 1", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+        {ParameterType.Custom, en = "Type of good to get 1", de = "Resourcentyp Angebot 1", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource" },
+        {ParameterType.Custom, en = "Type of good to pay 2", de = "Resourcentyp Bezahlung 2", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+        {ParameterType.Custom, en = "Type of good to get 2", de = "Resourcentyp Angebot 2", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+        {ParameterType.Custom, en = "Type of good to pay 3", de = "Resourcentyp Bezahlung 3", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+        {ParameterType.Custom, en = "Type of good to get 3", de = "Resourcentyp Angebot 3", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+        {ParameterType.Custom, en = "Type of good to pay 4", de = "Resourcentyp Bezahlung 4", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+        {ParameterType.Custom, en = "Type of good to get 4", de = "Resourcentyp Angebot 4", fr = ""},
+        {ParameterType.Number, en = "Amount of good", de = "Anzahl der Resource", fr = ""},
+    },
+}
+
+function B_Reward_TradePost:GetRewardTable()
+    return {Reward.Custom, {self, self.CustomFunction}};
+end
+function B_Reward_TradePost:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.ScriptName = _Parameter;
+    elseif (_Index == 1) then
+        self.PlayerID = _Parameter * 1;
+    elseif (_Index == 3) then
+        self.PayType1 = _Parameter;
+    elseif (_Index == 4) then
+        self.PayAmount1 = _Parameter * 1;
+    elseif (_Index == 5) then
+        self.OfferType1 = _Parameter;
+    elseif (_Index == 6) then
+        self.OfferAmount1 = _Parameter * 1;
+    elseif (_Index == 7) then
+        self.PayType2 = _Parameter;
+    elseif (_Index == 8) then
+        self.PayAmount2 = _Parameter * 1;
+    elseif (_Index == 9) then
+        self.OfferType2 = _Parameter;
+    elseif (_Index == 10) then
+        self.OfferAmount2 = _Parameter * 1;
+    elseif (_Index == 11) then
+        self.PayType3 = _Parameter;
+    elseif (_Index == 12) then
+        self.PayAmount3 = _Parameter * 1;
+    elseif (_Index == 13) then
+        self.OfferType3 = _Parameter;
+    elseif (_Index == 14) then
+        self.OfferAmount3 = _Parameter * 1;
+    elseif (_Index == 15) then
+        self.PayType4 = _Parameter;
+    elseif (_Index == 16) then
+        self.PayAmount4 = _Parameter * 1;
+    elseif (_Index == 17) then
+        self.OfferType4 = _Parameter;
+    elseif (_Index == 18) then
+        self.OfferAmount4 = _Parameter * 1;
+    end
+end
+
+function B_Reward_TradePost:CustomFunction(_Quest)
+    local OfferCount = 0;
+    for i = 1, 4 do
+        if self["PayAmount"..i] and self["PayAmount"..i] > 0 and self["OfferAmount"..i] and self["OfferAmount"..i] > 0 then
+            OfferCount = i;
+        else
+            break;
+        end
+    end
+    debug(IsExisting(self.ScriptName), _Quest.Identifier .. ": Error in " .. self.Name .. ": CustomFunction: Tradepost is missing");
+    local TradepostID = GetID(self.ScriptName);
+    if OfferCount > 0 then
+        Logic.TradePost_SetTradePartnerGenerateGoodsFlag(TradepostID, true);
+        Logic.TradePost_SetTradePartnerPlayerID(TradepostID, self.PlayerID);
+        for i = 1, OfferCount do
+            for j = 1, OfferCount do
+                Logic.TradePost_SetTradeDefinition(
+                    TradepostID,
+                    (j-1),
+                    Goods[self["PayType"..j]],
+                    self["PayAmount"..j],
+                    Goods[self["OfferType"..j]],
+                    self["OfferAmount"..j]
+                );
+            end
+        end
+        Logic.TradePost_SetActiveTradeSlot(TradepostID, 0);
+        Logic.InteractiveObjectSetAvailability(TradepostID, false);
+        for PlayerID = 1, 8 do
+            Logic.InteractiveObjectSetPlayerState(TradepostID, PlayerID, 2);
+        end
+    end
+end
+
+function B_Reward_TradePost:DEBUG(_Quest)
+    if Logic.GetStoreHouse(self.PlayerID) == 0 then
+        debug(false, _Quest.Identifier .. ":  Error in " .. self.Name ..": Player " .. self.PlayerID .. " is dead :-(");
+        return true;
+    elseif not IsExisting(self.ScriptName) then
+        debug(false, _Quest.Identifier .. ":  Error in " .. self.Name ..": No TradePost found");
+        return true;
+    end
+    for i = 1, 4 do
+        if  self["PayAmount"..i]
+        and self["OfferAmount"..i]
+        and self["PayAmount"..i] > 0
+        and self["OfferAmount"..i] > 0
+        and (not Goods[self["PayType"..i]] or
+             not Goods[self["OfferType"..i]])
+        then
+            debug(false, _Quest.Identifier .. ":  Error in " .. self.Name ..": Offer type or pay type in Slot " .. i .. " is wrong")
+            return true
+        end
+    end
+end
+
+function B_Reward_TradePost:GetCustomData(_index)
+    if _index >= 2 and _index <= 16 and _index % 2 == 0 then
+        return {
+            "G_Carcass",
+            "G_Grain",
+            "G_Herb",
+            "G_Honeycomb",
+            "G_Iron",
+            "G_Milk",
+            "G_RawFish",
+            "G_Stone",
+            "G_Wood",
+            "G_Wool",
+            "G_Salt",
+            "G_Dye",
+            "G_Olibanum",
+            "G_Gems",
+            "G_MusicalInstrument",
+        };
+    end
+end
+
+if g_GameExtraNo and g_GameExtraNo >= 1 then
+    RegisterBehavior(B_Reward_TradePost);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -3915,7 +4075,7 @@ end
 
 function B_Reward_Merchant:Debug(_Quest)
     if Logic.GetStoreHouse(self.PlayerID ) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.PlayerID .. " is dead. :-(")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.PlayerID .. " is dead. :-(")
         return true
     end
 end
@@ -4109,19 +4269,19 @@ end
 
 function B_Reward_CreateBattalion:Debug(_Quest)
     if not Entities[self.UnitKey] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
         return true;
     elseif not IsExisting(self.ScriptNameEntity) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": playerID is wrong!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": playerID is wrong!");
         return true;
     elseif tonumber(self.Orientation) == nil then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
         return true;
     elseif tonumber(self.SoldierCount) == nil or self.SoldierCount < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": you can not create a empty batallion!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": you can not create a empty batallion!");
         return true;
     end
     return false;
@@ -4214,22 +4374,22 @@ end
 
 function B_Reward_CreateSeveralBattalions:Debug(_Quest)
     if not Entities[self.UnitKey] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
         return true;
     elseif not IsExisting(self.ScriptNameEntity) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": playerDI is wrong!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": playerDI is wrong!");
         return true;
     elseif tonumber(self.Orientation) == nil then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
         return true;
     elseif tonumber(self.SoldierCount) == nil or self.SoldierCount < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": you can not create a empty batallion!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": you can not create a empty batallion!");
         return true;
     elseif tonumber(self.Amount) == nil or self.Amount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": amount can not be negative!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": amount can not be negative!");
         return true;
     end
     return false;
@@ -4298,16 +4458,16 @@ end
 
 function B_Reward_CreateEffect:Debug(_Quest)
     if CONST_EFFECT_NAME_TO_ID[self.EffectName] and Logic.IsEffectRegistered(CONST_EFFECT_NAME_TO_ID[self.EffectName]) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": effect already exists!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": effect already exists!");
         return true;
     elseif not IsExisting(self.Location) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": location '" ..self.Location.. "' is missing!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": location '" ..self.Location.. "' is missing!");
         return true;
     elseif self.PlayerID and (self.PlayerID < 0 or self.PlayerID > 8) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid playerID!");
         return true;
     elseif tonumber(self.Orientation) == nil then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid orientation!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid orientation!");
         return true;
     end
 end
@@ -4416,16 +4576,16 @@ end
 
 function B_Reward_CreateEntity:Debug(_Quest)
     if not Entities[self.UnitKey] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
         return true;
     elseif not IsExisting(self.ScriptNameEntity) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 0 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": playerID is not valid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": playerID is not valid!");
         return true;
     elseif tonumber(self.Orientation) == nil then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
         return true;
     end
     return false;
@@ -4537,19 +4697,19 @@ end
 
 function B_Reward_CreateSeveralEntities:Debug(_Quest)
     if not Entities[self.UnitKey] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": got an invalid entity type!");
         return true;
     elseif not IsExisting(self.ScriptNameEntity) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
         return true;
     elseif tonumber(self.PlayerID) == nil or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
         return true;
     elseif tonumber(self.Orientation) == nil then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": orientation must be a number!");
         return true;
     elseif tonumber(self.Amount) == nil or self.Amount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": amount can not be negative!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": amount can not be negative!");
         return true;
     end
     return false;
@@ -4602,10 +4762,10 @@ end
 
 function B_Reward_MoveSettler:Debug(_Quest)
     if not IsExisting(self.ScriptNameUnit) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": mover entity does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": mover entity does not exist!");
         return true;
     elseif not IsExisting(self.ScriptNameDest) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": destination does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": destination does not exist!");
         return true;
     end
     return false;
@@ -4792,34 +4952,34 @@ end
 
 function B_Reward_AI_SpawnAndAttackTerritory:Debug(_Quest)
     if self.AIPlayerID < 2 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong")
         return true
     elseif Logic.IsEntityDestroyed(self.Spawnpoint) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.SpawnPoint .. " is missing")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.SpawnPoint .. " is missing")
         return true
     elseif self.TerritoryID == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Territory unknown")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Territory unknown")
         return true
     elseif self.NumSword < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Swords is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Swords is negative")
         return true
     elseif self.NumBow < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Bows is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Bows is negative")
         return true
     elseif self.NumBow + self.NumSword < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": No Soldiers?")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": No Soldiers?")
         return true
     elseif self.NumCatapults < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Catapults is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Catapults is negative")
         return true
     elseif self.NumSiegeTowers < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": SiegeTowers is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": SiegeTowers is negative")
         return true
     elseif self.NumRams < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Rams is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Rams is negative")
         return true
     elseif self.NumAmmoCarts < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": AmmoCarts is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": AmmoCarts is negative")
         return true
     end
     return false;
@@ -4922,25 +5082,25 @@ end
 
 function B_Reward_AI_SpawnAndAttackArea:Debug(_Quest)
     if self.AIPlayerID < 2 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong")
         return true
     elseif Logic.IsEntityDestroyed(self.Spawnpoint) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.SpawnPoint .. " is missing")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.SpawnPoint .. " is missing")
         return true
     elseif Logic.IsEntityDestroyed(self.TargetName) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.TargetName .. " is missing")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.TargetName .. " is missing")
         return true
     elseif self.Radius < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Radius is to small or negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Radius is to small or negative")
         return true
     elseif self.NumSword < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Swords is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Swords is negative")
         return true
     elseif self.NumBow < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Bows is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Bows is negative")
         return true
     elseif self.NumBow + self.NumSword < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": No Soldiers?")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": No Soldiers?")
         return true
     end
     return false;
@@ -5061,28 +5221,28 @@ end
 
 function B_Reward_AI_SpawnAndProtectArea:Debug(_Quest)
     if self.AIPlayerID < 2 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong")
         return true
     elseif Logic.IsEntityDestroyed(self.Spawnpoint) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.SpawnPoint .. " is missing")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.SpawnPoint .. " is missing")
         return true
     elseif Logic.IsEntityDestroyed(self.TargetName) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.TargetName .. " is missing")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Entity " .. self.TargetName .. " is missing")
         return true
     elseif self.Radius < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Radius is to small or negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Radius is to small or negative")
         return true
     elseif self.Time < -1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Time is smaller than -1")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Time is smaller than -1")
         return true
     elseif self.NumSword < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Swords is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Swords is negative")
         return true
     elseif self.NumBow < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Bows is negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Number of Bows is negative")
         return true
     elseif self.NumBow + self.NumSword < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": No Soldiers?")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": No Soldiers?")
         return true
     end
     return false;
@@ -5178,25 +5338,25 @@ end
 
 function B_Reward_AI_SetNumericalFact:Debug(_Quest)
     if Logic.GetStoreHouse(self.AIPlayerID) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong or dead!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayerID .. " is wrong or dead!");
         return true;
     elseif not self.NumericalFact then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": invalid numerical fact choosen!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": invalid numerical fact choosen!");
         return true;
     else
         if self.NumericalFact == "BARB" or self.NumericalFact == "FCOP" or self.NumericalFact == "FMOP" then
             if self.Value ~= 0 and self.Value ~= 1 then
-                error(false, _Quest.Identifier.. ": " ..self.Name .. ": BARB, FCOP, FMOP: value must be 1 or 0!");
+                debug(false, _Quest.Identifier.. ": " ..self.Name .. ": BARB, FCOP, FMOP: value must be 1 or 0!");
                 return true;
             end
         elseif self.NumericalFact == "FEAR" then
             if self.Value <= 0 then
-                error(false, _Quest.Identifier.. ": " ..self.Name .. ": FEAR: value must greater than 0!");
+                debug(false, _Quest.Identifier.. ": " ..self.Name .. ": FEAR: value must greater than 0!");
                 return true;
             end
         else
             if self.Value < 0 then
-                error(false, _Quest.Identifier.. ": " ..self.Name .. ": value must always greater than or equal 0!");
+                debug(false, _Quest.Identifier.. ": " ..self.Name .. ": value must always greater than or equal 0!");
                 return true;
             end
         end
@@ -5256,7 +5416,7 @@ end
 
 function B_Reward_AI_Aggressiveness:Debug(_Quest)
     if self.AIPlayer < 1 or Logic.GetStoreHouse(self.AIPlayer) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayer .. " is wrong");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayer .. " is wrong");
         return true;
     end
 end
@@ -5308,7 +5468,7 @@ end
 
 function B_Reward_AI_SetEnemy:Debug(_Quest)
     if self.AIPlayer < 1 or self.AIPlayer > 8 or Logic.PlayerGetIsHumanFlag(self.AIPlayer) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayer .. " is wrong");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Player " .. self.AIPlayer .. " is wrong");
         return true;
     end
     return false;
@@ -5380,10 +5540,10 @@ end
 
 function B_Reward_SetResourceAmount:Debug(_Quest)
     if not IsExisting(self.ScriptName) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": resource entity does not exist!")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": resource entity does not exist!")
         return true
     elseif not type(self.Amount) == "number" or self.Amount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": resource amount can not be negative!")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": resource amount can not be negative!")
         return true
     end
     return false;
@@ -5519,22 +5679,22 @@ end
 
 function B_Reward_SendCart:Debug(_Quest)
     if not IsExisting(self.ScriptNameEntity) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": spawnpoint does not exist!");
         return true;
     elseif not tonumber(self.PlayerID) or self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": got a invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": got a invalid playerID!");
         return true;
     elseif not Entities[self.UnitKey] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": entity type '"..self.UnitKey.."' is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": entity type '"..self.UnitKey.."' is invalid!");
         return true;
     elseif not Goods[self.GoodType] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": good type '"..self.GoodType.."' is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": good type '"..self.GoodType.."' is invalid!");
         return true;
     elseif not tonumber(self.GoodAmount) or self.GoodAmount < 1 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": good amount can not be below 1!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": good amount can not be below 1!");
         return true;
     elseif tonumber(self.OverrideTargetPlayer) and (self.OverrideTargetPlayer < 1 or self.OverrideTargetPlayer > 8) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": overwrite target player with invalid playerID!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": overwrite target player with invalid playerID!");
         return true;
     end
     return false;
@@ -5833,7 +5993,7 @@ end
 
 function B_Reward_AI_MountOutpost:Debug(_Quest)
     if Logic.IsEntityDestroyed(self.Scriptname) then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Outpost " .. self.Scriptname .. " is missing")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Outpost " .. self.Scriptname .. " is missing")
         return true
     end
 end
@@ -5878,7 +6038,7 @@ end
 B_Reward_QuestRestartForceActive.ResetQuest = B_Reward_QuestRestart.CustomFunction;
 function B_Reward_QuestRestartForceActive:Debug(_Quest)
     if not Quests[GetQuestID(self.QuestName)] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Quest: "..  self.QuestName .. " does not exist");
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Quest: "..  self.QuestName .. " does not exist");
         return true;
     end
     return false;
@@ -5932,7 +6092,7 @@ function B_Reward_UpgradeBuilding:Debug(_Quest)
             and Logic.IsBuildingUpgradable(building, true)
             and Logic.IsBuildingUpgradable(building, false) )
     then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Building is wrong")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Building is wrong")
         return true
     end
 end
@@ -5946,53 +6106,53 @@ function Reward_SetBuildingUpgradeLevel(...)
 end
 
 B_Reward_SetBuildingUpgradeLevel = {
-	Name = "Reward_SetBuildingUpgradeLevel",
-	Description = {
-		en = "Reward: Sets the upgrade level of the specified building.",
-		de = "Lohn: Legt das Upgrade-Level eines Gebaeudes fest.",
+    Name = "Reward_SetBuildingUpgradeLevel",
+    Description = {
+        en = "Reward: Sets the upgrade level of the specified building.",
+        de = "Lohn: Legt das Upgrade-Level eines Gebaeudes fest.",
         fr = "Récompense: Définit le niveau d'amélioration d'un bâtiment.",
-	},
-	Parameter = {
-		{ ParameterType.ScriptName, en = "Building",        de = "Gebäude",         fr = "Bâtiment" },
-		{ ParameterType.Custom,     en = "Upgrade level",   de = "Upgrade-Level",   fr = "Niveau d'amélioration" },
-	}
+    },
+    Parameter = {
+        { ParameterType.ScriptName, en = "Building",        de = "Gebäude",         fr = "Bâtiment" },
+        { ParameterType.Custom,     en = "Upgrade level",   de = "Upgrade-Level",   fr = "Niveau d'amélioration" },
+    }
 };
 
 function B_Reward_SetBuildingUpgradeLevel:GetRewardTable()
-	return {Reward.Custom, self, self.CustomFunction};
+    return {Reward.Custom, self, self.CustomFunction};
 end
 
 function B_Reward_SetBuildingUpgradeLevel:AddParameter(_Index, _Parameter)
-	if _Index == 0 then
-		self.Building = _Parameter;
-	elseif _Index == 1 then
-		self.UpgradeLevel = tonumber(_Parameter);
-	end
+    if _Index == 0 then
+        self.Building = _Parameter;
+    elseif _Index == 1 then
+        self.UpgradeLevel = tonumber(_Parameter);
+    end
 end
 
 function B_Reward_SetBuildingUpgradeLevel:CustomFunction()
-	local building = Logic.GetEntityIDByName(self.Building);
-	local upgradeLevel = Logic.GetUpgradeLevel(building);
-	local maxUpgradeLevel = Logic.GetMaxUpgradeLevel(building);
-	if building ~= 0 
-	and Logic.IsBuilding(building) == 1
-	and (Logic.IsBuildingUpgradable(building, true)
-	or (maxUpgradeLevel ~= 0 
-	and maxUpgradeLevel == upgradeLevel))
-	then
-		Logic.SetUpgradableBuildingState(building, math.min(self.UpgradeLevel, maxUpgradeLevel), 0);
-	end
+    local building = Logic.GetEntityIDByName(self.Building);
+    local upgradeLevel = Logic.GetUpgradeLevel(building);
+    local maxUpgradeLevel = Logic.GetMaxUpgradeLevel(building);
+    if building ~= 0 
+    and Logic.IsBuilding(building) == 1
+    and (Logic.IsBuildingUpgradable(building, true)
+    or (maxUpgradeLevel ~= 0 
+    and maxUpgradeLevel == upgradeLevel))
+    then
+        Logic.SetUpgradableBuildingState(building, math.min(self.UpgradeLevel, maxUpgradeLevel), 0);
+    end
 end
 
 function B_Reward_SetBuildingUpgradeLevel:Debug(_Quest)
-	local building = Logic.GetEntityIDByName( self.Building )
-	if not building or Logic.IsBuilding(building) == 0  then
-		error(false, _Quest.Identifier.. ": " ..self.Name .. ": Building " .. self.Building .. " is missing or no building.")
-		return true
-	elseif not self.UpgradeLevel or self.UpgradeLevel < 0 then
-		error(false, _Quest.Identifier.. ": " ..self.Name .. ": Upgrade level is wrong")
-		return true
-	end
+    local building = Logic.GetEntityIDByName( self.Building )
+    if not building or Logic.IsBuilding(building) == 0  then
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Building " .. self.Building .. " is missing or no building.")
+        return true
+    elseif not self.UpgradeLevel or self.UpgradeLevel < 0 then
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Upgrade level is wrong")
+        return true
+    end
 end
 
 function B_Reward_SetBuildingUpgradeLevel:GetCustomData(_Index)
@@ -6106,13 +6266,13 @@ end
 
 function B_Trigger_OnNeedUnsatisfied:Debug(_Quest)
     if Logic.GetStoreHouse(self.PlayerID) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": " .. self.PlayerID .. " does not exist.")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": " .. self.PlayerID .. " does not exist.")
         return true
     elseif not Needs[self.Need] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": " .. self.Need .. " does not exist.")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": " .. self.Need .. " does not exist.")
         return true
     elseif self.WorkersOnStrike < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": WorkersOnStrike value negative")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": WorkersOnStrike value negative")
         return true
     end
     return false;
@@ -6204,13 +6364,13 @@ end
 
 function B_Trigger_OnAmountOfGoods:Debug(_Quest)
     if Logic.GetStoreHouse(self.PlayerID) == 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": " .. self.PlayerID .. " does not exist.")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": " .. self.PlayerID .. " does not exist.")
         return true
     elseif not Goods[self.GoodTypeName] then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Good type is wrong.")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Good type is wrong.")
         return true
     elseif self.GoodAmount < 0 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Good amount is negative.")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Good amount is negative.")
         return true
     end
     return false;
@@ -6274,10 +6434,10 @@ end
 
 function B_Trigger_OnQuestActiveWait:Debug(_Quest)
     if type(self.QuestName) ~= "string" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
         return true;
     elseif self.WaitTime and (type(self.WaitTime) ~= "number" or self.WaitTime < 0) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
         return true;
     end
     return false;
@@ -6368,10 +6528,10 @@ end
 
 function B_Trigger_OnQuestFailureWait:Debug(_Quest)
     if type(self.QuestName) ~= "string" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
         return true;
     elseif self.WaitTime and (type(self.WaitTime) ~= "number" or self.WaitTime < 0) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
         return true;
     end
     return false;
@@ -6448,7 +6608,7 @@ end
 
 function B_Trigger_OnQuestNotTriggered:Debug(_Quest)
     if type(self.QuestName) ~= "string" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
         return true;
     end
     return false;
@@ -6507,10 +6667,10 @@ end
 
 function B_Trigger_OnQuestInterruptedWait:Debug(_Quest)
     if type(self.QuestName) ~= "string" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
         return true;
     elseif self.WaitTime and (type(self.WaitTime) ~= "number" or self.WaitTime < 0) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
         return true;
     end
     return false;
@@ -6598,10 +6758,10 @@ end
 
 function B_Trigger_OnQuestOverWait:Debug(_Quest)
     if type(self.QuestName) ~= "string" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
         return true;
     elseif self.WaitTime and (type(self.WaitTime) ~= "number" or self.WaitTime < 0) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": waitTime must be a number!");
         return true;
     end
     return false;
@@ -6689,10 +6849,10 @@ end
 
 function B_Trigger_OnQuestSuccessWait:Debug(_Quest)
     if type(self.QuestName) ~= "string" then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": invalid quest name!");
         return true;
     elseif self.WaitTime and (type(self.WaitTime) ~= "number" or self.WaitTime < 0) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": waittime must be a number!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": waittime must be a number!");
         return true;
     end
     return false;
@@ -6802,7 +6962,7 @@ function B_Trigger_CustomVariables:Debug(_Quest)
         warn(false, _Quest.Identifier.. ": " ..self.Name..": variable '"..self.VariableName.."' do not exist!");
     end
     if not table.contains(relations, self.Relation) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.Relation.."' is an invalid relation!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": '"..self.Relation.."' is an invalid relation!");
         return true;
     end
     return false;
@@ -6877,7 +7037,7 @@ end
 
 function B_Trigger_OnMonth:Debug(_Quest)
     if self.Month < 1 or self.Month > 12 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": Month has the wrong value")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Month has the wrong value")
         return true
     end
     return false;
@@ -7038,13 +7198,13 @@ end
 
 function B_Trigger_OnAtLeastOneQuestFailure:Debug(_Quest)
     if self.Quest1 == self.Quest2 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": Both quests are identical!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": Both quests are identical!");
         return true;
     elseif not IsValidQuest(self.Quest1) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest1.."' does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest1.."' does not exist!");
         return true;
     elseif not IsValidQuest(self.Quest2) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest2.."' does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest2.."' does not exist!");
         return true;
     end
     return false;
@@ -7097,13 +7257,13 @@ end
 
 function B_Trigger_OnAtLeastOneQuestSuccess:Debug(_Quest)
     if self.Quest1 == self.Quest2 then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": Both quests are identical!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": Both quests are identical!");
         return true;
     elseif not IsValidQuest(self.Quest1) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest1.."' does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest1.."' does not exist!");
         return true;
     elseif not IsValidQuest(self.Quest2) then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest2.."' does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": Quest '"..self.Quest2.."' does not exist!");
         return true;
     end
     return false;
@@ -7163,13 +7323,13 @@ function B_Trigger_OnAtLeastXOfYQuestsSuccess:CustomFunction()
         ---@diagnostic disable-next-line: param-type-mismatch
         local QuestID = GetQuestID(self["QuestName"..i]);
         if IsValidQuest(QuestID) then
-			if (Quests[QuestID].Result == QuestResult.Success) then
-				least = least + 1
-				if least >= self.LeastAmount then
-					return true
-				end
-			end
-		end
+            if (Quests[QuestID].Result == QuestResult.Success) then
+                least = least + 1
+                if least >= self.LeastAmount then
+                    return true
+                end
+            end
+        end
     end
     return false
 end
@@ -7178,18 +7338,18 @@ function B_Trigger_OnAtLeastXOfYQuestsSuccess:Debug(_Quest)
     local leastAmount = self.LeastAmount
     local questAmount = self.QuestAmount
     if leastAmount <= 0 or leastAmount >5 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": LeastAmount is wrong")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": LeastAmount is wrong")
         return true
     elseif questAmount <= 0 or questAmount > 5 then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": QuestAmount is wrong")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": QuestAmount is wrong")
         return true
     elseif leastAmount > questAmount then
-        error(false, _Quest.Identifier.. ": " ..self.Name .. ": LeastAmount is greater than QuestAmount")
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": LeastAmount is greater than QuestAmount")
         return true
     end
     for i = 1, questAmount do
         if not IsValidQuest(self["QuestName"..i]) then
-            error(false, _Quest.Identifier.. ": " ..self.Name .. ": Quest ".. self["QuestName"..i] .. " not found")
+            debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Quest ".. self["QuestName"..i] .. " not found")
             return true
         end
     end
@@ -7241,11 +7401,11 @@ end
 
 function B_Trigger_MapScriptFunction:Debug(_Quest)
     if not self.FuncName then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": function reference is invalid!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": function reference is invalid!");
         return true;
     end
     if type(self.FuncName) ~= "function" and not _G[self.FuncName] then
-        error(false, _Quest.Identifier.. ": " ..self.Name..": function does not exist!");
+        debug(false, _Quest.Identifier.. ": " ..self.Name..": function does not exist!");
         return true;
     end
     return false;
@@ -7260,36 +7420,36 @@ function Trigger_OnEffectDestroyed(...)
 end
 
 B_Trigger_OnEffectDestroyed = {
-	Name = "Trigger_OnEffectDestroyed",
-	Description = {
-		en = "Trigger: Starts a quest after an effect was destroyed",
-		de = "Auslöser: Startet eine Quest, nachdem ein Effekt zerstoert wurde",
+    Name = "Trigger_OnEffectDestroyed",
+    Description = {
+        en = "Trigger: Starts a quest after an effect was destroyed",
+        de = "Auslöser: Startet eine Quest, nachdem ein Effekt zerstoert wurde",
         fr = "Déclencheur: Démarre une quête après la destruction d'un effet.",
-	},
-	Parameter = {
-		{ ParameterType.Default, en = "Effect name", de = "Effektname", fr = "Nom de l'effet" },
-	},
+    },
+    Parameter = {
+        { ParameterType.Default, en = "Effect name", de = "Effektname", fr = "Nom de l'effet" },
+    },
 }
 
 function B_Trigger_OnEffectDestroyed:GetTriggerTable()
-	return { Triggers.Custom2, {self, self.CustomFunction} }
+    return { Triggers.Custom2, {self, self.CustomFunction} }
 end
 
 function B_Trigger_OnEffectDestroyed:AddParameter(_Index, _Parameter)
-	if _Index == 0 then
-		self.EffectName = _Parameter
-	end
+    if _Index == 0 then
+        self.EffectName = _Parameter
+    end
 end
 
 function B_Trigger_OnEffectDestroyed:CustomFunction()
-	return not CONST_EFFECT_NAME_TO_ID[self.EffectName] or not Logic.IsEffectRegistered(CONST_EFFECT_NAME_TO_ID[self.EffectName]);
+    return not CONST_EFFECT_NAME_TO_ID[self.EffectName] or not Logic.IsEffectRegistered(CONST_EFFECT_NAME_TO_ID[self.EffectName]);
 end
 
 function B_Trigger_OnEffectDestroyed:Debug(_Quest)
-	if not CONST_EFFECT_NAME_TO_ID[self.EffectName] then
-		error(false, _Quest.Identifier.. ": " ..self.Name .. ": Effect has never existed")
-		return true
-	end
+    if not CONST_EFFECT_NAME_TO_ID[self.EffectName] then
+        debug(false, _Quest.Identifier.. ": " ..self.Name .. ": Effect has never existed")
+        return true
+    end
 end
 RegisterBehavior(B_Trigger_OnEffectDestroyed)
 
@@ -7413,6 +7573,30 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+B_Reward_TradePost.DEBUG_Orig_Warehouse = B_Reward_TradePost.DEBUG;
+--- @diagnostic disable-next-line: duplicate-set-field
+B_Reward_TradePost.DEBUG = function(self, _Quest)
+    local Index = Lib.Warehouse.Global:GetIndex(self.ScriptName);
+    if Index ~= 0 then
+        debug(false, _Quest.Identifier .. ": Error in " .. self.Name ..": Can not use a tradepost that is already a warehouse!");
+        return false;
+    end
+    return self:DEBUG_Orig_Warehouse(_Quest);
+end
+
+B_Reward_TradePost.CustomFunction_Orig_Warehouse = B_Reward_TradePost.CustomFunction;
+--- @diagnostic disable-next-line: duplicate-set-field
+B_Reward_TradePost.CustomFunction = function(self, _Quest)
+    local Index = Lib.Warehouse.Global:GetIndex(self.ScriptName);
+    if Index ~= 0 then
+        debug(false, _Quest.Identifier .. ": Error in " .. self.Name ..": Can not use a tradepost that is already a warehouse!");
+        return;
+    end
+    self:CustomFunction_Orig_Warehouse(_Quest);
+end
+
+-- -------------------------------------------------------------------------- --
+
 function Reprisal_Briefing(_Name, _Briefing)
     return B_Reprisal_Briefing:new(_Name, _Briefing);
 end
@@ -7448,11 +7632,11 @@ end
 
 function B_Reprisal_Briefing:Debug(_Quest)
     if self.BriefingName == nil or self.BriefingName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     if not type(_G[self.Function]) == "function" then
-        error(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        debug(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
         return true;
     end
     return false;
@@ -7534,15 +7718,15 @@ end
 
 function B_Trigger_Briefing:Debug(_Quest)
     if self.WaitTime < 0 then
-        error(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.BriefingName == nil or self.BriefingName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     return false;
@@ -7589,11 +7773,11 @@ end
 
 function B_Reprisal_Cutscene:Debug(_Quest)
     if self.CutsceneName == nil or self.CutsceneName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     if not type(_G[self.Function]) == "function" then
-        error(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        debug(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
         return true;
     end
     return false;
@@ -7675,15 +7859,15 @@ end
 
 function B_Trigger_Cutscene:Debug(_Quest)
     if self.WaitTime < 0 then
-        error(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.CutsceneName == nil or self.CutsceneName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     return false;
@@ -7730,11 +7914,11 @@ end
 
 function B_Reprisal_Dialog:Debug(_Quest)
     if self.DialogName == nil or self.DialogName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     if not type(_G[self.Function]) == "function" then
-        error(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        debug(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
         return true;
     end
     return false;
@@ -7816,15 +8000,15 @@ end
 
 function B_Trigger_Dialog:Debug(_Quest)
     if self.WaitTime < 0 then
-        error(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.DialogName == nil or self.DialogName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     return false;

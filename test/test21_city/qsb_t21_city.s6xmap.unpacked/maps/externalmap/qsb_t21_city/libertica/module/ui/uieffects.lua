@@ -24,7 +24,7 @@ CinematicEventState = {
 };
 
 Lib.Require("core/Core");
-Lib.Require("module/camera/Camera");
+Lib.Require("module/settings/Camera");
 Lib.Require("module/ui/UIEffects_API");
 Lib.Register("module/ui/UIEffects");
 

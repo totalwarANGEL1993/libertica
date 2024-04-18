@@ -15,10 +15,10 @@ Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/ui/UIEffects");
-Lib.Require("module/promotion/Promotion");
+Lib.Require("module/city/Promotion");
 Lib.Require("module/information/Requester");
 Lib.Require("module/entity/Selection");
-Lib.Require("module/city/SettlementSurvival");
+Lib.Require("module/mode/SettlementSurvival");
 
 function Mission_LocalOnMapStart()
 end

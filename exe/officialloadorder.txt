@@ -47,8 +47,8 @@ module/ui/UIEffects
 module/ui/UIBuilding
 module/city/Construction
 module/npc/NPC
-module/sound/Sound
-module/promotion/Promotion
+module/settings/Sound
+module/city/Promotion
 module/io/IO
 module/io/IOChest
 module/io/IOMine
@@ -56,8 +56,8 @@ module/quest/Quest
 module/quest/QuestJornal
 module/faker/Technology
 module/trade/Warehouse
-module/camera/Camera
-module/city/SettlementSurvival
+module/settings/Camera
+module/mode/SettlementSurvival
 module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem

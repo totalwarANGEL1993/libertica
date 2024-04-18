@@ -22,7 +22,7 @@ Lib.Require("module/io/IOMine");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/trade/Warehouse");
-Lib.Require("module/promotion/Promotion");
+Lib.Require("module/city/Promotion");
 
 -- ========================================================================== --
 

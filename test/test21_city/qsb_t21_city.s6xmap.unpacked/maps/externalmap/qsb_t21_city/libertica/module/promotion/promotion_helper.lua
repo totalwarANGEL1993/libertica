@@ -1,4 +1,4 @@
-Lib.Register("module/promotion/Promotion_Helper");
+Lib.Register("module/city/Promotion_Helper");
 
 Lib.Promotion = Lib.Promotion or {};
 Lib.Promotion.Helper = {};

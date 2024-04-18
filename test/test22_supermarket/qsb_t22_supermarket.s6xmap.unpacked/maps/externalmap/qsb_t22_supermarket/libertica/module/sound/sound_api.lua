@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/Sound/Sound_API");
+Lib.Register("module/settings/Sound_API");
 
 function StartEventPlaylist(_Playlist, _PlayerID)
     _PlayerID = _PlayerID or 1;

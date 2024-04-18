@@ -21,11 +21,11 @@ CONST_CONSUMED_GOODS_COUNTER = {};
 Lib.Require("core/Core");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/ui/UITools");
-Lib.Require("module/promotion/Promotion_API");
-Lib.Require("module/promotion/Promotion_Config");
-Lib.Require("module/promotion/Promotion_Helper");
-Lib.Require("module/promotion/Promotion_Requirements");
-Lib.Register("module/promotion/Promotion");
+Lib.Require("module/city/Promotion_API");
+Lib.Require("module/city/Promotion_Config");
+Lib.Require("module/city/Promotion_Helper");
+Lib.Require("module/city/Promotion_Requirements");
+Lib.Register("module/city/Promotion");
 
 -- -------------------------------------------------------------------------- --
 -- Global

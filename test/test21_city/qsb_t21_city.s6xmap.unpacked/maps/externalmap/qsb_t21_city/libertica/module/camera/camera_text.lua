@@ -1,4 +1,4 @@
-Lib.Register("module/camera/Camera_Text");
+Lib.Register("module/settings/Camera_Text");
 
 Lib.Camera = Lib.Camera or {};
 Lib.Camera.Text = {

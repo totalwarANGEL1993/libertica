@@ -109,6 +109,7 @@ end
 
 function Lib.QuestJornal.Global:FormatJournalEntry(_QuestName, _PlayerID)
     local Quest = Quests[GetQuestID(_QuestName)];
+    --- @diagnostic disable-next-line: undefined-field
     if Quest and Quest.QuestNotes and Quest.ReceivingPlayer == _PlayerID then
         local Journal = self:GetJournalEntriesSorted();
         local SeperateImportant = false;
@@ -241,6 +242,7 @@ end
 
 function Lib.QuestJornal.Local:OverrideUpdateVoiceMessage()
     GUI_Interaction.UpdateVoiceMessage_Orig_QuestJornal = GUI_Interaction.UpdateVoiceMessage;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.UpdateVoiceMessage = function()
         GUI_Interaction.UpdateVoiceMessage_Orig_QuestJornal();
         if not QuestLog.IsQuestLogShown() then
@@ -270,6 +272,7 @@ end
 
 function Lib.QuestJornal.Local:OverrideTimerButtons()
     GUI_Interaction.TimerButtonClicked_Orig_QuestJornal = GUI_Interaction.TimerButtonClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.TimerButtonClicked = function()
         if  XGUIEng.IsWidgetShown("/InGame/Root/Normal/ChatOptions") == 1
         and XGUIEng.IsWidgetShown("/InGame/Root/Normal/ChatOptions/ToggleWhisperTarget") == 1 then
@@ -281,11 +284,14 @@ end
 
 function Lib.QuestJornal.Local:OverrideTutorialNext()
     GUI_Interaction.TutorialNext_Orig_QuestJornal = GUI_Interaction.TutorialNext;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.TutorialNext = function()
         if g_Interaction.CurrentMessageQuestIndex then
             local QuestID = g_Interaction.CurrentMessageQuestIndex;
             local Quest = Quests[QuestID];
+            --- @diagnostic disable-next-line: undefined-field
             SendReportToGlobal(Report.TutorialNextClicked, Quest.Identifier, GUI.GetPlayerID());
+            --- @diagnostic disable-next-line: undefined-field
             SendReport(Report.TutorialNextClicked, Quest.Identifier, GUI.GetPlayerID());
         end
     end

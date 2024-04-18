@@ -13,9 +13,9 @@ CONST_FARCLIPPLANE = 45000;
 CONST_FARCLIPPLANE_DEFAULT = 0;
 
 Lib.Require("core/Core");
-Lib.Require("module/camera/Camera_API");
-Lib.Require("module/camera/Camera_Text");
-Lib.Register("module/camera/Camera");
+Lib.Require("module/settings/Camera_API");
+Lib.Require("module/settings/Camera_Text");
+Lib.Register("module/settings/Camera");
 
 -- -------------------------------------------------------------------------- --
 -- Global

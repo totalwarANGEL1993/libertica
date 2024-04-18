@@ -10,9 +10,9 @@ Lib.Selection.Text = {
                 fr = "Sélectionner le chevalier",
             },
             Text = {
-                de = "- Klick selektiert den Ritter {cr}- Doppelklick springt zum Ritter{cr}- STRG halten selektiert alle Ritter",
-                en = "- Click selects the knight {cr}- Double click jumps to knight{cr}- Press CTRL to select all knights",
-                fr = "- Clic sélectionne le chevalier {cr}- Double-clic saute au chevalier{cr}- Maintenir CTRL sélectionne tous les chevaliers",
+                de = "- Klick selektiert den Ritter {cr}- Doppelklick springt zum Ritter{cr}- UMSCH halten selektiert alle Ritter",
+                en = "- Click selects the knight {cr}- Double click jumps to knight{cr}- Press SHIFT to select all knights",
+                fr = "- Clic sélectionne le chevalier {cr}- Double-clic saute au chevalier{cr}- Maintenir SHIFT sélectionne tous les chevaliers",
             },
         },
 
@@ -23,9 +23,9 @@ Lib.Selection.Text = {
                 fr = "Sélectionner les unitées",
             },
             Text = {
-                de = "- Selektiert alle Einheiten {cr}- STRG halten selektiert Militär {cr}- SHIFT halten selektiert Kriegsmaschinen {cr}- ALT halten selektiert Diebe",
-                en = "- Selects all units {cr}- Holding CTRL selects military {cr}- Holding SHIFT selects siege engines {cr}- Holding ALT selects thieves",
-                fr = "- Sélectionne toutes les unités {cr}- Maintenir CTRL sélectionne les militaires {cr}- Maintenir SHIFT sélectionne les machines de guerre {cr}- Maintenir ALT sélectionne les voleurs",
+                de = "- Selektiert alle Einheiten {cr}- UMSCH halten selektiert Militär {cr}- ALT halten selektiert Kriegsmaschinen {cr}- STRG halten selektiert Diebe",
+                en = "- Selects all units {cr}- Holding SHIFT selects military {cr}- Holding ALT selects siege engines {cr}- Holding CTRL selects thieves",
+                fr = "- Sélectionne toutes les unités {cr}- Maintenir SHIFT sélectionne les militaires {cr}- Maintenir ALT sélectionne les machines de guerre {cr}- Maintenir CTRL sélectionne les voleurs",
             },
         },
 

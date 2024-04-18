@@ -580,7 +580,7 @@ function Lib.Selection.Local:OverwriteSelectKnight()
             g_MultiSelection.EntityList = {};
             g_MultiSelection.Highlighted = {};
             GUI.ClearSelection();
-            if XGUIEng.IsModifierPressed(Keys.ModifierControl) then
+            if XGUIEng.IsModifierPressed(Keys.ModifierShift) then
                 local knights = {}
                 Logic.GetKnights(PlayerID, knights);
                 for i=1,#knights do
@@ -616,15 +616,15 @@ function Lib.Selection.Local:OverwriteSelectAllUnits()
         end
         -- Select only thieves
         if ModifierAlt and not ModifierControl and not ModifierShift then
-            Lib.Selection.Local:SortOrderThievesOnly();
+            Lib.Selection.Local:SortOrderSiegeEnginesOnly();
         end
         -- Select only military and knight
         if not ModifierAlt and ModifierControl and not ModifierShift then
-            Lib.Selection.Local:SortOrderMilitaryUnitsOnly();
+            Lib.Selection.Local:SortOrderThievesOnly();
         end
         -- Select only siege engines
         if not ModifierAlt and not ModifierControl and ModifierShift then
-            Lib.Selection.Local:SortOrderSiegeEnginesOnly();
+            Lib.Selection.Local:SortOrderMilitaryUnitsOnly();
         end
 
         Sound.FXPlay2DSound("ui\\menu_click");
@@ -639,7 +639,7 @@ function Lib.Selection.Local:OverwriteSelectAllUnits()
 
         -- Add knight only to full selection or military selection
         if (not ModifierAlt and not ModifierControl and not ModifierShift)
-        or (not ModifierAlt and ModifierControl and not ModifierShift) then
+        or (not ModifierAlt and not ModifierControl and ModifierShift) then
             local Knights = {}
             Logic.GetKnights(PlayerID, Knights)
             for k = 1, #Knights do

@@ -255,7 +255,8 @@ function Lib.NPC.Global:OverrideQuestFunctions()
         SendReportToLocal(Report.NpcInteraction, _EntityID, ClosestKnightID, _PlayerID);
     end
 
-    QuestTemplate.RemoveQuestMarkers_Orig_NPC = QuestTemplate.RemoveQuestMarkers
+    QuestTemplate.RemoveQuestMarkers_Orig_NPC = QuestTemplate.RemoveQuestMarkers;
+    --- @diagnostic disable-next-line: duplicate-set-field
     QuestTemplate.RemoveQuestMarkers = function(self)
         for i=1, self.Objectives[0] do
             if self.Objectives[i].Type == Objective.Distance then
@@ -273,7 +274,8 @@ function Lib.NPC.Global:OverrideQuestFunctions()
         end
     end
 
-    QuestTemplate.ShowQuestMarkers_Orig_NPC = QuestTemplate.ShowQuestMarkers
+    QuestTemplate.ShowQuestMarkers_Orig_NPC = QuestTemplate.ShowQuestMarkers;
+    --- @diagnostic disable-next-line: duplicate-set-field
     QuestTemplate.ShowQuestMarkers = function(self)
         for i=1, self.Objectives[0] do
             if self.Objectives[i].Type == Objective.Distance then
@@ -293,6 +295,7 @@ function Lib.NPC.Global:OverrideQuestFunctions()
     end
 
     QuestTemplate.IsObjectiveCompleted_Orig_NPC = QuestTemplate.IsObjectiveCompleted;
+    --- @diagnostic disable-next-line: duplicate-set-field
     QuestTemplate.IsObjectiveCompleted = function(self, objective)
         local objectiveType = objective.Type;
         local data = objective.Data;
@@ -444,7 +447,8 @@ function Lib.NPC.Local:OnReportReceived(_ID, ...)
 end
 
 function Lib.NPC.Local:OverrideQuestFunctions()
-    GUI_Interaction.DisplayQuestObjective_Orig_NPC = GUI_Interaction.DisplayQuestObjective
+    GUI_Interaction.DisplayQuestObjective_Orig_NPC = GUI_Interaction.DisplayQuestObjective;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.DisplayQuestObjective = function(_QuestIndex, _MessageKey)
         local QuestIndexTemp = tonumber(_QuestIndex);
         if QuestIndexTemp then
@@ -464,6 +468,7 @@ function Lib.NPC.Local:OverrideQuestFunctions()
             QuestTypeCaption = Wrapped_GetStringTableText(_QuestIndex, "UI_Texts/QuestInteraction");
             local ObjectList = {};
 
+            assert(Quest ~= nil);
             if Quest.Objectives[1].Data[1] == -65565 then
                 QuestObjectiveContainer = QuestObjectivesPath .. "/Distance";
                 QuestTypeCaption = Wrapped_GetStringTableText(_QuestIndex, "UI_Texts/QuestMoveHere");
@@ -505,6 +510,7 @@ function Lib.NPC.Local:OverrideQuestFunctions()
     end
 
     GUI_Interaction.GetEntitiesOrTerritoryListForQuest_Orig_NPC = GUI_Interaction.GetEntitiesOrTerritoryListForQuest
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.GetEntitiesOrTerritoryListForQuest = function( _Quest, _QuestType )
         local EntityOrTerritoryList = {}
         local IsEntity = true

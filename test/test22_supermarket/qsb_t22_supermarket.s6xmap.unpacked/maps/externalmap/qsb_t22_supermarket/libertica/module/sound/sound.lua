@@ -11,8 +11,8 @@ CONST_FARCLIPPLANE = 45000;
 CONST_FARCLIPPLANE_DEFAULT = 0;
 
 Lib.Require("core/Core");
-Lib.Require("module/sound/Sound_API");
-Lib.Register("module/sound/Sound");
+Lib.Require("module/settings/Sound_API");
+Lib.Register("module/settings/Sound");
 
 -- -------------------------------------------------------------------------- --
 -- Global

@@ -14,10 +14,10 @@ if CONST_IS_IN_DEV then
 end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
-Lib.Require("module/promotion/Promotion");
+Lib.Require("module/city/Promotion");
 Lib.Require("module/city/Construction");
 Lib.Require("module/city/LifestockSystem");
-Lib.Require("module/city/SettlementSurvival");
+Lib.Require("module/mode/SettlementSurvival");
 Lib.Require("module/entity/Selection");
 Lib.Require("module/quest/Quest");
 

@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/camera/Camera_API");
+Lib.Register("module/settings/Camera_API");
 
 function SetRenderDistance(_View)
     if not IsLocalScript() then

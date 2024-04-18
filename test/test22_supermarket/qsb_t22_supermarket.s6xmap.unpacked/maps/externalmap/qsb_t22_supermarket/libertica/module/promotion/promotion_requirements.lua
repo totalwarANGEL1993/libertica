@@ -1,4 +1,4 @@
-Lib.Register("module/promotion/Promotion_Requirements");
+Lib.Register("module/city/Promotion_Requirements");
 
 -- This is the real deal. Defines the requirements, needs and rights.
 InitKnightTitleTablesOverwrite = function()

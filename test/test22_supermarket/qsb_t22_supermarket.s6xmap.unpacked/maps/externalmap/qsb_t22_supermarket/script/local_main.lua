@@ -15,7 +15,7 @@ end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
 Lib.Require("module/entity/Selection");
-Lib.Require("module/city/SettlementSurvival");
+Lib.Require("module/mode/SettlementSurvival");
 
 -- ========================================================================== --
 

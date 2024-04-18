@@ -1,4 +1,4 @@
-Lib.Register("module/promotion/Promotion_Config");
+Lib.Register("module/city/Promotion_Config");
 
 Lib.Promotion = Lib.Promotion or {};
 Lib.Promotion.Config = {};

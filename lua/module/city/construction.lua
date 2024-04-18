@@ -524,12 +524,14 @@ end
 
 function Lib.Construction.Local:OverrideBuildButtonClicked()
     self.Orig_BuildClicked = GUI_Construction.BuildClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Construction.BuildClicked = function(_BuildingType)
         Lib.Construction.Local.LastSelectedBuildingType = _BuildingType;
         Lib.Construction.Local.Orig_BuildClicked(_BuildingType);
     end
 
     self.Orig_BuildStreetClicked = GUI_Construction.BuildStreetClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Construction.BuildStreetClicked = function(_IsTrail)
         _IsTrail = (_IsTrail ~= nil and _IsTrail) or false;
         Lib.Construction.Local.LastSelectedRoadType = _IsTrail;
@@ -537,6 +539,7 @@ function Lib.Construction.Local:OverrideBuildButtonClicked()
     end
 
     self.Orig_BuildWallClicked = GUI_Construction.BuildWallClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Construction.BuildWallClicked = function(_BuildingType)
         if _BuildingType == nil then
             _BuildingType = GetUpgradeCategoryForClimatezone("WallSegment");
@@ -546,6 +549,7 @@ function Lib.Construction.Local:OverrideBuildButtonClicked()
     end
 
     self.Orig_BuildWallGateClicked = GUI_Construction.BuildWallGateClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Construction.BuildWallGateClicked = function(_BuildingType)
         if _BuildingType == nil then
             _BuildingType = GetUpgradeCategoryForClimatezone("WallGate");
@@ -578,6 +582,7 @@ function Lib.Construction.Local:OverridePlacementUpdate()
     end
 
     self.Orig_PlacementUpdate = GUI_Construction.PlacementUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Construction.PlacementUpdate = function()
         Lib.Construction.Local:CancleWallGatesToCloseToEachother(GUI.GetPlayerID());
         Lib.Construction.Local.Orig_PlacementUpdate();
