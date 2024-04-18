@@ -33,11 +33,11 @@ end
 
 function B_Reprisal_Cutscene:Debug(_Quest)
     if self.CutsceneName == nil or self.CutsceneName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     if not type(_G[self.Function]) == "function" then
-        error(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
+        debug(false, _Quest.Identifier..": "..self.Name..": '"..self.Function.."' was not found!");
         return true;
     end
     return false;
@@ -119,15 +119,15 @@ end
 
 function B_Trigger_Cutscene:Debug(_Quest)
     if self.WaitTime < 0 then
-        error(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Wait time must be 0 or greater!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.PlayerID < 1 or self.PlayerID > 8 then
-        error(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Player-ID must be between 1 and 8!", _Quest.Identifier, self.Name));
         return true;
     end
     if self.CutsceneName == nil or self.CutsceneName == "" then
-        error(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
+        debug(false, string.format("%s: %s: Dialog name is invalid!", _Quest.Identifier, self.Name));
         return true;
     end
     return false;

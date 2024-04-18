@@ -59,6 +59,17 @@ function error(_Condition, _Text, ...)
     end
 end
 
+function debug(_Condition, _Text, ...)
+    if not _Condition then
+        local Text = log(_Text, unpack(arg));
+        if GUI then
+            GUI.AddNote(Text);
+        else
+            Logic.DEBUG_Addnote(Text);
+        end
+    end
+end
+
 -- -------------------------------------------------------------------------- --
 -- Global
 
