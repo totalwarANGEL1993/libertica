@@ -2,6 +2,8 @@ comfort/copytable
 comfort/getcategoriesofentity
 comfort/getdelayedplayers
 comfort/getplayeratslot
+comfort/getplayername
+comfort/setplayername
 comfort/getsoldiersofgroup
 comfort/islocalscript
 comfort/keyof
@@ -30,6 +32,7 @@ comfort/global/createcartbygoodtype
 comfort/global/createentityname
 comfort/global/createstock
 comfort/global/GetQuestID
+comfort/global/getrandomsettlertype
 comfort/global/isvalidquest
 comfort/global/isvalidquestname
 comfort/global/lookat
@@ -46,12 +49,13 @@ module/ui/UITools
 module/ui/UIEffects
 module/ui/UIBuilding
 module/city/Construction
-module/npc/NPC
+module/entity/NPC
 module/settings/Sound
 module/city/Promotion
 module/io/IO
 module/io/IOChest
 module/io/IOMine
+module/entity/EntitySelection
 module/quest/Quest
 module/quest/QuestJornal
 module/faker/Technology
@@ -61,6 +65,5 @@ module/mode/SettlementSurvival
 module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem
-module/entity/Selection
 module/city/LifestockSystem
 module/information/Requester

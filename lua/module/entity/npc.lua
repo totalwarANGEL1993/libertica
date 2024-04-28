@@ -21,8 +21,8 @@ Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetClosestToTarget");
 Lib.Require("comfort/global/LookAt");
 Lib.Require("core/Core");
-Lib.Require("module/npc/NPC_API");
-Lib.Register("module/npc/NPC");
+Lib.Require("module/entity/NPC_API");
+Lib.Register("module/entity/NPC");
 
 -- -------------------------------------------------------------------------- --
 -- Global

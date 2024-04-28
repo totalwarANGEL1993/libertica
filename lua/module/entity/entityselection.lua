@@ -1,10 +1,10 @@
-Lib.Selection = Lib.Selection or {};
-Lib.Selection.Name = "Selection";
-Lib.Selection.Global = {
+Lib.EntitySelection = Lib.EntitySelection or {};
+Lib.EntitySelection.Name = "Selection";
+Lib.EntitySelection.Global = {
     TrebuchetIDToCart = {},
     SelectedEntities = {},
 };
-Lib.Selection.Local  = {
+Lib.EntitySelection.Local  = {
     SelectedEntities = {},
     TrebuchetDisassemble = false,
     TrebuchetErect = false,
@@ -25,7 +25,7 @@ Lib.Register("module/entity/Selection");
 -- Global
 
 -- Global initalizer method
-function Lib.Selection.Global:Initialize()
+function Lib.EntitySelection.Global:Initialize()
     if not self.IsInstalled then
         --- A entity has been expelled.
         ---
@@ -66,34 +66,34 @@ function Lib.Selection.Global:Initialize()
         end
 
         -- Garbage collection
-        Lib.Selection.Local = nil;
+        Lib.EntitySelection.Local = nil;
     end
     self.IsInstalled = true;
 end
 
 -- Global load game
-function Lib.Selection.Global:OnSaveGameLoaded()
+function Lib.EntitySelection.Global:OnSaveGameLoaded()
 end
 
 -- Global report listener
-function Lib.Selection.Global:OnReportReceived(_ID, ...)
+function Lib.EntitySelection.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.ForceTrebuchetTasklist then
         Logic.SetTaskList(arg[1], arg[2]);
     elseif _ID == Report.ErectTrebuchet then
-        Lib.Selection.Global:MilitaryErectTrebuchet(arg[1]);
+        Lib.EntitySelection.Global:MilitaryErectTrebuchet(arg[1]);
     elseif _ID == Report.DisambleTrebuchet then
-        Lib.Selection.Global:MilitaryDisambleTrebuchet(arg[1]);
+        Lib.EntitySelection.Global:MilitaryDisambleTrebuchet(arg[1]);
     elseif _ID == Report.ExpelSettler then
         DestroyEntity(arg[1]);
     elseif _ID == Report.SelectionChanged then
         local PlayerID = table.remove(arg, 1);
-        Lib.Selection.Global.SelectedEntities[PlayerID] = arg;
+        Lib.EntitySelection.Global.SelectedEntities[PlayerID] = arg;
     end
 end
 
-function Lib.Selection.Global:MilitaryDisambleTrebuchet(_EntityID)
+function Lib.EntitySelection.Global:MilitaryDisambleTrebuchet(_EntityID)
     local x,y,z = Logic.EntityGetPos(_EntityID);
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
 
@@ -123,7 +123,7 @@ function Lib.Selection.Global:MilitaryDisambleTrebuchet(_EntityID)
     ExecuteLocal([[GUI.SelectEntity(%d)]], TrebuchetCart);
 end
 
-function Lib.Selection.Global:MilitaryErectTrebuchet(_EntityID)
+function Lib.EntitySelection.Global:MilitaryErectTrebuchet(_EntityID)
     local x,y,z = Logic.EntityGetPos(_EntityID);
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
 
@@ -160,7 +160,7 @@ end
 -- Local
 
 -- Local initalizer method
-function Lib.Selection.Local:Initialize()
+function Lib.EntitySelection.Local:Initialize()
     if not self.IsInstalled then
         Report.ExpelSettler = CreateReport("Event_ExpelSettler");
         Report.SelectionChanged = CreateReport("Event_SelectionChanged");
@@ -187,31 +187,31 @@ function Lib.Selection.Local:Initialize()
         end
 
         -- Garbage collection
-        Lib.Selection.Global = nil;
+        Lib.EntitySelection.Global = nil;
     end
     self.IsInstalled = true;
 end
 
 -- Local load game
-function Lib.Selection.Local:OnSaveGameLoaded()
+function Lib.EntitySelection.Local:OnSaveGameLoaded()
 end
 
 -- Local report listener
-function Lib.Selection.Local:OnReportReceived(_ID, ...)
+function Lib.EntitySelection.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     end
 end
 
-function Lib.Selection.Local:OverrideSelection()
+function Lib.EntitySelection.Local:OverrideSelection()
     self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
     GameCallback_GUI_SelectionChanged = function(_Source)
-        Lib.Selection.Local.Orig_GameCallback_GUI_SelectionChanged(_Source);
-        Lib.Selection.Local:OnSelectionCanged(_Source);
+        Lib.EntitySelection.Local.Orig_GameCallback_GUI_SelectionChanged(_Source);
+        Lib.EntitySelection.Local:OnSelectionCanged(_Source);
     end
 end
 
-function Lib.Selection.Local:OverwriteMilitaryCommands()
+function Lib.EntitySelection.Local:OverwriteMilitaryCommands()
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.StandGroundClicked = function()
         Sound.FXPlay2DSound( "ui\\menu_click");
@@ -249,7 +249,7 @@ function Lib.Selection.Local:OverwriteMilitaryCommands()
     end
 end
 
-function Lib.Selection.Local:OverwriteMilitaryErect()
+function Lib.EntitySelection.Local:OverwriteMilitaryErect()
     GUI_Military.ErectClicked_Orig_Selection = GUI_Military.ErectClicked;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.ErectClicked = function()
@@ -271,7 +271,7 @@ function Lib.Selection.Local:OverwriteMilitaryErect()
         local SiegeCartID = GUI.GetSelectedEntity();
         local EntityType = Logic.GetEntityType(SiegeCartID);
         if EntityType == Entities.U_SiegeEngineCart then
-            local Disabled = (Lib.Selection.Local.TrebuchetErect and 0) or 1;
+            local Disabled = (Lib.EntitySelection.Local.TrebuchetErect and 0) or 1;
             XGUIEng.DisableButton(CurrentWidgetID, Disabled);
             SetIcon(CurrentWidgetID, {12, 6});
         else
@@ -294,7 +294,7 @@ function Lib.Selection.Local:OverwriteMilitaryErect()
     end
 end
 
-function Lib.Selection.Local:OverwriteMilitaryDisamble()
+function Lib.EntitySelection.Local:OverwriteMilitaryDisamble()
     GUI_Military.DisassembleClicked_Orig_Selection = GUI_Military.DisassembleClicked;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DisassembleClicked = function()
@@ -318,7 +318,7 @@ function Lib.Selection.Local:OverwriteMilitaryDisamble()
             TooltipDisabledTextKey = "Disassemble"
         else
             TooltipDisabledTextKey = "DisassembleNoSoldiersAttached"
-            if not Lib.Selection.Local.TrebuchetDisassemble then
+            if not Lib.EntitySelection.Local.TrebuchetDisassemble then
                 TooltipDisabledTextKey = "Disassemble";
             end
         end
@@ -332,7 +332,7 @@ function Lib.Selection.Local:OverwriteMilitaryDisamble()
         local SiegeEngineID = GUI.GetSelectedEntity();
         local EntityType = Logic.GetEntityType(SiegeEngineID);
         if EntityType == Entities.U_Trebuchet then
-            local Disabled = (Lib.Selection.Local.TrebuchetDisassemble and 0) or 1;
+            local Disabled = (Lib.EntitySelection.Local.TrebuchetDisassemble and 0) or 1;
             XGUIEng.DisableButton(CurrentWidgetID, Disabled);
             SetIcon(CurrentWidgetID, {12, 9});
         else
@@ -341,7 +341,7 @@ function Lib.Selection.Local:OverwriteMilitaryDisamble()
     end
 end
 
-function Lib.Selection.Local:OnSelectionCanged(_Source)
+function Lib.EntitySelection.Local:OnSelectionCanged(_Source)
     local PlayerID = GUI.GetPlayerID();
     local EntityID = GUI.GetSelectedEntity();
     local EntityType = Logic.GetEntityType(EntityID);
@@ -375,7 +375,7 @@ function Lib.Selection.Local:OnSelectionCanged(_Source)
     end
 end
 
-function Lib.Selection.Local:OverwriteMultiselectIcon()
+function Lib.EntitySelection.Local:OverwriteMultiselectIcon()
     GUI_MultiSelection.IconUpdate_Orig_Selection = GUI_MultiSelection.IconUpdate;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_MultiSelection.IconUpdate = function()
@@ -425,19 +425,19 @@ function Lib.Selection.Local:OverwriteMultiselectIcon()
         end
         if EntityType == Entities.U_SiegeEngineCart then
             SetTooltipNormal(
-                Localize(Lib.Selection.Text.Tooltips.TrebuchetCart.Title),
-                Localize(Lib.Selection.Text.Tooltips.TrebuchetCart.Text)
+                Localize(Lib.EntitySelection.Text.Tooltips.TrebuchetCart.Title),
+                Localize(Lib.EntitySelection.Text.Tooltips.TrebuchetCart.Text)
             );
         elseif EntityType == Entities.U_Trebuchet then
             SetTooltipNormal(
-                Localize(Lib.Selection.Text.Tooltips.Trebuchet.Title),
-                Localize(Lib.Selection.Text.Tooltips.Trebuchet.Text)
+                Localize(Lib.EntitySelection.Text.Tooltips.Trebuchet.Title),
+                Localize(Lib.EntitySelection.Text.Tooltips.Trebuchet.Text)
             );
         end
     end
 end
 
-function Lib.Selection.Local:OverwriteMilitaryDismount()
+function Lib.EntitySelection.Local:OverwriteMilitaryDismount()
     GUI_Military.DismountClicked_Orig_Selection = GUI_Military.DismountClicked;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Military.DismountClicked = function()
@@ -454,7 +454,7 @@ function Lib.Selection.Local:OverwriteMilitaryDismount()
             return;
         end
         if Logic.IsLeader(Selected) == 1 and Guarded == 0 then
-            if Lib.Selection.Local.MilitaryRelease then
+            if Lib.EntitySelection.Local.MilitaryRelease then
                 Sound.FXPlay2DSound( "ui\\menu_click");
                 local Soldiers = {Logic.GetSoldiersAttachedToLeader(Selected)};
                 SendReportToGlobal(Report.ExpelSettler, Soldiers[#Soldiers]);
@@ -466,7 +466,7 @@ function Lib.Selection.Local:OverwriteMilitaryDismount()
         or Type == Entities.U_CatapultCart or Type == Entities.U_SiegeTowerCart
         or Type == Entities.U_MilitaryBatteringRam or Entities.U_MilitaryCatapult
         or Type == Entities.U_MilitarySiegeTower then
-            if Lib.Selection.Local.SiegeEngineRelease and Guardian == 0 then
+            if Lib.EntitySelection.Local.SiegeEngineRelease and Guardian == 0 then
                 Sound.FXPlay2DSound( "ui\\menu_click");
                 SendReportToGlobal(Report.ExpelSettler, Selected);
                 SendReport(Report.ExpelSettler, Selected);
@@ -497,7 +497,7 @@ function Lib.Selection.Local:OverwriteMilitaryDismount()
         end
         SetIcon(CurrentWidgetID, {14, 12});
         if Type == Entities.U_MilitaryLeader then
-            if not Lib.Selection.Local.MilitaryRelease then
+            if not Lib.EntitySelection.Local.MilitaryRelease then
                 XGUIEng.DisableButton(CurrentWidgetID, 1);
             else
                 XGUIEng.DisableButton(CurrentWidgetID, 0);
@@ -512,7 +512,7 @@ function Lib.Selection.Local:OverwriteMilitaryDismount()
                 SetIcon(CurrentWidgetID, {12, 1});
                 XGUIEng.DisableButton(CurrentWidgetID, 0);
             else
-                if not Lib.Selection.Local.SiegeEngineRelease then
+                if not Lib.EntitySelection.Local.SiegeEngineRelease then
                     XGUIEng.DisableButton(CurrentWidgetID, 1);
                 else
                     XGUIEng.DisableButton(CurrentWidgetID, 0);
@@ -522,11 +522,11 @@ function Lib.Selection.Local:OverwriteMilitaryDismount()
     end
 end
 
-function Lib.Selection.Local:OverwriteThiefDeliver()
+function Lib.EntitySelection.Local:OverwriteThiefDeliver()
     GUI_Thief.ThiefDeliverClicked_Orig_Selection = GUI_Thief.ThiefDeliverClicked;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Thief.ThiefDeliverClicked = function()
-        if not Lib.Selection.Local.ThiefRelease then
+        if not Lib.EntitySelection.Local.ThiefRelease then
             GUI_Thief.ThiefDeliverClicked_Orig_Selection();
             return;
         end
@@ -542,21 +542,21 @@ function Lib.Selection.Local:OverwriteThiefDeliver()
     GUI_Thief.ThiefDeliverMouseOver_Orig_Selection = GUI_Thief.ThiefDeliverMouseOver;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Thief.ThiefDeliverMouseOver = function()
-        if not Lib.Selection.Local.ThiefRelease then
+        if not Lib.EntitySelection.Local.ThiefRelease then
             GUI_Thief.ThiefDeliverMouseOver_Orig_Selection();
             return;
         end
         SetTooltipNormal(
-            Localize(Lib.Selection.Text.Tooltips.ReleaseSoldiers.Title),
-            Localize(Lib.Selection.Text.Tooltips.ReleaseSoldiers.Text),
-            Localize(Lib.Selection.Text.Tooltips.ReleaseSoldiers.Disabled)
+            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Title),
+            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Text),
+            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Disabled)
         );
     end
 
     GUI_Thief.ThiefDeliverUpdate_Orig_Selection = GUI_Thief.ThiefDeliverUpdate;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Thief.ThiefDeliverUpdate = function()
-        if not Lib.Selection.Local.ThiefRelease then
+        if not Lib.EntitySelection.Local.ThiefRelease then
             GUI_Thief.ThiefDeliverUpdate_Orig_Selection();
             return;
         end
@@ -571,7 +571,7 @@ function Lib.Selection.Local:OverwriteThiefDeliver()
     end
 end
 
-function Lib.Selection.Local:OverwriteSelectKnight()
+function Lib.EntitySelection.Local:OverwriteSelectKnight()
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Knight.JumpToButtonClicked = function()
         local PlayerID = GUI.GetPlayerID();
@@ -603,7 +603,7 @@ function Lib.Selection.Local:OverwriteSelectKnight()
     end
 end
 
-function Lib.Selection.Local:OverwriteSelectAllUnits()
+function Lib.EntitySelection.Local:OverwriteSelectAllUnits()
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_MultiSelection.SelectAllPlayerUnitsClicked = function()
         local ModifierAlt = XGUIEng.IsModifierPressed(Keys.ModifierAlt);
@@ -612,19 +612,19 @@ function Lib.Selection.Local:OverwriteSelectAllUnits()
 
         -- Select all units
         if not ModifierAlt and not ModifierControl and not ModifierShift then
-            Lib.Selection.Local:SortOrderFullSelection();
+            Lib.EntitySelection.Local:SortOrderFullSelection();
         end
         -- Select only thieves
         if ModifierAlt and not ModifierControl and not ModifierShift then
-            Lib.Selection.Local:SortOrderSiegeEnginesOnly();
+            Lib.EntitySelection.Local:SortOrderSiegeEnginesOnly();
         end
         -- Select only military and knight
         if not ModifierAlt and ModifierControl and not ModifierShift then
-            Lib.Selection.Local:SortOrderThievesOnly();
+            Lib.EntitySelection.Local:SortOrderThievesOnly();
         end
         -- Select only siege engines
         if not ModifierAlt and not ModifierControl and ModifierShift then
-            Lib.Selection.Local:SortOrderMilitaryUnitsOnly();
+            Lib.EntitySelection.Local:SortOrderMilitaryUnitsOnly();
         end
 
         Sound.FXPlay2DSound("ui\\menu_click");
@@ -651,7 +651,7 @@ function Lib.Selection.Local:OverwriteSelectAllUnits()
     end
 end
 
-function Lib.Selection.Local:SortOrderFullSelection()
+function Lib.EntitySelection.Local:SortOrderFullSelection()
     g_MultiSelection = {};
     g_MultiSelection.EntityList = {};
     g_MultiSelection.Highlighted = {};
@@ -699,7 +699,7 @@ function Lib.Selection.Local:SortOrderFullSelection()
 
 end
 
-function Lib.Selection.Local:SortOrderMilitaryUnitsOnly()
+function Lib.EntitySelection.Local:SortOrderMilitaryUnitsOnly()
     g_MultiSelection = {};
     g_MultiSelection.EntityList = {};
     g_MultiSelection.Highlighted = {};
@@ -738,7 +738,7 @@ function Lib.Selection.Local:SortOrderMilitaryUnitsOnly()
 
 end
 
-function Lib.Selection.Local:SortOrderSiegeEnginesOnly()
+function Lib.EntitySelection.Local:SortOrderSiegeEnginesOnly()
     g_MultiSelection = {};
     g_MultiSelection.EntityList = {};
     g_MultiSelection.Highlighted = {};
@@ -759,7 +759,7 @@ function Lib.Selection.Local:SortOrderSiegeEnginesOnly()
     end
 end
 
-function Lib.Selection.Local:SortOrderThievesOnly()
+function Lib.EntitySelection.Local:SortOrderThievesOnly()
     g_MultiSelection = {};
     g_MultiSelection.EntityList = {};
     g_MultiSelection.Highlighted = {};
@@ -768,7 +768,7 @@ function Lib.Selection.Local:SortOrderThievesOnly()
     LeaderSortOrder[1] = Entities.U_Thief;
 end
 
-function Lib.Selection.Local:OverwriteNamesAndDescription()
+function Lib.EntitySelection.Local:OverwriteNamesAndDescription()
     GUI_Tooltip.SetNameAndDescription_Orig_Selection = GUI_Tooltip.SetNameAndDescription;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Tooltip.SetNameAndDescription = function(
@@ -780,16 +780,16 @@ function Lib.Selection.Local:OverwriteNamesAndDescription()
 
         if XGUIEng.GetWidgetID(MotherWidget.. "/MapFrame/KnightButton") == CurrentWidgetID then
             SetTooltipNormal(
-                Localize(Lib.Selection.Text.Tooltips.KnightButton.Title),
-                Localize(Lib.Selection.Text.Tooltips.KnightButton.Text)
+                Localize(Lib.EntitySelection.Text.Tooltips.KnightButton.Title),
+                Localize(Lib.EntitySelection.Text.Tooltips.KnightButton.Text)
             );
             return;
         end
 
         if XGUIEng.GetWidgetID(MotherWidget.. "/MapFrame/BattalionButton") == CurrentWidgetID then
             SetTooltipNormal(
-                Localize(Lib.Selection.Text.Tooltips.BattalionButton.Title),
-                Localize(Lib.Selection.Text.Tooltips.BattalionButton.Text)
+                Localize(Lib.EntitySelection.Text.Tooltips.BattalionButton.Title),
+                Localize(Lib.EntitySelection.Text.Tooltips.BattalionButton.Text)
             );
             return;
         end
@@ -805,9 +805,9 @@ function Lib.Selection.Local:OverwriteNamesAndDescription()
                     local GuardedEntity = Logic.GetGuardedEntityID(SelectedEntity);
                     if GuardianEntity == 0 and GuardedEntity == 0 then
                         SetTooltipNormal(
-                            Localize(Lib.Selection.Text.Tooltips.ReleaseSoldiers.Title),
-                            Localize(Lib.Selection.Text.Tooltips.ReleaseSoldiers.Text),
-                            Localize(Lib.Selection.Text.Tooltips.ReleaseSoldiers.Disabled)
+                            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Title),
+                            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Text),
+                            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Disabled)
                         );
                         return;
                     end
@@ -824,5 +824,5 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-RegisterModule(Lib.Selection.Name);
+RegisterModule(Lib.EntitySelection.Name);
 

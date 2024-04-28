@@ -4,7 +4,7 @@ LibWriter = {
     ComponentList = {
         "core/Core",
         "module/city/Construction",
-        "module/npc/NPC",
+        "module/entity/NPC",
         "module/settings/Sound",
         "module/city/Promotion",
         "module/io/IO",
@@ -23,7 +23,8 @@ LibWriter = {
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",
         "module/city/LifestockSystem",
-        "module/entity/Selection",
+        -- "module/entity/EntityEvent",
+        "module/entity/EntitySelection",
         "module/information/Requester",
     },
     FileReadLookup = {},

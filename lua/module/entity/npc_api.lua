@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/npc/NPC_API");
+Lib.Register("module/entity/NPC_API");
 
 function NpcCompose(_Data)
     error(not IsLocalScript(), "NPC manipulated in local script.");

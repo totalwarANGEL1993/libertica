@@ -6,7 +6,7 @@ function DisableReleaseThieves(_Flag)
         ExecuteLocal([[DisableReleaseThieves(%s)]], tostring(_Flag));
         return;
     end
-    Lib.Selection.Local.ThiefRelease = not _Flag;
+    Lib.EntitySelection.Local.ThiefRelease = not _Flag;
 end
 API.DisableReleaseThieves = DisableReleaseThieves;
 
@@ -15,7 +15,7 @@ function DisableReleaseSiegeEngines(_Flag)
         ExecuteLocal([[DisableReleaseSiegeEngines(%s)]], tostring(_Flag));
         return;
     end
-    Lib.Selection.Local.SiegeEngineRelease = not _Flag;
+    Lib.EntitySelection.Local.SiegeEngineRelease = not _Flag;
 end
 API.DisableReleaseSiegeEngines = DisableReleaseSiegeEngines;
 
@@ -24,7 +24,7 @@ function DisableReleaseSoldiers(_Flag)
         ExecuteLocal([[DisableReleaseSoldiers(%s)]], tostring(_Flag));
         return;
     end
-    Lib.Selection.Local.MilitaryRelease = not _Flag;
+    Lib.EntitySelection.Local.MilitaryRelease = not _Flag;
 end
 API.DisableReleaseSoldiers = DisableReleaseSoldiers;
 
@@ -34,7 +34,7 @@ function IsEntitySelected(_Entity, _PlayerID)
         local PlayerID = _PlayerID or Logic.EntityGetPlayer(EntityID);
         local SelectedEntities;
         if not GUI then
-            SelectedEntities = Lib.Selection.Global.SelectedEntities[PlayerID];
+            SelectedEntities = Lib.EntitySelection.Global.SelectedEntities[PlayerID];
         else
             SelectedEntities = {GUI.GetSelectedEntities()};
         end
@@ -51,9 +51,9 @@ API.IsEntityInSelection = IsEntitySelected;
 function GetSelectedEntity(_PlayerID)
     local SelectedEntity;
     if not GUI then
-        SelectedEntity = Lib.Selection.Global.SelectedEntities[_PlayerID][1];
+        SelectedEntity = Lib.EntitySelection.Global.SelectedEntities[_PlayerID][1];
     else
-        SelectedEntity = Lib.Selection.Local.SelectedEntities[_PlayerID][1];
+        SelectedEntity = Lib.EntitySelection.Local.SelectedEntities[_PlayerID][1];
     end
     return SelectedEntity or 0;
 end
@@ -62,9 +62,9 @@ API.GetSelectedEntity = GetSelectedEntity;
 function GetSelectedEntities(_PlayerID)
     local SelectedEntities;
     if not GUI then
-        SelectedEntities = Lib.Selection.Global.SelectedEntities[_PlayerID];
+        SelectedEntities = Lib.EntitySelection.Global.SelectedEntities[_PlayerID];
     else
-        SelectedEntities = Lib.Selection.Local.SelectedEntities[_PlayerID];
+        SelectedEntities = Lib.EntitySelection.Local.SelectedEntities[_PlayerID];
     end
     return SelectedEntities;
 end

@@ -8,8 +8,8 @@ Lib.Core.Report = {
     ScriptCommandSequence = 0,
 };
 
-Report = {};
-Command = {};
+Report = Report or {};
+Command = Command or {};
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/IsMultiplayer");
