@@ -11,6 +11,7 @@ LibWriter = {
         "module/io/IOChest",
         "module/io/IOMine",
         "module/quest/Quest",
+        "module/quest/QuestBehavior",
         "module/quest/QuestJornal",
         "module/faker/Technology",
         "module/trade/Warehouse",

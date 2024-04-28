@@ -1,4 +1,4 @@
 Lib.Register("module/city/Promotion_API");
 
--- Currently unused
+-- Promotion_API: currently unused
 
