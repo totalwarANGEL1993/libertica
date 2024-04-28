@@ -3,13 +3,13 @@
 mkdir release 2> /dev/null
 rm -rf release/* 2> /dev/null
 
-lua manager.lua -b -o "exe/officialloadorder.txt"
+lua manager.lua -b -c -o "exe/officialloadorder.txt"
 
 cp -r var/libertica release
 cp changelog.md release
 cp -r api release && mv release/api release/libertica_api
 
-lua manager.lua -b -s -o "exe/officialloadorder.txt"
+lua manager.lua -b -c -s -o "exe/officialloadorder.txt"
 mkdir release/single
 cp -r "var/qsb.lua" "release/single/qsb.lua"
 cp -r "var/localmapscript.lua" "release/single/localmapscript.lua"
