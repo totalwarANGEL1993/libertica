@@ -1,5 +1,5 @@
 Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/entity/Selection_API");
+Lib.Register("module/entity/EntitySelection_API");
 
 function DisableReleaseThieves(_Flag)
     if not GUI then

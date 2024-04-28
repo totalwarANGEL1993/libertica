@@ -1,4 +1,4 @@
-Lib.Register("module/entity/Selection_Text");
+Lib.Register("module/entity/EntitySelection_Text");
 
 Lib.EntitySelection = Lib.EntitySelection or {};
 Lib.EntitySelection.Text = {

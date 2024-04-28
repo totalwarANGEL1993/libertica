@@ -1,5 +1,5 @@
 Lib.EntitySelection = Lib.EntitySelection or {};
-Lib.EntitySelection.Name = "Selection";
+Lib.EntitySelection.Name = "EntitySelection";
 Lib.EntitySelection.Global = {
     TrebuchetIDToCart = {},
     SelectedEntities = {},
@@ -17,9 +17,9 @@ Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UITools");
-Lib.Require("module/entity/Selection_API");
-Lib.Require("module/entity/Selection_Text");
-Lib.Register("module/entity/Selection");
+Lib.Require("module/entity/EntitySelection_API");
+Lib.Require("module/entity/EntitySelection_Text");
+Lib.Register("module/entity/EntitySelection");
 
 -- -------------------------------------------------------------------------- --
 -- Global
