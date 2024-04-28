@@ -18,7 +18,7 @@ Lib.Require("module/ui/UITools");
 Lib.Require("module/ui/UIEffects");
 Lib.Require("module/city/Promotion");
 Lib.Require("module/information/Requester");
-Lib.Require("module/entity/Selection");
+Lib.Require("module/entity/EntitySelection");
 Lib.Require("module/mode/SettlementSurvival");
 
 -- ========================================================================== --

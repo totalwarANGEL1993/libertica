@@ -33,6 +33,7 @@ end
 
 function Lib.UITools.Widget:OverrideUpdateClaimTerritory()
     GUI_Knight.ClaimTerritoryUpdate_Orig_QSB_Interface = GUI_Knight.ClaimTerritoryUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Knight.ClaimTerritoryUpdate = function()
         GUI_Knight.ClaimTerritoryUpdate_Orig_QSB_Interface();
         local Key = "/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/ClaimTerritory";

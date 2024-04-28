@@ -14,7 +14,7 @@ if CONST_IS_IN_DEV then
 end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
-Lib.Require("module/entity/Selection");
+Lib.Require("module/entity/EntitySelection");
 Lib.Require("module/mode/SettlementSurvival");
 
 -- ========================================================================== --

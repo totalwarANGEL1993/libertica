@@ -16,7 +16,7 @@ Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/quest/QuestJornal");
-Lib.Require("module/npc/NPC");
+Lib.Require("module/entity/NPC");
 Lib.Require("module/information/BriefingSystem");
 Lib.Require("module/information/CutsceneSystem");
 Lib.Require("module/information/DialogSystem");

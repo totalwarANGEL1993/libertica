@@ -444,6 +444,7 @@ end
 
 function Lib.Requester.Local:OverrideChatLog()
     GUI_Chat.ChatlogAddMessage_Orig_Requester = GUI_Chat.ChatlogAddMessage;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ChatlogAddMessage = function(_Message)
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
@@ -454,6 +455,7 @@ function Lib.Requester.Local:OverrideChatLog()
     end
 
     GUI_Chat.DisplayChatLog_Orig_Requester = GUI_Chat.DisplayChatLog;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.DisplayChatLog = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
@@ -462,6 +464,7 @@ function Lib.Requester.Local:OverrideChatLog()
     end
 
     GUI_Chat.CloseChatMenu_Orig_Requester = GUI_Chat.CloseChatMenu;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.CloseChatMenu = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
@@ -473,6 +476,7 @@ function Lib.Requester.Local:OverrideChatLog()
     end
 
     GUI_Chat.ToggleWhisperTargetUpdate_Orig_Requester = GUI_Chat.ToggleWhisperTargetUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ToggleWhisperTargetUpdate = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
@@ -483,6 +487,7 @@ function Lib.Requester.Local:OverrideChatLog()
     end
 
     GUI_Chat.CheckboxMessageTypeWhisperUpdate_Orig_Requester = GUI_Chat.CheckboxMessageTypeWhisperUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.CheckboxMessageTypeWhisperUpdate = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
@@ -492,6 +497,7 @@ function Lib.Requester.Local:OverrideChatLog()
     end
 
     GUI_Chat.ToggleWhisperTarget_Orig_Requester = GUI_Chat.ToggleWhisperTarget;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ToggleWhisperTarget = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then

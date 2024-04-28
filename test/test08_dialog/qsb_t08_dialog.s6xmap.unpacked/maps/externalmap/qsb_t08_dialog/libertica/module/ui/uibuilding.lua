@@ -175,6 +175,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
     self.Orig_BuyAmmunitionCartClicked = GUI_BuildingButtons.BuyAmmunitionCartClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyAmmunitionCartClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -187,6 +188,7 @@ function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
     end
 
     Lib.UIBuilding.Local.Orig_BuyAmmunitionCartUpdate = GUI_BuildingButtons.BuyAmmunitionCartUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyAmmunitionCartUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -204,6 +206,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideBuyBattalion()
     self.Orig_BuyBattalionClicked = GUI_BuildingButtons.BuyBattalionClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyBattalionClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -216,6 +219,7 @@ function Lib.UIBuilding.Local:OverrideBuyBattalion()
     end
 
     self.Orig_BuyBattalionMouseOver = GUI_BuildingButtons.BuyBattalionMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyBattalionMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -231,6 +235,7 @@ function Lib.UIBuilding.Local:OverrideBuyBattalion()
     end
 
     self.Orig_BuyBattalionUpdate = GUI_BuildingButtons.BuyBattalionUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyBattalionUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -260,6 +265,7 @@ function Lib.UIBuilding.Local:OverridePlaceField()
     end
 
     self.Orig_PlaceFieldMouseOver = GUI_BuildingButtons.PlaceFieldMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.PlaceFieldMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -272,6 +278,7 @@ function Lib.UIBuilding.Local:OverridePlaceField()
     end
 
     self.Orig_PlaceFieldUpdate = GUI_BuildingButtons.PlaceFieldUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.PlaceFieldUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -293,6 +300,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
         SendReportToGlobal(Report.FestivalClicked, _PlayerID, 1);
     end
 
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartFestivalClicked = function(_FestivalIndex)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -321,6 +329,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
     end
 
     self.Orig_StartFestivalMouseOver = GUI_BuildingButtons.StartFestivalMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartFestivalMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -333,6 +342,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
     end
 
     self.Orig_StartFestivalUpdate = GUI_BuildingButtons.StartFestivalUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartFestivalUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -349,6 +359,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
 end
 
 function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartTheatrePlayClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -373,6 +384,7 @@ function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
     end
 
     self.Orig_StartTheatrePlayMouseOver = GUI_BuildingButtons.StartTheatrePlayMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartTheatrePlayMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -385,6 +397,7 @@ function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
     end
 
     self.Orig_StartTheatrePlayUpdate = GUI_BuildingButtons.StartTheatrePlayUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartTheatrePlayUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -415,6 +428,7 @@ function Lib.UIBuilding.Local:OverrideUpgradeTurret()
     end
 
     self.Orig_UpgradeTurretMouseOver = GUI_BuildingButtons.UpgradeTurretMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeTurretMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -427,6 +441,7 @@ function Lib.UIBuilding.Local:OverrideUpgradeTurret()
     end
 
     self.Orig_UpgradeTurretUpdate = GUI_BuildingButtons.UpgradeTurretUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeTurretUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -443,6 +458,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
     self.Orig_BuySiegeEngineCartClicked = GUI_BuildingButtons.BuySiegeEngineCartClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuySiegeEngineCartClicked = function(_EntityType)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -460,6 +476,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
     end
 
     self.Orig_BuySiegeEngineCartMouseOver = GUI_BuildingButtons.BuySiegeEngineCartMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuySiegeEngineCartMouseOver = function(_EntityType, _Right)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -477,6 +494,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
     end
 
     self.Orig_BuySiegeEngineCartUpdate = GUI_BuildingButtons.BuySiegeEngineCartUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuySiegeEngineCartUpdate = function(_EntityType)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -532,6 +550,7 @@ function Lib.UIBuilding.Local:OverrideUpgradeBuilding()
 end
 
 function Lib.UIBuilding.Local:OverrideStartSermon()
+    --- @diagnostic disable-next-line: duplicate-set-field
     function GUI_BuildingButtons.StartSermonClicked()
         local PlayerID = GUI.GetPlayerID();
         if Logic.CanSermonBeActivated(PlayerID) then

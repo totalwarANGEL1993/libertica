@@ -264,6 +264,7 @@ function Lib.IO.Global:OverrideObjectInteraction()
         SendReportToLocal(Report.ObjectInteraction, ScriptName, KnightID, _PlayerID);
     end
 
+    --- @diagnostic disable-next-line: duplicate-set-field
     QuestTemplate.AreObjectsActivated = function(self, _ObjectList)
         for i=1, _ObjectList[0] do
             if not _ObjectList[-i] then
@@ -446,6 +447,7 @@ function Lib.IO.Local:OverrideGameFunctions()
         end
     end
 
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.InteractiveObjectUpdate = function()
         if g_Interaction.ActiveObjects == nil then
             return;
@@ -575,6 +577,7 @@ function Lib.IO.Local:OverrideGameFunctions()
     end
 
     GUI_Interaction.InteractiveObjectMouseOver_Orig_Lib_IO = GUI_Interaction.InteractiveObjectMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Interaction.InteractiveObjectMouseOver = function()
         local PlayerID = GUI.GetPlayerID();
         local WidgetID = XGUIEng.GetCurrentWidgetID();
@@ -709,6 +712,7 @@ function Lib.IO.Local:OverrideGameFunctions()
             QuestTypeCaption = Wrapped_GetStringTableText(_QuestIndex, "UI_Texts/QuestInteraction");
             local ObjectList = {};
 
+            assert(Quest ~= nil);
             for i = 1, Quest.Objectives[1].Data[0] do
                 local ObjectType;
                 if Logic.IsEntityDestroyed(Quest.Objectives[1].Data[i]) then

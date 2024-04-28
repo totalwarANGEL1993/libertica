@@ -15,7 +15,7 @@ end
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
-Lib.Require("module/npc/NPC");
+Lib.Require("module/entity/NPC");
 Lib.Require("module/io/IO");
 Lib.Require("module/io/IOChest");
 Lib.Require("module/io/IOMine");
