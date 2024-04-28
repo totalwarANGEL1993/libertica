@@ -23,7 +23,7 @@ LibWriter = {
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",
         "module/city/LifestockSystem",
-        -- "module/entity/EntityEvent",
+        "module/entity/EntityEvent",
         "module/entity/EntitySelection",
         "module/information/Requester",
     },
@@ -251,7 +251,7 @@ function LibWriter:ReadFileAndDependencies(_Path, _Paths)
     local Paths = {};
     if not self.FileReadLookup[_Path:lower()] then
         for line in io.lines("lua/" .._Path:lower() .. ".lua") do
-            if line:find("Register") then
+            if line:find("Lib%.Register%(") then
                 break;
             end
             local s,e = line:find("Lib%.Require%(\".*\"");

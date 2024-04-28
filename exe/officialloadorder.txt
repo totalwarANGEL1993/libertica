@@ -55,6 +55,7 @@ module/city/Promotion
 module/io/IO
 module/io/IOChest
 module/io/IOMine
+module/entity/EntityEvent
 module/entity/EntitySelection
 module/quest/Quest
 module/quest/QuestJornal
