@@ -346,5 +346,8 @@ end
 function GameCallback_Lib_LoadingFinished()
     ActivateDebugMode(true, true, true, true, false);
     SetPlayerPortrait(1);
+
+    RequestAlternateSound();
+    RequestDialogAlternateGraphics();
 end
 

@@ -35,6 +35,15 @@ function StartCutscene(_Cutscene, _Name, _PlayerID)
 end
 API.StartCutscene = StartCutscene;
 
+function RequestCutsceneAlternateGraphics()
+    if not GUI then
+        ExecuteLocal("RequestCutsceneAlternateGraphics()");
+        return;
+    end
+    Lib.BriefingSystem.Local:RequestAlternateGraphics();
+end
+API.RequestCutsceneAlternateGraphics = RequestCutsceneAlternateGraphics;
+
 function IsCutsceneActive(_PlayerID)
     if not IsLocalScript() then
         return Lib.CutsceneSystem.Global:GetCurrentCutscene(_PlayerID) ~= nil;

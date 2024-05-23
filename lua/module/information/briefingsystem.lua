@@ -6,6 +6,9 @@ Lib.BriefingSystem.Global = {
     BriefingCounter = 0,
 };
 Lib.BriefingSystem.Local = {
+    Config = {
+        DoAlternateGraphics = true,
+    },
     ParallaxWidgets = {
         -- Can not set UV coordinates for this... :(
         -- {"/EndScreen/EndScreen/BG", "/EndScreen/EndScreen"},
@@ -17,11 +20,6 @@ Lib.BriefingSystem.Local = {
         {"/InGame/Root/BlackStartScreen/BG", "/InGame/Root/BlackStartScreen"},
     },
     Briefing = {},
-};
-Lib.BriefingSystem.Text = {
-    NextButton = {de = "Weiter",  en = "Forward",  fr = "Continuer"},
-    PrevButton = {de = "Zurück",  en = "Previous", fr = "Retour"},
-    EndButton  = {de = "Beenden", en = "Close",    fr = "Quitter"},
 };
 
 CONST_BRIEFING = {
@@ -36,9 +34,12 @@ CONST_BRIEFING = {
     DLGCAMERA_FOVDEFAULT = 25,
 };
 
+Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIEffects");
 Lib.Require("module/ui/UITools");
+Lib.Require("module/information/Requester");
+Lib.Require("module/information/BriefingSystem_Text");
 Lib.Require("module/information/BriefingSystem_API");
 Lib.Register("module/information/BriefingSystem");
 
@@ -1276,7 +1277,9 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     if not self.Briefing[_PlayerID].EnableBorderPins then
         Display.SetRenderBorderPins(0);
     end
-    Display.SetUserOptionOcclusionEffect(0);
+    if self:IsChangingGraphicsPermited() then
+        Display.SetUserOptionOcclusionEffect(0);
+    end
     Camera.SwitchCameraBehaviour(5);
 
     InitializeFader();
@@ -1310,7 +1313,7 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     Display.SetRenderSky(0);
     Display.SetRenderBorderPins(1);
     Display.SetRenderFogOfWar(1);
-    if Options.GetIntValue("Display", "Occlusion", 0) > 0 then
+    if  Options.GetIntValue("Display", "Occlusion", 0) > 0 then
         Display.SetUserOptionOcclusionEffect(1);
     end
 
@@ -1334,6 +1337,27 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
 
     ResetRenderDistance();
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.BriefingSystem.Local:IsChangingGraphicsPermited()
+    return self.Config.DoAlternateGraphics == true;
+end
+
+function Lib.BriefingSystem.Local:RequestAlternateGraphics()
+    if IsMultiplayer() then
+        return;
+    end
+    DialogRequestBox(
+        GUI.GetPlayerID(),
+        Lib.BriefingSystem.Text.Request.Title,
+        Lib.BriefingSystem.Text.Request.Text,
+        function(_Yes)
+            Lib.BriefingSystem.Local.Config.DoAlternateGraphics = _Yes == true;
+        end,
+        false
+    );
 end
 
 -- -------------------------------------------------------------------------- --

@@ -6,14 +6,10 @@ Lib.DialogSystem.Global = {
     DialogCounter = 0,
 };
 Lib.DialogSystem.Local = {
+    Config = {
+        DoAlternateGraphics = true,
+    },
     Dialog = {},
-};
-Lib.DialogSystem.Text = {
-    Continue = {
-        de = "{cr}{cr}{azure}Weiter mit ESC",
-        en = "{cr}{cr}{azure}Continue with ESC",
-        fr = "{cr}{cr}{azure}Continuer avec ESC",
-    }
 };
 
 CONST_DIALOG = {
@@ -28,9 +24,12 @@ CONST_DIALOG = {
     DLGCAMERA_FOVDEFAULT = 25,
 }
 
+Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIEffects");
 Lib.Require("module/ui/UITools");
+Lib.Require("module/information/Requester");
+Lib.Require("module/information/DialogSystem_Text");
 Lib.Require("module/information/DialogSystem_API");
 Lib.Register("module/information/DialogSystem");
 
@@ -906,7 +905,9 @@ function Lib.DialogSystem.Local:ActivateCinematicMode(_PlayerID)
     if not self.Dialog[_PlayerID].EnableBorderPins then
         Display.SetRenderBorderPins(0);
     end
-    Display.SetUserOptionOcclusionEffect(0);
+    if self:IsChangingGraphicsPermited() then
+        Display.SetUserOptionOcclusionEffect(0);
+    end
     Camera.SwitchCameraBehaviour(0);
 
     -- Prepare the fader
@@ -945,7 +946,7 @@ function Lib.DialogSystem.Local:DeactivateCinematicMode(_PlayerID)
     Display.SetRenderSky(0);
     Display.SetRenderBorderPins(1);
     Display.SetRenderFogOfWar(1);
-    if Options.GetIntValue("Display", "Occlusion", 0) > 0 then
+    if  Options.GetIntValue("Display", "Occlusion", 0) > 0 then
         Display.SetUserOptionOcclusionEffect(1);
     end
 
@@ -964,6 +965,34 @@ function Lib.DialogSystem.Local:DeactivateCinematicMode(_PlayerID)
 
     ResetRenderDistance();
     self:ResetSubtitlesPosition(_PlayerID);
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.DialogSystem.Local:IsChangingGraphicsPermited()
+    if Lib.BriefingSystem then
+        return Lib.BriefingSystem.Local:IsChangingGraphicsPermited();
+    end
+    return self.Config.DoAlternateGraphics == true;
+end
+
+function Lib.DialogSystem.Local:RequestAlternateGraphics()
+    if Lib.BriefingSystem then
+        return Lib.BriefingSystem.Local:RequestAlternateGraphics();
+    end
+    if IsMultiplayer() then
+        return;
+    end
+
+    DialogRequestBox(
+        GUI.GetPlayerID(),
+        Lib.DialogSystem.Text.Request.Title,
+        Lib.DialogSystem.Text.Request.Text,
+        function(_Yes)
+            Lib.BriefingSystem.Local.Config.DoAlternateGraphics = _Yes == true;
+        end,
+        false
+    );
 end
 
 -- -------------------------------------------------------------------------- --

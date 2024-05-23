@@ -6,17 +6,18 @@ Lib.CutsceneSystem.Global = {
     CutsceneCounter = 0;
 };
 Lib.CutsceneSystem.Local = {
+    Config = {
+        DoAlternateGraphics = true,
+    },
     Cutscene = {},
 };
-Lib.CutsceneSystem.Text = {
-    FastForwardActivate   = {de = "Beschleunigen",      en = "Fast Forward", fr = "Accélérer"},
-    FastForwardDeactivate = {de = "Zurücksetzen",       en = "Normal Speed", fr = "Réinitialiser"},
-    FastFormardMessage    = {de = "SCHNELLER VORLAUF",  en = "FAST FORWARD", fr = "AVANCÉ RAPIDE"},
-};
 
+Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIEffects");
 Lib.Require("module/ui/UITools");
+Lib.Require("module/information/Requester");
+Lib.Require("module/information/CutsceneSystem_Text");
 Lib.Require("module/information/CutsceneSystem_API");
 Lib.Register("module/information/CutsceneSystem");
 
@@ -664,7 +665,9 @@ function Lib.CutsceneSystem.Local:ActivateCinematicMode(_PlayerID)
     if not self.Cutscene[_PlayerID].EnableBorderPins then
         Display.SetRenderBorderPins(0);
     end
-    Display.SetUserOptionOcclusionEffect(0);
+    if self:IsChangingGraphicsPermited() then
+        Display.SetUserOptionOcclusionEffect(0);
+    end
     Camera.SwitchCameraBehaviour(5);
 
     InitializeFader();
@@ -715,6 +718,40 @@ function Lib.CutsceneSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", " ");
 
     ResetRenderDistance();
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.CutsceneSystem.Local:IsChangingGraphicsPermited()
+    if Lib.BriefingSystem then
+        return Lib.BriefingSystem.Local:IsChangingGraphicsPermited();
+    end
+    if Lib.DialogSystem then
+        return Lib.DialogSystem.Local:IsChangingGraphicsPermited();
+    end
+    return self.Config.DoAlternateGraphics == true;
+end
+
+function Lib.CutsceneSystem.Local:RequestAlternateGraphics()
+    if Lib.BriefingSystem then
+        return Lib.BriefingSystem.Local:RequestAlternateGraphics();
+    end
+    if Lib.DialogSystem then
+        return Lib.DialogSystem.Local:RequestAlternateGraphics();
+    end
+    if IsMultiplayer() then
+        return;
+    end
+
+    DialogRequestBox(
+        GUI.GetPlayerID(),
+        Lib.CutsceneSystem.Text.Request.Title,
+        Lib.CutsceneSystem.Text.Request.Text,
+        function(_Yes)
+            Lib.BriefingSystem.Local.Config.DoAlternateGraphics = _Yes == true;
+        end,
+        false
+    );
 end
 
 -- -------------------------------------------------------------------------- --

@@ -41,6 +41,15 @@ function StartDialog(_Dialog, _Name, _PlayerID)
 end
 API.StartDialog = StartDialog;
 
+function RequestDialogAlternateGraphics()
+    if not GUI then
+        ExecuteLocal("RequestDialogAlternateGraphics()");
+        return;
+    end
+    Lib.DialogSystem.Local:RequestAlternateGraphics();
+end
+API.RequestDialogAlternateGraphics = RequestDialogAlternateGraphics;
+
 function IsDialogActive(_PlayerID)
     if not IsLocalScript() then
         return Lib.DialogSystem.Global:GetCurrentDialog(_PlayerID) ~= nil;

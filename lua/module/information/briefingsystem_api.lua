@@ -41,6 +41,15 @@ function StartBriefing(_Briefing, _Name, _PlayerID)
 end
 API.StartBriefing = StartBriefing;
 
+function RequestBriefingAlternateGraphics()
+    if not GUI then
+        ExecuteLocal("RequestBriefingAlternateGraphics()");
+        return;
+    end
+    Lib.BriefingSystem.Local:RequestAlternateGraphics();
+end
+API.RequestBriefingAlternateGraphics = RequestBriefingAlternateGraphics;
+
 function IsBriefingActive(_PlayerID)
     if not IsLocalScript() then
         return Lib.BriefingSystem.Global:GetCurrentBriefing(_PlayerID) ~= nil;
