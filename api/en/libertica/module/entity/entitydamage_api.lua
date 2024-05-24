@@ -25,6 +25,7 @@ Lib.EntityDamage = Lib.EntityDamage or {};
 --- @param _Damage integer Amount of damage
 function SetEntityTypeDamage(_Type, _Damage)
 end
+API.SetEntityTypeDamage = SetEntityTypeDamage;
 
 --- Sets the damage for a named entity.
 ---
@@ -35,6 +36,7 @@ end
 --- @param _Damage integer Amount of damage
 function SetEntityNameDamage(_Name, _Damage)
 end
+API.SetEntityNameDamage = SetEntityNameDamage;
 
 --- Sets the armor for an entity type.
 ---
@@ -45,6 +47,7 @@ end
 --- @param _Armor integer Strength of the armor
 function SetEntityTypeArmor(_Type, _Armor)
 end
+API.SetEntityTypeArmor = SetEntityTypeArmor;
 
 --- Sets the armor for a named entity.
 ---
@@ -58,6 +61,7 @@ end
 --- @param ... integer? Optional category list
 function SetEntityNameArmor(_Name, _Armor, ...)
 end
+API.SetEntityNameArmor = SetEntityNameArmor;
 
 --- Sets the bonus factor for damage when fighting on own territory.
 ---
@@ -72,6 +76,7 @@ end
 --- @param ... integer? Optional category list
 function SetTerritoryBonus(_PlayerID, _Bonus, ...)
 end
+API.SetTerritoryBonus = SetTerritoryBonus;
 
 --- Sets the bonus factor for damage when fighting from an elevated position.
 ---
@@ -83,6 +88,7 @@ end
 --- @param _Bonus number Factor
 function SetHeightModifier(_PlayerID, _Bonus)
 end
+API.SetHeightModifier = SetHeightModifier;
 
 --- Checks if the entity is invulnerable.
 --- @param _Entity any Script name or entity ID
@@ -90,4 +96,5 @@ end
 function IsInvulnerable(_Entity)
     return true;
 end
+API.IsInvulnerable = IsInvulnerable;
 

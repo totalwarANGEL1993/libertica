@@ -26,6 +26,7 @@ Lib.EntityDamage = Lib.EntityDamage or {};
 --- @param ... integer? Optionale Feindkategorien
 function SetEntityTypeDamage(_Type, _Damage, ...)
 end
+API.SetEntityTypeDamage = SetEntityTypeDamage;
 
 --- Setzt den Schaden für eine benannte Entität.
 ---
@@ -39,6 +40,7 @@ end
 --- @param ... integer? Optionale Feindkategorien
 function SetEntityNameDamage(_Name, _Damage, ...)
 end
+API.SetEntityNameDamage = SetEntityNameDamage;
 
 --- Setzt Die Rüstung für einen Entitätstypen.
 ---
@@ -49,6 +51,7 @@ end
 --- @param _Armor integer Stärke der Rüstung
 function SetEntityTypeArmor(_Type, _Armor)
 end
+API.SetEntityTypeArmor = SetEntityTypeArmor;
 
 --- Setzt die Rüstung für eine benannte Entität.
 ---
@@ -59,6 +62,7 @@ end
 --- @param _Armor integer Stärke der Rüstung
 function SetEntityNameArmor(_Name, _Armor)
 end
+API.SetEntityNameArmor = SetEntityNameArmor;
 
 --- Setzt den Bonusfaktor für den Schaden bei Kämpfen auf eigenem Gebiet.
 ---
@@ -70,6 +74,7 @@ end
 --- @param _Bonus number Faktor
 function SetTerritoryBonus(_PlayerID, _Bonus)
 end
+API.SetTerritoryBonus = SetTerritoryBonus;
 
 --- Setzt den Bonusfaktor für den Schaden bei Kämpfen von erhöhter Position.
 ---
@@ -81,6 +86,7 @@ end
 --- @param _Bonus number Faktor
 function SetHeightModifier(_PlayerID, _Bonus)
 end
+API.SetHeightModifier = SetHeightModifier;
 
 --- Prüft, ob die Entität unverwundbar ist.
 --- @param _Entity any Skriptname oder Entität-ID
@@ -88,4 +94,5 @@ end
 function IsInvulnerable(_Entity)
     return true;
 end
+API.IsInvulnerable = IsInvulnerable;
 
