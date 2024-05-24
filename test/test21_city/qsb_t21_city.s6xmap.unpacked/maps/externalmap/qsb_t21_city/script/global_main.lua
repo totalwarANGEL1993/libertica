@@ -10,7 +10,7 @@
 Script.Load("maps/externalmap/qsb_t21_city/libertica/librarian.lua");
 
 if CONST_IS_IN_DEV then
-    Lib.Loader.PushPath("E:/Repositories/libertica/release/");
+    Lib.Loader.PushPath("E:/Repositories/libertica/var/");
 end
 Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
@@ -19,6 +19,7 @@ Lib.Require("module/city/Construction");
 Lib.Require("module/city/LifestockSystem");
 Lib.Require("module/mode/SettlementSurvival");
 Lib.Require("module/entity/EntitySelection");
+Lib.Require("module/entity/EntityDamage");
 Lib.Require("module/quest/Quest");
 
 -- ========================================================================== --

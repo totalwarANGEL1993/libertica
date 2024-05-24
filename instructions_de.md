@@ -15,7 +15,7 @@ von Komponenten wählen.
 
 * Starte den Mapeditor und aktiviere den Expertenmodus.
 * Alle benötigten Dateien befinden sich im Unterverzeichnis `single`. Die Mapskripte sind bereits vorbereitet, sodass keine weiteren Anpassungen gemacht werden müssen.
-* Die Datei `mapscript.lua` muss im Mapeditor als lokales Skript importiert werden
+* Die Datei `mapscript.lua` muss im Mapeditor als globales Skript importiert werden
 * Die Datei `localmapscript.lua` muss im Mapeditor als lokales Skript importiert werden.
 * Die Datei `qsb.min.lua` muss im Mapeditor importiert werden.
 
@@ -61,12 +61,12 @@ In diesem Fall sieht die `settings.json` wie folgt aus:
 {
     "Lua.diagnostics.globals": [],
     "Lua.workspace.ignoreDir": [
-        "libertica_release/libertica_api/en",
-        "libertica_release/libertica",
-        "libertica_release/single",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/en",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/single",
     ],
     "Lua.workspace.library": [
-        "libertica_release/libertica_api/de"
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/de"
     ]
 }
 ```
@@ -93,6 +93,6 @@ Project
 ```
 Diese Struktur vereinfacht das Auslagern von Skripten. Die Skripte liegen im Ordner `scripts` und werden in den Hauptskripten nur geladen. Während der Entwicklung kann anstelle des Path in der Map der absolute Path im System angegeben werden.
 
-`maps/externalmap/mapname/scripts/luafile.lua` - Das ist ein relativer Pfad innerhalb der Map.
+`maps/externalmap/mapname/scripts/luafile.lua` - Das ist ein relativer Pfad innerhalb des Spiels.
 
 `C:/Settlers6/mapname/scripts/luafile.lua` - Das ist ein absoluter Pfad auf deinem Rechner.
