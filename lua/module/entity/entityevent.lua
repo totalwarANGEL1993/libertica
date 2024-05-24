@@ -1,10 +1,10 @@
 Lib.EntityEvent = Lib.EntityEvent or {};
 Lib.EntityEvent.Name = "EntityEvent";
 Lib.EntityEvent.Global = {
+    JobID = {},
     RegisteredEntities = {},
     MineAmounts = {},
     AttackedEntities = {},
-    OverkillEntities = {},
     DisableThiefStorehouseHeist = false,
     DisableThiefCathedralSabotage = false,
     DisableThiefCisternSabotage = false,
@@ -59,7 +59,7 @@ Lib.Register("module/entity/EntityEvent");
 
 -- Global ------------------------------------------------------------------- --
 
-function Lib.EntityEvent.Global:OnGameStart()
+function Lib.EntityEvent.Global:Initialize()
     Report.SettlerAttracted = CreateReport("Event_SettlerAttracted");
     Report.EntitySpawned = CreateReport("Event_EntitySpawned");
     Report.EntityDestroyed = CreateReport("Event_EntityDestroyed");
@@ -100,21 +100,13 @@ function Lib.EntityEvent.Global:CleanTaggedAndDeadEntities()
         else
             -- Send killed event for knights
             if IsExisting(k) and IsExisting(v[1]) and Logic.IsKnight(k) then
-                if not self.OverkillEntities[k] and Logic.KnightGetResurrectionProgress(k) ~= 1 then
+                if Logic.KnightGetResurrectionProgress(k) ~= 1 then
                     local PlayerID1 = Logic.EntityGetPlayer(k);
                     local PlayerID2 = Logic.EntityGetPlayer(v[1]);
                     self:TriggerEntityKilledEvent(k, PlayerID1, v[1], PlayerID2);
-                    self.OverkillEntities[k] = 50;
                     self.AttackedEntities[k] = nil;
                 end
             end
-        end
-    end
-    -- unregister overkill entities
-    for k,v in pairs(self.OverkillEntities) do
-        self.OverkillEntities[k] = v - 1;
-        if v <= 0 then
-            self.OverkillEntities[k] = nil;
         end
     end
 end
@@ -217,7 +209,7 @@ function Lib.EntityEvent.Global:OverrideLogic()
 end
 
 function Lib.EntityEvent.Global:StartTriggers()
-    RequestHiResJob(
+    self.JobID.EveryTurn = RequestJobByEventType(
         Events.LOGIC_EVENT_EVERY_TURN,
         function()
             if Logic.GetCurrentTurn() > 0 then
@@ -227,7 +219,7 @@ function Lib.EntityEvent.Global:StartTriggers()
         end
     );
 
-    RequestJobByEventType(
+    self.JobID.EverySecond = RequestJobByEventType(
         Events.LOGIC_EVENT_EVERY_SECOND,
         function()
             local MineEntityTypes = {
@@ -250,7 +242,7 @@ function Lib.EntityEvent.Global:StartTriggers()
         end
     );
 
-    RequestJobByEventType(
+    self.JobID.EntityDestroyed = RequestJobByEventType(
         Events.LOGIC_EVENT_ENTITY_DESTROYED,
         function()
             local EntityID1 = Event.GetEntityID();
@@ -265,15 +257,15 @@ function Lib.EntityEvent.Global:StartTriggers()
         end
     );
 
-    RequestJobByEventType(
+    self.JobID.EveryHurn = RequestJobByEventType(
         Events.LOGIC_EVENT_ENTITY_HURT_ENTITY,
         function()
             local EntityID1 = Event.GetEntityID1();
             local PlayerID1 = Logic.EntityGetPlayer(EntityID1);
             local EntityID2 = Event.GetEntityID2();
             local PlayerID2 = Logic.EntityGetPlayer(EntityID2);
-            SendReport(Report.EntityHurt, EntityID2, PlayerID2, EntityID1, PlayerID1);
-            SendReportToLocal(Report.EntityHurt, EntityID2, PlayerID2, EntityID1, PlayerID1);
+            SendReport(Report.EntityHurt, EntityID1, PlayerID1, EntityID2, PlayerID2);
+            SendReportToLocal(Report.EntityHurt, EntityID1, PlayerID1, EntityID2, PlayerID2);
         end
     );
 end
@@ -397,7 +389,7 @@ end
 
 -- Local -------------------------------------------------------------------- --
 
-function Lib.EntityEvent.Local:OnGameStart()
+function Lib.EntityEvent.Local:Initialize()
     Report.SettlerAttracted = CreateReport("Event_SettlerAttracted");
     Report.EntitySpawned = CreateReport("Event_EntitySpawned");
     Report.EntityDestroyed = CreateReport("Event_EntityDestroyed");
