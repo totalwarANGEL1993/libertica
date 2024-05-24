@@ -251,7 +251,8 @@
         "GetKnightActor",
         "GetClimateEntityName",
         "UpdateStopOverlay",
-        "g_Outlaws"
+        "g_Outlaws",
+        "GameCallback_Lib_CalculateBattleDamage"
     ],
     "Lua.workspace.ignoreDir": [
         "demo",

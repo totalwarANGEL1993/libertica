@@ -26,6 +26,7 @@ LibWriter = {
         "module/city/LifestockSystem",
         "module/entity/EntityEvent",
         "module/entity/EntitySelection",
+        "module/entity/EntityDamage",
         "module/information/Requester",
     },
     FileReadLookup = {},
