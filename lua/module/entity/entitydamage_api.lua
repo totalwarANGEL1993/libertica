@@ -1,16 +1,12 @@
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/entity/EntityDamage_API");
 
-function SetEntityBaseDamage(_Type, _Damage)
-    Lib.EntityDamage.Global:SetEntityBaseDamage(_Type, _Damage);
+function SetEntityTypeDamage(_Type, _Damage, ...)
+    Lib.EntityDamage.Global:SetEntityTypeDamage(_Type, _Damage, ...);
 end
 
-function SetEntityTypeDamage(_Type, _Damage)
-    Lib.EntityDamage.Global:SetEntityTypeDamage(_Type, _Damage);
-end
-
-function SetEntityNameDamage(_Name, _Damage)
-    Lib.EntityDamage.Global:SetEntityNameDamage(_Name, _Damage);
+function SetEntityNameDamage(_Name, _Damage, ...)
+    Lib.EntityDamage.Global:SetEntityNameDamage(_Name, _Damage, ...);
 end
 
 function SetEntityTypeArmor(_Type, _Armor)

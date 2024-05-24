@@ -6,6 +6,7 @@
 ---
 --- Functions:
 --- * Better balancing for archers
+--- * Attacker advantage through negative territory bonus by default
 --- * Adjusting unit combat power via Lua
 --- * Granting additional armor to units
 --- * Adjusting the Own Territory bonus
@@ -47,15 +48,20 @@ end
 
 --- Sets the armor for a named entity.
 ---
+--- Categories can be listed to only use the damage value for those categories.
+---
 --- The armor value is subtracted from the remaining damage after the initial
 --- damage calculation. Damage can never be less than 1.
 ---
 --- @param _Name string Script name of the entity
 --- @param _Armor integer Strength of the armor
-function SetEntityNameArmor(_Name, _Armor)
+--- @param ... integer? Optional category list
+function SetEntityNameArmor(_Name, _Armor, ...)
 end
 
 --- Sets the bonus factor for damage when fighting on own territory.
+---
+--- Categories can be listed to only use the damage value for those categories.
 ---
 --- The specified factor is multiplied with the actual factor. For 0.5, this
 --- means the territory bonus is halved. In the calculation, the territory
@@ -63,7 +69,8 @@ end
 ---
 --- @param _PlayerID integer Player ID
 --- @param _Bonus number Factor
-function SetTerritoryBonus(_PlayerID, _Bonus)
+--- @param ... integer? Optional category list
+function SetTerritoryBonus(_PlayerID, _Bonus, ...)
 end
 
 --- Sets the bonus factor for damage when fighting from an elevated position.

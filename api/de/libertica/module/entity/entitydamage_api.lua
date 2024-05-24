@@ -6,6 +6,7 @@
 ---
 --- Funktionen:
 --- * Besseres Balancing für Bogenschützen
+--- * Angreifer im Vorteil durch negativen voreingestellten Territorienbonus
 --- * Anpassen der Kampfkraft von Einheiten über Lua
 --- * Zusätzliche Rüstung für Einheiten vergeben
 --- * Anpassen des Own Territoy bonus
@@ -15,22 +16,28 @@ Lib.EntityDamage = Lib.EntityDamage or {};
 
 --- Setzt den Schaden für einen Entitätstypen.
 ---
+--- Optional können Feindkategorien angegeben werden, für die der Schaden gilt.
+---
 --- Der angegebene Schaden ersetzt den Basischaden des Entitätstypen. Der
 --- tatsächliche Schaden Ergibt sich aus Moral, Höhenbonus und Territorienbonus.
 ---
 --- @param _Type integer Entitätstyp
 --- @param _Damage integer Höhe des Schaden
-function SetEntityTypeDamage(_Type, _Damage)
+--- @param ... integer? Optionale Feindkategorien
+function SetEntityTypeDamage(_Type, _Damage, ...)
 end
 
 --- Setzt den Schaden für eine benannte Entität.
+---
+--- Optional können Feindkategorien angegeben werden, für die der Schaden gilt.
 ---
 --- Der angegebene Schaden ersetzt den Basischaden der Entität. Der tatsächliche
 --- Schaden Ergibt sich aus Moral, Höhenbonus und Territorienbonus.
 ---
 --- @param _Name string Scriptname der Entität
 --- @param _Damage integer Höhe des Schaden
-function SetEntityNameDamage(_Name, _Damage)
+--- @param ... integer? Optionale Feindkategorien
+function SetEntityNameDamage(_Name, _Damage, ...)
 end
 
 --- Setzt Die Rüstung für einen Entitätstypen.
