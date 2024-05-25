@@ -12,7 +12,7 @@
 --- * Adjusting the Own Territory bonus
 --- * Adjusting the Height Modifier
 ---
-Lib.EntityDamage = Lib.EntityDamage or {};
+Lib.Damage = Lib.Damage or {};
 
 
 

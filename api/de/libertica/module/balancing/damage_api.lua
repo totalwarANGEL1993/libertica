@@ -12,7 +12,7 @@
 --- * Anpassen des Own Territoy bonus
 --- * Anpassen des Height Modifier
 ---
-Lib.EntityDamage = Lib.EntityDamage or {};
+Lib.Damage = Lib.Damage or {};
 
 --- Setzt den Schaden für einen Entitätstypen.
 ---

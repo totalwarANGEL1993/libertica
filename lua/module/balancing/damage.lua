@@ -1,6 +1,6 @@
-Lib.EntityDamage = Lib.EntityDamage or {};
-Lib.EntityDamage.Name = "EntityDamage";
-Lib.EntityDamage.Global = {
+Lib.Damage = Lib.Damage or {};
+Lib.Damage.Name = "Damage";
+Lib.Damage.Global = {
     InvulnerableList = {},
     --
     EntityTypeDamage = {},
@@ -11,18 +11,18 @@ Lib.EntityDamage.Global = {
     TerritoryBonus = {},
     HeightModifier = {},
 };
-Lib.EntityDamage.Local  = {};
+Lib.Damage.Local  = {};
 
 Lib.Require("core/Core");
 Lib.Require("module/entity/EntityEvent");
-Lib.Require("module/entity/EntityDamage_API");
-Lib.Register("module/entity/EntityDamage");
+Lib.Require("module/balancing/Damage_API");
+Lib.Register("module/balancing/Damage");
 
 -- -------------------------------------------------------------------------- --
 -- Global
 
 -- Global initalizer method
-function Lib.EntityDamage.Global:Initialize()
+function Lib.Damage.Global:Initialize()
     if not self.IsInstalled then
         for PlayerID = 0, 8 do
             self.TerritoryBonus[PlayerID] = -0.25;
@@ -32,17 +32,17 @@ function Lib.EntityDamage.Global:Initialize()
         self:InitEntityBaseDamage();
 
         -- Garbage collection
-        Lib.EntityDamage.Local = nil;
+        Lib.Damage.Local = nil;
     end
     self.IsInstalled = true;
 end
 
 -- Global load game
-function Lib.EntityDamage.Global:OnSaveGameLoaded()
+function Lib.Damage.Global:OnSaveGameLoaded()
 end
 
 -- Global report listener
-function Lib.EntityDamage.Global:OnReportReceived(_ID, ...)
+function Lib.Damage.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.EntityDestroyed then
@@ -52,7 +52,7 @@ function Lib.EntityDamage.Global:OnReportReceived(_ID, ...)
     end
 end
 
-function Lib.EntityDamage.Global:SetEntityTypeDamage(_Type, _Damage, ...)
+function Lib.Damage.Global:SetEntityTypeDamage(_Type, _Damage, ...)
     assert(type(_Damage) == "number");
     local Categories = {...};
     self.EntityTypeDamage[_Type] = self.EntityTypeDamage[_Type] or {};
@@ -65,7 +65,7 @@ function Lib.EntityDamage.Global:SetEntityTypeDamage(_Type, _Damage, ...)
     end
 end
 
-function Lib.EntityDamage.Global:SetEntityNameDamage(_Name, _Damage, ...)
+function Lib.Damage.Global:SetEntityNameDamage(_Name, _Damage, ...)
     assert(type(_Damage) == "number");
     local Categories = {...};
     self.EntityNameDamage[_Name] = self.EntityNameDamage[_Name] or {};
@@ -78,31 +78,31 @@ function Lib.EntityDamage.Global:SetEntityNameDamage(_Name, _Damage, ...)
     end
 end
 
-function Lib.EntityDamage.Global:SetEntityTypeArmor(_Type, _Armor)
+function Lib.Damage.Global:SetEntityTypeArmor(_Type, _Armor)
     assert(type(_Armor) == "number");
     self.EntityTypeArmor[_Type] = _Armor;
 end
 
-function Lib.EntityDamage.Global:SetEntityNameArmor(_Name, _Armor)
+function Lib.Damage.Global:SetEntityNameArmor(_Name, _Armor)
     assert(type(_Armor) == "number");
     self.EntityNameArmor[_Name] = _Armor;
 end
 
-function Lib.EntityDamage.Global:SetTerritoryBonus(_PlayerID, _Bonus)
+function Lib.Damage.Global:SetTerritoryBonus(_PlayerID, _Bonus)
     assert(type(_Bonus) == "number");
     self.TerritoryBonus[_PlayerID] = _Bonus or 1;
 end
 
-function Lib.EntityDamage.Global:SetHeightModifier(_PlayerID, _Bonus)
+function Lib.Damage.Global:SetHeightModifier(_PlayerID, _Bonus)
     assert(type(_Bonus) == "number");
     self.HeightModifier[_PlayerID] = _Bonus or 1;
 end
 
-function Lib.EntityDamage.Global:IsInvulnerable(_Entity)
+function Lib.Damage.Global:IsInvulnerable(_Entity)
     return self.InvulnerableList[GetID(_Entity)] ~= nil;
 end
 
-function Lib.EntityDamage.Global:InitEntityBaseDamage()
+function Lib.Damage.Global:InitEntityBaseDamage()
     self:SetEntityTypeDamage(Entities.U_MilitaryBow, 20);
     self:SetEntityTypeDamage(Entities.U_MilitaryBow, 5,
         EntityCategories.AttackableBuilding,
@@ -233,11 +233,11 @@ function Lib.EntityDamage.Global:InitEntityBaseDamage()
     self:SetEntityTypeDamage(Entities.A_AS_Tiger, 40);
 end
 
-function Lib.EntityDamage.Global:OverwriteVulnerabilityFunctions()
+function Lib.Damage.Global:OverwriteVulnerabilityFunctions()
     MakeInvulnerable = function(_Entity)
         if IsExisting(_Entity) then
             local ID = GetID(_Entity);
-            Lib.EntityDamage.Global.InvulnerableList[ID] = nil;
+            Lib.Damage.Global.InvulnerableList[ID] = nil;
             Logic.SetEntityInvulnerabilityFlag(ID, 1);
         end
     end
@@ -245,13 +245,13 @@ function Lib.EntityDamage.Global:OverwriteVulnerabilityFunctions()
     MakeVulnerable = function(_Entity)
         if IsExisting(_Entity) then
             local ID = GetID(_Entity);
-            Lib.EntityDamage.Global.InvulnerableList[ID] = true;
+            Lib.Damage.Global.InvulnerableList[ID] = true;
             Logic.SetEntityInvulnerabilityFlag(ID, 0);
         end
     end
 end
 
-function Lib.EntityDamage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2, _PlayerID2)
+function Lib.Damage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2, _PlayerID2)
     -- Get involved entities
     local AggressorID = self:GetTrueEntityID(_EntityID1);
     local TargetID = self:GetTrueEntityID(_EntityID2);
@@ -309,7 +309,7 @@ function Lib.EntityDamage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _Ent
     end
 end
 
-function Lib.EntityDamage.Global:GetEntityBaseDamage(_Type1, _Type2)
+function Lib.Damage.Global:GetEntityBaseDamage(_Type1, _Type2)
     if self.EntityNameDamage[_Type1] then
         for Category, Damage in pairs(self.EntityNameDamage[_Type1]) do
             if Category > 0 and Logic.IsEntityTypeInCategory(_Type2, Category) == 1 then
@@ -329,7 +329,7 @@ function Lib.EntityDamage.Global:GetEntityBaseDamage(_Type1, _Type2)
     return 25;
 end
 
-function Lib.EntityDamage.Global:GetTrueEntityID(_EntityID)
+function Lib.Damage.Global:GetTrueEntityID(_EntityID)
     -- Find first alive soldier if entity is leader
     if Logic.IsLeader(_EntityID) == 1 then
         local Soldiers = {Logic.GetSoldiersAttachedToLeader(_EntityID)};
@@ -351,21 +351,21 @@ end
 -- Local
 
 -- Local initalizer method
-function Lib.EntityDamage.Local:Initialize()
+function Lib.Damage.Local:Initialize()
     if not self.IsInstalled then
 
         -- Garbage collection
-        Lib.EntityDamage.Global = nil;
+        Lib.Damage.Global = nil;
     end
     self.IsInstalled = true;
 end
 
 -- Local load game
-function Lib.EntityDamage.Local:OnSaveGameLoaded()
+function Lib.Damage.Local:OnSaveGameLoaded()
 end
 
 -- Local report listener
-function Lib.EntityDamage.Local:OnReportReceived(_ID, ...)
+function Lib.Damage.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     end
@@ -373,5 +373,5 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-RegisterModule(Lib.EntityDamage.Name);
+RegisterModule(Lib.Damage.Name);
 

@@ -19,7 +19,7 @@ Lib.Require("module/city/Construction");
 Lib.Require("module/city/LifestockSystem");
 Lib.Require("module/mode/SettlementSurvival");
 Lib.Require("module/entity/EntitySelection");
-Lib.Require("module/entity/EntityDamage");
+Lib.Require("module/balancing/Damage");
 Lib.Require("module/quest/Quest");
 
 -- ========================================================================== --
