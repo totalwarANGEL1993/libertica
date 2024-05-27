@@ -25,7 +25,7 @@ Lib.Register("module/balancing/Damage");
 function Lib.Damage.Global:Initialize()
     if not self.IsInstalled then
         for PlayerID = 0, 8 do
-            self.TerritoryBonus[PlayerID] = -0.25;
+            self.TerritoryBonus[PlayerID] = 1;
             self.HeightModifier[PlayerID] = 1;
         end
         self:OverwriteVulnerabilityFunctions();
@@ -186,7 +186,7 @@ function Lib.Damage.Global:InitEntityBaseDamage()
         EntityCategories.CityWallGate
     );
     self:SetEntityTypeDamage(Entities.U_MilitaryBatteringRam, 120);
-    self:SetEntityTypeDamage(Entities.U_MilitaryBatteringRam, 120,
+    self:SetEntityTypeDamage(Entities.U_MilitaryBatteringRam, 20,
         EntityCategories.CityWallSegment
     );
     self:SetEntityTypeDamage(Entities.U_MilitarySiegeTower, 0);
@@ -267,16 +267,20 @@ function Lib.Damage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2
         return;
     end
 
+    local Damage = 1;
+
     -- Player properties
     local TerritoryBonus = Logic.GetTerritoryBonus(AggressorID) * self.TerritoryBonus[_PlayerID1];
     local HeightModifier = Logic.GetHeightDamageModifier(AggressorID) * self.HeightModifier[_PlayerID1];
     local EntityType1 = Logic.GetEntityType(AggressorID);
     local EntityType2 = Logic.GetEntityType(TargetID);
+    local EntityName1 = Logic.GetEntityName(AggressorID);
     local EntityName2 = Logic.GetEntityName(TargetID);
 
     -- Get attacker properties
     local MoralFactor  = Logic.GetPlayerMorale(_PlayerID1);
-    local Damage = self:GetEntityBaseDamage(EntityType1, EntityType2);
+    Damage = self:GetEntityTypeBaseDamage(EntityType1, EntityType2);
+    Damage = self:GetEntityNameBaseDamage(EntityName1, EntityType2);
 
     -- Get defender properties
     local Armor = 0;
@@ -289,17 +293,16 @@ function Lib.Damage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2
 
     -- Calculate damage
     Damage = Damage * (math.max(MoralFactor, 0.5) + TerritoryBonus) * HeightModifier;
-    if Logic.GetCurrentTaskList(AggressorID) == "TL_BATTLE_BOW_CLOSECOMBAT" then
-        Damage = Damage * 0.2;
-    end
-    Damage = math.abs(math.max(1, math.ceil(Damage - Armor)));
+    Damage = self:ApllyRangedCloseCombatDamage(AggressorID, Damage);
+    Damage = self:ApllyWallCatapultCombatDamage(AggressorID, Damage);
+    Damage = math.abs(Damage - Armor);
     if GameCallback_Lib_CalculateBattleDamage ~= nil then
         Damage = GameCallback_Lib_CalculateBattleDamage(AggressorID, _PlayerID1, TargetID, _PlayerID2, Damage);
     end
 
     -- Apply damage
     local Health = Logic.GetEntityHealth(TargetID);
-    Damage = math.min(Health, Damage);
+    Damage = math.min(Health, math.max(1, math.ceil(Damage)));
     Logic.SetEntityInvulnerabilityFlag(TargetID, 0);
     Logic.HurtEntity(TargetID, Damage);
 
@@ -309,15 +312,8 @@ function Lib.Damage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2
     end
 end
 
-function Lib.Damage.Global:GetEntityBaseDamage(_Type1, _Type2)
-    if self.EntityNameDamage[_Type1] then
-        for Category, Damage in pairs(self.EntityNameDamage[_Type1]) do
-            if Category > 0 and Logic.IsEntityTypeInCategory(_Type2, Category) == 1 then
-                return Damage;
-            end
-        end
-        return self.EntityNameDamage[_Type1][0] or 25;
-    end
+-- Returns the base damage of the entity type depending on the target type.
+function Lib.Damage.Global:GetEntityTypeBaseDamage(_Type1, _Type2)
     if self.EntityTypeDamage[_Type1] then
         for Category, Damage in pairs(self.EntityTypeDamage[_Type1]) do
             if Category > 0 and Logic.IsEntityTypeInCategory(_Type2, Category) == 1 then
@@ -329,6 +325,21 @@ function Lib.Damage.Global:GetEntityBaseDamage(_Type1, _Type2)
     return 25;
 end
 
+-- Returns the base damage of the entity type depending on the target type.
+function Lib.Damage.Global:GetEntityNameBaseDamage(_Name1, _Type2)
+    if self.EntityNameDamage[_Name1] then
+        for Category, Damage in pairs(self.EntityNameDamage[_Name1]) do
+            if Category > 0 and Logic.IsEntityTypeInCategory(_Type2, Category) == 1 then
+                return Damage;
+            end
+        end
+        return self.EntityNameDamage[_Name1][0] or 25;
+    end
+    return 25;
+end
+
+-- Returns a valid entity ID or 0. If entity is a leader the first soldier
+-- of the battalion is returned.
 function Lib.Damage.Global:GetTrueEntityID(_EntityID)
     -- Find first alive soldier if entity is leader
     if Logic.IsLeader(_EntityID) == 1 then
@@ -345,6 +356,40 @@ function Lib.Damage.Global:GetTrueEntityID(_EntityID)
         return 0;
     end
     return _EntityID;
+end
+
+-- Emulates the reduced close combat damage of archers.
+function Lib.Damage.Global:ApllyRangedCloseCombatDamage(_EntityID, _Damage)
+    local Damage = _Damage;
+    if Logic.GetCurrentTaskList(_EntityID) == "TL_BATTLE_BOW_CLOSECOMBAT" then
+        local Factor = 0.3;
+        if GameCallback_Lib_CalculateRangedCloseCombatDamageFactor then
+            local PlayerID = Logic.EntityGetPlayer(_EntityID);
+            Factor = GameCallback_Lib_CalculateRangedCloseCombatDamageFactor(PlayerID, _EntityID, _Damage);
+        end
+        Damage = Damage * Factor;
+    end
+    return Damage;
+end
+
+-- Reduces the damage of wall catapult depending on the distance to the
+-- next clostest wall catapult. (Only for human players)
+function Lib.Damage.Global:ApllyWallCatapultCombatDamage(_EntityID, _Damage)
+    local Damage = _Damage;
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.U_MilitaryBallista then
+        local Factor = 1;
+        local PlayerID = Logic.EntityGetPlayer(_EntityID);
+        if GameCallback_Lib_CalculateWallCatapultDamageFactor then
+            Factor = GameCallback_Lib_CalculateWallCatapultDamageFactor(PlayerID, _EntityID, _Damage);
+        elseif Logic.PlayerGetIsHumanFlag(PlayerID) == true then
+            local x,y,z = Logic.EntityGetPos(_EntityID);
+            local Ballista = {Logic.GetPlayerEntitiesInArea(PlayerID, Type, x, y, 1500, 16)};
+            Factor = (Ballista[1] > 1 and Factor / Ballista[1]) or 1;
+        end
+        Damage = Damage * Factor;
+    end
+    return Damage;
 end
 
 -- -------------------------------------------------------------------------- --

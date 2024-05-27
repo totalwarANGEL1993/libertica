@@ -252,7 +252,10 @@
         "GetClimateEntityName",
         "UpdateStopOverlay",
         "g_Outlaws",
-        "GameCallback_Lib_CalculateBattleDamage"
+        "GameCallback_Lib_CalculateBattleDamage",
+        "GameCallback_Lib_CalculateRangedCloseCombatBattleDamage",
+        "GameCallback_Lib_CalculateRangedCloseCombatDamageFactor",
+        "GameCallback_Lib_CalculateWallCatapultDamageFactor"
     ],
     "Lua.workspace.ignoreDir": [
         "demo",
