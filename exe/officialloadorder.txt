@@ -57,7 +57,7 @@ module/io/IOChest
 module/io/IOMine
 module/entity/EntityEvent
 module/entity/EntitySelection
-module/entity/EntityDamage
+module/balancing/Damage
 module/quest/Quest
 module/quest/QuestBehavior
 module/quest/QuestJornal

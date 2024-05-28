@@ -141,7 +141,7 @@ end
 function Lib.Technology.Shared:RestoreNewTechnologies()
     for i= 1, #self.CustomTechnologies do
         local Data = self.CustomTechnologies[i];
-        Technologies[Data[1]] = self.CustomTechnologySequence;
+        Technologies[Data[1]] = Data[2];
         CONST_TECHNOLOGY_TO_INDEX[Technologies[Data[1]]] = i;
         CONST_TECHNOLOGY_TO_INDEX[Data[1]] = i;
     end

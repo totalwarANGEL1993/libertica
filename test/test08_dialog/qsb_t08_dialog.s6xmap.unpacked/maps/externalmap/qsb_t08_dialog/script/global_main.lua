@@ -7,10 +7,11 @@
 
 -- ========================================================================== --
 
-Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
-
 if CONST_IS_IN_DEV then
+    Script.Load("E:/Repositories/libertica/var/libertica/librarian.lua");
     Lib.Loader.PushPath("E:/Repositories/libertica/var/");
+else
+    Script.Load("maps/externalmap/qsb_t08_dialog/libertica/librarian.lua");
 end
 Lib.Require("comfort/global/ReplaceEntity");
 Lib.Require("core/Core");
@@ -221,7 +222,8 @@ function CutsceneBriefingTest(_Name, _PlayerID)
             {30, {GetFrameVector("pos1", 1750, "hero", 500)},
                  {GetFrameVector("pos2", 1500, "hero", 500)},
                  {GetFrameVector("pos3", 1250, "Pos1", 500)},
-                 {GetFrameVector("pos4", 1150, "Pos1", 500)}},
+                 {GetFrameVector("pos4", 1150, "Pos1", 500)},
+            },
         },
     };
 

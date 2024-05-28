@@ -7,10 +7,11 @@
 
 -- ========================================================================== --
 
-Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
-
 if CONST_IS_IN_DEV then
+    Script.Load("E:/Repositories/libertica/var/libertica/librarian.lua");
     Lib.Loader.PushPath("E:/Repositories/libertica/var/");
+else
+    Script.Load("maps/externalmap/qsb_t04_io/libertica/librarian.lua");
 end
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
