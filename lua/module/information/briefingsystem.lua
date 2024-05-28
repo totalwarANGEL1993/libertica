@@ -329,6 +329,7 @@ function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
                 for i= 1, #v, 1 do
                     local Entry = {};
                     Entry.Interpolation = v[i].Interpolation;
+                    Entry.Modulation = v[i].Modulation or ((#v[i] >= 4 and 1.25) or 1);
                     Entry.Duration = v[i][1] or (2 * 60);
                     if v[i][4] and type(v[i][4]) ~= "table" then
                         Entry.Start = {
@@ -371,6 +372,7 @@ function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
                         local Entry = {};
                         Entry.Image = v[i][1];
                         Entry.Interpolation = v[i].Interpolation;
+                        Entry.Modulation = v[i].Modulation or 1;
                         Entry.Duration = v[i][2] or (2 * 60);
                         Entry.AnimData = {};
                         for j= 3, #v[i] do
@@ -770,6 +772,12 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
             if Data.Interpolation then
                 Factor = math.min(Data:Interpolation(CurrentTime), 1);
             end
+            if type(Data.Modulation) == "function" then
+                Factor = Data:Modulation(CurrentTime, Factor);
+            elseif type(Data.Modulation) == "number" then
+                Factor = self:ModulateInterpolationFactor(Factor, Data.Modulation);
+            end
+            Factor = math.min(math.max(Factor, 0), 1);
 
             local Image = Data.Image;
             if type(Image) == "function" then
@@ -1015,17 +1023,32 @@ end
 function Lib.BriefingSystem.Local:GetInterpolationFactor(_PlayerID)
     if self.Briefing[_PlayerID].CurrentAnimation then
         local CurrentTime = XGUIEng.GetSystemTime();
-        if self.Briefing[_PlayerID].CurrentAnimation.Interpolation then
-            return self.Briefing[_PlayerID].CurrentAnimation:Interpolation(CurrentTime);
+        local Data = self.Briefing[_PlayerID].CurrentAnimation;
+        local Factor = 1;
+        if Data.Interpolation then
+            Factor = Data:Interpolation(CurrentTime);
+        else
+            Factor = math.lerp(
+                self.Briefing[_PlayerID].CurrentAnimation.Started,
+                CurrentTime,
+                self.Briefing[_PlayerID].CurrentAnimation.Duration
+            );
         end
-        local Factor = math.lerp(
-            self.Briefing[_PlayerID].CurrentAnimation.Started,
-            CurrentTime,
-            self.Briefing[_PlayerID].CurrentAnimation.Duration
-        );
-        return math.min(Factor, 1);
+        if type(Data.Modulation) == "function" then
+            Factor = Data:Modulation(CurrentTime, Factor);
+        elseif type(Data.Modulation) == "number" then
+            Factor = self:ModulateInterpolationFactor(Factor, Data.Modulation);
+        end
+        return math.min(math.max(Factor, 0), 1);
     end
     return 1;
+end
+
+function Lib.BriefingSystem.Local:ModulateInterpolationFactor(_Factor, _Modulation)
+    local m = _Modulation or 1;
+    -- Smoothstep function
+    local f = _Factor ^ m / ((_Factor ^ m) + ((1 - _Factor) ^ m));
+    return math.min(math.max(f, 0), 1);
 end
 
 function Lib.BriefingSystem.Local:LinearInterpolation(_Pos1, _Pos2, _Factor)
