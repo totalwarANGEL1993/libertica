@@ -20,6 +20,7 @@ LibWriter = {
         "module/ui/UIEffects",
         "module/ui/UIBuilding",
         "module/mode/SettlementSurvival",
+        "module/mode/SettlementLimitation",
         "module/information/BriefingSystem",
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",

@@ -65,6 +65,7 @@ module/faker/Technology
 module/trade/Warehouse
 module/settings/Camera
 module/mode/SettlementSurvival
+module/mode/SettlementLimitation
 module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem
