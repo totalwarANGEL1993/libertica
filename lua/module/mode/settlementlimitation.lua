@@ -25,6 +25,7 @@ Lib.SettlementLimitation.Local  = {
     OuterRimBuildings = {},
 };
 
+Lib.Require("comfort/GetTerritoryID");
 Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
 Lib.Require("module/ui/UIBuilding");
@@ -48,9 +49,6 @@ function Lib.SettlementLimitation.Global:Initialize()
             self.TerritoryRestriction[PlayerID] = {};
             self.TerritoryTypeRestriction[PlayerID] = {};
             self.OutpostUpgradeBonus[PlayerID] = {};
-
-            self:InitDefaultRules(PlayerID);
-            self:InitConstructionLimit(PlayerID);
         end
 
         -- Garbage collection
@@ -67,6 +65,10 @@ end
 function Lib.SettlementLimitation.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+        for PlayerID = 1, 8 do
+            self:InitDefaultRules(PlayerID);
+            self:InitConstructionLimit(PlayerID);
+        end
     elseif _ID == Report.DevelopTerritory_Internal then
         local Costs = Lib.SettlementLimitation.Local.UpgradeTerritoryCosts;
         AddGood(Costs[1], Costs[2], arg[1]);
@@ -77,12 +79,12 @@ end
 function Lib.SettlementLimitation.Global:InitDefaultRules(_PlayerID)
     local Territories = {Logic.GetTerritories()};
     for i = 1, #Territories do
-        self:SetTerritoryBuildingLimit(_PlayerID, Territories[i], 3);
+        SetTerritoryBuildingLimit(_PlayerID, Territories[i], 3);
         for j= 1, #self.CityBuildings do
-            self:SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], self.CityBuildings[j], 0);
+            SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], self.CityBuildings[j], 0);
         end
         for j= 1, #self.OuterRimBuildings do
-            self:SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], self.OuterRimBuildings[j], 1);
+            SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], self.OuterRimBuildings[j], 1);
         end
     end
 end
@@ -93,15 +95,19 @@ function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
         local MainBuilding = Logic.GetStoreHouse(_PlayerID);
         local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
         local OutpostID = Logic.GetTerritoryAcquiringBuildingID(TerritoryID);
-        Current = Current - ((OutpostID ~= 0 and 1) or 0);
         if  Lib.SettlementLimitation.Global.Active
         and GetTerritoryUnderEntity(MainBuilding) ~= TerritoryID then
             if  Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID] then
-                local Limit = Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][TerritoryID] or -1;
+                local Limit = Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][TerritoryID];
+                if Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][0] then
+                    Limit = Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][0];
+                end
                 local Bonus = Lib.SettlementLimitation.Global:GetOutpostUpgradeBonusAmount(_PlayerID, TerritoryID);
                 local Current = #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.AttackableBuilding, 0)};
                 Current = Current - ((OutpostID ~= 0 and 1) or 0);
-                return Limit ~= -1 and Current < (Limit + Bonus);
+                if (Limit or -1) ~= -1 then
+                    return Current < (Limit + Bonus);
+                end
             end
         end
         return true;
@@ -113,12 +119,18 @@ function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
         local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
         if  Lib.SettlementLimitation.Global.Active
         and GetTerritoryUnderEntity(MainBuilding) ~= TerritoryID then
-            if  Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID]
-            and Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][TerritoryID] then
-                local Limit = Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][TerritoryID][_Type] or -1;
-                local Bonus = Lib.SettlementLimitation.Global:GetOutpostUpgradeBonusAmount(_PlayerID, TerritoryID);
+            if  Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
+                local Limit = -1;
+                if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][TerritoryID] then
+                    Limit = Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][TerritoryID][_Type] or -1;
+                end
+                if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][0] then
+                    Limit = Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][0][_Type] or -1;
+                end
                 local Current = #{Logic.GetEntitiesOfTypeInTerritory(TerritoryID, _PlayerID, _Type, 0)};
-                return Limit ~= -1 and Current < (Limit + Bonus);
+                if (Limit or -1) ~= -1 then
+                    return Current < Limit;
+                end
             end
         end
         return true;
@@ -133,63 +145,6 @@ function Lib.SettlementLimitation.Global:ActivateSettlementLimitation(_Flag)
     ExecuteLocal(
         [[Lib.SettlementLimitation.Local.Active = %s == true]],
         tostring(_Flag == true)
-    );
-end
-
-function Lib.SettlementLimitation.Global:SetTerritoryDevelopmentCost(_CostType1, _Amount1, _CostType2, _Amount2)
-    self.UpgradeTerritoryCosts = {_CostType1, _Amount1, _CostType2, _Amount2};
-    ExecuteLocal(
-        [[Lib.SettlementLimitation.Local:SetTerritoryDevelopmentCost(%s,%s,%s,%s)]],
-        tostring(_CostType1),
-        tostring(_Amount1),
-        tostring(_CostType2),
-        tostring(_Amount2)
-    );
-end
-
-function Lib.SettlementLimitation.Global:ClearTerritoryBuildingLimit(_PlayerID, _ID)
-    self.TerritoryRestriction[_PlayerID][_ID] = nil;
-    ExecuteLocal(
-        [[Lib.SettlementLimitation.Local:ClearTerritoryBuildingLimit(%d,%d)]],
-        _PlayerID, _ID
-    );
-end
-
-function Lib.SettlementLimitation.Global:SetTerritoryBuildingLimit(_PlayerID, _ID, _Limit)
-    self.TerritoryRestriction[_PlayerID][_ID] = _Limit;
-    ExecuteLocal(
-        [[Lib.SettlementLimitation.Local:SetTerritoryBuildingLimit(%d,%d,%s)]],
-        _PlayerID, _ID, tostring(_Limit)
-    );
-end
-
-function Lib.SettlementLimitation.Global:ClearTerritoryBuildingTypeLimit(_PlayerID, _ID, _Type)
-    if not self.TerritoryTypeRestriction[_PlayerID][_ID] then
-        self.TerritoryTypeRestriction[_PlayerID][_ID] = {};
-    end
-    self.TerritoryTypeRestriction[_PlayerID][_ID][_Type] = nil;
-    ExecuteLocal(
-        [[Lib.SettlementLimitation.Local:SetTerritoryBuildingTypeLimit(%d,%d,%d)]],
-        _PlayerID, _ID, _Type
-    );
-end
-
-function Lib.SettlementLimitation.Global:SetTerritoryBuildingTypeLimit(_PlayerID, _ID, _Type, _Limit)
-    if not self.TerritoryTypeRestriction[_PlayerID][_ID] then
-        self.TerritoryTypeRestriction[_PlayerID][_ID] = {};
-    end
-    self.TerritoryTypeRestriction[_PlayerID][_ID][_Type] = _Limit;
-    ExecuteLocal(
-        [[Lib.SettlementLimitation.Local:SetTerritoryBuildingTypeLimit(%d,%d,%d,%s)]],
-        _PlayerID, _ID, _Type, tostring(_Limit)
-    );
-end
-
-function Lib.SettlementLimitation.Global:SetOutpostUpgradeBonusAmount(_PlayerID, _ID, _Bonus)
-    self.OutpostUpgradeBonus[_PlayerID][_ID] = _Bonus;
-    ExecuteLocal(
-        [[Lib.SettlementLimitation.Local:SetOutpostUpgradeBonusAmount(%d,%d,%s)]],
-        _PlayerID, _ID, tostring(_Bonus)
     );
 end
 
@@ -218,8 +173,6 @@ function Lib.SettlementLimitation.Local:Initialize()
             self.TerritoryRestriction[PlayerID] = {};
             self.TerritoryTypeRestriction[PlayerID] = {};
             self.OutpostUpgradeBonus[PlayerID] = {};
-
-            self:InitDefaultRules(PlayerID);
         end
 
         -- Garbage collection
@@ -236,19 +189,6 @@ end
 function Lib.SettlementLimitation.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
-    end
-end
-
-function Lib.SettlementLimitation.Local:InitDefaultRules(_PlayerID)
-    local Territories = {Logic.GetTerritories()};
-    for i = 1, #Territories do
-        self:SetTerritoryBuildingLimit(_PlayerID, Territories[i], 3);
-        for j= 1, #self.CityBuildings do
-            self:SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], self.CityBuildings[j], 0);
-        end
-        for j= 1, #self.OuterRimBuildings do
-            self:SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], self.OuterRimBuildings[j], 1);
-        end
     end
 end
 
@@ -431,46 +371,6 @@ function Lib.SettlementLimitation.Local:GetRestrictionTypeText(_PlayerID, _Terri
     end
 
     return "";
-end
-
-function Lib.SettlementLimitation.Local:SetTerritoryDevelopmentCost(_CostType1, _Amount1, _CostType2, _Amount2)
-    self.UpgradeTerritoryCosts = {_CostType1, _Amount1, _CostType2, _Amount2};
-end
-
-function Lib.SettlementLimitation.Local:ClearTerritoryBuildingLimit(_PlayerID, _ID)
-    if self.TerritoryRestriction[_PlayerID] then
-        self.TerritoryRestriction[_PlayerID][_ID] = nil;
-    end
-end
-
-function Lib.SettlementLimitation.Local:SetTerritoryBuildingLimit(_PlayerID, _ID, _Limit)
-    if self.TerritoryRestriction[_PlayerID] then
-        self.TerritoryRestriction[_PlayerID][_ID] = _Limit;
-    end
-end
-
-function Lib.SettlementLimitation.Local:ClearTerritoryBuildingTypeLimit(_PlayerID, _ID, _Type)
-    if self.TerritoryTypeRestriction[_PlayerID] then
-        if not self.TerritoryTypeRestriction[_PlayerID][_ID] then
-            self.TerritoryTypeRestriction[_PlayerID][_ID] = {};
-        end
-        self.TerritoryTypeRestriction[_PlayerID][_ID][_Type] = nil;
-    end
-end
-
-function Lib.SettlementLimitation.Local:SetTerritoryBuildingTypeLimit(_PlayerID, _ID, _Type, _Limit)
-    if self.TerritoryTypeRestriction[_PlayerID] then
-        if not self.TerritoryTypeRestriction[_PlayerID][_ID] then
-            self.TerritoryTypeRestriction[_PlayerID][_ID] = {};
-        end
-        self.TerritoryTypeRestriction[_PlayerID][_ID][_Type] = _Limit;
-    end
-end
-
-function Lib.SettlementLimitation.Local:SetOutpostUpgradeBonusAmount(_PlayerID, _ID, _Bonus)
-    if self.OutpostUpgradeBonus[_PlayerID] then
-        self.OutpostUpgradeBonus[_PlayerID][_ID] = _Bonus;
-    end
 end
 
 function Lib.SettlementLimitation.Local:GetOutpostUpgradeBonusAmount(_PlayerID, _ID)

@@ -17,6 +17,7 @@ comfort/getactiveplayers
 comfort/getcircleposition
 comfort/getgeometricfocus
 comfort/getsiegecarttypebyenginetype
+comfort/getterritoryid
 comfort/ishistoryedition
 comfort/ismultiplayerready
 comfort/round

@@ -219,7 +219,7 @@ function Lib.Core.Global:AquireContext(_Module)
     assert(Lib[Name] ~= nil);
     table.insert(CONST_CURRENT_MODULE_CONTEXT, Lib[Name].Global);
     local Frame = #CONST_CURRENT_MODULE_CONTEXT;
-    return CONST_CURRENT_MODULE_CONTEXT[Frame];
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
 end
 
 function Lib.Core.Global:ReleaseContext(_Module)
@@ -228,6 +228,8 @@ function Lib.Core.Global:ReleaseContext(_Module)
     local Frame = #CONST_CURRENT_MODULE_CONTEXT;
     Lib[Name].Global = CONST_CURRENT_MODULE_CONTEXT[Frame];
     table.remove(CONST_CURRENT_MODULE_CONTEXT);
+    Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
 end
 
 -- -------------------------------------------------------------------------- --
@@ -383,7 +385,7 @@ function Lib.Core.Local:AquireContext(_Module)
     assert(Lib[Name] ~= nil);
     table.insert(CONST_CURRENT_MODULE_CONTEXT, Lib[Name].Local);
     local Frame = #CONST_CURRENT_MODULE_CONTEXT;
-    return CONST_CURRENT_MODULE_CONTEXT[Frame];
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
 end
 
 function Lib.Core.Local:ReleaseContext(_Module)
@@ -392,6 +394,8 @@ function Lib.Core.Local:ReleaseContext(_Module)
     local Frame = #CONST_CURRENT_MODULE_CONTEXT;
     Lib[Name].Local = CONST_CURRENT_MODULE_CONTEXT[Frame];
     table.remove(CONST_CURRENT_MODULE_CONTEXT);
+    Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
 end
 
 -- -------------------------------------------------------------------------- --
@@ -446,12 +450,14 @@ function RegisterModule(_Name)
 end
 
 function ExecuteLocal(_Command, ...)
-    assert(not IsLocalScript(), "Can not be used in local script.");
-    Lib.Core.Global:ExecuteLocal(_Command, ...);
+    if not IsLocalScript() then
+        Lib.Core.Global:ExecuteLocal(_Command, ...);
+    end
 end
 
 function ExecuteGlobal(_Command, ...)
-    assert(IsLocalScript(), "Can not be used in global script.");
-    Lib.Core.Local:ExecuteGlobal(_Command, ...);
+    if IsLocalScript() then
+        Lib.Core.Local:ExecuteGlobal(_Command, ...);
+    end
 end
 
