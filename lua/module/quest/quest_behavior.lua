@@ -49,6 +49,118 @@ RegisterBehavior(B_Goal_WinQuest);
 
 -- -------------------------------------------------------------------------- --
 
+function Goal_DiscoverPlayers(...)
+    return B_Goal_DiscoverPlayers:new(...);
+end
+
+B_Goal_DiscoverPlayers = {
+    Name = "Goal_DiscoverPlayers",
+    Description = {
+        en = "Goal: Discover the home territory of some other players.",
+        de = "Ziel: Entdecke das Heimatterritorium einiger Spieler.",
+        fr = "Objectif: Découvrir le territoire d'origine d'un joueur.",
+    },
+    Parameter = {
+        { ParameterType.Custom, en = "Player amount", de = "Spieleranzahl", fr = "Montant du Joueur" },
+        { ParameterType.PlayerID, en = "Player 1", de = "Spieler 1", fr = "Joueur 1" },
+        { ParameterType.PlayerID, en = "Player 2", de = "Spieler 2", fr = "Joueur 2" },
+        { ParameterType.PlayerID, en = "Player 3", de = "Spieler 3", fr = "Joueur 3" },
+        { ParameterType.PlayerID, en = "Player 4", de = "Spieler 4", fr = "Joueur 4" },
+        { ParameterType.PlayerID, en = "Player 5", de = "Spieler 5", fr = "Joueur 5" },
+        { ParameterType.PlayerID, en = "Player 6", de = "Spieler 6", fr = "Joueur 6" },
+    },
+}
+
+function B_Goal_DiscoverPlayers:GetGoalTable()
+    return {Objective.Discover, 2, { unpack(self.PlayerList) } }
+end
+
+function B_Goal_DiscoverPlayers:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.Amount = _Parameter * 1;
+    end
+    if (_Index > 0) then
+        self.PlayerList = self.PlayerList or {};
+        if _Index <= self.Amount then
+            local PlayerID = _Parameter * 1;
+            table.insert(self.PlayerList, PlayerID);
+        end
+    end
+end
+
+function B_Goal_DiscoverPlayers:GetMsgKey()
+    local tMapping = {
+        [PlayerCategories.BanditsCamp] = "Quest_Discover",
+        [PlayerCategories.City] = "Quest_Discover_City",
+        [PlayerCategories.Cloister] = "Quest_Discover_Cloister",
+        [PlayerCategories.Harbour] = "Quest_Discover",
+        [PlayerCategories.Village] = "Quest_Discover_Village",
+    };
+    local PlayerCategory = GetPlayerCategoryType(self.PlayerList[1] or 1);
+    if PlayerCategory then
+        local Key = tMapping[PlayerCategory];
+        if Key then
+            return Key;
+        end
+    end
+    return "Quest_Discover";
+end
+
+RegisterBehavior(B_Goal_DiscoverPlayers);
+
+-- -------------------------------------------------------------------------- --
+
+function Goal_DiscoverTerritories(...)
+    return B_Goal_DiscoverTerritories:new(...);
+end
+
+B_Goal_DiscoverTerritories = {
+    Name = "Goal_DiscoverTerritories",
+    Description = {
+        en = "Goal: Discover multiple territories",
+        de = "Ziel: Entdecke mehrere Territorien",
+        fr = "Objectif : Découvrez plusieurs territoires",
+    },
+    Parameter = {
+        { ParameterType.Custom, en = "Territory amount", de = "Territorienanzahl", fr = "Montant du territoire" },
+        { ParameterType.TerritoryName, en = "Territory 1", de = "Territorium 1", fr = "Territoire 1" },
+        { ParameterType.TerritoryName, en = "Territory 2", de = "Territorium 2", fr = "Territoire 2" },
+        { ParameterType.TerritoryName, en = "Territory 3", de = "Territorium 3", fr = "Territoire 3" },
+        { ParameterType.TerritoryName, en = "Territory 4", de = "Territorium 4", fr = "Territoire 4" },
+        { ParameterType.TerritoryName, en = "Territory 5", de = "Territorium 5", fr = "Territoire 5" },
+        { ParameterType.TerritoryName, en = "Territory 6", de = "Territorium 6", fr = "Territoire 6" },
+    },
+}
+
+function B_Goal_DiscoverTerritories:GetGoalTable()
+    return { Objective.Discover, 1, { unpack(self.TerritoryList) } };
+end
+
+function B_Goal_DiscoverTerritories:AddParameter(_Index, _Parameter)
+    if (_Index == 0) then
+        self.Amount = _Parameter * 1;
+    end
+    if (_Index > 0) then
+        self.TerritoryList = self.TerritoryList or {};
+        if _Index <= self.Amount then
+            local TerritoryID = tonumber(_Parameter);
+            if not TerritoryID then
+                TerritoryID = GetTerritoryIDByName(_Parameter);
+            end
+            assert(TerritoryID > 0);
+            table.insert(self.TerritoryList, TerritoryID);
+        end
+    end
+end
+
+function B_Goal_DiscoverTerritories:GetMsgKey()
+    return "Quest_Discover_Territory";
+end
+
+RegisterBehavior(B_Goal_DiscoverTerritories);
+
+-- -------------------------------------------------------------------------- --
+
 function Trigger_OnAtLeastXOfYQuestsFailed(...)
     return B_Trigger_OnAtLeastXOfYQuestsFailed:new(...);
 end
