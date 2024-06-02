@@ -17,6 +17,7 @@ comfort/getactiveplayers
 comfort/getcircleposition
 comfort/getgeometricfocus
 comfort/getsiegecarttypebyenginetype
+comfort/getterritoryid
 comfort/ishistoryedition
 comfort/ismultiplayerready
 comfort/round
@@ -44,6 +45,7 @@ comfort/global/setposition
 
 comfort/local/test
 
+core/QSB
 core/Core
 module/ui/UITools
 module/ui/UIEffects
@@ -65,6 +67,7 @@ module/faker/Technology
 module/trade/Warehouse
 module/settings/Camera
 module/mode/SettlementSurvival
+module/mode/SettlementLimitation
 module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem

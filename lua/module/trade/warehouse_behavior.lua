@@ -1,3 +1,5 @@
+Lib.Register("module/quest/Warehouse_Behavior");
+
 B_Reward_TradePost.DEBUG_Orig_Warehouse = B_Reward_TradePost.DEBUG;
 --- @diagnostic disable-next-line: duplicate-set-field
 B_Reward_TradePost.DEBUG = function(self, _Quest)

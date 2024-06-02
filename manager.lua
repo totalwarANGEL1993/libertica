@@ -2,6 +2,7 @@ LibWriter = {
     -- Do not change the order of files because it may cause
     -- "to many open files" error!
     ComponentList = {
+        "core/QSB",
         "core/Core",
         "module/city/Construction",
         "module/entity/NPC",
@@ -20,6 +21,7 @@ LibWriter = {
         "module/ui/UIEffects",
         "module/ui/UIBuilding",
         "module/mode/SettlementSurvival",
+        "module/mode/SettlementLimitation",
         "module/information/BriefingSystem",
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",
@@ -147,7 +149,7 @@ function LibWriter:CreateSingleFile()
     end
 
     -- Read behaviors
-    behaviors = self:ConcatBehaviors();
+    behaviors = self:ConcatBehaviors(true);
     code = code .. behaviors;
 
     -- Create file
@@ -183,9 +185,11 @@ end
 --- creates the QSB and writes it to output folder.
 function LibWriter:CreateQsb()
     local behaviors = self:ConcatBehaviors();
-    local fh = assert(io.open("var/libertica/qsb.lua", "wb"));
-    fh:write(behaviors);
-    fh:close();
+    if behaviors ~= "" then
+        local fh = assert(io.open("var/libertica/qsb.lua", "wb"));
+        fh:write(behaviors);
+        fh:close();
+    end
     -- Editor can't read binary
     -- self:CompileFile('var/libertica/qsb.lua', 'var/libertica/qsb.lua');
 
@@ -194,27 +198,30 @@ function LibWriter:CreateQsb()
 end
 
 --- Reads all behavior files from the components and returns them as lua string.
-function LibWriter:ConcatBehaviors()
-    local fh, index, content, template, behaviors;
-    fh = assert(io.open("lua/core/qsb.lua", "rb"));
-    template = fh:read("*all");
-    fh:close();
-    behaviors = template;
-    for i= 1, #self.ComponentList do
-        if self.ComponentList[i]:len() > 0 then
-            local File = "lua/" ..self.ComponentList[i]:lower() .. "_behavior.lua";
-            fh = io.open(File, "rb");
-            if fh ~= nil then
-                content = fh:read("*all");
-                -- Debug
-                -- print("reading behavior file: " ..File, content:len().. " bytes")
-                fh:close();
-            else
-                content = "";
-                -- Debug
-                -- print("reading behavior file: " ..File, content:len().. " bytes")
+function LibWriter:ConcatBehaviors(_SingleFile)
+    local fh, index, content, template;
+    local behaviors = "";
+    if _SingleFile then
+        fh = assert(io.open("lua/core/qsb.lua", "rb"));
+        template = fh:read("*all");
+        fh:close();
+        behaviors = template;
+        for i= 1, #self.ComponentList do
+            if self.ComponentList[i]:len() > 0 then
+                local File = "lua/" ..self.ComponentList[i]:lower() .. "_behavior.lua";
+                fh = io.open(File, "rb");
+                if fh ~= nil then
+                    content = fh:read("*all");
+                    -- Debug
+                    -- print("reading behavior file: " ..File, content:len().. " bytes")
+                    fh:close();
+                else
+                    content = "";
+                    -- Debug
+                    -- print("reading behavior file: " ..File, content:len().. " bytes")
+                end
+                behaviors = behaviors .. content;
             end
-            behaviors = behaviors .. content;
         end
     end
     return behaviors;
