@@ -1,3 +1,5 @@
+Lib.Register("module/quest/QuestBehavior_Behavior");
+
 function Goal_MoveToPosition(...)
     return B_Goal_MoveToPosition:new(...);
 end
@@ -41,7 +43,9 @@ function B_Goal_MoveToPosition:GetCustomData( _Index )
     return Data
 end
 
-RegisterBehavior(B_Goal_MoveToPosition);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_MoveToPosition);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -102,7 +106,9 @@ function B_Goal_AmmunitionAmount:GetCustomData( _Index )
     end
 end
 
-RegisterBehavior(B_Goal_AmmunitionAmount);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_AmmunitionAmount);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -164,7 +170,9 @@ function B_Goal_CityReputation:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Goal_CityReputation);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_CityReputation);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -231,7 +239,9 @@ function B_Goal_DestroySpawnedEntities:GetCustomData(_Index)
     end
 end
 
-RegisterBehavior(B_Goal_DestroySpawnedEntities);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_DestroySpawnedEntities);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -326,7 +336,9 @@ function B_Goal_StealGold:SetDescriptionOverwrite(_Quest)
 end
 
 function B_Goal_StealGold:CustomFunction(_Quest)
-    Lib.Core.Quest:ChangeCustomQuestCaptionText(self:SetDescriptionOverwrite(_Quest), _Quest);
+    if Lib.Core.Quest then
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(self:SetDescriptionOverwrite(_Quest), _Quest);
+    end
     if self.StohlenGold >= self.Amount then
         return true;
     end
@@ -349,7 +361,9 @@ function B_Goal_StealGold:Reset(_Quest)
     self.StohlenGold = 0;
 end
 
-RegisterBehavior(B_Goal_StealGold)
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_StealGold)
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -487,7 +501,9 @@ function B_Goal_StealFromBuilding:Interrupt(_Quest)
     Logic.DestroyEffect(self.Marker);
 end
 
-RegisterBehavior(B_Goal_StealFromBuilding)
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_StealFromBuilding)
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -598,7 +614,9 @@ function B_Goal_SpyOnBuilding:Interrupt(_Quest)
     Logic.DestroyEffect(self.Marker);
 end
 
-RegisterBehavior(B_Goal_SpyOnBuilding);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_SpyOnBuilding);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -652,10 +670,13 @@ function B_Goal_DestroySoldiers:CustomFunction(_Quest)
             _Quest
         );
     end
-    local Kills = Lib.QuestBehavior.Global:GetEnemySoldierKillsOfPlayer(
-        self.AttackingPlayer,
-        self.AttackedPlayer
-    );
+    local Kills = 0;
+    if Lib.QuestBehavior then
+        Kills = Lib.QuestBehavior.Global:GetEnemySoldierKillsOfPlayer(
+            self.AttackingPlayer,
+            self.AttackedPlayer
+        );
+    end
     if self.KillsNeeded <= Kills then
         return true;
     end
@@ -678,7 +699,9 @@ function B_Goal_DestroySoldiers:GetIcon()
     return {7,12}
 end
 
-RegisterBehavior(B_Goal_DestroySoldiers);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Goal_DestroySoldiers);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -763,7 +786,9 @@ function B_Reprisal_SetPosition:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reprisal_SetPosition);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reprisal_SetPosition);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -822,7 +847,9 @@ function B_Reprisal_ChangePlayer:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reprisal_ChangePlayer);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reprisal_ChangePlayer);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -904,7 +931,9 @@ function B_Reprisal_SetVisible:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reprisal_SetVisible);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reprisal_SetVisible);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -978,7 +1007,9 @@ function B_Reprisal_SetVulnerability:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reprisal_SetVulnerability);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reprisal_SetVulnerability);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1019,11 +1050,58 @@ function B_Reprisal_SetModel:CustomFunction(_Quest)
     Logic.SetModel(eID, Models[self.Model]);
 end
 
--- Hinweis: Kann nicht durch Aufruf der Methode von B_Goal_FetchItems
--- vereinfacht werden, weil man im Editor keine Methoden aufrufen kann!
 function B_Reprisal_SetModel:GetCustomData(_Index)
     if _Index == 1 then
-        return Lib.QuestBehavior.Global:GetPossibleModels();
+        local Data = {};
+        -- Add generic models
+        for k, v in pairs(Models) do
+            if  not string.find(k, "Animals_")
+            and not string.find(k, "MissionMap_")
+            and not string.find(k, "R_Fish")
+            and not string.find(k, "^[GEHUVXYZgt][ADSTfm]*")
+            and not string.find(string.lower(k), "goods|tools_") then
+                table.insert(Data, k);
+            end
+        end
+        -- Add specific models
+        table.insert(Data, "Effects_Dust01");
+        table.insert(Data, "Effects_E_DestructionSmoke");
+        table.insert(Data, "Effects_E_DustLarge");
+        table.insert(Data, "Effects_E_DustSmall");
+        table.insert(Data, "Effects_E_Firebreath");
+        table.insert(Data, "Effects_E_Fireworks01");
+        table.insert(Data, "Effects_E_Flies01");
+        table.insert(Data, "Effects_E_Grasshopper03");
+        table.insert(Data, "Effects_E_HealingFX");
+        table.insert(Data, "Effects_E_Knight_Chivalry_Aura");
+        table.insert(Data, "Effects_E_Knight_Plunder_Aura");
+        table.insert(Data, "Effects_E_Knight_Song_Aura");
+        table.insert(Data, "Effects_E_Knight_Trader_Aura");
+        table.insert(Data, "Effects_E_Knight_Wisdom_Aura");
+        table.insert(Data, "Effects_E_KnightFight");
+        table.insert(Data, "Effects_E_NA_BlowingSand01");
+        table.insert(Data, "Effects_E_NE_BlowingSnow01");
+        table.insert(Data, "Effects_E_Oillamp");
+        table.insert(Data, "Effects_E_SickBuilding");
+        table.insert(Data, "Effects_E_Splash");
+        table.insert(Data, "Effects_E_Torch");
+        table.insert(Data, "Effects_Fire01");
+        table.insert(Data, "Effects_FX_Lantern");
+        table.insert(Data, "Effects_FX_SmokeBIG");
+        table.insert(Data, "Effects_XF_BuildingSmoke");
+        table.insert(Data, "Effects_XF_BuildingSmokeLarge");
+        table.insert(Data, "Effects_XF_BuildingSmokeMedium");
+        table.insert(Data, "Effects_XF_HouseFire");
+        table.insert(Data, "Effects_XF_HouseFireLo");
+        table.insert(Data, "Effects_XF_HouseFireMedium");
+        table.insert(Data, "Effects_XF_HouseFireSmall");
+        if g_GameExtraNo > 0 then
+            table.insert(Data, "Effects_E_KhanaTemple_Fire");
+            table.insert(Data, "Effects_E_Knight_Saraya_Aura");
+        end
+        -- Sort list
+        table.sort(Data);
+        return Data;
     end
 end
 
@@ -1039,7 +1117,9 @@ function B_Reprisal_SetModel:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reprisal_SetModel);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reprisal_SetModel);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1058,7 +1138,9 @@ B_Reward_SetPosition.GetRewardTable = function(self, _Quest)
     return { Reward.Custom, { self, self.CustomFunction } };
 end
 
-RegisterBehavior(B_Reward_SetPosition);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_SetPosition);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1077,7 +1159,9 @@ B_Reward_ChangePlayer.GetRewardTable = function(self, _Quest)
     return { Reward.Custom, { self, self.CustomFunction } };
 end
 
-RegisterBehavior(B_Reward_ChangePlayer);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_ChangePlayer);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1158,7 +1242,9 @@ function B_Reward_MoveToPosition:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reward_MoveToPosition);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_MoveToPosition);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1184,6 +1270,9 @@ function B_Reward_VictoryWithParty:AddParameter(_Index, _Parameter)
 end
 
 function B_Reward_VictoryWithParty:CustomFunction(_Quest)
+    if not Lib.QuestBehavior then
+        return;
+    end
     if Framework.IsNetworkGame() then
         error(_Quest.Identifier.. ": " ..self.Name.. ": Can not be used in multiplayer!");
         return;
@@ -1261,14 +1350,18 @@ function B_Reward_VictoryWithParty:GenerateParty(_PlayerID)
 end
 
 function B_Reward_VictoryWithParty:Debug(_Quest)
-    if Lib.QuestBehavior.Global.VictoryWithPartyEntities[_Quest.ReceivingPlayer] then
-        error(_Quest.Identifier.. ": " ..self.Name..": Victory festival already started for player ".._Quest.ReceivingPlayer.."!");
-        return true;
+    if Lib.QuestBehavior then
+        if Lib.QuestBehavior.Global.VictoryWithPartyEntities[_Quest.ReceivingPlayer] then
+            error(_Quest.Identifier.. ": " ..self.Name..": Victory festival already started for player ".._Quest.ReceivingPlayer.."!");
+            return true;
+        end
     end
     return false;
 end
 
-RegisterBehavior(B_Reward_VictoryWithParty);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_VictoryWithParty);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1287,7 +1380,9 @@ B_Reward_SetVisible.GetRewardTable = function(self, _Quest)
     return { Reward.Custom, { self, self.CustomFunction } }
 end
 
-RegisterBehavior(B_Reward_SetVisible);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_SetVisible);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1306,7 +1401,9 @@ B_Reward_SetVulnerability.GetRewardTable = function(self, _Quest)
     return { Reward.Custom, { self, self.CustomFunction } }
 end
 
-RegisterBehavior(B_Reward_SetVulnerability);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_SetVulnerability);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1325,7 +1422,9 @@ B_Reward_SetModel.GetRewardTable = function(self, _Quest)
     return { Reward.Custom, { self, self.CustomFunction } }
 end
 
-RegisterBehavior(B_Reward_SetModel);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_SetModel);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1393,7 +1492,9 @@ function B_Reward_AI_SetEntityControlled:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Reward_AI_SetEntityControlled);
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Reward_AI_SetEntityControlled);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -1444,7 +1545,9 @@ function B_Trigger_AmmunitionDepleted:Debug(_Quest)
     return false
 end
 
-RegisterBehavior(B_Trigger_AmmunitionDepleted)
+if MapEditor or Lib.QuestBehavior then
+    RegisterBehavior(B_Trigger_AmmunitionDepleted)
+end
 
 -- -------------------------------------------------------------------------- --
 

@@ -45,6 +45,7 @@ comfort/global/setposition
 
 comfort/local/test
 
+core/QSB
 core/Core
 module/ui/UITools
 module/ui/UIEffects

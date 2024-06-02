@@ -1,3 +1,5 @@
+Lib.Register("module/information/DialogSystem_Behavior");
+
 function Reprisal_Dialog(_Name, _Dialog)
     return B_Reprisal_Dialog:new(_Name, _Dialog);
 end

@@ -1,3 +1,5 @@
+Lib.Register("module/information/CutsceneSystem_Behavior");
+
 function Reprisal_Cutscene(_Name, _Cutscene)
     return B_Reprisal_Cutscene:new(_Name, _Cutscene);
 end

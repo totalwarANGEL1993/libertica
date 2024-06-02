@@ -19,6 +19,7 @@ Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester");
 Lib.Require("module/information/CutsceneSystem_Text");
 Lib.Require("module/information/CutsceneSystem_API");
+Lib.Require("module/information/CutsceneSystem_Behavior");
 Lib.Register("module/information/CutsceneSystem");
 
 CinematicEventTypes.Cutscene = 3;

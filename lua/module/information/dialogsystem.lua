@@ -31,6 +31,7 @@ Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester");
 Lib.Require("module/information/DialogSystem_Text");
 Lib.Require("module/information/DialogSystem_API");
+Lib.Require("module/information/DialogSystem_Behavior");
 Lib.Register("module/information/DialogSystem");
 
 CinematicEventTypes.Dialog = 5;

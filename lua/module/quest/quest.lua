@@ -21,6 +21,7 @@ Lib.Require("comfort/global/IsValidQuest");
 Lib.Require("comfort/global/IsValidQuestName");
 Lib.Require("core/core");
 Lib.Require("module/quest/Quest_API");
+Lib.Require("module/quest/Quest_Behavior");
 Lib.Register("module/quest/Quest");
 
 -- -------------------------------------------------------------------------- --

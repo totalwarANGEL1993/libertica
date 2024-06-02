@@ -1,3 +1,5 @@
+Lib.Register("module/entity/NPC_Behavior");
+
 function Goal_NPC(_NpcName, _HeroName)
     return B_Goal_NPC:new(_NpcName, _HeroName);
 end
@@ -34,7 +36,9 @@ function B_Goal_NPC:GetIcon()
     return {14,10}
 end
 
-RegisterBehavior(B_Goal_NPC);
+if MapEditor or Lib.NPC then
+    RegisterBehavior(B_Goal_NPC);
+end
 
 -- -------------------------------------------------------------------------- --
 

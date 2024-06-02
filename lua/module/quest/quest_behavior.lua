@@ -1,3 +1,5 @@
+Lib.Register("module/quest/Quest_Behavior");
+
 function Goal_WinQuest(...)
     return B_Goal_WinQuest:new(...);
 end
@@ -45,7 +47,9 @@ function B_Goal_WinQuest:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Goal_WinQuest);
+if MapEditor or Lib.Quest then
+    RegisterBehavior(B_Goal_WinQuest);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -106,7 +110,9 @@ function B_Goal_DiscoverPlayers:GetMsgKey()
     return "Quest_Discover";
 end
 
-RegisterBehavior(B_Goal_DiscoverPlayers);
+if MapEditor or Lib.Quest then
+    RegisterBehavior(B_Goal_DiscoverPlayers);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -157,7 +163,9 @@ function B_Goal_DiscoverTerritories:GetMsgKey()
     return "Quest_Discover_Territory";
 end
 
-RegisterBehavior(B_Goal_DiscoverTerritories);
+if MapEditor or Lib.Quest then
+    RegisterBehavior(B_Goal_DiscoverTerritories);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -249,7 +257,9 @@ function B_Trigger_OnAtLeastXOfYQuestsFailed:GetCustomData(_Index)
     end
 end
 
-RegisterBehavior(B_Trigger_OnAtLeastXOfYQuestsFailed);
+if MapEditor or Lib.Quest then
+    RegisterBehavior(B_Trigger_OnAtLeastXOfYQuestsFailed);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -311,7 +321,9 @@ function B_Trigger_OnExactOneQuestIsWon:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Trigger_OnExactOneQuestIsWon);
+if MapEditor or Lib.Quest then
+    RegisterBehavior(B_Trigger_OnExactOneQuestIsWon);
+end
 
 -- -------------------------------------------------------------------------- --
 
@@ -373,7 +385,9 @@ function B_Trigger_OnExactOneQuestIsLost:Debug(_Quest)
     return false;
 end
 
-RegisterBehavior(B_Trigger_OnExactOneQuestIsLost);
+if MapEditor or Lib.Quest then
+    RegisterBehavior(B_Trigger_OnExactOneQuestIsLost);
+end
 
 -- -------------------------------------------------------------------------- --
 

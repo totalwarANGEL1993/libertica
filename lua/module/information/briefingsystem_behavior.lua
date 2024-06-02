@@ -1,3 +1,5 @@
+Lib.Register("module/information/BriefingSystem_Behavior");
+
 function Reprisal_Briefing(_Name, _Briefing)
     return B_Reprisal_Briefing:new(_Name, _Briefing);
 end

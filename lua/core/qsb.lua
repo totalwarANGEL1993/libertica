@@ -1,3 +1,5 @@
+Lib.Register("core/QSB");
+
 --- @diagnostic disable: cast-local-type
 --- @diagnostic disable: duplicate-set-field
 --- @diagnostic disable: missing-return-value

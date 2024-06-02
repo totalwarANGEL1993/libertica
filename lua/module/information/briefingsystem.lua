@@ -41,6 +41,7 @@ Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester");
 Lib.Require("module/information/BriefingSystem_Text");
 Lib.Require("module/information/BriefingSystem_API");
+Lib.Require("module/information/BriefingSystem_Behavior");
 Lib.Register("module/information/BriefingSystem");
 
 CinematicEventTypes.Briefing = 2;

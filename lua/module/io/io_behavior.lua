@@ -1,3 +1,5 @@
+Lib.Register("module/io/IO_Behavior");
+
 function Goal_ActivateSeveralObjects(...)
     return B_Goal_ActivateSeveralObjects:new(...);
 end

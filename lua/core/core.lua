@@ -15,6 +15,8 @@ Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/IsLocalScript");
 
+Lib.Require("core/QSB");
+
 Lib.Require("core/feature/Core_Chat");
 Lib.Require("core/feature/Core_Debug");
 Lib.Require("core/feature/Core_LuaExtension");
@@ -26,6 +28,7 @@ Lib.Require("core/feature/Core_Job");
 Lib.Require("core/feature/Core_Save");
 Lib.Require("core/feature/Core_Quest");
 
+Lib.Require("core/Core_Behavior");
 Lib.Register("core/Core");
 
 ---@diagnostic disable: deprecated
