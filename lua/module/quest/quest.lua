@@ -61,7 +61,7 @@ function Lib.Quest.Global:CreateNestedQuest(_Data)
     table.insert(
         _Data,
         Goal_MapScriptFunction(self:GetCheckQuestSegmentsInlineGoal(), _Data.Name)
-    )
+    );
     -- Create quest
     local Name = self:CreateSimpleQuest(_Data);
     if Name ~= nil then
@@ -528,6 +528,27 @@ function Lib.Quest.Global:FindQuestNames(_Pattern, _ExactName)
     return NamesOfFoundQuests;
 end
 
+function Lib.Quest.Global:FindQuestsByState(_QuestState)
+    local QuestsOfState = {};
+    for i= 1, Quests[0], 1 do
+        if Quests[i].Result == _QuestState then
+            table.insert(QuestsOfState, Quests[i]);
+        end
+    end
+    local QuestNames = "";
+    local Matching = 0;
+    for i= 1, #QuestsOfState, 1 do
+        if Matching < 15 then
+            QuestNames = QuestNames .. "- " .. QuestsOfState[i].Identifier .. "{cr}";
+            Matching = Matching +1;
+        else
+            QuestNames = QuestNames .. "... (" .. (#QuestsOfState-Matching) .. " more)";
+            break;
+        end
+    end
+    return "Found quests:{cr}"..QuestNames;
+end
+
 function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
     if _IsDebug then
         local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
@@ -555,6 +576,20 @@ function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
                     WinQuest(FoundQuests[1]);
                     log("win quest '" ..FoundQuests[1].. "'");
                 end
+            end
+
+            if Commands[i][1] == "stopped" then
+                log(self:FindQuestsByState(QuestResult.Interrupted));
+            elseif Commands[i][1] == "active" then
+                log(self:FindQuestsByState(QuestResult.Active));
+            elseif Commands[i][1] == "won" then
+                log(self:FindQuestsByState(QuestResult.Success));
+            elseif Commands[i][1] == "failed" then
+                log(self:FindQuestsByState(QuestResult.Failure));
+            elseif Commands[i][1] == "waiting" then
+                log(self:FindQuestsByState(QuestResult.NotTriggered));
+            elseif Commands[i][1] == "find" then
+                log(self:FindQuestsByNamePart(Commands[i]));
             end
         end
     end
@@ -687,7 +722,7 @@ function Lib.Quest.Local:OverwriteQuestTexts()
     ---
     --- @param _Quest table Quest
     --- @return string Name Name of string
-    --- @return string File Name of file
+    --- @return string? File Name of file
     GetTextOverride = function(_Quest)
         assert(type(_Quest) == "table");
 
@@ -714,7 +749,7 @@ function Lib.Quest.Local:OverwriteQuestTexts()
             Result = string.match(Text, g_OverrideTextKeyPattern);
         end
         if Result then
-            local OverrideTable, OverrideKey = string.match( Result, "^([^/]+)/([^/]+)$" )
+            local OverrideTable, OverrideKey = string.match(Result, "^([^/]+)/([^/]+)$");
             if OverrideTable and OverrideKey then
                 return OverrideKey, OverrideTable;
             end
