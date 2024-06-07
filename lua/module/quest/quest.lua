@@ -363,7 +363,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Triggers[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Triggers[i], Triggers.Custom2, 4);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Trigger
@@ -397,7 +397,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Objectives[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Objectives[i], Objective.Custom2, 1);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Goal
@@ -443,7 +443,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Rewards[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Rewards[i], Reward.Custom, 3);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
@@ -453,7 +453,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Reprisals[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Reprisals[i], Reprisal.Custom, 3);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
@@ -516,37 +516,63 @@ end
 -- -------------------------------------------------------------------------- --
 -- Chat Commands
 
-function Lib.Quest.Global:FindQuestNames(_Pattern, _ExactName)
-    local FoundQuests = FindQuestsByName(_Pattern, _ExactName);
-    if #FoundQuests == 0 then
-        return {};
+function Lib.Quest.Global:FindQuestsByAttribute(_MaxResults, ...)
+    _MaxResults = math.max(_MaxResults or 65565, 1);
+    local arg = {...};
+    local MatchingQuests = {};
+    for i= 1, Quests[0], 1 do
+        local IsMatching = true;
+        for j= 1, #arg, 2 do
+            if arg[j] == "Name" then
+                if not string.find(Quests[i].Identifier, "^" .. arg[j+1]) then
+                    IsMatching = false;
+                    break;
+                end
+            else
+                if Quests[i][arg[j]] ~= arg[j+1] then
+                    IsMatching = false;
+                    break;
+                end
+            end
+        end
+        if IsMatching then
+            table.insert(MatchingQuests, Quests[i]);
+        end
     end
-    local NamesOfFoundQuests = {};
-    for i= 1, #FoundQuests, 1 do
-        table.insert(NamesOfFoundQuests, FoundQuests[i].Identifier);
-    end
-    return NamesOfFoundQuests;
+    return MatchingQuests;
 end
 
-function Lib.Quest.Global:FindQuestsByState(_QuestState)
-    local QuestsOfState = {};
-    for i= 1, Quests[0], 1 do
-        if Quests[i].Result == _QuestState then
-            table.insert(QuestsOfState, Quests[i]);
-        end
-    end
+function Lib.Quest.Global:FindQuestsByExactName(_QuestName, _MaxResults)
+    return self:FindQuestsByAttribute(_MaxResults, "Identifier", _QuestName);
+end
+
+function Lib.Quest.Global:ListQuestsByAttribute(_MaxResults, ...)
+    _MaxResults = math.max(_MaxResults or 65565, 1);
+    local MatchingQuests = self:FindQuestsByAttribute(_MaxResults, ...);
     local QuestNames = "";
-    local Matching = 0;
-    for i= 1, #QuestsOfState, 1 do
-        if Matching < 15 then
-            QuestNames = QuestNames .. "- " .. QuestsOfState[i].Identifier .. "{cr}";
-            Matching = Matching +1;
-        else
-            QuestNames = QuestNames .. "... (" .. (#QuestsOfState-Matching) .. " more)";
+    local ResultCount = 0;
+    for i= 1, #MatchingQuests, 1 do
+        if ResultCount >= _MaxResults then
+            QuestNames = QuestNames .. "... (" .. (#MatchingQuests - ResultCount) .. " more)";
             break;
         end
+        QuestNames = QuestNames .. "> " .. MatchingQuests[i].Identifier .. "{cr}";
+        ResultCount = ResultCount +1;
     end
     return "Found quests:{cr}"..QuestNames;
+end
+
+function Lib.Quest.Global:ListQuestsByState(_QuestState, _MaxResults)
+    return self:ListQuestsByAttribute(_MaxResults, "State", _QuestState);
+end
+
+function Lib.Quest.Global:ListQuestsByResult(_QuestResult, _MaxResults)
+    return self:ListQuestsByAttribute(_MaxResults, "Result", _QuestResult);
+end
+
+function Lib.Quest.Global:ListQuestsByName(_QuestName, _MaxResults)
+    -- HACK: Name will be converted to Identifier but it's a like search.
+    return self:ListQuestsByAttribute(_MaxResults, "Name", _QuestName);
 end
 
 function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
@@ -558,38 +584,44 @@ function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
             or Commands[i][1] == "restart"
             or Commands[i][1] == "stop"
             or Commands[i][1] == "win" then
-                local FoundQuests = self:FindQuestNames(Commands[i][2], true);
+                local FoundQuests = self:FindQuestsByExactName(Commands[i][2], 1);
                 error(#FoundQuests == 1, "Unable to find quest containing '" ..Commands[i][2].. "'");
                 if Commands[i][1] == "fail" then
-                    FailQuest(FoundQuests[1]);
-                    log("fail quest '" ..FoundQuests[1].. "'");
+                    FailQuest(FoundQuests[1].Identifier);
+                    log("forced quest to fail: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "restart" then
-                    RestartQuest(FoundQuests[1]);
-                    log("restart quest '" ..FoundQuests[1].. "'");
+                    RestartQuest(FoundQuests[1].Identifier);
+                    log("forced quest to restart: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "start" then
-                    StartQuest(FoundQuests[1]);
-                    log("trigger quest '" ..FoundQuests[1].. "'");
+                    StartQuest(FoundQuests[1].Identifier);
+                    log("forced quest to start: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "stop" then
-                    StopQuest(FoundQuests[1]);
-                    log("interrupt quest '" ..FoundQuests[1].. "'");
+                    StopQuest(FoundQuests[1].Identifier);
+                    log("forced quest to stop: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "win" then
-                    WinQuest(FoundQuests[1]);
-                    log("win quest '" ..FoundQuests[1].. "'");
+                    WinQuest(FoundQuests[1].Identifier);
+                    log("forced quest to succeed: '" ..FoundQuests[1].Identifier.. "'");
                 end
             end
 
             if Commands[i][1] == "stopped" then
-                log(self:FindQuestsByState(QuestResult.Interrupted));
+                AddNote(self:ListQuestsByResult(QuestResult.Interrupted, 15));
+                log(self:ListQuestsByResult(QuestResult.Interrupted));
             elseif Commands[i][1] == "active" then
-                log(self:FindQuestsByState(QuestResult.Active));
+                AddNote(self:ListQuestsByState(QuestState.Active, 15));
+                log(self:ListQuestsByState(QuestState.Active));
             elseif Commands[i][1] == "won" then
-                log(self:FindQuestsByState(QuestResult.Success));
+                AddNote(self:ListQuestsByResult(QuestResult.Success, 15));
+                log(self:ListQuestsByResult(QuestResult.Success));
             elseif Commands[i][1] == "failed" then
-                log(self:FindQuestsByState(QuestResult.Failure));
+                AddNote(self:ListQuestsByResult(QuestResult.Failure, 15));
+                log(self:ListQuestsByResult(QuestResult.Failure));
             elseif Commands[i][1] == "waiting" then
-                log(self:FindQuestsByState(QuestResult.NotTriggered));
+                AddNote(self:ListQuestsByState(QuestState.NotTriggered, 15));
+                log(self:ListQuestsByState(QuestState.NotTriggered));
             elseif Commands[i][1] == "find" then
-                log(self:FindQuestsByNamePart(Commands[i]));
+                AddNote(self:ListQuestsByName(Commands[i][2], 15));
+                log(self:ListQuestsByName(Commands[i][2]));
             end
         end
     end
