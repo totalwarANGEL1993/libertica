@@ -293,5 +293,8 @@
         "test",
         "var",
         "release/libertica_api",
+    ],
+    "Lua.diagnostics.disable": [
+        "lowercase-global"
     ]
 }

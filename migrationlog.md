@@ -12,5 +12,9 @@ Summary:  Only the first player note is colored violet.
 
 ## Console commands
 Location: any occurances of `:ProcessChatInput`
-Summary:  Input is parsed into `Commands` and then iterated. But the Index was
-          missing and certain commands did not work because of this.
+Summary:  Input is parsed into `Commands` and then iterated. But the Index was missing and certain commands did not work because of this.
+
+## String Tables
+Location: any String Table regex
+Summary:  Wrong range defined in regex. Quests use different format
+for string tables
