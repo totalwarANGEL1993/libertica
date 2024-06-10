@@ -124,9 +124,11 @@ end
 function Lib.Core.Debug:ProcessDebugShortcut(_Type, _Params)
     if self.DevelopingCheats then
         if _Type == "RestartMap" then
+            self:HideDebugInput();
             Framework.RestartMap();
         elseif _Type == "Terminal" then
             ShowTextInput(GUI.GetPlayerID(), true);
+            -- ToggleScriptConsole();
         end
     end
 end
@@ -225,8 +227,85 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.Core.Debug:ToggleDebugInput()
+    if self.ConsoleIsVisible then
+        self:HideDebugInput();
+    else
+        self:ShowDebugInput();
+    end
+end
+
+function Lib.Core.Debug:ShowDebugInput()
+    local MotherPath = "/InGame/TempStuff/BGTopBar/temp";
+    local TopWidget = XGUIEng.GetWidgetPathByID(XGUIEng.GetTopPage());
+    if self.ConsoleIsVisible then
+        return;
+    end
+    Display.ToggleScriptConsole();
+    if TopWidget ~= MotherPath then
+        XGUIEng.PushPage(MotherPath, false);
+    end
+    XGUIEng.ShowWidget(MotherPath, 0);
+    RequestHiResDelay(0, function()
+        XGUIEng.ShowWidget(MotherPath, 1);
+        XGUIEng.ShowAllSubWidgets(MotherPath, 1);
+        XGUIEng.ShowWidget(MotherPath.. "/ShadowBottom", 0);
+        XGUIEng.ShowWidget(MotherPath.. "/ShadowTop", 0);
+        XGUIEng.ShowWidget(MotherPath.. "/BGTopBarRightBound", 0);
+        XGUIEng.SetWidgetLocalPosition(MotherPath, 0, 0);
+        XGUIEng.SetWidgetLocalPosition(MotherPath.. "/BGTopBarLeftBound/1", 10, -22)
+        XGUIEng.SetWidgetLocalPosition(MotherPath.. "/BGTopBarLeftBound/2", 295, -22)
+        XGUIEng.SetWidgetLocalPosition(MotherPath.. "/BGTopBarLeftBound/3", 592, -22)
+        XGUIEng.SetWidgetLocalPosition(MotherPath.. "/BGTopBarLeftBound/4", 889, -22)
+        XGUIEng.SetWidgetLocalPosition(MotherPath.. "/BGTopBarLeftBound/5", 1184, -22)
+        XGUIEng.SetWidgetLocalPosition(MotherPath.. "/BGTopBarLeftBound/6", 1483, -22);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6", 275, 300);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/Frame", 275, 300);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/Frame/Bottom", 275, 300);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/Frame/Bottom/1", 275, 100);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/Frame/Top", 275, 300);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/Frame/Top/1", 275, 60);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6", 275, 60);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/DialogBG", 275, 60);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/DialogBG/1", 275, 60);
+        XGUIEng.SetWidgetSize(MotherPath.. "/BGTopBarLeftBound/6/DialogBG/1/1", 275, 60);
+        XGUIEng.SetWidgetLocalPosition(MotherPath, 0, -140);
+    end);
+
+    self.ConsoleIsVisible = true;
+end
+
+function Lib.Core.Debug:HideDebugInput()
+    local MotherPath = "/InGame/TempStuff/BGTopBar/temp";
+    if not self.ConsoleIsVisible then
+        return;
+    end
+    Display.ToggleScriptConsole();
+    XGUIEng.ShowWidget(MotherPath, 0);
+
+    self.ConsoleIsVisible = false;
+end
+
+-- -------------------------------------------------------------------------- --
+
 function ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
     Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests);
 end
 API.ActivateDebugMode = ActivateDebugMode;
+
+function ShowScriptConsole()
+    Lib.Core.Debug:ShowDebugInput();
+end
+
+function HideScriptConsole()
+    Lib.Core.Debug:HideDebugInput();
+end
+
+function ToggleScriptConsole()
+    Lib.Core.Debug:ToggleDebugInput();
+end
+
+function IsScriptConsoleShown()
+    return Lib.Core.Debug.ConsoleIsVisible == true;
+end
 

@@ -10,6 +10,7 @@ Lib.BriefingSystem.Local = {
         DoAlternateGraphics = true,
     },
     ParallaxWidgets = {
+        Pushed = {},
         -- Can not set UV coordinates for this... :(
         -- {"/EndScreen/EndScreen/BG", "/EndScreen/EndScreen"},
         {"/EndScreen/EndScreen/BackGround", "/EndScreen/EndScreen"},
@@ -18,6 +19,8 @@ Lib.BriefingSystem.Local = {
         {"/InGame/Root/EndScreen/BlackBG", "/InGame/Root/EndScreen"},
         {"/InGame/Root/EndScreen/BG", "/InGame/Root/EndScreen"},
         {"/InGame/Root/BlackStartScreen/BG", "/InGame/Root/BlackStartScreen"},
+        -- Can not set UV coordinates for this... :(
+        -- {"/InGame/Root/PresentationLoadingScreen/BG", "/InGame/Root/PresentationLoadingScreen"},
     },
     Briefing = {},
 };
@@ -821,9 +824,9 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
                 u1 = u1 - (u1 * 0.125);
             end
 
-            XGUIEng.SetMaterialAlpha(Widget, 1, Alpha or 255);
-            XGUIEng.SetMaterialTexture(Widget, 1, Image);
-            XGUIEng.SetMaterialUV(Widget, 1, u0, v0, u1, v1);
+            XGUIEng.SetMaterialColor(Widget, 0, 255, 255, 255, Alpha or 255);
+            XGUIEng.SetMaterialTexture(Widget, 0, Image);
+            XGUIEng.SetMaterialUV(Widget, 0, u0, v0, u1, v1);
         end
     end
 end
@@ -1232,15 +1235,19 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     function EndScreen_ExitGame() end
     function MissionFadeInEndScreen() end
     for i= 1, #self.ParallaxWidgets do
-        XGUIEng.ShowWidget(self.ParallaxWidgets[i][1], 1);
         XGUIEng.ShowWidget(self.ParallaxWidgets[i][2], 1);
-        XGUIEng.PushPage(self.ParallaxWidgets[i][2], false);
+        if not self.ParallaxWidgets.Pushed[self.ParallaxWidgets[i][2]] then
+            self.ParallaxWidgets.Pushed[self.ParallaxWidgets[i][2]] = true;
+            XGUIEng.PushPage(self.ParallaxWidgets[i][2], false);
+        end
+        XGUIEng.ShowWidget(self.ParallaxWidgets[i][1], 1);
 
-        XGUIEng.SetMaterialTexture(self.ParallaxWidgets[i][1], 1, "");
-        XGUIEng.SetMaterialColor(self.ParallaxWidgets[i][1], 1, 255, 255, 255, 0);
-        XGUIEng.SetMaterialUV(self.ParallaxWidgets[i][1], 1, 0, 0, 1, 1);
+        XGUIEng.SetMaterialTexture(self.ParallaxWidgets[i][1], 0, "");
+        XGUIEng.SetMaterialColor(self.ParallaxWidgets[i][1], 0, 255, 255, 255, 0);
+        XGUIEng.SetMaterialUV(self.ParallaxWidgets[i][1], 0, 0, 0, 1, 1);
     end
     XGUIEng.ShowWidget("/EndScreen/EndScreen/BG", 0);
+    XGUIEng.ShowWidget("/InGame/Root/PresentationLoadingScreen/Logo", 0);
 
     -- Throneroom Main
     XGUIEng.ShowWidget("/InGame/ThroneRoom", 1);
@@ -1342,6 +1349,8 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     end
 
     XGUIEng.ShowWidget("/EndScreen/EndScreen/BG", 1);
+    XGUIEng.ShowWidget("/InGame/Root/PresentationLoadingScreen/Logo", 1);
+    self.ParallaxWidgets.Pushed = {};
     for i= 1, #self.ParallaxWidgets do
         XGUIEng.ShowWidget(self.ParallaxWidgets[i][1], 0);
         XGUIEng.ShowWidget(self.ParallaxWidgets[i][2], 0);
