@@ -1231,6 +1231,11 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     end
     local ScreenX, ScreenY = GUI.GetScreenSize();
 
+    local ConsoleWasVisible = IsScriptConsoleShown();
+    if ConsoleWasVisible then
+        HideScriptConsole();
+    end
+
     -- Parallax
     function EndScreen_ExitGame() end
     function MissionFadeInEndScreen() end
@@ -1317,6 +1322,9 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     g_Fade.To = 0;
     SetFaderAlpha(0);
 
+    if ConsoleWasVisible then
+        ShowScriptConsole();
+    end
     if not self.LoadscreenClosed then
         XGUIEng.PushPage("/LoadScreen/LoadScreen", false);
     end
@@ -1327,6 +1335,11 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
         return;
     end
     self.CinematicActive = false;
+
+    local ConsoleWasVisible = IsScriptConsoleShown();
+    if ConsoleWasVisible then
+        HideScriptConsole();
+    end
 
     g_Fade.To = 0;
     SetFaderAlpha(0);
@@ -1370,6 +1383,10 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
 
     ResetRenderDistance();
+
+    if ConsoleWasVisible then
+        ShowScriptConsole();
+    end
 end
 
 -- -------------------------------------------------------------------------- --

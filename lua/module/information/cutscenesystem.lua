@@ -614,6 +614,12 @@ function Lib.CutsceneSystem.Local:ActivateCinematicMode(_PlayerID)
     if not self.LoadscreenClosed then
         XGUIEng.PopPage();
     end
+
+    local ConsoleWasVisible = IsScriptConsoleShown();
+    if ConsoleWasVisible then
+        HideScriptConsole();
+    end
+
     local ScreenX, ScreenY = GUI.GetScreenSize();
 
     XGUIEng.ShowWidget("/InGame/ThroneRoom", 1);
@@ -675,6 +681,9 @@ function Lib.CutsceneSystem.Local:ActivateCinematicMode(_PlayerID)
     g_Fade.To = 1;
     SetFaderAlpha(1);
 
+    if ConsoleWasVisible then
+        ShowScriptConsole();
+    end
     if not self.LoadscreenClosed then
         XGUIEng.PushPage("/LoadScreen/LoadScreen", false);
     end
@@ -685,6 +694,11 @@ function Lib.CutsceneSystem.Local:DeactivateCinematicMode(_PlayerID)
         return;
     end
     self.CinematicActive = false;
+
+    local ConsoleWasVisible = IsScriptConsoleShown();
+    if ConsoleWasVisible then
+        HideScriptConsole();
+    end
 
     g_Fade.To = 0;
     SetFaderAlpha(0);
@@ -719,6 +733,10 @@ function Lib.CutsceneSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", " ");
 
     ResetRenderDistance();
+
+    if ConsoleWasVisible then
+        ShowScriptConsole();
+    end
 end
 
 -- -------------------------------------------------------------------------- --
