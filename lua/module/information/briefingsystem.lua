@@ -220,7 +220,7 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
                     _Page.DisableSkipping = false;
                 end
                 _Page.Duration = _Page.Text:len() * CONST_BRIEFING.TIMER_PER_CHAR;
-                _Page.Duration = (_Page.Duration < 6 and 6) or _Page.Duration < 6;
+                _Page.Duration = (_Page.Duration < 6 and 6) or _Page.Duration;
             end
         end
 
@@ -370,6 +370,7 @@ function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
             local PageID = self:GetPageIDByName(_PlayerID, k);
             if PageID ~= 0 then
                 self.Briefing[_PlayerID][PageID].Parallax = {};
+                self.Briefing[_PlayerID][PageID].Parallax.Repeat = v.Repeat == true;
                 self.Briefing[_PlayerID][PageID].Parallax.Clear = v.Clear == true;
                 for i= 1, 4, 1 do
                     if v[i] then
@@ -772,7 +773,12 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
         for Index, Data in pairs(self.Briefing[_PlayerID].ParallaxLayers) do
             local Widget = self.ParallaxWidgets[Index][1];
             local Size = {GUI.GetScreenSize()};
-            local Factor = math.min(math.lerp(Data.Started, CurrentTime, Data.Duration), 1);
+
+            local Factor = math.lerp(Data.Started, CurrentTime, Data.Duration);
+            if Factor > 1 and Data.Repeat then
+                self.Briefing[_PlayerID].ParallaxLayers[Index].Started = CurrentTime;
+                Factor = math.lerp(Data.Started, CurrentTime, Data.Duration);
+            end
             if Data.Interpolation then
                 Factor = math.min(Data:Interpolation(CurrentTime), 1);
             end
@@ -1211,12 +1217,12 @@ function Lib.BriefingSystem.Local:OverrideThroneRoomFunctions()
         end
     end
 
-    GameCallback_Escape_Orig_BriefingSystem = GameCallback_Escape;
+    self.Orig_GameCallback_Escape = GameCallback_Escape;
     GameCallback_Escape = function()
         if Lib.BriefingSystem.Local.Briefing[GUI.GetPlayerID()] then
             return;
         end
-        GameCallback_Escape_Orig_BriefingSystem();
+        Lib.BriefingSystem.Local.Orig_GameCallback_Escape();
     end
 end
 

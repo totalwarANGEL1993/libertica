@@ -56,6 +56,8 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 ---
 --- *-> Beispiel #6*
 ---
+--- *-> Beispiel #7*
+---
 --- #### Beispiele
 ---
 --- * Beispiel #1: Grundlegende Struktur
@@ -141,6 +143,18 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 --- Briefing.PageParallax = {
 ---     ["Seite1"] = {
 ---         Clear = true,
+---         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
+---          {0, 0, 0.8, 1, 255},
+---          {0.2, 0, 1, 1, 255}},
+---     },
+--- };
+--- ```
+---
+--- * Beispiel #7: Endlos wiederholte Parallaxe
+--- ```lua
+--- Briefing.PageParallax = {
+---     ["Seite1"] = {
+---         Repeat = true,
 ---         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
 ---          {0, 0, 0.8, 1, 255},
 ---          {0.2, 0, 1, 1, 255}},
