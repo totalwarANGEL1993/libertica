@@ -28,6 +28,7 @@ Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIEffects");
 Lib.Require("module/ui/UITools");
+Lib.Require("module/settings/Sound");
 Lib.Require("module/information/Requester");
 Lib.Require("module/information/DialogSystem_Text");
 Lib.Require("module/information/DialogSystem_API");
@@ -507,6 +508,7 @@ function Lib.DialogSystem.Local:EndDialog(_PlayerID, _DialogName, _Dialog)
         Camera.RTS_SetRotationAngle(self.Dialog[_PlayerID].Backup.Camera[3]);
         Camera.RTS_SetZoomFactor(self.Dialog[_PlayerID].Backup.Camera[4]);
     end
+    StopVoice("DialogSpeech");
 
     self:DeactivateCinematicMode(_PlayerID);
     ActivateNormalInterface(_PlayerID);
@@ -650,6 +652,11 @@ function Lib.DialogSystem.Local:DisplayPageText(_PlayerID, _PageID)
     end
     XGUIEng.SetText(SubtitlesWidget.. "/VoiceText1", Text .. Extension);
     self:SetSubtitlesPosition(_PlayerID, _PageID);
+
+    StopVoice("DialogSpeech");
+    if Page and Page.Speech then
+        PlayVoice(Page.Speech, "DialogSpeech");
+    end
 end
 
 function Lib.DialogSystem.Local:SetSubtitlesPosition(_PlayerID, _PageID)

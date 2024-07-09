@@ -227,6 +227,7 @@ API.AddBriefingPages = AddBriefingPages;
 ---
 --- * `Title`           - Angezeigter Seitentitel
 --- * `Text`            - Angezeigter Seitentext
+--- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
 --- * `Position`        - Skriptname der Position
 --- * `Duration`        - Zeit bis zum automatischen Überspringen
 --- * `DialogCamera`    - Verwendung der Nahaufnahmekamera

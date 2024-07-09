@@ -39,6 +39,7 @@ CONST_BRIEFING = {
 
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
+Lib.Require("module/settings/Sound");
 Lib.Require("module/ui/UIEffects");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester");
@@ -596,6 +597,7 @@ function Lib.BriefingSystem.Local:EndBriefing(_PlayerID, _BriefingName)
         Camera.RTS_SetRotationAngle(Briefing.Backup.Camera[3]);
         Camera.RTS_SetZoomFactor(Briefing.Backup.Camera[4]);
     end
+    StopVoice("BriefingSpeech");
 
     self:DeactivateCinematicMode(_PlayerID);
     ActivateNormalInterface(_PlayerID);
@@ -695,6 +697,10 @@ function Lib.BriefingSystem.Local:DisplayPageText(_PlayerID, _PageID)
             Text = "{cr}{cr}{cr}" .. Text;
         end
         XGUIEng.SetText(TextWidget, Text);
+    end
+    StopVoice("BriefingSpeech");
+    if Page.Speech then
+        PlayVoice(Page.Speech, "BriefingSpeech");
     end
 end
 
