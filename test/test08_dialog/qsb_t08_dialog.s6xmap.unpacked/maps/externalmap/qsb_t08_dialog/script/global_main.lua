@@ -107,15 +107,18 @@ function BriefingTest3(_Name, _PlayerID)
     }
     local AP, ASP = AddBriefingPages(Briefing);
 
+    ASP("Page 0", "This is a briefing. I have to say important things.", false, "hero");
     ASP("SpecialNamedPage1", "Page 1", "This is a briefing. I have to say important things.", false, "hero");
     ASP("SpecialNamedPage2", "Page 2", "WOW! That is very cool.", false, "hero");
 
     Briefing.PageParallax = {
         ["SpecialNamedPage1"] = {
-            {"C:/IMG/Paralax1.png", 60, 0, 0, 1, 1, 255, 0, 0, 1, 1, 255},
-            {"C:/IMG/Paralax2.png", 60, 0, 0, 1, 1, 255, 0, 0, 1, 1, 255},
-            {"C:/IMG/Paralax3.png", 60, 0, 0, 1, 1, 255, 0, 0, 1, 1, 255},
-            {"C:/IMG/Paralax4.png", 60, 0, 0, 1, 1, 255, 0, 0, 1, 1, 255},
+            {"C:/IMG/Paralax1.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
+            {"C:/IMG/Paralax2.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
+            {"C:/IMG/Paralax3.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
+            {"C:/IMG/Paralax4.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
+            -- {"C:/IMG/Paralax5.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
+            --{"C:/IMG/Paralax6.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
         },
         ["SpecialNamedPage2"] = {
             Clear = true
@@ -348,8 +351,5 @@ end
 function GameCallback_Lib_LoadingFinished()
     ActivateDebugMode(true, true, true, true, false);
     SetPlayerPortrait(1);
-
-    RequestAlternateSound();
-    RequestDialogAlternateGraphics();
 end
 
