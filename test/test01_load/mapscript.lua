@@ -98,6 +98,12 @@ function GameCallback_Lib_LoadingFinished()
     }
 end
 
+function MockLanguageSelection()
+    DefineLanguage("gz", "Generation Z Slang", "de", 2);
+    DefineLanguage("pc", "Politisch Korrekt", "de", 2);
+    DialogLanguageSelection(1);
+end
+
 function TestTypeWriter()
     local EventName = StartTypewriter {
         PlayerID = 1,

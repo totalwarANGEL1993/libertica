@@ -32,11 +32,6 @@ Lib.Register("module/entity/NPC");
 -- Global initalizer method
 function Lib.NPC.Global:Initialize()
     if not self.IsInstalled then
-        --- Someone talks to an NPC
-        ---
-        --- #### Parameters
-        --- * `NpcEntityID`  - ID of npc
-        --- * `HeroEntityID` - ID of hero
         Report.NpcInteraction = CreateReport("Event_NpcInteraction");
 
         self:OverrideQuestFunctions();

@@ -825,9 +825,11 @@ function Lib.Quest.Local:OverwriteQuestTexts()
     --- @return string Name Name of string
     --- @return string? File Name of file
     GetTextOverride = function(_Quest)
-        assert(type(_Quest) == "table");
-
         local Result;
+        if not _Quest then
+            return;
+        end
+        assert(type( _Quest ) == "table");
         if _Quest.State == QuestState.Over then
             if _Quest.Result == QuestResult.Success then
                 local Text = _Quest.QuestSuccessMsg or "";
