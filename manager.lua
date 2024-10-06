@@ -4,6 +4,7 @@ LibWriter = {
     ComponentList = {
         "core/QSB",
         "core/Core",
+        "module/diplomacy/Diplomacy",
         "module/city/Construction",
         "module/entity/NPC",
         "module/settings/Sound",

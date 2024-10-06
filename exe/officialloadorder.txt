@@ -47,6 +47,7 @@ comfort/local/test
 
 core/QSB
 core/Core
+module/diplomacy/Diplomacy
 module/ui/UITools
 module/ui/UIEffects
 module/ui/UIBuilding

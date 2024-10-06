@@ -1,11 +1,12 @@
 --- Implementiert härtere Baubeschwänkungen im Spiel.
 ---
---- Wird der Modus aktiviert, gelden die voreingestellten Standardregeln. Diese
+--- Wird der Modus aktiviert, gelten die voreingestellten Standardregeln. Diese
 --- können im begrenzten Ausmaß individualisiert werden.
 ---
 --- Standardregeln:
 --- * Die Gebäudeanzahl im Heimatgebiet ist nicht beschränkt
 --- * Stadtgebäude können nur auf dem Heimatgebiet gebaut werden
+--- * Ziergebäude können überall gebaut werden
 --- * In Territorien können nur 3 Gebäude gebaut werden. Dabei zählen Felder
 ---   und Bienenstöcke nicht als Gebäude.
 --- * Jeder Gebäudetyp kann nur 1 mal pro Territorium gebaut werden.
