@@ -27,7 +27,7 @@ CONST_IO_LAST_HERO = 0;
 Lib.Require("comfort/GetClosestToTarget");
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/IsHistoryEdition");
-Lib.Require("comfort/global/ReplaceEntity");
+Lib.Require("comfort/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/faker/Technology");
