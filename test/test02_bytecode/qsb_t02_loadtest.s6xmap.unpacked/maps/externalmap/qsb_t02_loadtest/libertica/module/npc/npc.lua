@@ -19,7 +19,7 @@ CONST_LAST_HERO_INTERACTED = 0;
 
 Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetClosestToTarget");
-Lib.Require("comfort/global/LookAt");
+Lib.Require("comfort/LookAt");
 Lib.Require("core/Core");
 Lib.Require("module/npc/NPC_API");
 Lib.Register("module/npc/NPC");

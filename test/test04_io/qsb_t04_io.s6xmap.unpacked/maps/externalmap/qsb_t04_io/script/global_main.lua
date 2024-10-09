@@ -13,7 +13,7 @@ if CONST_IS_IN_DEV then
 else
     Script.Load("maps/externalmap/qsb_t04_io/libertica/librarian.lua");
 end
-Lib.Require("comfort/global/ReplaceEntity");
+Lib.Require("comfort/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/entity/NPC");

@@ -16,9 +16,9 @@ SegmentResult = {
     Ignore  = 3,
 }
 
-Lib.Require("comfort/global/GetQuestID");
-Lib.Require("comfort/global/IsValidQuest");
-Lib.Require("comfort/global/IsValidQuestName");
+Lib.Require("comfort/GetQuestID");
+Lib.Require("comfort/IsValidQuest");
+Lib.Require("comfort/IsValidQuestName");
 Lib.Require("core/core");
 Lib.Require("module/quest/Quest_API");
 Lib.Require("module/quest/Quest_Behavior");

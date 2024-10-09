@@ -11,7 +11,7 @@ Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/li
 
 Lib.Loader.PushPath("E:/Repositories/libertica/var/");
 
-Lib.Require("comfort/global/ReplaceEntity");
+Lib.Require("comfort/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/ui/UITools");

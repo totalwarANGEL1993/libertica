@@ -17,7 +17,7 @@ API.NpcCompose = NpcCompose;
 function NpcDispose(_Data)
     error(not IsLocalScript(), "NPC manipulated in local script.");
     error(IsExisting(_Data.Name), "Entity does not exist.");
-    error(Lib.NPC.Global:GetNpc(_Data.Name) == nil, "NPC must first be composed.");
+    error(Lib.NPC.Global:GetNpc(_Data.Name) ~= nil, "NPC must first be composed.");
     Lib.NPC.Global:DestroyNpc(_Data);
 end
 API.NpcDispose = NpcDispose;

@@ -1,4 +1,4 @@
-Lib.Register("comfort/global/GetRandomSettlerType");
+Lib.Register("comfort/GetRandomSettlerType");
 
 CONST_RANDOM_SETTLER_TYPES = {
     Male = {
