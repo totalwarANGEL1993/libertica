@@ -53,7 +53,7 @@ function Lib.SettlementLimitation.Global:Initialize()
         Lib.SettlementLimitation.Shared:CreateTypeLists();
 
         -- Garbage collection
-        Lib.SettlementSurvival.Local = nil;
+        Lib.SettlementLimitation.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -228,7 +228,7 @@ function Lib.SettlementLimitation.Local:Initialize()
         Lib.SettlementLimitation.Shared:CreateTypeLists();
 
         -- Garbage collection
-        Lib.SettlementSurvival.Global = nil;
+        Lib.SettlementLimitation.Global = nil;
     end
     self.IsInstalled = true;
 end

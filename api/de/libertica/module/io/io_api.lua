@@ -174,7 +174,7 @@ API.RequireTitleToBuildTradeposts = RequireTitleToBuildTradeposts;
 
 --- Aktiviert ein interaktives Objekt.
 --- @param _ScriptName string Skriptname der Entität
---- @param _State integer     Interaktionszustand
+--- @param _State? integer    Interaktionszustand
 --- @param ... integer        Liste der Spieler-IDs
 InteractiveObjectActivate = function(_ScriptName, _State, ...)
 end
