@@ -571,6 +571,7 @@ function Lib.BriefingSystem.Local:StartBriefing(_PlayerID, _BriefingName, _Brief
     local SpeedFactor = Game.GameTimeGetFactor(_PlayerID);
     self.Briefing[_PlayerID].Backup = {
         Camera = {PosX, PosY, Rotation, ZoomFactor},
+        Throneroom = {0, 0},
         Speed  = SpeedFactor,
     };
 
@@ -596,6 +597,9 @@ function Lib.BriefingSystem.Local:EndBriefing(_PlayerID, _BriefingName)
         Camera.RTS_SetLookAtPosition(Briefing.Backup.Camera[1], Briefing.Backup.Camera[2]);
         Camera.RTS_SetRotationAngle(Briefing.Backup.Camera[3]);
         Camera.RTS_SetZoomFactor(Briefing.Backup.Camera[4]);
+    else
+        Throneroom = self.Briefing[_PlayerID].Throneroom;
+        Camera.RTS_SetLookAtPosition(Throneroom[1], Throneroom[2]);
     end
     StopVoice("BriefingSpeech");
 
@@ -932,6 +936,7 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
         Camera.ThroneRoom_SetPosition(PX, PY, PZ);
         Camera.ThroneRoom_SetLookAt(LX, LY, LZ);
         Camera.ThroneRoom_SetFOV(FOV);
+        self.Briefing[_PlayerID].Throneroom = {LX, LY};
 
         -- Parallax
         self:ControlParallaxes(_PlayerID);
