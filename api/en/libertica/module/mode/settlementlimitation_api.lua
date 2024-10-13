@@ -6,6 +6,8 @@
 --- Standard rules:
 --- * The number of buildings in the home territory is not limited
 --- * City buildings can only be built in the home territory
+--- * Palisades can only be placed on the home territory or near outposts.
+--- * Walls can only be placed on the home territory.
 --- * In territories, only 3 buildings can be built.
 --- * When a outpost is upgraded the max amount of buildings is permemently
 ---   increased  to 4.
@@ -19,6 +21,11 @@ Lib.SettlementLimitation = Lib.SettlementLimitation or {};
 --- Activates or deactivates the mode.
 --- @param _Flag boolean Indicates whether the mode is active
 function ActivateSettlementLimitation(_Flag)
+end
+
+--- Activates or deactivates the restrictions for placing walls.
+--- @param _Flag boolean Walls will be restricted
+function UseRampartLimitation(_Flag)
 end
 
 --- Sets the title, required for developing territories.

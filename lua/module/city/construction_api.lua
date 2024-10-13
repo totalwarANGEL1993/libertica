@@ -1,6 +1,26 @@
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/city/Construction_API");
 
+function UseForceBallistaDistance(_Flag)
+    if not IsLocalScript() then
+        ExecuteLocal("UseForceBallistaDistance(%s)", tostring(_Flag == true));
+    end
+    Lib.Construction.AquireContext();
+    this.Construction.ForceBallistaDistance = _Flag == true;
+    Lib.Construction.ReleaseContext();
+end
+API.UseForceBallistaDistance = UseForceBallistaDistance;
+
+function UseForceGateDistance(_Flag)
+    if not IsLocalScript() then
+        ExecuteLocal("UseForceGateDistance(%s)", tostring(_Flag == true));
+    end
+    Lib.Construction.AquireContext();
+    this.Construction.ForceGateDistance = _Flag == true;
+    Lib.Construction.ReleaseContext();
+end
+API.UseForceGateDistance = UseForceGateDistance;
+
 function CustomRuleConstructBuilding(_PlayerID, _FunctionName, ...)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:CustomRuleConstructBuilding(_PlayerID, _FunctionName, unpack(arg));

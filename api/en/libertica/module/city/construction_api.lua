@@ -12,6 +12,18 @@ Lib.Construction = Lib.Construction or {};
 
 
 
+--- Activates or deactivates the forced distance between ballistas.
+--- @param _Flag boolean Limitation is active
+function UseForceBallistaDistance(_Flag)
+end
+API.UseForceBallistaDistance = UseForceBallistaDistance;
+
+--- Activates or deactivates the forced distance between gates.
+--- @param _Flag boolean Limitation is active
+function UseForceGateDistance(_Flag)
+end
+API.UseForceGateDistance = UseForceGateDistance;
+
 --- Defines a custom rule for construction buildings.
 ---
 --- The function must be located in the **global script**!

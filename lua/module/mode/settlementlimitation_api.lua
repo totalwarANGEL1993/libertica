@@ -11,6 +11,16 @@ function ActivateSettlementLimitation(_Flag)
 end
 API.ActivateSettlementLimitation = ActivateSettlementLimitation;
 
+function UseRampartLimitation(_Flag)
+    if not IsLocalScript() then
+        ExecuteLocal("UseRampartLimitation(%s)", tostring(_Flag == true));
+    end
+    Lib.SettlementLimitation.AquireContext();
+    this.RestrictWalls = _Flag == true;
+    Lib.SettlementLimitation.ReleaseContext();
+end
+API.UseRampartLimitation = UseRampartLimitation;
+
 function RequireTitleToDevelopTerritory(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
     ExecuteLocal([[
@@ -92,7 +102,7 @@ function SetTerritoryDevelopmentCost(_CostType1, _Amount1, _CostType2, _Amount2)
         );
     end
     Lib.SettlementLimitation.AquireContext();
-    this.UpgradeTerritoryCosts = {_CostType1, _Amount1, _CostType2, _Amount2};
+    this.DevelopTerritoryCosts = {_CostType1, _Amount1, _CostType2, _Amount2};
     Lib.SettlementLimitation.ReleaseContext();
 end
 API.SetTerritoryDevelopmentCost = SetTerritoryDevelopmentCost;

@@ -6,6 +6,7 @@ Lib.SettlementLimitation.Global = {
     TerritoryTypeRestriction = {},
     AdditionalBuildingBonus = {},
     MultiConstructionBonus = {},
+    RestrictWalls = true,
 };
 Lib.SettlementLimitation.Local  = {
     Active = false,
@@ -13,6 +14,7 @@ Lib.SettlementLimitation.Local  = {
     TerritoryTypeRestriction = {},
     AdditionalBuildingBonus = {},
     MultiConstructionBonus = {},
+    RestrictWalls = true,
 };
 Lib.SettlementLimitation.Shared = {
     TechnologyConfig = {
@@ -24,6 +26,7 @@ Lib.SettlementLimitation.Shared = {
     OuterRimBuildings = {},
 };
 
+Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetTerritoryID");
 Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
@@ -42,6 +45,8 @@ Lib.Register("module/mode/SettlementLimitation");
 function Lib.SettlementLimitation.Global:Initialize()
     if not self.IsInstalled then
         Report.DevelopTerritory_Internal = CreateReport("DevelopTerritory_Internal");
+
+        self:InitConstructionLimitRules();
 
         for PlayerID = 1, 8 do
             self.TerritoryRestriction[PlayerID] = {};
@@ -68,20 +73,27 @@ function Lib.SettlementLimitation.Global:OnReportReceived(_ID, ...)
         self.LoadscreenClosed = true;
         for PlayerID = 1, 8 do
             self:InitDefaultRules(PlayerID);
-            self:InitConstructionLimit(PlayerID);
+            --
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_TerritoryBuildingTypeLimitRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_PalisadeGateRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_WallGateRule");
+            CustomRuleConstructWall(PlayerID, "SettlementLimitation_PalisadeRule");
+            CustomRuleConstructWall(PlayerID, "SettlementLimitation_WallRule");
         end
     elseif _ID == Report.BuildingUpgraded then
         local Costs = Lib.SettlementLimitation.Shared.DevelopTerritoryCosts;
+        local IsOutpost = Logic.IsEntityInCategory(arg[1], EntityCategories.Outpost) == 1;
         local TerritoryID = GetTerritoryUnderEntity(arg[1]);
-        local Bonus = self:GetMultiConstructionBonusAmount(arg[2], TerritoryID);
-        if Bonus == 0 then
+        local Bonus = self:GetAdditionalBuildingBonusAmount(arg[2], TerritoryID);
+        if IsOutpost and Bonus == 0 then
             AddGood(Costs[1], Costs[2], arg[1]);
-            self:SetMultiConstructionBonusAmount(arg[2], TerritoryID, 1);
+            self:SetAdditionalBuildingBonusAmount(arg[2], TerritoryID, 1);
         end
     elseif _ID == Report.DevelopTerritory_Internal then
-        local Bonus = self:GetAdditionalBuildingBonusAmount(arg[1], arg[2]);
+        local Bonus = self:GetMultiConstructionBonusAmount(arg[1], arg[2]);
         if Bonus == 0 then
-            self:SetAdditionalBuildingBonusAmount(arg[1], arg[2], 1);
+            self:SetMultiConstructionBonusAmount(arg[1], arg[2], 1);
         end
     end
 end
@@ -99,7 +111,7 @@ function Lib.SettlementLimitation.Global:InitDefaultRules(_PlayerID)
     end
 end
 
-function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
+function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
     -- Check general amount of buildings in a territory.
     SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule = function(_PlayerID, _Type, _X, _Y)
         local MainBuilding = Logic.GetStoreHouse(_PlayerID);
@@ -152,8 +164,35 @@ function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
         return true;
     end
 
-    CustomRuleConstructBuilding(_PlayerID, "SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule");
-    CustomRuleConstructBuilding(_PlayerID, "SettlementLimitation_Global_TerritoryBuildingTypeLimitRule");
+    -- Check palisade gates at home or near outpost
+    SettlementLimitation_Global_PalisadeGateRule = function(_PlayerID, _Type, _x, _y)
+        if Lib.SettlementLimitation.Global.RestrictWalls then
+            local StorehouseID = Logic.GetHeadquarters(_PlayerID);
+            local HomeTerritoryID = GetTerritoryUnderEntity(StorehouseID);
+            local TerritoryID = Logic.GetTerritoryAtPosition(_x, _y);
+            if Logic.IsEntityTypeInCategory(_Type, EntityCategories.PalisadeSegment) == 1 then
+                local OutpostList = {Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.Outpost, 0)};
+                return TerritoryID ~= HomeTerritoryID and
+                       OutpostList[1] and
+                       GetDistance(OutpostList[1], {X= _x, Y= _y}) <= 1500
+            end
+        end
+        return true;
+    end
+
+    -- Check wall gates at home 
+    SettlementLimitation_Global_WallGateRule = function(_PlayerID, _Type, _x, _y)
+        if Lib.SettlementLimitation.Global.RestrictWalls then
+            local StorehouseID = Logic.GetHeadquarters(_PlayerID);
+            local HomeTerritoryID = GetTerritoryUnderEntity(StorehouseID);
+            local TerritoryID = Logic.GetTerritoryAtPosition(_x, _y);
+            if Logic.IsEntityTypeInCategory(_Type, EntityCategories.CityWallSegment) == 1
+            or Logic.IsEntityTypeInCategory(_Type, EntityCategories.CityWallGate) == 1 then
+                return TerritoryID == HomeTerritoryID;
+            end
+        end
+        return true;
+    end
 end
 
 function Lib.SettlementLimitation.Global:ActivateSettlementLimitation(_Flag)
@@ -217,6 +256,7 @@ function Lib.SettlementLimitation.Local:Initialize()
 
         self:AddOutpostDevelopButton();
         self:OverwritePlacementUpdate();
+        self:InitConstructionLimitRules();
 
         for PlayerID = 1, 8 do
             self.TerritoryRestriction[PlayerID] = {};
@@ -241,6 +281,37 @@ end
 function Lib.SettlementLimitation.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    end
+end
+
+function Lib.SettlementLimitation.Local:InitConstructionLimitRules()
+    -- Check palisade segments at home or near outpost
+    SettlementLimitation_PalisadeRule = function(_PlayerID, _IsWall, _x, _y)
+        if Lib.SettlementLimitation.Local.RestrictWalls then
+            local StorehouseID = Logic.GetHeadquarters(_PlayerID);
+            local HomeTerritoryID = GetTerritoryUnderEntity(StorehouseID);
+            local TerritoryID = Logic.GetTerritoryAtPosition(_x, _y);
+            if not _IsWall then
+                local OutpostList = {Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.Outpost, 0)};
+                return TerritoryID ~= HomeTerritoryID and
+                       OutpostList[1] and
+                       GetDistance(OutpostList[1], {X= _x, Y= _y}) <= 1500
+            end
+        end
+        return true;
+    end
+
+    -- Check wall segments at home 
+    SettlementLimitation_WallRule = function(_PlayerID, _IsWall, _x, _y)
+        if Lib.SettlementLimitation.Local.RestrictWalls then
+            local StorehouseID = Logic.GetHeadquarters(_PlayerID);
+            local HomeTerritoryID = GetTerritoryUnderEntity(StorehouseID);
+            local TerritoryID = Logic.GetTerritoryAtPosition(_x, _y);
+            if _IsWall then
+                return TerritoryID ~= HomeTerritoryID;
+            end
+        end
+        return true;
     end
 end
 

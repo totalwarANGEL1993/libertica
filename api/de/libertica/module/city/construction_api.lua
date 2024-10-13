@@ -12,6 +12,18 @@ Lib.Construction = Lib.Construction or {};
 
 
 
+--- Aktiviert oder deaktiviert die erzwungene Distanz zwischen Mauerkatapulten.
+--- @param _Flag boolean Beschränkung ist aktiv
+function UseForceBallistaDistance(_Flag)
+end
+API.UseForceBallistaDistance = UseForceBallistaDistance;
+
+--- Aktiviert oder deaktiviert die erzwungene Distanz zwischen Toren.
+--- @param _Flag boolean Beschränkung ist aktiv
+function UseForceGateDistance(_Flag)
+end
+API.UseForceGateDistance = UseForceGateDistance;
+
 --- Definiert eine benutzerdefinierte Regel für den Bau von Gebäuden.
 ---
 --- Die Funktion muss im **globalen Skript** platziert sein!

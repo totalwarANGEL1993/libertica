@@ -20,7 +20,7 @@ function Lib.UITools.Widget:OverrideMissionGoodCounter()
     StartMissionGoodOrEntityCounter = function(_Icon, _AmountToReach)
         local IconWidget = "/InGame/Root/Normal/MissionGoodOrEntityCounter/Icon";
         local CounterWidget = "/InGame/Root/Normal/MissionGoodOrEntityCounter";
-        if type(_Icon[3]) == "string" or _Icon[3] > 2 then
+        if type(_Icon[3]) == "string" or (_Icon[3] or 0) > 2 then
             Lib.UITools.Widget:SetIcon(IconWidget, _Icon, 64, _Icon[3]);
         else
             SetIcon(IconWidget, _Icon);

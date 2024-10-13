@@ -2,6 +2,8 @@ Lib.Construction = Lib.Construction or {};
 Lib.Construction.Name = "Construction";
 Lib.Construction.Global = {
     Construction = {
+        ForceBallistaDistance = true,
+        ForceGateDistance = true,
         Restriction = {
             Index = 0,
             BuildingCustomRule = {},
@@ -34,6 +36,8 @@ Lib.Construction.Global = {
 };
 Lib.Construction.Local  = {
     Construction = {
+        ForceBallistaDistance = true,
+        ForceGateDistance = true,
         Restriction = {
             BuildingCustomRule = {},
             BuildingTerritoryBlacklist = {},
@@ -603,9 +607,12 @@ function Lib.Construction.Local:OverridePlacementUpdate()
 end
 
 function Lib.Construction.Local:AreOtherBallistasToCloseToPosition(_PlayerID, _x, _y, _AreaSize)
-    local nSite, SiteID = Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.U_MilitaryBallista_BuildingSite, _x, _y, _AreaSize, 1);
-    local nBallista, BallistaID = Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.U_MilitaryBallista, _x, _y, _AreaSize, 1);
-    return nSite > 0 or nBallista > 0;
+    if self.Construction.ForceBallistaDistance then
+        local nSite, SiteID = Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.U_MilitaryBallista_BuildingSite, _x, _y, _AreaSize, 1);
+        local nBallista, BallistaID = Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.U_MilitaryBallista, _x, _y, _AreaSize, 1);
+        return nSite > 0 or nBallista > 0;
+    end
+    return true;
 end
 
 function Lib.Construction.Local:CancleConstructWallState(_PlayerID, _SegmentType, _TurretType)
@@ -770,15 +777,17 @@ function Lib.Construction.Local:CancleConstructRoad(_PlayerID, _Length)
 end
 
 function Lib.Construction.Local:CancleWallGatesToCloseToEachother(_PlayerID)
-    local GuiState = GUI.GetCurrentStateID();
-    if GuiState == 3 then
-        local UpCat = Lib.Construction.Local.LastSelectedBuildingType;
-        local _, Type = Logic.GetBuildingTypesInUpgradeCategory(UpCat);
-        local AreaSize = (Type == Entities.B_PalisadeGate and 1200) or 2350;
-        local x,y = GUI.Debug_GetMapPositionUnderMouse();
-        local n, ID = Logic.GetPlayerEntitiesInArea(_PlayerID, Type, x, y, AreaSize, 1);
-        if n > 0 then
-            self:CancelState(-1);
+    if self.Construction.ForceGateDistance then
+        local GuiState = GUI.GetCurrentStateID();
+        if GuiState == 3 then
+            local UpCat = Lib.Construction.Local.LastSelectedBuildingType;
+            local _, Type = Logic.GetBuildingTypesInUpgradeCategory(UpCat);
+            local AreaSize = (Type == Entities.B_PalisadeGate and 1200) or 2350;
+            local x,y = GUI.Debug_GetMapPositionUnderMouse();
+            local n, ID = Logic.GetPlayerEntitiesInArea(_PlayerID, Type, x, y, AreaSize, 1);
+            if n > 0 then
+                self:CancelState(-1);
+            end
         end
     end
 end

@@ -6,6 +6,9 @@
 --- Standardregeln:
 --- * Die Gebäudeanzahl im Heimatgebiet ist nicht beschränkt.
 --- * Stadtgebäude können nur auf dem Heimatgebiet gebaut werden.
+--- * Palisaden können nur dem Heimatgebiet oder nahe von Außenposzen gebaut
+---   werden.
+--- * Mauern können nur auf dem Heimatgebiet gebaut werden.
 --- * In Territorien können nur 3 Gebäude gebaut werden. 
 --- * Wird der Außenposten ausgebaut, können dauerhaft 4 Gebäude gebaut werden.
 --- * Jeder Gebäudetyp kann nur 1 mal pro Territorium gebaut werden.
@@ -18,6 +21,11 @@ Lib.SettlementLimitation = Lib.SettlementLimitation or {};
 --- Aktiviert/deaktiviert den Modus.
 --- @param _Flag boolean Modus ist aktiv
 function ActivateSettlementLimitation(_Flag)
+end
+
+--- Aktiviert oder deaktiviert die Beschränkungen für Mauern.
+--- @param _Flag boolean Mauern sind beschränkt
+function UseRampartLimitation(_Flag)
 end
 
 --- Setzt den Titel, ab dem Territorien entwickelt werden können.
