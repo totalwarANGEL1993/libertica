@@ -3,8 +3,6 @@
 --- #### Special rules
 --- The following rules are always active and can not be deactivated:
 ---
---- * Gates can not be placed right beside each other. They need at least one
----   wall segment between.
 --- * Ballistas can not be placed right beside each other and always need a full
 ---   length wall segment between them (or multiple that are equally long).
 ---
@@ -17,12 +15,6 @@ Lib.Construction = Lib.Construction or {};
 function UseForceBallistaDistance(_Flag)
 end
 API.UseForceBallistaDistance = UseForceBallistaDistance;
-
---- Activates or deactivates the forced distance between gates.
---- @param _Flag boolean Limitation is active
-function UseForceGateDistance(_Flag)
-end
-API.UseForceGateDistance = UseForceGateDistance;
 
 --- Defines a custom rule for construction buildings.
 ---

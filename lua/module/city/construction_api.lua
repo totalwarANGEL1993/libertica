@@ -11,16 +11,6 @@ function UseForceBallistaDistance(_Flag)
 end
 API.UseForceBallistaDistance = UseForceBallistaDistance;
 
-function UseForceGateDistance(_Flag)
-    if not IsLocalScript() then
-        ExecuteLocal("UseForceGateDistance(%s)", tostring(_Flag == true));
-    end
-    Lib.Construction.AquireContext();
-    this.Construction.ForceGateDistance = _Flag == true;
-    Lib.Construction.ReleaseContext();
-end
-API.UseForceGateDistance = UseForceGateDistance;
-
 function CustomRuleConstructBuilding(_PlayerID, _FunctionName, ...)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:CustomRuleConstructBuilding(_PlayerID, _FunctionName, unpack(arg));
