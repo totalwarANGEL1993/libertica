@@ -11,15 +11,25 @@ function ActivateSettlementLimitation(_Flag)
 end
 API.ActivateSettlementLimitation = ActivateSettlementLimitation;
 
-function UseRampartLimitation(_Flag)
+function UseWallUpkeepCosts(_Flag)
     if not IsLocalScript() then
-        ExecuteLocal("UseRampartLimitation(%s)", tostring(_Flag == true));
+        ExecuteLocal("UseWallUpkeepCosts(%s)", tostring(_Flag == true));
     end
     Lib.SettlementLimitation.AquireContext();
-    this.RestrictWalls = _Flag == true;
+    this.WallUpkeepCosts = _Flag == true;
     Lib.SettlementLimitation.ReleaseContext();
 end
-API.UseRampartLimitation = UseRampartLimitation;
+API.UseWallUpkeepCosts = UseWallUpkeepCosts;
+
+function UseWallDeteriation(_Flag)
+    if not IsLocalScript() then
+        ExecuteLocal("UseWallDeteriation(%s)", tostring(_Flag == true));
+    end
+    Lib.SettlementLimitation.AquireContext();
+    this.WallDeteriation = _Flag == true;
+    Lib.SettlementLimitation.ReleaseContext();
+end
+API.UseWallDeteriation = UseWallDeteriation;
 
 function RequireTitleToDevelopTerritory(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
