@@ -26,6 +26,10 @@ Lib.SettlementSurvival.Global = {
         IsActive = false,
         AffectAI = false,
     },
+    Enemy = {
+        PredatorBlockClaim = false,
+        BanditsBlockClaim = false,
+    },
     SuspendedSettlers = {},
 };
 Lib.SettlementSurvival.Local  = {
@@ -66,8 +70,10 @@ Lib.SettlementSurvival.Shared = {
     },
 };
 
+Lib.Require("comfort/GetPredatorSpawnerTypes");
 Lib.Require("comfort/SetHealth");
 Lib.Require("core/Core");
+Lib.Require("module/city/Construction");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/mode/SettlementSurvival_API");
@@ -129,6 +135,7 @@ function Lib.SettlementSurvival.Global:Initialize()
         );
 
         self:OverwriteNeeds();
+        self:InitLimitations();
 
         -- Garbage collection
         Lib.SettlementSurvival.Local = nil;
@@ -145,6 +152,10 @@ end
 function Lib.SettlementSurvival.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+        for PlayerID = 1, 8 do
+            CustomRuleConstructBuilding(PlayerID, "SettlementSurvival_Global_ClaimTerritoryPredatorRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementSurvival_Global_ClaimTerritoryBanditRule");
+        end
     elseif _ID == Report.FireAlarmDeactivated_Internal then
         self:RestoreSettlerSuspension();
     elseif _ID == Report.FireAlarmActivated_Internal then
@@ -153,6 +164,51 @@ function Lib.SettlementSurvival.Global:OnReportReceived(_ID, ...)
         self:RestoreSettlerSuspension();
     elseif _ID == Report.ReRepairAlarmActivated_Internal then
         self:RestoreSettlerSuspension();
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.SettlementSurvival.Global:InitLimitations()
+    -- Check predators in territory
+    SettlementSurvival_Global_ClaimTerritoryPredatorRule = function(_PlayerID, _Type, _X, _Y)
+        if Lib.SettlementSurvival.Global.Enemy.PredatorBlockClaim then
+            if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Outpost) == 1 then
+                local TerritoryID1 = Logic.GetTerritoryAtPosition(_X, _Y);
+                for _, SpawnerType in pairs(GetPredatorSpawnerTypes()) do
+                    for _, SpawnerID in pairs(Logic.GetEntitiesOfType(SpawnerType)) do
+                        local TerritoryID2 = GetTerritoryUnderEntity(SpawnerID);
+                        if TerritoryID1 == TerritoryID2 then
+                            for _, ID in pairs({Logic.GetSpawnedEntities(SpawnerID)}) do
+                                local PlayerID = Logic.EntityGetPlayer(ID);
+                                if PlayerID == 0 or (PlayerID ~= _PlayerID and GetDiplomacyState(PlayerID, _PlayerID) == -2) then
+                                    return false;
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        return true;
+    end
+
+    -- Check bandits in territory
+    SettlementSurvival_Global_ClaimTerritoryBanditRule = function(_PlayerID, _Type, _X, _Y)
+        if Lib.SettlementSurvival.Global.Enemy.BanditsBlockClaim then
+            if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Outpost) == 1 then
+                local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
+                for PlayerID = 1, 8 do
+                    if PlayerID ~= _PlayerID and GetDiplomacyState(PlayerID, _PlayerID) == -2 then
+                        local Bandits = {Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, PlayerID, EntityCategories.BanditsCamp, 0)};
+                        if #Bandits > 0 then
+                            return false;
+                        end
+                    end
+                end
+            end
+        end
+        return true;
     end
 end
 

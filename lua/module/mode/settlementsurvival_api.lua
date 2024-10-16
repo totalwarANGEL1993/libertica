@@ -156,3 +156,13 @@ function PlagueSetDeathChance(_Chance)
 end
 API.PlagueSetDeathChance = PlagueSetDeathChance;
 
+function PredatorBlockClaimActivate(_Flag)
+    Lib.SettlementSurvival.Global.Enemy.PredatorBlockClaim = _Flag == true;
+end
+API.PredatorBlockClaimActivate = PredatorBlockClaimActivate;
+
+function BanditsBlockClaimActivate(_Flag)
+    Lib.SettlementSurvival.Global.Enemy.BanditsBlockClaim = _Flag == true;
+end
+API.BanditsBlockClaimActivate = BanditsBlockClaimActivate;
+
