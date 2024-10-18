@@ -31,6 +31,7 @@ LibWriter = {
         "module/entity/EntitySelection",
         "module/balancing/Damage",
         "module/information/Requester",
+        "module/entity/EntitySearch",
     },
     FileReadLookup = {},
     Compile = false,

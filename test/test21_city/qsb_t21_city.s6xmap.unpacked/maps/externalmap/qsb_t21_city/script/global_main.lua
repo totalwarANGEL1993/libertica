@@ -23,6 +23,7 @@ Lib.Require("module/entity/EntitySelection");
 Lib.Require("module/balancing/Damage");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/mode/SettlementLimitation");
+Lib.Require("module/entity/EntitySearch");
 
 -- ========================================================================== --
 
