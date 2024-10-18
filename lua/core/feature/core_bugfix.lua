@@ -126,7 +126,8 @@ function Lib.Core.Bugfix:FixInteractiveObjectClicked()
         local canNotBuyString = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_Resources");
 
         local isAffordable = function(costType, amount)
-            if Logic.GetGoodCategoryForGoodType(costType) ~= GoodCategories.GC_Resource then
+            if  Logic.GetGoodCategoryForGoodType(costType) ~= GoodCategories.GC_Resource
+            and Logic.GetGoodCategoryForGoodType(costType) ~= GoodCategories.GC_Gold then
                 error("Only resources can be used as costs for objects!");
                 return false;
             end

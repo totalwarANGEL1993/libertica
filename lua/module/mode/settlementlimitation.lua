@@ -4,26 +4,35 @@ Lib.SettlementLimitation.Global = {
     Active = false,
     TerritoryRestriction = {},
     TerritoryTypeRestriction = {},
-    OutpostUpgradeBonus = {},
+    AdditionalBuildingBonus = {},
     MultiConstructionBonus = {},
+    WallUpkeepCosts = false,
+    WallDeteriation = false,
 };
 Lib.SettlementLimitation.Local  = {
     Active = false,
     TerritoryRestriction = {},
     TerritoryTypeRestriction = {},
-    OutpostUpgradeBonus = {},
+    AdditionalBuildingBonus = {},
     MultiConstructionBonus = {},
+    WallUpkeepCosts = false,
+    WallDeteriation = false,
 };
 Lib.SettlementLimitation.Shared = {
-    TechnologyConfig = {
-        -- Tech name, Description, Icon, Extra Number
-        {"R_RuralLogistics", {de = "Ländliche Logistik", en = "Rural Logistics", fr = "Logistique agricole",}, {3, 6, 0}, 0},
-    },
     DevelopTerritoryCosts = {Goods.G_Gold, 500},
     CityBuildings = {},
     OuterRimBuildings = {},
+    WallDeteriation = {
+        Health = 10,
+        Chance = 15,
+    },
+    Upkeep = {
+        Palisade = 0.5,
+        Wall = 1.5,
+    },
 };
 
+Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetTerritoryID");
 Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
@@ -41,19 +50,19 @@ Lib.Register("module/mode/SettlementLimitation");
 -- Global initalizer method
 function Lib.SettlementLimitation.Global:Initialize()
     if not self.IsInstalled then
-        Report.DevelopTerritory_Internal = CreateReport("DevelopTerritory_Internal");
-
         for PlayerID = 1, 8 do
             self.TerritoryRestriction[PlayerID] = {};
             self.TerritoryTypeRestriction[PlayerID] = {};
-            self.OutpostUpgradeBonus[PlayerID] = {};
+            self.AdditionalBuildingBonus[PlayerID] = {};
             self.MultiConstructionBonus[PlayerID] = {};
         end
-        Lib.SettlementLimitation.Shared:CreateTechnologies();
         Lib.SettlementLimitation.Shared:CreateTypeLists();
 
+        self:InitConstructionLimitRules();
+        self:InitWallUpkeep();
+
         -- Garbage collection
-        Lib.SettlementSurvival.Local = nil;
+        Lib.SettlementLimitation.Local = nil;
     end
     self.IsInstalled = true;
 end
@@ -68,20 +77,17 @@ function Lib.SettlementLimitation.Global:OnReportReceived(_ID, ...)
         self.LoadscreenClosed = true;
         for PlayerID = 1, 8 do
             self:InitDefaultRules(PlayerID);
-            self:InitConstructionLimit(PlayerID);
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_TerritoryBuildingTypeLimitRule");
         end
     elseif _ID == Report.BuildingUpgraded then
-        local TerritoryID = GetTerritoryUnderEntity(arg[1]);
-        local Bonus = self:GetOutpostUpgradeBonusAmount(arg[2], TerritoryID);
-        if Bonus == 0 then
-            self:SetOutpostUpgradeBonusAmount(arg[2], TerritoryID, 1);
-        end
-    elseif _ID == Report.DevelopTerritory_Internal then
         local Costs = Lib.SettlementLimitation.Shared.DevelopTerritoryCosts;
-        local Bonus = self:GetMultiConstructionBonusAmount(arg[1], arg[2]);
-        if Bonus == 0 then
+        local IsOutpost = Logic.IsEntityInCategory(arg[1], EntityCategories.Outpost) == 1;
+        local TerritoryID = GetTerritoryUnderEntity(arg[1]);
+        local Bonus = self:GetMultiConstructionBonusAmount(arg[2], TerritoryID);
+        if IsOutpost and Bonus == 0 then
             AddGood(Costs[1], Costs[2], arg[1]);
-            self:SetMultiConstructionBonusAmount(arg[1], arg[2], arg[3]);
+            self:SetMultiConstructionBonusAmount(arg[2], TerritoryID, 1);
         end
     end
 end
@@ -99,7 +105,7 @@ function Lib.SettlementLimitation.Global:InitDefaultRules(_PlayerID)
     end
 end
 
-function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
+function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
     -- Check general amount of buildings in a territory.
     SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule = function(_PlayerID, _Type, _X, _Y)
         local MainBuilding = Logic.GetStoreHouse(_PlayerID);
@@ -115,7 +121,7 @@ function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
                 if Limit == -1 and Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][0] then
                     Limit = Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][0];
                 end
-                local Bonus = Lib.SettlementLimitation.Global:GetOutpostUpgradeBonusAmount(_PlayerID, TerritoryID);
+                local Bonus = Lib.SettlementLimitation.Global:GetAdditionalBuildingBonusAmount(_PlayerID, TerritoryID);
                 local Current = 0;
                 Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.CityBuilding, 0)};
                 Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.OuterRimBuilding, 0)};
@@ -151,9 +157,6 @@ function Lib.SettlementLimitation.Global:InitConstructionLimit(_PlayerID)
         end
         return true;
     end
-
-    CustomRuleConstructBuilding(_PlayerID, "SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule");
-    CustomRuleConstructBuilding(_PlayerID, "SettlementLimitation_Global_TerritoryBuildingTypeLimitRule");
 end
 
 function Lib.SettlementLimitation.Global:ActivateSettlementLimitation(_Flag)
@@ -165,20 +168,20 @@ function Lib.SettlementLimitation.Global:ActivateSettlementLimitation(_Flag)
     );
 end
 
-function Lib.SettlementLimitation.Global:GetOutpostUpgradeBonusAmount(_PlayerID, _ID)
-    if self.OutpostUpgradeBonus[_PlayerID] then
-        return self.OutpostUpgradeBonus[_PlayerID][_ID] or 0;
+function Lib.SettlementLimitation.Global:GetAdditionalBuildingBonusAmount(_PlayerID, _ID)
+    if self.AdditionalBuildingBonus[_PlayerID] then
+        return self.AdditionalBuildingBonus[_PlayerID][_ID] or 0;
     end
     return 0;
 end
 
-function Lib.SettlementLimitation.Global:SetOutpostUpgradeBonusAmount(_PlayerID, _ID, _Amount)
-    if self.OutpostUpgradeBonus[_PlayerID] then
-        local CurrentAmount = self.OutpostUpgradeBonus[_PlayerID][_ID] or 0;
-        self.OutpostUpgradeBonus[_PlayerID][_ID] = CurrentAmount + _Amount;
+function Lib.SettlementLimitation.Global:SetAdditionalBuildingBonusAmount(_PlayerID, _ID, _Amount)
+    if self.AdditionalBuildingBonus[_PlayerID] then
+        local CurrentAmount = self.AdditionalBuildingBonus[_PlayerID][_ID] or 0;
+        self.AdditionalBuildingBonus[_PlayerID][_ID] = CurrentAmount + _Amount;
 
         ExecuteLocal(
-            [[Lib.SettlementLimitation.Local.OutpostUpgradeBonus[%d][%d] = %d]],
+            [[Lib.SettlementLimitation.Local.AdditionalBuildingBonus[%d][%d] = %d]],
             _PlayerID,
             _ID,
             CurrentAmount + _Amount
@@ -208,27 +211,82 @@ function Lib.SettlementLimitation.Global:SetMultiConstructionBonusAmount(_Player
 end
 
 -- -------------------------------------------------------------------------- --
+
+function Lib.SettlementLimitation.Global:InitWallUpkeep()
+    self.Orig_GameCallback_TaxCollectionFinished = GameCallback_TaxCollectionFinished;
+    GameCallback_TaxCollectionFinished = function(_PlayerID, _Total, _Bonus)
+        Lib.SettlementLimitation.Global.Orig_GameCallback_TaxCollectionFinished(_PlayerID, _Total, _Bonus);
+        Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID);
+    end
+end
+
+function Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID)
+    if self.WallUpkeepCosts then
+        if Logic.PlayerGetIsHumanFlag(_PlayerID) then
+            local WallCost = self:GetWallUpkeep(_PlayerID);
+            local MoneyCost = WallCost;
+
+            if WallCost > 0 then
+                if GetPlayerResources(Goods.G_Gold, WallCost) < WallCost then
+                    local WallList = {Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)};
+                    local Deteriation = Lib.SettlementLimitation.Shared.Upkeep.WallDeteriation;
+                    for _,ID in pairs(WallList) do
+                        if math.random(1, 100) <= Deteriation.Chance then
+                            local Health = Logic.GetEntityHealth(ID);
+                            local MaxHealth = Logic.GetEntityHealth(ID);
+                            local Damage = math.ceil(MaxHealth * 0.05);
+                            if Health > 0 and Damage >= Health then
+                                Logic.HurtEntity(ID, Damage);
+                            end
+                        end
+                    end
+                else
+                    AddGood(Goods.G_Gold, (-1) * WallCost, _PlayerID);
+                end
+            end
+
+            ExecuteLocal(
+                [[GUI_FeedbackWidgets.GoldAdd(%d, nil, {3, 11, 0}, {1, 8, 0})]],
+                (-1) * MoneyCost
+            );
+        end
+    end
+end
+
+function Lib.SettlementLimitation.Global:GetWallUpkeep(_PlayerID)
+    local Upkeep = 0;
+    local UpkeepPalisade = Lib.SettlementLimitation.Shared.Upkeep.Palisade;
+    local UpkeepWall = Lib.SettlementLimitation.Shared.Upkeep.Wall;
+    for _, ID in pairs{Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)} do
+        if Logic.IsEntityInCategory(ID, EntityCategories.Wall) == 1 then
+            if Logic.IsEntityInCategory(ID, EntityCategories.PalisadeSegment) == 1 then
+                Upkeep = Upkeep + UpkeepPalisade;
+            else
+                Upkeep = Upkeep + UpkeepWall;
+            end
+        end
+    end
+    return math.ceil(Upkeep);
+end
+
+-- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
 function Lib.SettlementLimitation.Local:Initialize()
     if not self.IsInstalled then
-        Report.DevelopTerritory_Internal = CreateReport("DevelopTerritory_Internal");
-
-        self:AddOutpostDevelopButton();
-        self:OverwritePlacementUpdate();
-
         for PlayerID = 1, 8 do
             self.TerritoryRestriction[PlayerID] = {};
             self.TerritoryTypeRestriction[PlayerID] = {};
-            self.OutpostUpgradeBonus[PlayerID] = {};
+            self.AdditionalBuildingBonus[PlayerID] = {};
             self.MultiConstructionBonus[PlayerID] = {};
         end
-        Lib.SettlementLimitation.Shared:CreateTechnologies();
         Lib.SettlementLimitation.Shared:CreateTypeLists();
 
+        self:OverwritePlacementUpdate();
+
         -- Garbage collection
-        Lib.SettlementSurvival.Global = nil;
+        Lib.SettlementLimitation.Global = nil;
     end
     self.IsInstalled = true;
 end
@@ -241,66 +299,6 @@ end
 function Lib.SettlementLimitation.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
-    end
-end
-
-function Lib.SettlementLimitation.Local:AddOutpostDevelopButton()
-    local Action = function(_WidgetID, _EntityID)
-        local PlayerID = GUI.GetPlayerID();
-        local TerritoryID = GetTerritoryUnderEntity(_EntityID);
-        local Costs = Lib.SettlementLimitation.Shared.DevelopTerritoryCosts;
-        if  GetPlayerGoodsInSettlement(Costs[1], PlayerID, true) <= Costs[2] then
-            Message(XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_G_Gold"));
-            return;
-        end
-        SendReportToGlobal(Report.DevelopTerritory_Internal, PlayerID, TerritoryID, 1);
-    end
-
-    local Tooltip = function(_WidgetID, _EntityID)
-        local PlayerID = GUI.GetPlayerID();
-        local TerritoryID = GetTerritoryUnderEntity(_EntityID);
-        local DisabledText;
-
-        if Logic.GetUpgradeLevel(_EntityID) < 1 then
-            DisabledText = Localize(Lib.SettlementLimitation.Text.DevelopTerritory.DisabledUpgrade);
-        elseif Lib.SettlementLimitation.Local.MultiConstructionBonus[PlayerID][TerritoryID] then
-            DisabledText = Localize(Lib.SettlementLimitation.Text.DevelopTerritory.DisabledDone);
-        elseif Logic.TechnologyGetState(PlayerID, Technologies.R_RuralLogistics) ~= TechnologyStates.Researched then
-            DisabledText = XGUIEng.GetStringTableText("UI_ButtonDisabled/PromoteKnight");
-        end
-
-        SetTooltipCosts(
-            Localize(Lib.SettlementLimitation.Text.DevelopTerritory.Title),
-            Localize(Lib.SettlementLimitation.Text.DevelopTerritory.Text),
-            DisabledText,
-            Lib.SettlementLimitation.Shared.DevelopTerritoryCosts,
-            true
-        )
-    end
-
-    local Update = function(_WidgetID, _EntityID)
-        local PlayerID = GUI.GetPlayerID();
-        local TerritoryID = GetTerritoryUnderEntity(_EntityID);
-        SetIcon(_WidgetID, {4, 4});
-        if Lib.SettlementLimitation.Local.Active then
-            if Lib.SettlementLimitation.Local.MultiConstructionBonus[PlayerID][TerritoryID]
-            or Logic.TechnologyGetState(PlayerID, Technologies.R_RuralLogistics) ~= TechnologyStates.Researched
-            or Logic.GetUpgradeLevel(_EntityID) < 1 then
-                XGUIEng.DisableButton(_WidgetID, 1);
-            else
-                XGUIEng.DisableButton(_WidgetID, 0);
-            end
-        else
-            XGUIEng.ShowWidget(_WidgetID, 0);
-        end
-    end
-
-    AddBuildingButtonByTypeAtPosition(Entities.B_Outpost_ME, 222, 62, Action, Tooltip, Update);
-    AddBuildingButtonByTypeAtPosition(Entities.B_Outpost_NA, 222, 62, Action, Tooltip, Update);
-    AddBuildingButtonByTypeAtPosition(Entities.B_Outpost_NE, 222, 62, Action, Tooltip, Update);
-    AddBuildingButtonByTypeAtPosition(Entities.B_Outpost_SE, 222, 62, Action, Tooltip, Update);
-    if Entities.B_Outpost_AS then
-        AddBuildingButtonByTypeAtPosition(Entities.B_Outpost_AS, 222, 62, Action, Tooltip, Update);
     end
 end
 
@@ -351,7 +349,6 @@ function Lib.SettlementLimitation.Local:OverwritePlacementUpdate()
             XGUIEng.SetText("/Ingame/Root/Normal/PlacementStatus/TerritoryName" .. i, "{center}" ..PlayerColor.. " " ..TerritoryName);
             XGUIEng.SetText("/Ingame/Root/Normal/PlacementStatus/TerritoryReason" .. i, "{center}" ..RestrictionString);
             XGUIEng.SetText("/Ingame/Root/Normal/PlacementStatus/OtherReason" .. i, "");
-            XGUIEng.SetText("/InGame/Root/Normal/TextMessages/MessageContainer/Message" .. i, "");
         end
     end
 end
@@ -368,7 +365,7 @@ function Lib.SettlementLimitation.Local:GetRestrictionText(_PlayerID, _Territory
         local Current = 0;
         Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(territoryID, playerID, EntityCategories.CityBuilding, 0)};
         Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(territoryID, playerID, EntityCategories.OuterRimBuilding, 0)};
-        local Bonus = this:GetOutpostUpgradeBonusAmount(playerID, territoryID);
+        local Bonus = this:GetAdditionalBuildingBonusAmount(playerID, territoryID);
         local Limit = buildingLimit;
         Limit = (Limit > 0 and Limit + Bonus) or Limit;
         local Text = string.format(
@@ -439,9 +436,9 @@ function Lib.SettlementLimitation.Local:GetRestrictionTypeText(_PlayerID, _Terri
     return "";
 end
 
-function Lib.SettlementLimitation.Local:GetOutpostUpgradeBonusAmount(_PlayerID, _ID)
-    if self.OutpostUpgradeBonus[_PlayerID] then
-        return self.OutpostUpgradeBonus[_PlayerID][_ID] or 0;
+function Lib.SettlementLimitation.Local:GetAdditionalBuildingBonusAmount(_PlayerID, _ID)
+    if self.AdditionalBuildingBonus[_PlayerID] then
+        return self.AdditionalBuildingBonus[_PlayerID][_ID] or 0;
     end
     return 0;
 end
@@ -455,21 +452,6 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Shared
-
-function Lib.SettlementLimitation.Shared:CreateTechnologies()
-    for i= 1, #self.TechnologyConfig do
-        if g_GameExtraNo >= self.TechnologyConfig[i][4] then
-            if not Technologies[self.TechnologyConfig[i][1]] then
-                AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
-                if not IsLocalScript() then
-                    for j= 1, 8 do
-                        Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
-                    end
-                end
-            end
-        end
-    end
-end
 
 function Lib.SettlementLimitation.Shared:CreateTypeLists()
     self.CityBuildings = {};

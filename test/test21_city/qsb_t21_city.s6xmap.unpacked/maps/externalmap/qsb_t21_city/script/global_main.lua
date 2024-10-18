@@ -23,6 +23,13 @@ Lib.Require("module/entity/EntitySelection");
 Lib.Require("module/balancing/Damage");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/mode/SettlementLimitation");
+Lib.Require("module/entity/EntitySearch");
+
+-- ========================================================================== --
+
+function TestTextDivision()
+    Lib.Core.Text:GetAmountOfLines([[Dieser Modus schränkt die Baumöglichkeiten ein, sodass der Bau der Stadt bessere Planung erfordert.{cr}{cr}{cr}1. Das Heimatgebiet hat keine Einschränkungen.{cr}{cr}2. In anderen Territorien können nur 3 Gebäude gebaut werden. Jeder Gebäudetyp kann nur einmal auf dem Gebiet gebaut werden.{cr}{cr}3. Der Ausbau des Außenposten gewährt dauerhaft ein zusätzliches Gebäude. Außerdem können für Gold Gebäudetypen doppelt gebaut werden.{cr}{cr}4. Stadtgebäude können nur auf dem Heimatgebiet gebaut werden.{cr}{cr}5. Bienenstöcke, Felder und Ziergebäude zählen nicht als Gebäude.]],170)
+end
 
 -- ========================================================================== --
 

@@ -196,6 +196,20 @@ function PlagueSetDeathChance(_Chance)
 end
 API.PlagueSetDeathChance = PlagueSetDeathChance;
 
+--- Aktiviert oder deaktiviert ob auf feindliche Raubtiere im Territorium
+--- geprüft wird.
+--- @param _Flag boolean Bedingung aktiv
+function PredatorBlockClaimActivate(_Flag)
+end
+API.PredatorBlockClaimActivate = PredatorBlockClaimActivate;
+
+--- Aktiviert oder deaktiviert ob auf feindliche Banditen im Territorium
+--- geprüft wird.
+--- @param _Flag boolean Bedingung aktiv
+function BanditsBlockClaimActivate(_Flag)
+end
+API.BanditsBlockClaimActivate = BanditsBlockClaimActivate;
+
 
 
 --- Ein Tier ist an Krankheit gestorben.

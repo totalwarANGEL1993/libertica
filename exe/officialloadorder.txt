@@ -71,3 +71,4 @@ module/information/CutsceneSystem
 module/information/DialogSystem
 module/city/LifestockSystem
 module/information/Requester
+module/entity/EntitySearch

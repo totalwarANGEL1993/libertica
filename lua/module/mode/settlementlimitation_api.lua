@@ -6,10 +6,30 @@ function ActivateSettlementLimitation(_Flag)
         ExecuteLocal("ActivateSettlementLimitation(%s)", tostring(_Flag == true));
     end
     Lib.SettlementLimitation.AquireContext();
-    this.Active = true;
+    this.Active = _Flag == true;
     Lib.SettlementLimitation.ReleaseContext();
 end
 API.ActivateSettlementLimitation = ActivateSettlementLimitation;
+
+function UseWallUpkeepCosts(_Flag)
+    if not IsLocalScript() then
+        ExecuteLocal("UseWallUpkeepCosts(%s)", tostring(_Flag == true));
+    end
+    Lib.SettlementLimitation.AquireContext();
+    this.WallUpkeepCosts = _Flag == true;
+    Lib.SettlementLimitation.ReleaseContext();
+end
+API.UseWallUpkeepCosts = UseWallUpkeepCosts;
+
+function UseWallDeteriation(_Flag)
+    if not IsLocalScript() then
+        ExecuteLocal("UseWallDeteriation(%s)", tostring(_Flag == true));
+    end
+    Lib.SettlementLimitation.AquireContext();
+    this.WallDeteriation = _Flag == true;
+    Lib.SettlementLimitation.ReleaseContext();
+end
+API.UseWallDeteriation = UseWallDeteriation;
 
 function RequireTitleToDevelopTerritory(_Title)
     assert(not IsLocalScript(), "Can not be used in local script!");
@@ -92,7 +112,7 @@ function SetTerritoryDevelopmentCost(_CostType1, _Amount1, _CostType2, _Amount2)
         );
     end
     Lib.SettlementLimitation.AquireContext();
-    this.UpgradeTerritoryCosts = {_CostType1, _Amount1, _CostType2, _Amount2};
+    this.DevelopTerritoryCosts = {_CostType1, _Amount1, _CostType2, _Amount2};
     Lib.SettlementLimitation.ReleaseContext();
 end
 API.SetTerritoryDevelopmentCost = SetTerritoryDevelopmentCost;

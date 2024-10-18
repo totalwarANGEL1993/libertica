@@ -50,7 +50,6 @@ Lib.EntityEvent.Global = {
     },
 };
 Lib.EntityEvent.Local  = {};
-Lib.EntityEvent.Shared  = {};
 
 Lib.Require("comfort/GetDistance");
 Lib.Require("core/Core");
@@ -87,7 +86,7 @@ function Lib.EntityEvent.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadscreenClosed then
         self.LoadscreenClosed = true;
     elseif _ID == Report.EntityHurt then
-        self.AttackedEntities[arg[1]] = {arg[3], 100};
+        self.AttackedEntities[arg[3]] = {arg[1], 300};
     end
 end
 
@@ -405,26 +404,10 @@ function Lib.EntityEvent.Local:Initialize()
     Report.BuildingUpgraded = CreateReport("Event_BuildingUpgraded");
 end
 
-function Lib.EntityEvent.Local:OnEvent(_ID, ...)
+function Lib.EntityEvent.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadscreenClosed then
         self.LoadscreenClosed = true;
     end
-end
-
--- Shared ------------------------------------------------------------------- --
-
-function Lib.EntityEvent.Shared:IterateOverEntities(_Filter, _TypeList)
-    _TypeList = _TypeList or Entities;
-    local ResultList = {};
-    for _, v in pairs(_TypeList) do
-        local AllEntitiesOfType = Logic.GetEntitiesOfType(v);
-        for i= 1, #AllEntitiesOfType do
-            if _Filter(AllEntitiesOfType[i]) then
-                table.insert(ResultList, AllEntitiesOfType[i]);
-            end
-        end
-    end
-    return ResultList;
 end
 
 -- -------------------------------------------------------------------------- --
