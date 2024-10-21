@@ -174,11 +174,11 @@ function Lib.Quest.Global:GetCheckQuestSegmentsInlineGoal()
             end
             -- Not expectec result of segment fails quest
             if SegmentQuest.State == QuestState.Over and SegmentQuest.Result ~= QuestResult.Interrupted then
-                if SegmentList[i].Result == SegmentResult.Success and SegmentQuest.Result ~= QuestResult.Success then
+                if SegmentList[i].Outcome == SegmentResult.Success and SegmentQuest.Outcome ~= QuestResult.Success then
                     Lib.Quest.Global:AbortAllQuestSegments(_QuestName);
                     return false;
                 end
-                if SegmentList[i].Result == SegmentResult.Failure and SegmentQuest.Result ~= QuestResult.Failure then
+                if SegmentList[i].Outcome == SegmentResult.Failure and SegmentQuest.Outcome ~= QuestResult.Failure then
                     Lib.Quest.Global:AbortAllQuestSegments(_QuestName);
                     return false;
                 end
